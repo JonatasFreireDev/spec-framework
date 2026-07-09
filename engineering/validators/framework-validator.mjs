@@ -605,7 +605,29 @@ function mermaidClassAssignments(block) {
   return assignments;
 }
 
-function validateMermaidProgressState(file, block, index) {
+function mermaidArtifactBindings(block) {
+  const bindings = [];
+  const pattern = /%%\s*artifact:\s*([A-Za-z0-9_-]+)\s+node:\s*([A-Za-z][A-Za-z0-9_]*)\s*%%/g;
+  for (const match of block.matchAll(pattern)) {
+    bindings.push({ artifactId: match[1], node: match[2] });
+  }
+  return bindings;
+}
+
+function artifactStatusToMermaidState(status) {
+  if (["approved", "implemented", "validated", "released"].includes(status)) return "done";
+  if (["draft", "proposed", "in_progress"].includes(status)) return "current";
+  if (["deprecated", "superseded"].includes(status)) return "blocked";
+  return "pending";
+}
+
+function artifactRegistryById() {
+  const registry = generatedRegistry ?? parseJsonFile(path.join(root, ".product", "artifacts.json")).value;
+  const artifacts = Array.isArray(registry?.artifacts) ? registry.artifacts : [];
+  return new Map(artifacts.map((artifact) => [artifact.id, artifact]));
+}
+
+function validateMermaidProgressState(file, block, index, artifactsById) {
   const hasProgressDefinitions = /\bclassDef\s+done\b/.test(block) || /\bclassDef\s+current\b/.test(block);
   if (!hasProgressDefinitions) {
     addResult("warning", "mermaid", file, `Flowchart ${index + 1} is missing Mermaid progress classes.`, "Add done/current/pending/blocked classDef.");
@@ -615,6 +637,7 @@ function validateMermaidProgressState(file, block, index) {
   const assignments = mermaidClassAssignments(block);
   const allowedStates = new Set(["done", "current", "pending", "blocked"]);
   const declaredIds = declaredMermaidNodeIds(block);
+  const nodeStates = new Map(assignments.map((item) => [item.node, item.state]));
 
   if (!assignments.some((item) => item.state === "current")) {
     addResult("warning", "mermaid-progress", file, `Flowchart ${index + 1} has progress classes but no current node.`, "Assign one node with `class <node> current;`.");
@@ -628,14 +651,36 @@ function validateMermaidProgressState(file, block, index) {
       addResult("warning", "mermaid-progress", file, `Flowchart ${index + 1} assigns ${assignment.state} to undeclared node ${assignment.node}.`, "Declare the node in the flowchart or fix the class assignment.");
     }
   }
+
+  for (const binding of mermaidArtifactBindings(block)) {
+    if (binding.artifactId.includes("XXX")) continue;
+
+    const artifact = artifactsById.get(binding.artifactId);
+    if (!artifact) {
+      addResult("warning", "mermaid-semantic", file, `Flowchart ${index + 1} references artifact ${binding.artifactId}, but it is not in .product/artifacts.json.`, "Regenerate the registry or fix the artifact binding.");
+      continue;
+    }
+
+    const visualState = nodeStates.get(binding.node);
+    if (!visualState) {
+      addResult("warning", "mermaid-semantic", file, `Flowchart ${index + 1} binds ${binding.artifactId} to node ${binding.node}, but that node has no progress class.`, "Assign done/current/pending/blocked to the bound node.");
+      continue;
+    }
+
+    const expectedState = artifactStatusToMermaidState(artifact.status);
+    if (visualState !== expectedState) {
+      addResult("warning", "mermaid-semantic", file, `Flowchart ${index + 1} shows ${binding.artifactId} as ${visualState}, but registry status ${artifact.status} maps to ${expectedState}.`, "Update the Mermaid class or the artifact status.");
+    }
+  }
 }
 
 function validateMermaidAndTemplates(files) {
+  const artifactsById = artifactRegistryById();
   for (const file of files.filter((item) => item.endsWith(".md"))) {
     const text = readText(file);
     const flowcharts = extractMermaidBlocks(text).filter((block) => /\bflowchart\b/.test(block));
     for (const [index, block] of flowcharts.entries()) {
-      validateMermaidProgressState(file, block, index);
+      validateMermaidProgressState(file, block, index, artifactsById);
     }
   }
 
@@ -763,6 +808,7 @@ flowchart LR
 | Artifacts registry | ${results.some((item) => item.check === "artifacts-registry" && item.severity === "error") ? "🔴 has errors" : results.some((item) => item.check === "artifacts-registry") ? "🟡 findings" : "✅ no findings"} |
 | Mermaid visual standard | ${results.some((item) => item.check === "mermaid") ? "🟡 findings" : "✅ no findings"} |
 | Mermaid progress state | ${results.some((item) => item.check === "mermaid-progress") ? "🟡 findings" : "✅ no findings"} |
+| Mermaid semantic state | ${results.some((item) => item.check === "mermaid-semantic") ? "🟡 findings" : "✅ no findings"} |
 | Markdown links | ${results.some((item) => item.check === "links" && item.severity === "error") ? "🔴 has errors" : results.some((item) => item.check === "links") ? "🟡 findings" : "✅ no findings"} |
 | Template snapshots | ${results.some((item) => item.check === "templates") ? "🟡 findings" : "✅ no findings"} |
 

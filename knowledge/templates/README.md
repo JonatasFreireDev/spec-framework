@@ -69,6 +69,7 @@ When a Mermaid flow represents framework progress, include visual classes:
 
 ```mermaid
 flowchart LR
+  %% artifact: SPEC-XXX node: H %%
   A["Problem"] --> B["Vision"] --> C["Strategy"] --> D["Domain"] --> E["User Goal"] --> F["Feature"] --> G["Use Case"] --> H["Specification"] --> I["Design"] --> J["Implementation Plan"] --> K["Execution Graph"] --> L["Tasks"]
 
   classDef done fill:#dcfce7,stroke:#16a34a,color:#14532d;
@@ -89,6 +90,25 @@ Responsibility:
 | Documentation Orchestrator | Synchronize Mermaid progress across reports, templates, indexes, and context files. |
 | Audit Orchestrator | Verify visual state matches real artifact status during audits. |
 | Release Orchestrator | Verify release/readiness visual flows before release approval. |
+
+Semantic validation:
+
+Use a Mermaid comment to bind a node to a framework artifact when the node represents a real artifact:
+
+```text
+%% artifact: UC-002 node: U %%
+```
+
+Placeholder IDs such as `SPEC-XXX` are examples. Generated documents should replace them with real artifact IDs before relying on semantic validation.
+
+The validator maps artifact status from `.product/artifacts.json` to visual state:
+
+| Artifact status | Expected Mermaid class |
+| --- | --- |
+| `approved`, `implemented`, `validated`, `released` | `done` |
+| `draft`, `proposed`, `in_progress` | `current` |
+| `deprecated`, `superseded` | `blocked` |
+| `unknown` or missing | `pending` |
 
 ## Next Step
 

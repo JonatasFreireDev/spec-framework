@@ -14,6 +14,7 @@
 
 ```mermaid
 flowchart LR
+  %% artifact: UC-002 node: U %%
   U["UC-002 Use Case"] --> S["SPEC-002"]
   S --> D["DES-002"]
   D --> P["PLAN-002"]
@@ -29,8 +30,8 @@ flowchart LR
   classDef pending fill:#f8fafc,stroke:#94a3b8,color:#334155;
   classDef blocked fill:#fee2e2,stroke:#dc2626,color:#7f1d1d;
 
-  class U,S,D,P,G,T,Q,A done;
-  class V current;
+  class S,D,P,G,T,Q,A done;
+  class U,V current;
 ```
 
 ## 🚦 Verdict Matrix
