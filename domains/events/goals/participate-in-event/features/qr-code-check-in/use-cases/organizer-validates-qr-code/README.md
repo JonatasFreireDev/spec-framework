@@ -10,16 +10,18 @@ Use this use case when specifying, designing, planning, testing, or auditing org
 
 ## Expected Files
 
-- `context.md`: local traceability and handoff.
-- `use-case.md`: product behavior and acceptance criteria.
-- `specification.md`: implementation contract.
-- `design.md`: organizer scanner UX and states.
-- `implementation-plan.md`: technical plan without application code.
-- `execution-graph.json`: task dependency graph.
-- `tasks.md`: executable task list.
-- `tests.md`: validation plan.
-- `analytics.md`: analytics and observability events.
-- `audit.md`: readiness and residual risks.
+| Artifact | Link | Purpose |
+| --- | --- | --- |
+| Context | [context.md](context.md) | Local traceability and handoff. |
+| Use Case | [use-case.md](use-case.md) | Product behavior and acceptance criteria. |
+| Specification | [specification.md](specification.md) | Implementation contract. |
+| Design | [design.md](design.md) | Organizer scanner UX and states. |
+| Implementation Plan | [implementation-plan.md](implementation-plan.md) | Technical plan without application code. |
+| Execution Graph | [execution-graph.json](execution-graph.json) | Task dependency graph. |
+| Tasks | [tasks.md](tasks.md) | Executable task list. |
+| Tests | [tests.md](tests.md) | Validation plan. |
+| Analytics | [analytics.md](analytics.md) | Analytics and observability events. |
+| Audit | [audit.md](audit.md) | Readiness and residual risks. |
 
 ## Responsible Skill
 
@@ -29,4 +31,4 @@ Downstream owners: Specification AI, UX/UI AI, Implementation Planner AI, Execut
 
 ## Next Step
 
-Resolve open approval questions in `audit.md`, then seek human approval before implementation.
+Resolve open approval questions in [audit.md](audit.md), then seek human approval before implementation.

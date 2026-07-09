@@ -58,12 +58,12 @@ flowchart TD
 
 | Document | Path |
 | --- | --- |
-| Primary | `[path]` |
-| Specification | `[path or N/A]` |
-| Design | `[path or N/A]` |
-| Implementation plan | `[path or N/A]` |
-| Execution graph | `[path or N/A]` |
-| Tasks | `[path or N/A]` |
+| Primary | [`[primary document]`]([path]) |
+| Specification | [`[specification]`]([path or N/A]) |
+| Design | [`[design]`]([path or N/A]) |
+| Implementation plan | [`[implementation plan]`]([path or N/A]) |
+| Execution graph | [`[execution graph]`]([path or N/A]) |
+| Tasks | [`[tasks]`]([path or N/A]) |
 
 ## 🔐 Decisions
 
@@ -83,5 +83,5 @@ flowchart TD
 | Field | Value |
 | --- | --- |
 | Next recommended skill | `[skill]` |
-| Required reading | `[paths]` |
+| Required reading | [`[artifact]`]([path]) |
 | Stop condition | `[approval gate/blocker]` |

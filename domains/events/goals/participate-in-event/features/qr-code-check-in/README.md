@@ -10,10 +10,12 @@ Use this feature when work concerns QR token generation, display, validation, ex
 
 ## Expected Files
 
-- `context.md`: feature context and use-case links.
-- `feature.md`: feature scope, delivery, dependencies, rules, and risks.
-- `use-cases/attendee-checks-in-with-qr-code/`: attendee-facing check-in flow.
-- `use-cases/organizer-validates-qr-code/`: organizer-facing validation flow.
+| Artifact | Link | Purpose |
+| --- | --- | --- |
+| Context | [context.md](context.md) | Feature context and use-case links. |
+| Feature | [feature.md](feature.md) | Feature scope, delivery, dependencies, rules, and risks. |
+| Attendee use case | [attendee-checks-in-with-qr-code](use-cases/attendee-checks-in-with-qr-code/use-case.md) | Attendee-facing check-in flow. |
+| Organizer use case | [organizer-validates-qr-code](use-cases/organizer-validates-qr-code/use-case.md) | Organizer-facing validation flow. |
 
 ## Responsible Skill
 

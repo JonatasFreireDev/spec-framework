@@ -20,7 +20,7 @@
                                          "supabase/migrations"
                                      ],
                       "status":  "pending",
-                      "acceptance":  [
+                      "acceptanceChecks":  [
                                          "attendance check-in state and token persistence are constrained and testable"
                                      ]
                   },
@@ -41,7 +41,7 @@
                                          "server functions"
                                      ],
                       "status":  "pending",
-                      "acceptance":  [
+                      "acceptanceChecks":  [
                                          "attendee can generate event-scoped non-PII QR token"
                                      ]
                   },
@@ -63,7 +63,7 @@
                                          "server functions"
                                      ],
                       "status":  "pending",
-                      "acceptance":  [
+                      "acceptanceChecks":  [
                                          "organizer validation is permissioned, idempotent, and rejects invalid tokens"
                                      ]
                   },
@@ -82,7 +82,7 @@
                                          "mobile event screens"
                                      ],
                       "status":  "pending",
-                      "acceptance":  [
+                      "acceptanceChecks":  [
                                          "attendee sees active, loading, expired, error, and refresh states"
                                      ]
                   },
@@ -101,7 +101,7 @@
                                          "mobile organizer event screens"
                                      ],
                       "status":  "pending",
-                      "acceptance":  [
+                      "acceptanceChecks":  [
                                          "organizer sees success, already checked in, invalid, expired, and permission denied states"
                                      ]
                   },
@@ -125,7 +125,7 @@
                                          "product audit notes"
                                      ],
                       "status":  "pending",
-                      "acceptance":  [
+                      "acceptanceChecks":  [
                                          "acceptance criteria have automated or documented validation"
                                      ]
                   }

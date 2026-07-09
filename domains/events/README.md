@@ -10,9 +10,11 @@ Use this domain when work concerns event lifecycle, attendee participation, orga
 
 ## Expected Files
 
-- `context.md`: current domain context and dependencies.
-- `domain.md`: Events domain definition and boundaries.
-- `goals/participate-in-event/`: user goal for attending and completing event participation.
+| Artifact | Link | Purpose |
+| --- | --- | --- |
+| Context | [context.md](context.md) | Current domain context and dependencies. |
+| Domain | [domain.md](domain.md) | Events domain definition and boundaries. |
+| Participate in event | [goals/participate-in-event](goals/participate-in-event/goal.md) | User goal for attending and completing event participation. |
 
 ## Responsible Skill
 

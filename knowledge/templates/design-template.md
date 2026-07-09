@@ -10,6 +10,16 @@
 | Owner skill | UX/UI AI |
 | Next skill | Implementation Planner AI |
 
+## 🔗 Navigation
+
+| Artifact | Link |
+| --- | --- |
+| Context | [context.md](context.md) |
+| Specification | [specification.md](specification.md) |
+| Use Case | [use-case.md](use-case.md) |
+| Implementation Plan | [implementation-plan.md](implementation-plan.md) |
+| Audit | [audit.md](audit.md) |
+
 ## 🚚 Delivery
 
 | Field | Value |

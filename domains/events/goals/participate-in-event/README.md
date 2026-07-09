@@ -10,10 +10,12 @@ Use this folder when work concerns attendee participation, event admission, atte
 
 ## Expected Files
 
-- `context.md`: goal context and links to features.
-- `goal.md`: goal definition, users, outcomes, rules, and metrics.
-- `journeys.md`: participation journey and decision points.
-- `features/qr-code-check-in/`: QR check-in feature serving this goal.
+| Artifact | Link | Purpose |
+| --- | --- | --- |
+| Context | [context.md](context.md) | Goal context and links to features. |
+| Goal | [goal.md](goal.md) | Goal definition, users, outcomes, rules, and metrics. |
+| Journeys | [journeys.md](journeys.md) | Participation journey and decision points. |
+| QR Code Check-in | [features/qr-code-check-in](features/qr-code-check-in/feature.md) | QR check-in feature serving this goal. |
 
 ## Responsible Skill
 

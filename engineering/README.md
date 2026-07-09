@@ -11,6 +11,7 @@ Use this folder for engineering conventions, environment notes, testing strategy
 ## Expected Files
 
 - `README.md`: engineering purpose and operating rules.
+- `validators/`: local framework validation scripts.
 - Future convention files when approved, such as `testing.md`, `architecture-notes.md`, `observability.md`, or `release-checklist.md`.
 
 ## Responsible Skill
@@ -29,3 +30,13 @@ Supporting skills: Code Runner AI, QA AI, Code Review AI, Security Review AI, Do
 ## Next Step
 
 When a specification and design are approved, create or update the use-case `implementation-plan.md` and `execution-graph.json` before generating tasks.
+
+## Validation
+
+Run the framework validator before major documentation handoffs:
+
+```bash
+node engineering/validators/framework-validator.mjs --write-report
+```
+
+The report is written to `audits/framework-validation-report.md`.

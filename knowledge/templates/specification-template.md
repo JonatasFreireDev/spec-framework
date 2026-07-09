@@ -11,6 +11,20 @@
 | Owner skill | Specification AI |
 | Next skill | UX/UI AI |
 
+## 🔗 Navigation
+
+| Artifact | Link |
+| --- | --- |
+| Context | [context.md](context.md) |
+| Use Case | [use-case.md](use-case.md) |
+| Design | [design.md](design.md) |
+| Implementation Plan | [implementation-plan.md](implementation-plan.md) |
+| Execution Graph | [execution-graph.json](execution-graph.json) |
+| Tasks | [tasks.md](tasks.md) |
+| Tests | [tests.md](tests.md) |
+| Analytics | [analytics.md](analytics.md) |
+| Audit | [audit.md](audit.md) |
+
 ## 🚚 Delivery
 
 | Field | Value |

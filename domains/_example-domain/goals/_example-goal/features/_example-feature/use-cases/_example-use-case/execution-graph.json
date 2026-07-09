@@ -1,13 +1,36 @@
-﻿{
+{
+  "id": "GRAPH-EXAMPLE",
+  "status": "draft",
+  "sourceSpecification": "SPEC-EXAMPLE",
+  "sourceDesign": "DESIGN-EXAMPLE",
+  "sourceImplementationPlan": "PLAN-EXAMPLE",
   "featureId": "FT-000",
   "useCaseId": "UC-000",
+  "delivery": {
+    "level": "N/A",
+    "priority": "N/A",
+    "rationale": "Structural example only; not product scope."
+  },
   "nodes": [
     {
       "id": "TASK-000",
       "title": "Example task",
       "type": "example",
+      "ownerSkill": "task-generator",
       "dependsOn": [],
-      "status": "pending"
+      "sourceSections": ["Specification > Acceptance Criteria"],
+      "writeScope": ["example-only"],
+      "status": "pending",
+      "acceptanceChecks": ["Example task has a visible acceptance check."]
     }
-  ]
+  ],
+  "parallelLanes": [
+    {
+      "name": "example-lane",
+      "nodes": ["TASK-000"]
+    }
+  ],
+  "blockedNodes": [],
+  "risks": [],
+  "updatedAt": "2026-07-09"
 }

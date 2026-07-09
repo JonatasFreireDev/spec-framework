@@ -36,6 +36,33 @@ Templates should produce artifacts that are easy to scan in GitHub and Codex:
 - use Mermaid diagrams for flows, artifact chains, gates, journeys, and dependencies;
 - keep prose focused on decisions, evidence, and handoff.
 
+## Link Standard
+
+Generated documents should use real Markdown links for local artifacts instead of plain paths when the target exists.
+
+Use repository-relative paths in indexes and root-level reports:
+
+```markdown
+[FRAMEWORK.md](../../FRAMEWORK.md)
+```
+
+Use sibling-relative links inside artifact bundles:
+
+```markdown
+[Context](context.md)
+[Specification](specification.md)
+[Implementation Plan](implementation-plan.md)
+[Execution Graph](execution-graph.json)
+```
+
+When a template contains placeholders, keep the placeholder in the label and use the expected target shape:
+
+```markdown
+[`[SPEC-XXX] Specification`](specification.md)
+```
+
+Do not link to a file that does not exist yet unless the document clearly marks it as a planned output.
+
 ## Mermaid Progress Classes
 
 When a Mermaid flow represents framework progress, include visual classes:

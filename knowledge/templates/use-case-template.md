@@ -6,9 +6,23 @@
 | --- | --- |
 | ID | `[UC-XXX]` |
 | Status | `[draft | proposed | approved]` |
-| Feature | `[FT-XXX]` |
+| Feature | [`[FT-XXX]`]([../feature-or-context-path]) |
 | Owner skill | Use Case AI |
 | Next skill | Specification AI |
+
+## 🔗 Navigation
+
+| Artifact | Link |
+| --- | --- |
+| Context | [context.md](context.md) |
+| Specification | [specification.md](specification.md) |
+| Design | [design.md](design.md) |
+| Implementation Plan | [implementation-plan.md](implementation-plan.md) |
+| Execution Graph | [execution-graph.json](execution-graph.json) |
+| Tasks | [tasks.md](tasks.md) |
+| Tests | [tests.md](tests.md) |
+| Analytics | [analytics.md](analytics.md) |
+| Audit | [audit.md](audit.md) |
 
 ## 🚚 Delivery
 

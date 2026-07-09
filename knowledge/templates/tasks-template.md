@@ -11,6 +11,17 @@
 | Owner skill | Task AI |
 | Next skill | Code Runner AI or QA AI |
 
+## 🔗 Navigation
+
+| Artifact | Link |
+| --- | --- |
+| Context | [context.md](context.md) |
+| Specification | [specification.md](specification.md) |
+| Implementation Plan | [implementation-plan.md](implementation-plan.md) |
+| Execution Graph | [execution-graph.json](execution-graph.json) |
+| Tests | [tests.md](tests.md) |
+| Audit | [audit.md](audit.md) |
+
 ## 🚚 Delivery
 
 | Field | Value |

@@ -11,6 +11,18 @@
 | Owner skill | Implementation Planner AI |
 | Next skill | Execution Graph AI |
 
+## 🔗 Navigation
+
+| Artifact | Link |
+| --- | --- |
+| Context | [context.md](context.md) |
+| Specification | [specification.md](specification.md) |
+| Design | [design.md](design.md) |
+| Execution Graph | [execution-graph.json](execution-graph.json) |
+| Tasks | [tasks.md](tasks.md) |
+| Tests | [tests.md](tests.md) |
+| Audit | [audit.md](audit.md) |
+
 ## 🚚 Delivery
 
 | Field | Value |

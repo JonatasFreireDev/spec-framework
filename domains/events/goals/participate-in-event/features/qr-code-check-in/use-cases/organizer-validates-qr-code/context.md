@@ -49,12 +49,28 @@ This context gives agents the local map for the organizer validation use case. I
 
 ## Required Reading
 
-- `FRAMEWORK.md`
-- `domains/events/context.md`
-- `domains/events/goals/participate-in-event/context.md`
-- `domains/events/goals/participate-in-event/features/qr-code-check-in/context.md`
-- `knowledge/decisions/DEC-001-qr-expiration-duration.md`
-- `knowledge/decisions/DEC-002-qr-token-strategy.md`
+| Artifact | Link |
+| --- | --- |
+| Framework | [FRAMEWORK.md](../../../../../../../../FRAMEWORK.md) |
+| Domain context | [domains/events/context.md](../../../../../../context.md) |
+| Goal context | [participate-in-event/context.md](../../../../context.md) |
+| Feature context | [qr-code-check-in/context.md](../../context.md) |
+| DEC-001 QR expiration duration | [DEC-001](../../../../../../../../knowledge/decisions/DEC-001-qr-expiration-duration.md) |
+| DEC-002 QR token strategy | [DEC-002](../../../../../../../../knowledge/decisions/DEC-002-qr-token-strategy.md) |
+
+## Local Documents
+
+| Document | Link |
+| --- | --- |
+| Use Case | [use-case.md](use-case.md) |
+| Specification | [specification.md](specification.md) |
+| Design | [design.md](design.md) |
+| Implementation Plan | [implementation-plan.md](implementation-plan.md) |
+| Execution Graph | [execution-graph.json](execution-graph.json) |
+| Tasks | [tasks.md](tasks.md) |
+| Tests | [tests.md](tests.md) |
+| Analytics | [analytics.md](analytics.md) |
+| Audit | [audit.md](audit.md) |
 
 ## Handoff
 
