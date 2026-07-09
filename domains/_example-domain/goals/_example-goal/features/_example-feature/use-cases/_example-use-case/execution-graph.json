@@ -1,0 +1,13 @@
+﻿{
+  "featureId": "FT-000",
+  "useCaseId": "UC-000",
+  "nodes": [
+    {
+      "id": "TASK-000",
+      "title": "Example task",
+      "type": "example",
+      "dependsOn": [],
+      "status": "pending"
+    }
+  ]
+}

@@ -1,0 +1,38 @@
+{
+  "id": "GRAPH-XXX",
+  "status": "draft",
+  "sourceSpecification": "SPEC-XXX",
+  "sourceDesign": "DESIGN-XXX|Not applicable",
+  "sourceImplementationPlan": "PLAN-XXX",
+  "delivery": {
+    "level": "L1",
+    "priority": "P0",
+    "rationale": "[why this graph belongs to this level/priority]"
+  },
+  "nodes": [
+    {
+      "id": "TK-001",
+      "title": "[task title]",
+      "type": "database|backend|frontend|test|analytics|docs|security",
+      "ownerSkill": "task-runner|documentation-writer|qa|security-reviewer",
+      "dependsOn": [],
+      "sourceSections": ["Specification > Data Contract"],
+      "delivery": {
+        "level": "L1",
+        "priority": "P0"
+      },
+      "writeScope": ["path/or/module"],
+      "status": "pending",
+      "acceptance": ["observable check"]
+    }
+  ],
+  "parallelLanes": [
+    {
+      "name": "[lane name]",
+      "nodes": ["TK-001"]
+    }
+  ],
+  "blockedNodes": [],
+  "risks": [],
+  "updatedAt": "YYYY-MM-DD"
+}
