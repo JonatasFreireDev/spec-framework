@@ -21,6 +21,7 @@ The validator checks:
 - stale `product/...` paths outside `FRAMEWORK.md`;
 - decision index paths in `.product/decisions.json`;
 - visual Mermaid standards for flowcharts;
+- Mermaid progress state assignments using `done`, `current`, `pending`, and `blocked`;
 - local Markdown links;
 - template snapshots.
 

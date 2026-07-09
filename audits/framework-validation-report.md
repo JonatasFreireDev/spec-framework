@@ -41,6 +41,7 @@ flowchart LR
 | Decisions index | ✅ no findings |
 | Artifacts registry | ✅ no findings |
 | Mermaid visual standard | ✅ no findings |
+| Mermaid progress state | ✅ no findings |
 | Markdown links | ✅ no findings |
 | Template snapshots | ✅ no findings |
 

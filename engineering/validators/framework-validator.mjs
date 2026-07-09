@@ -577,11 +577,65 @@ function validateDecisionsIndex() {
   }
 }
 
+function extractMermaidBlocks(text) {
+  const blocks = [];
+  const pattern = /```mermaid\s*([\s\S]*?)```/g;
+  for (const match of text.matchAll(pattern)) {
+    blocks.push(match[1]);
+  }
+  return blocks;
+}
+
+function declaredMermaidNodeIds(block) {
+  const ids = new Set();
+  for (const match of block.matchAll(/\b([A-Za-z][A-Za-z0-9_]*)\s*(?=\[|\{|\()/g)) {
+    ids.add(match[1]);
+  }
+  return ids;
+}
+
+function mermaidClassAssignments(block) {
+  const assignments = [];
+  const pattern = /^\s*class\s+([A-Za-z0-9_,\s]+)\s+([A-Za-z][A-Za-z0-9_-]*)\s*;?\s*$/gm;
+  for (const match of block.matchAll(pattern)) {
+    for (const node of match[1].split(",").map((item) => item.trim()).filter(Boolean)) {
+      assignments.push({ node, state: match[2] });
+    }
+  }
+  return assignments;
+}
+
+function validateMermaidProgressState(file, block, index) {
+  const hasProgressDefinitions = /\bclassDef\s+done\b/.test(block) || /\bclassDef\s+current\b/.test(block);
+  if (!hasProgressDefinitions) {
+    addResult("warning", "mermaid", file, `Flowchart ${index + 1} is missing Mermaid progress classes.`, "Add done/current/pending/blocked classDef.");
+    return;
+  }
+
+  const assignments = mermaidClassAssignments(block);
+  const allowedStates = new Set(["done", "current", "pending", "blocked"]);
+  const declaredIds = declaredMermaidNodeIds(block);
+
+  if (!assignments.some((item) => item.state === "current")) {
+    addResult("warning", "mermaid-progress", file, `Flowchart ${index + 1} has progress classes but no current node.`, "Assign one node with `class <node> current;`.");
+  }
+
+  for (const assignment of assignments) {
+    if (!allowedStates.has(assignment.state)) {
+      addResult("warning", "mermaid-progress", file, `Flowchart ${index + 1} uses unknown progress state ${assignment.state}.`, "Use only done/current/pending/blocked.");
+    }
+    if (declaredIds.size > 0 && !declaredIds.has(assignment.node)) {
+      addResult("warning", "mermaid-progress", file, `Flowchart ${index + 1} assigns ${assignment.state} to undeclared node ${assignment.node}.`, "Declare the node in the flowchart or fix the class assignment.");
+    }
+  }
+}
+
 function validateMermaidAndTemplates(files) {
   for (const file of files.filter((item) => item.endsWith(".md"))) {
     const text = readText(file);
-    if (/```mermaid[\s\S]*?flowchart/.test(text) && !text.includes("classDef done")) {
-      addResult("warning", "mermaid", file, "Flowchart is missing Mermaid progress classes.", "Add done/current/pending/blocked classDef.");
+    const flowcharts = extractMermaidBlocks(text).filter((block) => /\bflowchart\b/.test(block));
+    for (const [index, block] of flowcharts.entries()) {
+      validateMermaidProgressState(file, block, index);
     }
   }
 
@@ -708,6 +762,7 @@ flowchart LR
 | Decisions index | ${results.some((item) => item.check === "decisions-index") ? "🟡 findings" : "✅ no findings"} |
 | Artifacts registry | ${results.some((item) => item.check === "artifacts-registry" && item.severity === "error") ? "🔴 has errors" : results.some((item) => item.check === "artifacts-registry") ? "🟡 findings" : "✅ no findings"} |
 | Mermaid visual standard | ${results.some((item) => item.check === "mermaid") ? "🟡 findings" : "✅ no findings"} |
+| Mermaid progress state | ${results.some((item) => item.check === "mermaid-progress") ? "🟡 findings" : "✅ no findings"} |
 | Markdown links | ${results.some((item) => item.check === "links" && item.severity === "error") ? "🔴 has errors" : results.some((item) => item.check === "links") ? "🟡 findings" : "✅ no findings"} |
 | Template snapshots | ${results.some((item) => item.check === "templates") ? "🟡 findings" : "✅ no findings"} |
 
