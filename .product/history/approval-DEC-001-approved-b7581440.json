@@ -1,0 +1,9 @@
+{
+  "artifact_id": "DEC-001",
+  "path": "knowledge/decisions/DEC-001-qr-expiration-duration.md",
+  "content_hash": "b758144062894d1042fee8b539c566de9843d8236ff5b21a1f45b42687243b52",
+  "status_granted": "approved",
+  "approved_by": "JonatasFreireDev <JonatasFreireDev@users.noreply.github.com>",
+  "approved_at": "2026-07-09T19:26:08.895Z",
+  "notes": "retroactive baseline"
+}

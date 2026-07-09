@@ -547,10 +547,14 @@ Regras:
 
 Transicoes obrigatorias:
 
+- `proposed`: nao exige approval record, mas nao deve avancar a partir de um parent gate incompleto.
+- `approved` e estados posteriores: exigem approval record correspondente em `.product/history/`, com `artifact_id`, `path`, `content_hash`, `status_granted`, `approved_by`, `approved_at` e `notes`.
 - `implemented -> validated`: exige QA Evidence aprovada e sem blockers; exige Security Review aprovada quando houver codigo, dados, permissoes, tokens, API, pagamentos, uploads, mensagens, busca, admin, analytics sensivel ou qualquer risco de privacidade/abuso.
 - `validated -> released`: exige Release Orchestrator, auditoria sem blockers, Security Review sem blockers, riscos residuais aceitos e rollback/monitoramento definidos.
 - QA pode bloquear validacao quando qualquer criterio de aceite, task, controle de seguranca, regressao critica ou evidencia obrigatoria estiver ausente.
 - Security Review pode bloquear validacao e release quando houver falha de autorizacao, vazamento de dados, decisao de permissao sem aprovacao, segredo exposto, abuso nao mitigado, logging inseguro ou risco residual alto sem decisao humana.
+
+Approval records usam hash SHA-256 do arquivo inteiro com conteudo normalizado para LF e sem trailing whitespace por linha. Eles fornecem auditabilidade e gate mecanico, nao prova criptografica de aprovacao humana.
 
 ## 12. Decisoes
 

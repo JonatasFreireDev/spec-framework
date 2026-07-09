@@ -18,6 +18,7 @@ The validator checks:
 - traceability between parent, child, source, graph, and task artifacts;
 - status policy between parent and child artifacts;
 - approval gates between Specification, Design, Implementation Plan, Execution Graph, and Tasks;
+- approval records in `.product/history/` for `approved` and later statuses;
 - validation gates for approved tests, QA evidence, Security Review, and audit before `validated` or `released`;
 - Delivery Level and Priority metadata for executable framework artifacts;
 - execution graph JSON shape and dependencies;

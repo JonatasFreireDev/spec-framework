@@ -66,4 +66,5 @@ flowchart LR
 | --- | --- |
 | Approved by |  |
 | Date |  |
+| Approval record | `[.product/history/approval-...]` |
 | Notes |  |

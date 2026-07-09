@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-09T19:13:45.893Z",
+  "generatedAt": "2026-07-09T19:31:02.070Z",
   "generator": "engineering/validators/framework-validator.mjs",
   "artifacts": [
     {
@@ -90,6 +90,51 @@
         "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/attendee-checks-in-with-qr-code/implementation-plan.md",
         "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/attendee-checks-in-with-qr-code/execution-graph.json",
         "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/attendee-checks-in-with-qr-code/tasks.md"
+      ]
+    },
+    {
+      "id": "DEC-003",
+      "type": "decision",
+      "name": "Approval Records",
+      "status": "approved",
+      "ownerSkill": "product-historian",
+      "path": "knowledge/decisions/DEC-003-approval-records.md",
+      "parentIds": [],
+      "childIds": [],
+      "dependsOn": [],
+      "decisions": [],
+      "delivery": {},
+      "documents": {
+        "canonical": "knowledge/decisions/DEC-003-approval-records.md"
+      },
+      "affectedArtifacts": [
+        "FRAMEWORK.md",
+        "AGENTS.md",
+        "engineering/validators/framework-validator.mjs",
+        "knowledge/templates/approval-record-template.json",
+        ".product/history/"
+      ]
+    },
+    {
+      "id": "DEC-004",
+      "type": "decision",
+      "name": "Code Link Convention",
+      "status": "approved",
+      "ownerSkill": "product-historian",
+      "path": "knowledge/decisions/DEC-004-code-link-convention.md",
+      "parentIds": [],
+      "childIds": [],
+      "dependsOn": [],
+      "decisions": [],
+      "delivery": {},
+      "documents": {
+        "canonical": "knowledge/decisions/DEC-004-code-link-convention.md"
+      },
+      "affectedArtifacts": [
+        "FRAMEWORK.md",
+        "knowledge/templates/tasks-template.md",
+        "knowledge/templates/qa-evidence-template.md",
+        "engineering/validators/framework-validator.mjs"
       ]
     },
     {

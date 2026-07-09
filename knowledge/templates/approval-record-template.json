@@ -1,0 +1,9 @@
+{
+  "artifact_id": "[ARTIFACT-ID]",
+  "path": "[repository-relative/path.md]",
+  "content_hash": "[sha256 of normalized artifact content]",
+  "status_granted": "[approved|in_progress|implemented|validated|released]",
+  "approved_by": "[git user.name <git user.email>]",
+  "approved_at": "[YYYY-MM-DDTHH:mm:ssZ]",
+  "notes": "[approval context]"
+}

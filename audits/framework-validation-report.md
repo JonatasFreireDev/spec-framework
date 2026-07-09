@@ -38,6 +38,7 @@ flowchart LR
 | Context metadata | ✅ no errors |
 | Use-case bundles | ✅ no errors |
 | Approval gates | ✅ no findings |
+| Approval records | ✅ no findings |
 | Validation gates | ✅ no findings |
 | Traceability | ✅ no findings |
 | Status policy | ✅ no findings |

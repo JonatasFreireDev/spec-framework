@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 import fs from "node:fs";
 import path from "node:path";
+import crypto from "node:crypto";
 
 const root = process.cwd();
 const args = new Set(process.argv.slice(2));
@@ -86,6 +87,21 @@ function parseJsonFile(file) {
   } catch (error) {
     return { ok: false, error };
   }
+}
+
+function normalizeArtifactContent(text) {
+  return text
+    .replace(/\r\n?/g, "\n")
+    .split("\n")
+    .map((line) => line.replace(/[ \t]+$/g, ""))
+    .join("\n");
+}
+
+function artifactContentHash(file) {
+  return crypto
+    .createHash("sha256")
+    .update(normalizeArtifactContent(readText(file)), "utf8")
+    .digest("hex");
 }
 
 function findUseCaseDirs() {
@@ -436,6 +452,14 @@ function statusCanFeedDownstream(status) {
   return ["approved", "implemented", "validated", "released"].includes(status);
 }
 
+function statusRequiresApprovedParent(status) {
+  return status === "proposed" || statusCanFeedDownstream(status);
+}
+
+function statusRequiresApprovalRecord(status) {
+  return statusCanFeedDownstream(status);
+}
+
 function isDraftLike(status) {
   return status === "draft";
 }
@@ -529,9 +553,8 @@ function validateDecisionReferences() {
 }
 
 function addGateResult(file, child, parent, rule, fix) {
-  const severity = statusCanFeedDownstream(child?.status) ? "error" : "warning";
   addResult(
-    severity,
+    "error",
     "approval-gates",
     file,
     `${child?.id ?? "Downstream artifact"} is ${child?.status ?? "missing"}, but ${parent?.id ?? "required parent"} is ${parent?.status ?? "missing"}: ${rule}`,
@@ -648,28 +671,94 @@ function validateApprovalGates() {
     const graph = artifactByType(artifacts, useCase.id, "execution-graph");
     const tasks = artifactByType(artifacts, useCase.id, "taskset");
 
-    if (design && !spec) {
+    if (design && !spec && statusRequiresApprovedParent(design.status)) {
       addGateResult(path.join(root, design.path), design, spec, "design requires an existing Specification.", "Create specification.md before design.md.");
-    } else if (design && !statusCanFeedDownstream(spec.status) && !isDraftLike(design.status)) {
+    } else if (design && !statusCanFeedDownstream(spec?.status) && statusRequiresApprovedParent(design.status)) {
       addGateResult(path.join(root, design.path), design, spec, "design should not move beyond draft before Specification approval.", "Approve the Specification or keep Design as draft.");
     }
 
-    if (plan && !design) {
+    if (plan && !design && statusRequiresApprovedParent(plan.status)) {
       addGateResult(path.join(root, plan.path), plan, design, "implementation plan requires design.md.", "Create design.md or mark Design as Not applicable.");
-    } else if (plan && !statusCanFeedDownstream(design.status) && !isDraftLike(plan.status)) {
+    } else if (plan && !statusCanFeedDownstream(design?.status) && statusRequiresApprovedParent(plan.status)) {
       addGateResult(path.join(root, plan.path), plan, design, "implementation plan should not move beyond draft before Design approval.", "Approve Design, mark Design Not applicable, or keep Implementation Plan as draft.");
     }
 
-    if (graph && !plan) {
+    if (graph && !plan && statusRequiresApprovedParent(graph.status)) {
       addGateResult(path.join(root, graph.path), graph, plan, "execution graph requires implementation-plan.md.", "Create implementation-plan.md before execution-graph.json.");
-    } else if (graph && !statusCanFeedDownstream(plan.status) && !isDraftLike(graph.status)) {
+    } else if (graph && !statusCanFeedDownstream(plan?.status) && statusRequiresApprovedParent(graph.status)) {
       addGateResult(path.join(root, graph.path), graph, plan, "execution graph should not move beyond draft before Implementation Plan approval.", "Approve Implementation Plan or keep Execution Graph as draft.");
     }
 
-    if (tasks && !graph) {
+    if (tasks && !graph && statusRequiresApprovedParent(tasks.status)) {
       addGateResult(path.join(root, tasks.path), tasks, graph, "tasks require execution-graph.json.", "Create and validate execution-graph.json before tasks.md.");
-    } else if (tasks && !statusCanFeedDownstream(graph.status) && !isDraftLike(tasks.status)) {
+    } else if (tasks && !statusCanFeedDownstream(graph?.status) && statusRequiresApprovedParent(tasks.status)) {
       addGateResult(path.join(root, tasks.path), tasks, graph, "tasks should not move beyond draft before Execution Graph approval.", "Approve Execution Graph or keep Tasks as draft.");
+    }
+  }
+}
+
+function approvalRecordFiles() {
+  const historyDir = path.join(root, ".product", "history");
+  if (!fs.existsSync(historyDir)) return [];
+  return walk(historyDir).filter((file) => path.basename(file).startsWith("approval-") && file.endsWith(".json"));
+}
+
+function approvalRecordsByArtifact() {
+  const records = new Map();
+  for (const file of approvalRecordFiles()) {
+    const parsed = parseJsonFile(file);
+    if (!parsed.ok) {
+      addResult("error", "approval-records", file, `Invalid approval record JSON: ${parsed.error.message}`, "Ask a human to fix or replace the approval record.");
+      continue;
+    }
+
+    const record = parsed.value;
+    for (const field of ["artifact_id", "path", "content_hash", "status_granted", "approved_by", "approved_at", "notes"]) {
+      if (!record[field]) {
+        addResult("error", "approval-records", file, `Approval record is missing ${field}.`, "Ask a human to recreate the approval record from the template.");
+      }
+    }
+
+    if (record.status_granted && !statusRequiresApprovalRecord(record.status_granted)) {
+      addResult("error", "approval-records", file, `Approval record grants non-approval status ${record.status_granted}.`, "Use approved, in_progress, implemented, validated, or released.");
+    }
+
+    if (record.path && !fs.existsSync(path.join(root, record.path))) {
+      addResult("error", "approval-records", file, `Approval record path does not exist: ${record.path}`, "Ask a human to fix the path or supersede the record.");
+    }
+
+    const key = record.artifact_id || rel(file);
+    if (!records.has(key)) records.set(key, []);
+    records.get(key).push({ ...record, recordPath: rel(file) });
+  }
+  return records;
+}
+
+function validateApprovalRecords() {
+  const recordsByArtifact = approvalRecordsByArtifact();
+  for (const artifact of currentArtifacts()) {
+    if (!statusRequiresApprovalRecord(artifact.status) || isPlaceholderArtifact(artifact)) continue;
+    const file = artifact.path ? path.join(root, artifact.path) : null;
+    if (!file || !fs.existsSync(file)) continue;
+    const expectedHash = artifactContentHash(file);
+    const records = recordsByArtifact.get(artifact.id) ?? [];
+    const matchingRecord = records.find((record) =>
+      record.path === artifact.path &&
+      record.status_granted === artifact.status &&
+      record.content_hash === expectedHash
+    );
+
+    if (!matchingRecord) {
+      const staleRecord = records.find((record) => record.path === artifact.path && record.status_granted === artifact.status);
+      addResult(
+        "error",
+        "approval-records",
+        file,
+        staleRecord
+          ? `${artifact.id} is ${artifact.status}, but approval record ${staleRecord.recordPath} hash does not match current content.`
+          : `${artifact.id} is ${artifact.status}, but no matching approval record exists in .product/history/.`,
+        "Do not auto-fix approval records. Ask the approving human to create a matching record."
+      );
     }
   }
 }
@@ -1299,6 +1388,7 @@ flowchart LR
 | Context metadata | ${results.some((item) => item.check === "context" && item.severity === "error") ? "🔴 has errors" : "✅ no errors"} |
 | Use-case bundles | ${results.some((item) => item.check === "use-case-bundle" && item.severity === "error") ? "🔴 has errors" : "✅ no errors"} |
 | Approval gates | ${results.some((item) => item.check === "approval-gates" && item.severity === "error") ? "🔴 has errors" : results.some((item) => item.check === "approval-gates") ? "🟡 findings" : "✅ no findings"} |
+| Approval records | ${results.some((item) => item.check === "approval-records" && item.severity === "error") ? "🔴 has errors" : results.some((item) => item.check === "approval-records") ? "🟡 findings" : "✅ no findings"} |
 | Validation gates | ${results.some((item) => item.check === "validation-gates" && item.severity === "error") ? "\u{1F534} has errors" : results.some((item) => item.check === "validation-gates") ? "\u{1F7E1} findings" : "\u{2705} no findings"} |
 | Traceability | ${results.some((item) => item.check === "traceability" && item.severity === "error") ? "🔴 has errors" : results.some((item) => item.check === "traceability") ? "🟡 findings" : "✅ no findings"} |
 | Status policy | ${results.some((item) => item.check === "status-policy" && item.severity === "error") ? "🔴 has errors" : results.some((item) => item.check === "status-policy") ? "🟡 findings" : "✅ no findings"} |
@@ -1336,6 +1426,7 @@ validateUseCaseBundles();
 validateTraceability();
 validateStatusPolicy();
 validateApprovalGates();
+validateApprovalRecords();
 validateValidationGates();
 validateDeliveryMetadata();
 validateExecutionGraphs();

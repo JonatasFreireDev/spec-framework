@@ -1,0 +1,9 @@
+{
+  "artifact_id": "DEC-002",
+  "path": "knowledge/decisions/DEC-002-qr-token-strategy.md",
+  "content_hash": "2df3bc9ac1ab959acfe01b9ecdf60a37000b0f5e570c8dc62be37aecd8c2cd4f",
+  "status_granted": "approved",
+  "approved_by": "JonatasFreireDev <JonatasFreireDev@users.noreply.github.com>",
+  "approved_at": "2026-07-09T19:26:08.895Z",
+  "notes": "retroactive baseline"
+}

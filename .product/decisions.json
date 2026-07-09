@@ -1,38 +1,65 @@
 {
-    "decisions":  [
-                      {
-                          "id":  "DEC-001",
-                          "title":  "QR expiration duration",
-                          "affectedArtifacts":  [
-                                                    "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/attendee-checks-in-with-qr-code/specification.md",
-                                                    "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/attendee-checks-in-with-qr-code/implementation-plan.md",
-                                                    "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/attendee-checks-in-with-qr-code/execution-graph.json",
-                                                    "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/attendee-checks-in-with-qr-code/tasks.md"
-                                                ],
-                          "status":  "approved",
-                          "scope":  "feature/security",
-                          "path":  "knowledge/decisions/DEC-001-qr-expiration-duration.md",
-                          "date":  "2026-07-09",
-                          "supersedes":  [
-
-                                         ]
-                      },
-                      {
-                          "id":  "DEC-002",
-                          "title":  "QR token strategy",
-                          "affectedArtifacts":  [
-                                                    "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/attendee-checks-in-with-qr-code/specification.md",
-                                                    "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/attendee-checks-in-with-qr-code/implementation-plan.md",
-                                                    "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/attendee-checks-in-with-qr-code/execution-graph.json",
-                                                    "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/attendee-checks-in-with-qr-code/tasks.md"
-                                                ],
-                          "status":  "approved",
-                          "scope":  "architecture/security",
-                          "path":  "knowledge/decisions/DEC-002-qr-token-strategy.md",
-                          "date":  "2026-07-09",
-                          "supersedes":  [
-
-                                         ]
-                      }
-                  ]
+  "decisions": [
+    {
+      "id": "DEC-001",
+      "title": "QR expiration duration",
+      "affectedArtifacts": [
+        "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/attendee-checks-in-with-qr-code/specification.md",
+        "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/attendee-checks-in-with-qr-code/implementation-plan.md",
+        "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/attendee-checks-in-with-qr-code/execution-graph.json",
+        "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/attendee-checks-in-with-qr-code/tasks.md"
+      ],
+      "status": "approved",
+      "scope": "feature/security",
+      "path": "knowledge/decisions/DEC-001-qr-expiration-duration.md",
+      "date": "2026-07-09",
+      "supersedes": []
+    },
+    {
+      "id": "DEC-002",
+      "title": "QR token strategy",
+      "affectedArtifacts": [
+        "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/attendee-checks-in-with-qr-code/specification.md",
+        "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/attendee-checks-in-with-qr-code/implementation-plan.md",
+        "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/attendee-checks-in-with-qr-code/execution-graph.json",
+        "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/attendee-checks-in-with-qr-code/tasks.md"
+      ],
+      "status": "approved",
+      "scope": "architecture/security",
+      "path": "knowledge/decisions/DEC-002-qr-token-strategy.md",
+      "date": "2026-07-09",
+      "supersedes": []
+    },
+    {
+      "id": "DEC-003",
+      "title": "Approval Records",
+      "affectedArtifacts": [
+        "FRAMEWORK.md",
+        "AGENTS.md",
+        "engineering/validators/framework-validator.mjs",
+        "knowledge/templates/approval-record-template.json",
+        ".product/history/"
+      ],
+      "status": "approved",
+      "scope": "governance/approval-gates/auditability",
+      "path": "knowledge/decisions/DEC-003-approval-records.md",
+      "date": "2026-07-09",
+      "supersedes": []
+    },
+    {
+      "id": "DEC-004",
+      "title": "Code Link Convention",
+      "affectedArtifacts": [
+        "FRAMEWORK.md",
+        "knowledge/templates/tasks-template.md",
+        "knowledge/templates/qa-evidence-template.md",
+        "engineering/validators/framework-validator.mjs"
+      ],
+      "status": "approved",
+      "scope": "engineering/code-links/validation",
+      "path": "knowledge/decisions/DEC-004-code-link-convention.md",
+      "date": "2026-07-09",
+      "supersedes": []
+    }
+  ]
 }
