@@ -16,6 +16,7 @@ The validator checks:
 
 - required use-case artifact bundles;
 - traceability between parent, child, source, graph, and task artifacts;
+- status policy between parent and child artifacts;
 - approval gates between Specification, Design, Implementation Plan, Execution Graph, and Tasks;
 - Delivery Level and Priority metadata for executable framework artifacts;
 - execution graph JSON shape and dependencies;
@@ -36,6 +37,7 @@ When `--write-report` is provided, the validator writes:
 
 ```text
 audits/framework-validation-report.md
+audits/readiness/framework-readiness.md
 ```
 
 When `--write-registry` is provided, the validator writes:

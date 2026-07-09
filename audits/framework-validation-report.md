@@ -39,6 +39,7 @@ flowchart LR
 | Use-case bundles | ✅ no errors |
 | Approval gates | ✅ no findings |
 | Traceability | ✅ no findings |
+| Status policy | ✅ no findings |
 | Delivery metadata | ✅ no findings |
 | Execution graph JSON and dependencies | ✅ no errors |
 | Decisions index | ✅ no findings |

@@ -612,6 +612,27 @@ function validateTraceability() {
   }
 }
 
+function validateStatusPolicy() {
+  const byId = artifactById();
+  for (const artifact of currentArtifacts()) {
+    if (artifact.type === "decision" || isPlaceholderArtifact(artifact)) continue;
+    const file = artifact.path ? path.join(root, artifact.path) : null;
+    for (const parentId of artifact.parentIds ?? []) {
+      const parent = byId.get(parentId);
+      if (!parent || isPlaceholderArtifact(parent)) continue;
+      if (statusCanFeedDownstream(artifact.status) && !statusCanFeedDownstream(parent.status)) {
+        addResult(
+          "error",
+          "status-policy",
+          file,
+          `${artifact.id} is ${artifact.status}, but parent ${parent.id} is ${parent.status}.`,
+          `Approve or validate ${parent.id} before advancing ${artifact.id}.`
+        );
+      }
+    }
+  }
+}
+
 function validateApprovalGates() {
   const artifacts = currentArtifacts();
   const useCases = artifacts.filter((artifact) => artifact.type === "use-case");
@@ -1002,6 +1023,121 @@ function markdownEscape(value) {
   return String(value ?? "").replaceAll("|", "\\|").replace(/\r?\n/g, " ");
 }
 
+function readinessIcon(status) {
+  if (statusCanFeedDownstream(status)) return "✅";
+  if (status === "proposed" || status === "in_progress") return "🟡";
+  if (status === "draft" || status === "unknown") return "➖";
+  return "🔴";
+}
+
+function artifactStatusCell(artifact) {
+  return artifact ? `${readinessIcon(artifact.status)} ${artifact.status}` : "🔴 missing";
+}
+
+function nextReadinessOwner(parts) {
+  if (!statusCanFeedDownstream(parts.spec?.status)) return "Specification AI";
+  if (!statusCanFeedDownstream(parts.design?.status)) return "UX/UI AI";
+  if (!statusCanFeedDownstream(parts.plan?.status)) return "Implementation Planner AI";
+  if (!statusCanFeedDownstream(parts.graph?.status)) return "Execution Graph AI";
+  if (!statusCanFeedDownstream(parts.tasks?.status)) return "Task AI";
+  return "Audit Orchestrator";
+}
+
+function useCaseReadiness(useCase) {
+  const artifacts = currentArtifacts();
+  const parts = {
+    spec: artifactByType(artifacts, useCase.id, "specification"),
+    design: artifactByType(artifacts, useCase.id, "design"),
+    plan: artifactByType(artifacts, useCase.id, "implementation-plan"),
+    graph: artifactByType(artifacts, useCase.id, "execution-graph"),
+    tasks: artifactByType(artifacts, useCase.id, "taskset"),
+    tests: artifactByType(artifacts, useCase.id, "tests"),
+    analytics: artifactByType(artifacts, useCase.id, "analytics"),
+    audit: artifactByType(artifacts, useCase.id, "audit"),
+  };
+  const required = [parts.spec, parts.design, parts.plan, parts.graph, parts.tasks];
+  const missing = required.filter((item) => !item).length;
+  const approved = required.filter((item) => statusCanFeedDownstream(item?.status)).length;
+  const score = missing > 0 ? Math.round((required.length - missing) / required.length * 100) : Math.round(approved / required.length * 100);
+  const canGenerateTasks = statusCanFeedDownstream(parts.spec?.status) && statusCanFeedDownstream(parts.design?.status) && statusCanFeedDownstream(parts.plan?.status) && parts.graph;
+  const verdictLabel = missing > 0 ? "🔴 not_ready" : canGenerateTasks ? "✅ ready" : "🟡 in_progress";
+
+  return {
+    useCase,
+    parts,
+    score,
+    canGenerateTasks,
+    verdictLabel,
+    nextOwner: nextReadinessOwner(parts),
+  };
+}
+
+function generateReadinessReport() {
+  const now = new Date().toISOString().slice(0, 10);
+  const useCases = currentArtifacts()
+    .filter((artifact) => artifact.type === "use-case" && artifact.delivery?.level !== "N/A")
+    .map(useCaseReadiness)
+    .sort((a, b) => a.useCase.id.localeCompare(b.useCase.id));
+  const readyCount = useCases.filter((item) => item.canGenerateTasks).length;
+  const rows = useCases.length
+    ? useCases
+        .map((item) => {
+          const link = item.useCase.path ? `[${item.useCase.id}](../../${item.useCase.path})` : item.useCase.id;
+          return `| ${link} | ${markdownEscape(item.useCase.name)} | ${item.verdictLabel} | ${item.score}% | ${artifactStatusCell(item.parts.spec)} | ${artifactStatusCell(item.parts.design)} | ${artifactStatusCell(item.parts.plan)} | ${artifactStatusCell(item.parts.graph)} | ${artifactStatusCell(item.parts.tasks)} | ${item.canGenerateTasks ? "yes" : "no"} | ${item.nextOwner} |`;
+        })
+        .join("\n")
+    : "| ➖ none | No use cases found. | ➖ | 0% | ➖ | ➖ | ➖ | ➖ | ➖ | no | Product Orchestrator |";
+
+  return `# Framework Readiness Matrix
+
+## 🧭 Executive Snapshot
+
+| Field | Value |
+| --- | --- |
+| Date | ${now} |
+| Auditor | \`engineering/validators/framework-validator.mjs\` |
+| Scope | Use cases with real delivery level |
+| Use cases checked | ${useCases.length} |
+| Ready for task generation | ${readyCount} |
+| Overall verdict | ${readyCount === useCases.length && useCases.length > 0 ? "✅ ready" : "🟡 in_progress"} |
+
+## 🗺️ Readiness Flow
+
+\`\`\`mermaid
+flowchart LR
+  U["Use Case"] --> S["Specification"]
+  S --> D["Design"]
+  D --> P["Implementation Plan"]
+  P --> G["Execution Graph"]
+  G --> T["Tasks"]
+  T --> R["Ready For Execution"]
+
+  classDef done fill:#dcfce7,stroke:#16a34a,color:#14532d;
+  classDef current fill:#fef3c7,stroke:#d97706,color:#78350f,stroke-width:3px;
+  classDef pending fill:#f8fafc,stroke:#94a3b8,color:#334155;
+  classDef blocked fill:#fee2e2,stroke:#dc2626,color:#7f1d1d;
+
+  class U done;
+  class S current;
+  class D,P,G,T,R pending;
+\`\`\`
+
+## 🚦 Use Case Matrix
+
+| Use Case | Name | Verdict | Score | Spec | Design | Plan | Graph | Tasks | Can Generate Tasks | Next Owner |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+${rows}
+
+## 🏁 Result
+
+| Field | Value |
+| --- | --- |
+| Current bottleneck | Specification approval and downstream approval gates |
+| Recommended next skill | Specification AI |
+| Required next step | Review and approve or revise draft/proposed specifications before design, plan, graph, and tasks advance. |
+`;
+}
+
 function generateReport() {
   const counts = severityCounts();
   const now = new Date().toISOString().slice(0, 10);
@@ -1055,6 +1191,7 @@ flowchart LR
 | Use-case bundles | ${results.some((item) => item.check === "use-case-bundle" && item.severity === "error") ? "🔴 has errors" : "✅ no errors"} |
 | Approval gates | ${results.some((item) => item.check === "approval-gates" && item.severity === "error") ? "🔴 has errors" : results.some((item) => item.check === "approval-gates") ? "🟡 findings" : "✅ no findings"} |
 | Traceability | ${results.some((item) => item.check === "traceability" && item.severity === "error") ? "🔴 has errors" : results.some((item) => item.check === "traceability") ? "🟡 findings" : "✅ no findings"} |
+| Status policy | ${results.some((item) => item.check === "status-policy" && item.severity === "error") ? "🔴 has errors" : results.some((item) => item.check === "status-policy") ? "🟡 findings" : "✅ no findings"} |
 | Delivery metadata | ${results.some((item) => item.check === "delivery" && item.severity === "error") ? "🔴 has errors" : results.some((item) => item.check === "delivery") ? "🟡 findings" : "✅ no findings"} |
 | Execution graph JSON and dependencies | ${results.some((item) => item.check === "execution-graph" && item.severity === "error") ? "🔴 has errors" : "✅ no errors"} |
 | Decisions index | ${results.some((item) => item.check === "decisions-index") ? "🟡 findings" : "✅ no findings"} |
@@ -1087,6 +1224,7 @@ if (writeRegistry) {
 }
 validateUseCaseBundles();
 validateTraceability();
+validateStatusPolicy();
 validateApprovalGates();
 validateDeliveryMetadata();
 validateExecutionGraphs();
@@ -1103,6 +1241,9 @@ if (writeReport) {
   const reportPath = path.join(root, "audits", "framework-validation-report.md");
   fs.writeFileSync(reportPath, report, "utf8");
   console.log(`Wrote ${rel(reportPath)}`);
+  const readinessPath = path.join(root, "audits", "readiness", "framework-readiness.md");
+  fs.writeFileSync(readinessPath, generateReadinessReport(), "utf8");
+  console.log(`Wrote ${rel(readinessPath)}`);
 }
 
 const counts = severityCounts();
