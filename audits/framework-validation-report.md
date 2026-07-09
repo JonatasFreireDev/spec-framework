@@ -39,6 +39,7 @@ flowchart LR
 | Use-case bundles | ✅ no errors |
 | Execution graph JSON and dependencies | ✅ no errors |
 | Decisions index | ✅ no findings |
+| Artifacts registry | ✅ no findings |
 | Mermaid visual standard | ✅ no findings |
 | Markdown links | ✅ no findings |
 | Template snapshots | ✅ no findings |

@@ -36,7 +36,7 @@ When a specification and design are approved, create or update the use-case `imp
 Run the framework validator before major documentation handoffs:
 
 ```bash
-node engineering/validators/framework-validator.mjs --write-report
+node engineering/validators/framework-validator.mjs --write-registry --write-report
 ```
 
-The report is written to `audits/framework-validation-report.md`.
+The registry is written to `.product/artifacts.json` and the report is written to `audits/framework-validation-report.md`.

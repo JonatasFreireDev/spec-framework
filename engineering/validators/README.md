@@ -9,7 +9,7 @@ This folder stores local validation tools for the Product Engineering Framework.
 Run the framework validator from the repository root:
 
 ```bash
-node engineering/validators/framework-validator.mjs --write-report
+node engineering/validators/framework-validator.mjs --write-registry --write-report
 ```
 
 The validator checks:
@@ -17,6 +17,7 @@ The validator checks:
 - required use-case artifact bundles;
 - execution graph JSON shape and dependencies;
 - `context.md` required metadata;
+- `.product/artifacts.json` registry consistency;
 - stale `product/...` paths outside `FRAMEWORK.md`;
 - decision index paths in `.product/decisions.json`;
 - visual Mermaid standards for flowcharts;
@@ -29,6 +30,12 @@ When `--write-report` is provided, the validator writes:
 
 ```text
 audits/framework-validation-report.md
+```
+
+When `--write-registry` is provided, the validator writes:
+
+```text
+.product/artifacts.json
 ```
 
 ## Responsible Skill

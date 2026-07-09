@@ -5,6 +5,7 @@ import path from "node:path";
 const root = process.cwd();
 const args = new Set(process.argv.slice(2));
 const writeReport = args.has("--write-report");
+const writeRegistry = args.has("--write-registry");
 
 const allowedStatuses = new Set([
   "draft",
@@ -32,6 +33,7 @@ const requiredUseCaseFiles = [
 ];
 
 const results = [];
+let generatedRegistry = null;
 
 function rel(filePath) {
   return path.relative(root, filePath).replaceAll(path.sep, "/");
@@ -106,6 +108,77 @@ function parseContextMeta(text) {
   return meta;
 }
 
+function parseYamlList(text, key) {
+  const lines = text.split(/\r?\n/);
+  const values = [];
+  const start = lines.findIndex((line) => line.trim() === `${key}:`);
+  if (start === -1) return values;
+
+  for (let index = start + 1; index < lines.length; index += 1) {
+    const line = lines[index];
+    if (/^\S/.test(line) && !line.trim().startsWith("- ")) break;
+    const item = line.trim().match(/^-\s+(.+?)\s*$/);
+    if (item) values.push(item[1].replace(/^["']|["']$/g, ""));
+  }
+  return values;
+}
+
+function parseYamlDelivery(text) {
+  const lines = text.split(/\r?\n/);
+  const delivery = {};
+  const start = lines.findIndex((line) => line.trim() === "delivery:");
+  if (start === -1) return delivery;
+
+  for (let index = start + 1; index < lines.length; index += 1) {
+    const line = lines[index];
+    if (/^\S/.test(line)) break;
+    const pair = line.trim().match(/^([A-Za-z0-9_-]+):\s*(.+?)\s*$/);
+    if (pair) delivery[pair[1]] = pair[2].replace(/^["']|["']$/g, "");
+  }
+  delivery.depends_on = parseYamlList(text.slice(text.indexOf("delivery:")), "depends_on");
+  return delivery;
+}
+
+function findContextFiles() {
+  return walk(path.join(root, "domains")).filter((item) => path.basename(item) === "context.md");
+}
+
+function normalizeArtifactType(type) {
+  return (type ?? "unknown").replaceAll("_", "-");
+}
+
+function normalizeOwnerSkill(ownerSkill) {
+  return (ownerSkill ?? "")
+    .replace(/^\d+-/, "")
+    .replace(/\.md$/, "");
+}
+
+function parseMarkdownSectionItems(text, heading) {
+  const lines = text.split(/\r?\n/);
+  const start = lines.findIndex((line) => line.trim() === `## ${heading}`);
+  if (start === -1) return [];
+  const items = [];
+  for (let index = start + 1; index < lines.length; index += 1) {
+    const line = lines[index];
+    if (line.startsWith("## ")) break;
+    const item = line.trim().match(/^-\s+(.+?)\s*$/);
+    if (item) items.push(item[1]);
+  }
+  return items;
+}
+
+function parseLeadingIds(items) {
+  return items
+    .map((item) => item.split(/\s+-\s+/)[0]?.trim())
+    .filter((item) => item && item !== "N/A" && /^[A-Z]+-[A-Z0-9.-]+$/.test(item));
+}
+
+function parseDecisionIds(items) {
+  return items
+    .map((item) => item.match(/\bDEC-\d+\b/)?.[0])
+    .filter(Boolean);
+}
+
 function pathExistsMaybeProductPrefix(value) {
   const direct = path.join(root, value);
   if (fs.existsSync(direct)) return { exists: true, normalized: value };
@@ -116,6 +189,195 @@ function pathExistsMaybeProductPrefix(value) {
     }
   }
   return { exists: false, normalized: value };
+}
+
+function inferArtifactDocuments(contextFile, meta) {
+  const dir = path.dirname(contextFile);
+  const type = normalizeArtifactType(meta.type);
+  const documents = {
+    context: rel(contextFile),
+  };
+
+  const candidatesByType = {
+    domain: { canonical: "domain.md", decisions: "decisions.md" },
+    goal: { canonical: "goal.md", journeys: "journeys.md" },
+    feature: { canonical: "feature.md", decisions: "decisions.md" },
+    "use-case": {
+      canonical: "use-case.md",
+      specification: "specification.md",
+      design: "design.md",
+      implementationPlan: "implementation-plan.md",
+      executionGraph: "execution-graph.json",
+      tasks: "tasks.md",
+      tests: "tests.md",
+      analytics: "analytics.md",
+      audit: "audit.md",
+      readme: "README.md",
+    },
+  };
+
+  const candidates = candidatesByType[type] ?? {};
+  for (const [name, fileName] of Object.entries(candidates)) {
+    const candidate = path.join(dir, fileName);
+    if (fs.existsSync(candidate)) documents[name] = rel(candidate);
+  }
+  return documents;
+}
+
+function parseMarkdownField(text, field) {
+  const escaped = field.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  const bullet = text.match(new RegExp(`^-\\s+${escaped}:\\s*(.+?)\\s*$`, "im"));
+  if (bullet) return bullet[1].trim();
+  const table = text.match(new RegExp(`\\|\\s*${escaped}\\s*\\|\\s*(.+?)\\s*\\|`, "i"));
+  if (table) return table[1].trim().replace(/^`|`$/g, "");
+  return "";
+}
+
+function firstKnownId(text, prefixes) {
+  for (const prefix of prefixes) {
+    const match = text.match(new RegExp(`\\b${prefix}-[A-Z0-9.]+\\b`));
+    if (match) return match[0];
+  }
+  return "";
+}
+
+function artifactFromDocument(parentArtifact, documentKey, documentPath) {
+  const fullPath = path.join(root, documentPath);
+  if (!fs.existsSync(fullPath)) return null;
+
+  if (documentKey === "executionGraph") {
+    const parsed = parseJsonFile(fullPath);
+    const graph = parsed.ok ? parsed.value : {};
+    return {
+      id: graph.id || `${parentArtifact.id}:execution-graph`,
+      type: "execution-graph",
+      name: graph.id || "Execution Graph",
+      status: graph.status || "unknown",
+      ownerSkill: "execution-graph",
+      path: documentPath,
+      parentIds: [parentArtifact.id],
+      childIds: Array.isArray(graph.nodes) ? graph.nodes.map((node) => node.id).filter(Boolean) : [],
+      dependsOn: [],
+      decisions: [],
+      delivery: graph.delivery ?? {},
+      documents: {
+        canonical: documentPath,
+      },
+    };
+  }
+
+  const text = readText(fullPath);
+  const config = {
+    specification: { type: "specification", prefixes: ["SPEC"], ownerSkill: "specification" },
+    design: { type: "design", prefixes: ["DES", "DESIGN"], ownerSkill: "ux-ui" },
+    implementationPlan: { type: "implementation-plan", prefixes: ["PLAN"], ownerSkill: "implementation-planner" },
+    tasks: { type: "taskset", prefixes: ["TASKSET"], ownerSkill: "task-generator" },
+    tests: { type: "tests", prefixes: ["TEST"], ownerSkill: "qa" },
+    analytics: { type: "analytics", prefixes: ["ANA"], ownerSkill: "documentation-writer" },
+    audit: { type: "audit", prefixes: ["AUD"], ownerSkill: "audit-orchestrator" },
+  }[documentKey];
+  if (!config) return null;
+
+  const heading = text.match(/^#\s+(.+?)\s*$/m)?.[1]?.trim() ?? config.type;
+  return {
+    id: parseMarkdownField(text, "ID") || firstKnownId(text, config.prefixes) || `${parentArtifact.id}:${documentKey}`,
+    type: config.type,
+    name: heading.replace(/^(Specification|Design|Implementation Plan|Tasks|Tests|Analytics|Audit):\s*/i, ""),
+    status: parseMarkdownField(text, "Status") || "unknown",
+    ownerSkill: config.ownerSkill,
+    path: documentPath,
+    parentIds: [parentArtifact.id],
+    childIds: [],
+    dependsOn: [],
+    decisions: parseDecisionIds(text.split(/\r?\n/)),
+    delivery: {
+      level: parseMarkdownField(text, "Level"),
+      priority: parseMarkdownField(text, "Priority"),
+    },
+    documents: {
+      canonical: documentPath,
+    },
+  };
+}
+
+function buildArtifactsRegistry() {
+  const artifacts = [];
+  const contextFiles = findContextFiles();
+
+  for (const contextFile of contextFiles) {
+    const text = readText(contextFile);
+    const meta = parseContextMeta(text);
+    if (!meta?.id) continue;
+    const type = normalizeArtifactType(meta.type);
+    const yamlParents = parseYamlList(text, "parents");
+    const yamlChildren = parseYamlList(text, "children");
+    const yamlDecisions = parseYamlList(text, "decisions");
+    const markdownParents = parseLeadingIds(parseMarkdownSectionItems(text, "Parent Artifacts"));
+    const markdownChildren = parseLeadingIds(parseMarkdownSectionItems(text, "Child Artifacts"));
+    const markdownDecisions = parseDecisionIds(parseMarkdownSectionItems(text, "Decisions"));
+
+    const artifact = {
+      id: meta.id,
+      type,
+      name: meta.name ?? "",
+      status: meta.status ?? "unknown",
+      ownerSkill: normalizeOwnerSkill(meta.owner_skill),
+      path: rel(contextFile),
+      parentIds: [...new Set([...yamlParents, ...markdownParents])],
+      childIds: [...new Set([...yamlChildren, ...markdownChildren])],
+      dependsOn: parseYamlList(text, "depends_on"),
+      decisions: [...new Set([...yamlDecisions, ...markdownDecisions])],
+      delivery: parseYamlDelivery(text),
+      documents: inferArtifactDocuments(contextFile, meta),
+    };
+    artifacts.push(artifact);
+
+    if (type === "use-case") {
+      for (const key of ["specification", "design", "implementationPlan", "executionGraph", "tasks", "tests", "analytics", "audit"]) {
+        const documentPath = artifact.documents[key];
+        const documentArtifact = documentPath ? artifactFromDocument(artifact, key, documentPath) : null;
+        if (documentArtifact) artifacts.push(documentArtifact);
+      }
+    }
+  }
+
+  const decisionFile = path.join(root, ".product", "decisions.json");
+  const parsedDecisions = parseJsonFile(decisionFile);
+  if (parsedDecisions.ok && Array.isArray(parsedDecisions.value.decisions)) {
+    for (const decision of parsedDecisions.value.decisions) {
+      artifacts.push({
+        id: decision.id,
+        type: "decision",
+        name: decision.title ?? decision.id,
+        status: decision.status ?? "unknown",
+        ownerSkill: "product-historian",
+        path: decision.path,
+        parentIds: [],
+        childIds: [],
+        dependsOn: [],
+        decisions: [],
+        delivery: {},
+        documents: {
+          canonical: decision.path,
+        },
+        affectedArtifacts: decision.affectedArtifacts ?? [],
+      });
+    }
+  }
+
+  artifacts.sort((a, b) => a.id.localeCompare(b.id));
+  return {
+    generatedAt: new Date().toISOString(),
+    generator: "engineering/validators/framework-validator.mjs",
+    artifacts,
+  };
+}
+
+function writeArtifactsRegistry() {
+  generatedRegistry = buildArtifactsRegistry();
+  const file = path.join(root, ".product", "artifacts.json");
+  fs.writeFileSync(file, `${JSON.stringify(generatedRegistry, null, 2)}\n`, "utf8");
+  console.log(`Wrote ${rel(file)}`);
 }
 
 function validateUseCaseBundles() {
@@ -197,7 +459,7 @@ function validateExecutionGraphs() {
 }
 
 function validateContexts() {
-  for (const file of walk(path.join(root, "domains")).filter((item) => path.basename(item) === "context.md")) {
+  for (const file of findContextFiles()) {
     const meta = parseContextMeta(readText(file));
     if (!meta) {
       addResult("error", "context", file, "context.md is missing yaml metadata block.", "Add a yaml metadata block.");
@@ -211,6 +473,54 @@ function validateContexts() {
     }
     if (!readText(file).includes("## Handoff")) {
       addResult("warning", "context", file, "Missing Handoff section.", "Add next skill and required reading.");
+    }
+  }
+}
+
+function validateArtifactsRegistry() {
+  const file = path.join(root, ".product", "artifacts.json");
+  if (!fs.existsSync(file)) {
+    addResult("warning", "artifacts-registry", file, "Artifacts registry is missing.", "Run validator with --write-registry.");
+    return;
+  }
+
+  const parsed = parseJsonFile(file);
+  if (!parsed.ok) {
+    addResult("error", "artifacts-registry", file, `Invalid artifacts registry JSON: ${parsed.error.message}`, "Fix JSON syntax or regenerate registry.");
+    return;
+  }
+
+  const registry = parsed.value;
+  if (!Array.isArray(registry.artifacts)) {
+    addResult("error", "artifacts-registry", file, "Registry artifacts must be an array.", "Regenerate registry.");
+    return;
+  }
+
+  const ids = new Set();
+  for (const artifact of registry.artifacts) {
+    if (!artifact.id) {
+      addResult("error", "artifacts-registry", file, "Registry artifact missing id.", "Regenerate registry.");
+      continue;
+    }
+    if (ids.has(artifact.id)) {
+      addResult("error", "artifacts-registry", file, `Duplicate artifact id: ${artifact.id}`, "Resolve duplicate IDs.");
+    }
+    ids.add(artifact.id);
+
+    if (artifact.path && !fs.existsSync(path.join(root, artifact.path))) {
+      addResult("error", "artifacts-registry", file, `Artifact ${artifact.id} path does not exist: ${artifact.path}`, "Fix path or regenerate registry.");
+    }
+    for (const documentPath of Object.values(artifact.documents ?? {})) {
+      if (documentPath && !fs.existsSync(path.join(root, documentPath))) {
+        addResult("error", "artifacts-registry", file, `Artifact ${artifact.id} document path does not exist: ${documentPath}`, "Fix document path or regenerate registry.");
+      }
+    }
+  }
+
+  for (const contextFile of findContextFiles()) {
+    const meta = parseContextMeta(readText(contextFile));
+    if (meta?.id && !ids.has(meta.id)) {
+      addResult("error", "artifacts-registry", file, `Context id missing from registry: ${meta.id}`, "Regenerate registry.");
     }
   }
 }
@@ -396,6 +706,7 @@ flowchart LR
 | Use-case bundles | ${results.some((item) => item.check === "use-case-bundle" && item.severity === "error") ? "🔴 has errors" : "✅ no errors"} |
 | Execution graph JSON and dependencies | ${results.some((item) => item.check === "execution-graph" && item.severity === "error") ? "🔴 has errors" : "✅ no errors"} |
 | Decisions index | ${results.some((item) => item.check === "decisions-index") ? "🟡 findings" : "✅ no findings"} |
+| Artifacts registry | ${results.some((item) => item.check === "artifacts-registry" && item.severity === "error") ? "🔴 has errors" : results.some((item) => item.check === "artifacts-registry") ? "🟡 findings" : "✅ no findings"} |
 | Mermaid visual standard | ${results.some((item) => item.check === "mermaid") ? "🟡 findings" : "✅ no findings"} |
 | Markdown links | ${results.some((item) => item.check === "links" && item.severity === "error") ? "🔴 has errors" : results.some((item) => item.check === "links") ? "🟡 findings" : "✅ no findings"} |
 | Template snapshots | ${results.some((item) => item.check === "templates") ? "🟡 findings" : "✅ no findings"} |
@@ -416,11 +727,15 @@ ${rows}
 }
 
 const allFiles = walk(root);
+if (writeRegistry) {
+  writeArtifactsRegistry();
+}
 validateUseCaseBundles();
 validateExecutionGraphs();
 validateContexts();
 validateProductPrefixLinks(allFiles);
 validateDecisionsIndex();
+validateArtifactsRegistry();
 validateMermaidAndTemplates(allFiles);
 validateMarkdownLinks(allFiles);
 

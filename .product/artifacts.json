@@ -1,0 +1,866 @@
+{
+  "generatedAt": "2026-07-09T16:22:55.813Z",
+  "generator": "engineering/validators/framework-validator.mjs",
+  "artifacts": [
+    {
+      "id": "ANA-002",
+      "type": "analytics",
+      "name": "Organizer Validates QR Code",
+      "status": "draft",
+      "ownerSkill": "documentation-writer",
+      "path": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/organizer-validates-qr-code/analytics.md",
+      "parentIds": [
+        "UC-002"
+      ],
+      "childIds": [],
+      "dependsOn": [],
+      "decisions": [],
+      "delivery": {
+        "level": "",
+        "priority": "P0"
+      },
+      "documents": {
+        "canonical": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/organizer-validates-qr-code/analytics.md"
+      }
+    },
+    {
+      "id": "AUD-002",
+      "type": "audit",
+      "name": "Organizer Validates QR Code",
+      "status": "draft",
+      "ownerSkill": "audit-orchestrator",
+      "path": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/organizer-validates-qr-code/audit.md",
+      "parentIds": [
+        "UC-002"
+      ],
+      "childIds": [],
+      "dependsOn": [],
+      "decisions": [],
+      "delivery": {
+        "level": "",
+        "priority": ""
+      },
+      "documents": {
+        "canonical": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/organizer-validates-qr-code/audit.md"
+      }
+    },
+    {
+      "id": "DEC-001",
+      "type": "decision",
+      "name": "QR expiration duration",
+      "status": "approved",
+      "ownerSkill": "product-historian",
+      "path": "knowledge/decisions/DEC-001-qr-expiration-duration.md",
+      "parentIds": [],
+      "childIds": [],
+      "dependsOn": [],
+      "decisions": [],
+      "delivery": {},
+      "documents": {
+        "canonical": "knowledge/decisions/DEC-001-qr-expiration-duration.md"
+      },
+      "affectedArtifacts": [
+        "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/attendee-checks-in-with-qr-code/specification.md",
+        "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/attendee-checks-in-with-qr-code/implementation-plan.md",
+        "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/attendee-checks-in-with-qr-code/execution-graph.json",
+        "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/attendee-checks-in-with-qr-code/tasks.md"
+      ]
+    },
+    {
+      "id": "DEC-002",
+      "type": "decision",
+      "name": "QR token strategy",
+      "status": "approved",
+      "ownerSkill": "product-historian",
+      "path": "knowledge/decisions/DEC-002-qr-token-strategy.md",
+      "parentIds": [],
+      "childIds": [],
+      "dependsOn": [],
+      "decisions": [],
+      "delivery": {},
+      "documents": {
+        "canonical": "knowledge/decisions/DEC-002-qr-token-strategy.md"
+      },
+      "affectedArtifacts": [
+        "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/attendee-checks-in-with-qr-code/specification.md",
+        "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/attendee-checks-in-with-qr-code/implementation-plan.md",
+        "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/attendee-checks-in-with-qr-code/execution-graph.json",
+        "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/attendee-checks-in-with-qr-code/tasks.md"
+      ]
+    },
+    {
+      "id": "DES-002",
+      "type": "design",
+      "name": "Organizer Validates QR Code",
+      "status": "proposed",
+      "ownerSkill": "ux-ui",
+      "path": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/organizer-validates-qr-code/design.md",
+      "parentIds": [
+        "UC-002"
+      ],
+      "childIds": [],
+      "dependsOn": [],
+      "decisions": [],
+      "delivery": {
+        "level": "",
+        "priority": "P0"
+      },
+      "documents": {
+        "canonical": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/organizer-validates-qr-code/design.md"
+      }
+    },
+    {
+      "id": "DOMAIN-001",
+      "type": "domain",
+      "name": "Events",
+      "status": "draft",
+      "ownerSkill": "domain-architect",
+      "path": "domains/events/context.md",
+      "parentIds": [
+        "STRAT-001"
+      ],
+      "childIds": [
+        "GOAL-001"
+      ],
+      "dependsOn": [],
+      "decisions": [],
+      "delivery": {},
+      "documents": {
+        "context": "domains/events/context.md",
+        "canonical": "domains/events/domain.md"
+      }
+    },
+    {
+      "id": "DOMAIN-EXAMPLE",
+      "type": "domain",
+      "name": "Example Domain",
+      "status": "draft",
+      "ownerSkill": "domain-architect",
+      "path": "domains/_example-domain/context.md",
+      "parentIds": [],
+      "childIds": [
+        "GOAL-EXAMPLE"
+      ],
+      "dependsOn": [],
+      "decisions": [],
+      "delivery": {
+        "level": "N/A",
+        "priority": "N/A",
+        "depends_on": [],
+        "rationale": "Structural example only; not product scope."
+      },
+      "documents": {
+        "context": "domains/_example-domain/context.md",
+        "canonical": "domains/_example-domain/domain.md",
+        "decisions": "domains/_example-domain/decisions.md"
+      }
+    },
+    {
+      "id": "FT-001",
+      "type": "feature",
+      "name": "QR Code Check-in",
+      "status": "draft",
+      "ownerSkill": "feature",
+      "path": "domains/events/goals/participate-in-event/features/qr-code-check-in/context.md",
+      "parentIds": [
+        "GOAL-001"
+      ],
+      "childIds": [
+        "UC-001",
+        "UC-002"
+      ],
+      "dependsOn": [],
+      "decisions": [],
+      "delivery": {},
+      "documents": {
+        "context": "domains/events/goals/participate-in-event/features/qr-code-check-in/context.md",
+        "canonical": "domains/events/goals/participate-in-event/features/qr-code-check-in/feature.md"
+      }
+    },
+    {
+      "id": "FT-EXAMPLE",
+      "type": "feature",
+      "name": "Example Feature",
+      "status": "draft",
+      "ownerSkill": "feature",
+      "path": "domains/_example-domain/goals/_example-goal/features/_example-feature/context.md",
+      "parentIds": [
+        "GOAL-EXAMPLE"
+      ],
+      "childIds": [
+        "UC-EXAMPLE"
+      ],
+      "dependsOn": [
+        "GOAL-EXAMPLE"
+      ],
+      "decisions": [],
+      "delivery": {
+        "level": "N/A",
+        "priority": "N/A",
+        "rationale": "Structural example only; not product scope.",
+        "depends_on": [
+          "GOAL-EXAMPLE"
+        ]
+      },
+      "documents": {
+        "context": "domains/_example-domain/goals/_example-goal/features/_example-feature/context.md",
+        "canonical": "domains/_example-domain/goals/_example-goal/features/_example-feature/feature.md",
+        "decisions": "domains/_example-domain/goals/_example-goal/features/_example-feature/decisions.md"
+      }
+    },
+    {
+      "id": "GOAL-001",
+      "type": "goal",
+      "name": "Participate in event",
+      "status": "draft",
+      "ownerSkill": "user-goal",
+      "path": "domains/events/goals/participate-in-event/context.md",
+      "parentIds": [
+        "DOMAIN-001"
+      ],
+      "childIds": [
+        "FT-001"
+      ],
+      "dependsOn": [],
+      "decisions": [],
+      "delivery": {},
+      "documents": {
+        "context": "domains/events/goals/participate-in-event/context.md",
+        "canonical": "domains/events/goals/participate-in-event/goal.md",
+        "journeys": "domains/events/goals/participate-in-event/journeys.md"
+      }
+    },
+    {
+      "id": "GOAL-EXAMPLE",
+      "type": "goal",
+      "name": "Example Goal",
+      "status": "draft",
+      "ownerSkill": "user-goal",
+      "path": "domains/_example-domain/goals/_example-goal/context.md",
+      "parentIds": [
+        "DOMAIN-EXAMPLE"
+      ],
+      "childIds": [
+        "FT-EXAMPLE"
+      ],
+      "dependsOn": [
+        "DOMAIN-EXAMPLE"
+      ],
+      "decisions": [],
+      "delivery": {
+        "level": "N/A",
+        "priority": "N/A",
+        "rationale": "Structural example only; not product scope.",
+        "depends_on": [
+          "DOMAIN-EXAMPLE"
+        ]
+      },
+      "documents": {
+        "context": "domains/_example-domain/goals/_example-goal/context.md",
+        "canonical": "domains/_example-domain/goals/_example-goal/goal.md",
+        "journeys": "domains/_example-domain/goals/_example-goal/journeys.md"
+      }
+    },
+    {
+      "id": "GRAPH-001",
+      "type": "execution-graph",
+      "name": "GRAPH-001",
+      "status": "draft",
+      "ownerSkill": "execution-graph",
+      "path": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/attendee-checks-in-with-qr-code/execution-graph.json",
+      "parentIds": [
+        "UC-001"
+      ],
+      "childIds": [
+        "TK-001",
+        "TK-002",
+        "TK-003",
+        "TK-004",
+        "TK-005",
+        "TK-006"
+      ],
+      "dependsOn": [],
+      "decisions": [],
+      "delivery": {},
+      "documents": {
+        "canonical": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/attendee-checks-in-with-qr-code/execution-graph.json"
+      }
+    },
+    {
+      "id": "GRAPH-002",
+      "type": "execution-graph",
+      "name": "GRAPH-002",
+      "status": "draft",
+      "ownerSkill": "execution-graph",
+      "path": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/organizer-validates-qr-code/execution-graph.json",
+      "parentIds": [
+        "UC-002"
+      ],
+      "childIds": [
+        "TK-002-001",
+        "TK-002-002",
+        "TK-002-003",
+        "TK-002-004",
+        "TK-002-005",
+        "TK-002-006",
+        "TK-002-007"
+      ],
+      "dependsOn": [],
+      "decisions": [],
+      "delivery": {
+        "level": "L1",
+        "priority": "P0",
+        "dependsOn": [
+          "DEC-001",
+          "DEC-002"
+        ],
+        "rationale": "Organizer validation is required to close the walking skeleton for event attendance."
+      },
+      "documents": {
+        "canonical": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/organizer-validates-qr-code/execution-graph.json"
+      }
+    },
+    {
+      "id": "GRAPH-EXAMPLE",
+      "type": "execution-graph",
+      "name": "GRAPH-EXAMPLE",
+      "status": "draft",
+      "ownerSkill": "execution-graph",
+      "path": "domains/_example-domain/goals/_example-goal/features/_example-feature/use-cases/_example-use-case/execution-graph.json",
+      "parentIds": [
+        "UC-EXAMPLE"
+      ],
+      "childIds": [
+        "TASK-000"
+      ],
+      "dependsOn": [],
+      "decisions": [],
+      "delivery": {
+        "level": "N/A",
+        "priority": "N/A",
+        "rationale": "Structural example only; not product scope."
+      },
+      "documents": {
+        "canonical": "domains/_example-domain/goals/_example-goal/features/_example-feature/use-cases/_example-use-case/execution-graph.json"
+      }
+    },
+    {
+      "id": "PLAN-001",
+      "type": "implementation-plan",
+      "name": "Attendee Checks In With QR Code",
+      "status": "draft",
+      "ownerSkill": "implementation-planner",
+      "path": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/attendee-checks-in-with-qr-code/implementation-plan.md",
+      "parentIds": [
+        "UC-001"
+      ],
+      "childIds": [],
+      "dependsOn": [],
+      "decisions": [
+        "DEC-001",
+        "DEC-001",
+        "DEC-001",
+        "DEC-002"
+      ],
+      "delivery": {
+        "level": "",
+        "priority": ""
+      },
+      "documents": {
+        "canonical": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/attendee-checks-in-with-qr-code/implementation-plan.md"
+      }
+    },
+    {
+      "id": "PLAN-002",
+      "type": "implementation-plan",
+      "name": "Organizer Validates QR Code",
+      "status": "draft",
+      "ownerSkill": "implementation-planner",
+      "path": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/organizer-validates-qr-code/implementation-plan.md",
+      "parentIds": [
+        "UC-002"
+      ],
+      "childIds": [],
+      "dependsOn": [],
+      "decisions": [
+        "DEC-001",
+        "DEC-002"
+      ],
+      "delivery": {
+        "level": "",
+        "priority": "P0"
+      },
+      "documents": {
+        "canonical": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/organizer-validates-qr-code/implementation-plan.md"
+      }
+    },
+    {
+      "id": "Scenario",
+      "type": "tests",
+      "name": "Attendee Checks In With QR Code",
+      "status": "draft",
+      "ownerSkill": "qa",
+      "path": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/attendee-checks-in-with-qr-code/tests.md",
+      "parentIds": [
+        "UC-001"
+      ],
+      "childIds": [],
+      "dependsOn": [],
+      "decisions": [],
+      "delivery": {
+        "level": "",
+        "priority": ""
+      },
+      "documents": {
+        "canonical": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/attendee-checks-in-with-qr-code/tests.md"
+      }
+    },
+    {
+      "id": "SPEC-001",
+      "type": "specification",
+      "name": "Attendee Checks In With QR Code",
+      "status": "draft",
+      "ownerSkill": "specification",
+      "path": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/attendee-checks-in-with-qr-code/specification.md",
+      "parentIds": [
+        "UC-001"
+      ],
+      "childIds": [],
+      "dependsOn": [],
+      "decisions": [
+        "DEC-001",
+        "DEC-001",
+        "DEC-002"
+      ],
+      "delivery": {
+        "level": "",
+        "priority": ""
+      },
+      "documents": {
+        "canonical": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/attendee-checks-in-with-qr-code/specification.md"
+      }
+    },
+    {
+      "id": "SPEC-002",
+      "type": "specification",
+      "name": "Organizer Validates QR Code",
+      "status": "proposed",
+      "ownerSkill": "specification",
+      "path": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/organizer-validates-qr-code/specification.md",
+      "parentIds": [
+        "UC-002"
+      ],
+      "childIds": [],
+      "dependsOn": [],
+      "decisions": [
+        "DEC-001",
+        "DEC-002",
+        "DEC-001",
+        "DEC-002"
+      ],
+      "delivery": {
+        "level": "L1 Walking Skeleton",
+        "priority": "P0"
+      },
+      "documents": {
+        "canonical": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/organizer-validates-qr-code/specification.md"
+      }
+    },
+    {
+      "id": "TASKSET-002",
+      "type": "taskset",
+      "name": "Organizer Validates QR Code",
+      "status": "draft",
+      "ownerSkill": "task-generator",
+      "path": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/organizer-validates-qr-code/tasks.md",
+      "parentIds": [
+        "UC-002"
+      ],
+      "childIds": [],
+      "dependsOn": [],
+      "decisions": [],
+      "delivery": {
+        "level": "",
+        "priority": "P0"
+      },
+      "documents": {
+        "canonical": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/organizer-validates-qr-code/tasks.md"
+      }
+    },
+    {
+      "id": "TEST-002",
+      "type": "tests",
+      "name": "Organizer Validates QR Code",
+      "status": "draft",
+      "ownerSkill": "qa",
+      "path": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/organizer-validates-qr-code/tests.md",
+      "parentIds": [
+        "UC-002"
+      ],
+      "childIds": [],
+      "dependsOn": [],
+      "decisions": [],
+      "delivery": {
+        "level": "",
+        "priority": "P0"
+      },
+      "documents": {
+        "canonical": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/organizer-validates-qr-code/tests.md"
+      }
+    },
+    {
+      "id": "UC-001",
+      "type": "use-case",
+      "name": "Attendee checks in with QR code",
+      "status": "draft",
+      "ownerSkill": "use-case",
+      "path": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/attendee-checks-in-with-qr-code/context.md",
+      "parentIds": [
+        "FT-001"
+      ],
+      "childIds": [
+        "SPEC-001",
+        "PLAN-001",
+        "GRAPH-001",
+        "TK-001..TK-006"
+      ],
+      "dependsOn": [],
+      "decisions": [
+        "DEC-001",
+        "DEC-002"
+      ],
+      "delivery": {},
+      "documents": {
+        "context": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/attendee-checks-in-with-qr-code/context.md",
+        "canonical": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/attendee-checks-in-with-qr-code/use-case.md",
+        "specification": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/attendee-checks-in-with-qr-code/specification.md",
+        "design": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/attendee-checks-in-with-qr-code/design.md",
+        "implementationPlan": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/attendee-checks-in-with-qr-code/implementation-plan.md",
+        "executionGraph": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/attendee-checks-in-with-qr-code/execution-graph.json",
+        "tasks": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/attendee-checks-in-with-qr-code/tasks.md",
+        "tests": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/attendee-checks-in-with-qr-code/tests.md",
+        "analytics": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/attendee-checks-in-with-qr-code/analytics.md",
+        "audit": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/attendee-checks-in-with-qr-code/audit.md"
+      }
+    },
+    {
+      "id": "UC-001:analytics",
+      "type": "analytics",
+      "name": "Attendee Checks In With QR Code",
+      "status": "draft",
+      "ownerSkill": "documentation-writer",
+      "path": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/attendee-checks-in-with-qr-code/analytics.md",
+      "parentIds": [
+        "UC-001"
+      ],
+      "childIds": [],
+      "dependsOn": [],
+      "decisions": [],
+      "delivery": {
+        "level": "",
+        "priority": ""
+      },
+      "documents": {
+        "canonical": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/attendee-checks-in-with-qr-code/analytics.md"
+      }
+    },
+    {
+      "id": "UC-001:audit",
+      "type": "audit",
+      "name": "Attendee Checks In With QR Code Example",
+      "status": "unknown",
+      "ownerSkill": "audit-orchestrator",
+      "path": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/attendee-checks-in-with-qr-code/audit.md",
+      "parentIds": [
+        "UC-001"
+      ],
+      "childIds": [],
+      "dependsOn": [],
+      "decisions": [],
+      "delivery": {
+        "level": "",
+        "priority": ""
+      },
+      "documents": {
+        "canonical": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/attendee-checks-in-with-qr-code/audit.md"
+      }
+    },
+    {
+      "id": "UC-001:design",
+      "type": "design",
+      "name": "Attendee Checks In With QR Code",
+      "status": "draft",
+      "ownerSkill": "ux-ui",
+      "path": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/attendee-checks-in-with-qr-code/design.md",
+      "parentIds": [
+        "UC-001"
+      ],
+      "childIds": [],
+      "dependsOn": [],
+      "decisions": [],
+      "delivery": {
+        "level": "",
+        "priority": ""
+      },
+      "documents": {
+        "canonical": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/attendee-checks-in-with-qr-code/design.md"
+      }
+    },
+    {
+      "id": "UC-001:tasks",
+      "type": "taskset",
+      "name": "Attendee Checks In With QR Code",
+      "status": "draft",
+      "ownerSkill": "task-generator",
+      "path": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/attendee-checks-in-with-qr-code/tasks.md",
+      "parentIds": [
+        "UC-001"
+      ],
+      "childIds": [],
+      "dependsOn": [],
+      "decisions": [
+        "DEC-002",
+        "DEC-001"
+      ],
+      "delivery": {
+        "level": "",
+        "priority": ""
+      },
+      "documents": {
+        "canonical": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/attendee-checks-in-with-qr-code/tasks.md"
+      }
+    },
+    {
+      "id": "UC-002",
+      "type": "use-case",
+      "name": "Organizer Validates QR Code",
+      "status": "proposed",
+      "ownerSkill": "use-case",
+      "path": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/organizer-validates-qr-code/context.md",
+      "parentIds": [
+        "FT-001"
+      ],
+      "childIds": [
+        "SPEC-002"
+      ],
+      "dependsOn": [
+        "UC-001"
+      ],
+      "decisions": [
+        "DEC-001",
+        "DEC-002"
+      ],
+      "delivery": {
+        "level": "L1",
+        "priority": "P0",
+        "rationale": "Organizer validation closes the walking skeleton for event attendance by turning attendee QR proof into server-authoritative check-in.",
+        "depends_on": [
+          "DOMAIN-users",
+          "DOMAIN-events",
+          "DEC-001",
+          "DEC-002"
+        ]
+      },
+      "documents": {
+        "context": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/organizer-validates-qr-code/context.md",
+        "canonical": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/organizer-validates-qr-code/use-case.md",
+        "specification": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/organizer-validates-qr-code/specification.md",
+        "design": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/organizer-validates-qr-code/design.md",
+        "implementationPlan": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/organizer-validates-qr-code/implementation-plan.md",
+        "executionGraph": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/organizer-validates-qr-code/execution-graph.json",
+        "tasks": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/organizer-validates-qr-code/tasks.md",
+        "tests": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/organizer-validates-qr-code/tests.md",
+        "analytics": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/organizer-validates-qr-code/analytics.md",
+        "audit": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/organizer-validates-qr-code/audit.md",
+        "readme": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/organizer-validates-qr-code/README.md"
+      }
+    },
+    {
+      "id": "UC-EXAMPLE",
+      "type": "use-case",
+      "name": "Example Use Case",
+      "status": "draft",
+      "ownerSkill": "use-case",
+      "path": "domains/_example-domain/goals/_example-goal/features/_example-feature/use-cases/_example-use-case/context.md",
+      "parentIds": [
+        "FT-EXAMPLE"
+      ],
+      "childIds": [
+        "SPEC-EXAMPLE",
+        "GRAPH-EXAMPLE"
+      ],
+      "dependsOn": [
+        "FT-EXAMPLE"
+      ],
+      "decisions": [],
+      "delivery": {
+        "level": "N/A",
+        "priority": "N/A",
+        "rationale": "Structural example only; not product scope.",
+        "depends_on": [
+          "FT-EXAMPLE"
+        ]
+      },
+      "documents": {
+        "context": "domains/_example-domain/goals/_example-goal/features/_example-feature/use-cases/_example-use-case/context.md",
+        "canonical": "domains/_example-domain/goals/_example-goal/features/_example-feature/use-cases/_example-use-case/use-case.md",
+        "specification": "domains/_example-domain/goals/_example-goal/features/_example-feature/use-cases/_example-use-case/specification.md",
+        "design": "domains/_example-domain/goals/_example-goal/features/_example-feature/use-cases/_example-use-case/design.md",
+        "implementationPlan": "domains/_example-domain/goals/_example-goal/features/_example-feature/use-cases/_example-use-case/implementation-plan.md",
+        "executionGraph": "domains/_example-domain/goals/_example-goal/features/_example-feature/use-cases/_example-use-case/execution-graph.json",
+        "tasks": "domains/_example-domain/goals/_example-goal/features/_example-feature/use-cases/_example-use-case/tasks.md",
+        "tests": "domains/_example-domain/goals/_example-goal/features/_example-feature/use-cases/_example-use-case/tests.md",
+        "analytics": "domains/_example-domain/goals/_example-goal/features/_example-feature/use-cases/_example-use-case/analytics.md",
+        "audit": "domains/_example-domain/goals/_example-goal/features/_example-feature/use-cases/_example-use-case/audit.md",
+        "readme": "domains/_example-domain/goals/_example-goal/features/_example-feature/use-cases/_example-use-case/README.md"
+      }
+    },
+    {
+      "id": "UC-EXAMPLE:analytics",
+      "type": "analytics",
+      "name": "_example-use-case",
+      "status": "unknown",
+      "ownerSkill": "documentation-writer",
+      "path": "domains/_example-domain/goals/_example-goal/features/_example-feature/use-cases/_example-use-case/analytics.md",
+      "parentIds": [
+        "UC-EXAMPLE"
+      ],
+      "childIds": [],
+      "dependsOn": [],
+      "decisions": [],
+      "delivery": {
+        "level": "",
+        "priority": ""
+      },
+      "documents": {
+        "canonical": "domains/_example-domain/goals/_example-goal/features/_example-feature/use-cases/_example-use-case/analytics.md"
+      }
+    },
+    {
+      "id": "UC-EXAMPLE:audit",
+      "type": "audit",
+      "name": "_example-use-case",
+      "status": "unknown",
+      "ownerSkill": "audit-orchestrator",
+      "path": "domains/_example-domain/goals/_example-goal/features/_example-feature/use-cases/_example-use-case/audit.md",
+      "parentIds": [
+        "UC-EXAMPLE"
+      ],
+      "childIds": [],
+      "dependsOn": [],
+      "decisions": [],
+      "delivery": {
+        "level": "",
+        "priority": ""
+      },
+      "documents": {
+        "canonical": "domains/_example-domain/goals/_example-goal/features/_example-feature/use-cases/_example-use-case/audit.md"
+      }
+    },
+    {
+      "id": "UC-EXAMPLE:design",
+      "type": "design",
+      "name": "_example-use-case",
+      "status": "unknown",
+      "ownerSkill": "ux-ui",
+      "path": "domains/_example-domain/goals/_example-goal/features/_example-feature/use-cases/_example-use-case/design.md",
+      "parentIds": [
+        "UC-EXAMPLE"
+      ],
+      "childIds": [],
+      "dependsOn": [],
+      "decisions": [],
+      "delivery": {
+        "level": "",
+        "priority": ""
+      },
+      "documents": {
+        "canonical": "domains/_example-domain/goals/_example-goal/features/_example-feature/use-cases/_example-use-case/design.md"
+      }
+    },
+    {
+      "id": "UC-EXAMPLE:implementationPlan",
+      "type": "implementation-plan",
+      "name": "_example-use-case",
+      "status": "unknown",
+      "ownerSkill": "implementation-planner",
+      "path": "domains/_example-domain/goals/_example-goal/features/_example-feature/use-cases/_example-use-case/implementation-plan.md",
+      "parentIds": [
+        "UC-EXAMPLE"
+      ],
+      "childIds": [],
+      "dependsOn": [],
+      "decisions": [],
+      "delivery": {
+        "level": "",
+        "priority": ""
+      },
+      "documents": {
+        "canonical": "domains/_example-domain/goals/_example-goal/features/_example-feature/use-cases/_example-use-case/implementation-plan.md"
+      }
+    },
+    {
+      "id": "UC-EXAMPLE:specification",
+      "type": "specification",
+      "name": "_example-use-case",
+      "status": "unknown",
+      "ownerSkill": "specification",
+      "path": "domains/_example-domain/goals/_example-goal/features/_example-feature/use-cases/_example-use-case/specification.md",
+      "parentIds": [
+        "UC-EXAMPLE"
+      ],
+      "childIds": [],
+      "dependsOn": [],
+      "decisions": [],
+      "delivery": {
+        "level": "",
+        "priority": ""
+      },
+      "documents": {
+        "canonical": "domains/_example-domain/goals/_example-goal/features/_example-feature/use-cases/_example-use-case/specification.md"
+      }
+    },
+    {
+      "id": "UC-EXAMPLE:tasks",
+      "type": "taskset",
+      "name": "_example-use-case",
+      "status": "pending",
+      "ownerSkill": "task-generator",
+      "path": "domains/_example-domain/goals/_example-goal/features/_example-feature/use-cases/_example-use-case/tasks.md",
+      "parentIds": [
+        "UC-EXAMPLE"
+      ],
+      "childIds": [],
+      "dependsOn": [],
+      "decisions": [],
+      "delivery": {
+        "level": "",
+        "priority": ""
+      },
+      "documents": {
+        "canonical": "domains/_example-domain/goals/_example-goal/features/_example-feature/use-cases/_example-use-case/tasks.md"
+      }
+    },
+    {
+      "id": "UC-EXAMPLE:tests",
+      "type": "tests",
+      "name": "_example-use-case",
+      "status": "unknown",
+      "ownerSkill": "qa",
+      "path": "domains/_example-domain/goals/_example-goal/features/_example-feature/use-cases/_example-use-case/tests.md",
+      "parentIds": [
+        "UC-EXAMPLE"
+      ],
+      "childIds": [],
+      "dependsOn": [],
+      "decisions": [],
+      "delivery": {
+        "level": "",
+        "priority": ""
+      },
+      "documents": {
+        "canonical": "domains/_example-domain/goals/_example-goal/features/_example-feature/use-cases/_example-use-case/tests.md"
+      }
+    }
+  ]
+}
