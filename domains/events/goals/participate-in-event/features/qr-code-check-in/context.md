@@ -7,6 +7,13 @@ name: QR Code Check-in
 status: draft
 owner_skill: feature
 last_updated: 2026-07-09
+delivery:
+  level: L1
+  priority: P0
+  depends_on:
+    - GOAL-001
+    - DOMAIN-users
+  rationale: QR Code Check-in is required for the first end-to-end event attendance proof.
 ```
 
 ## Purpose

@@ -2,10 +2,14 @@
 
 ## Context
 
+- ID: UC-001:tasks
 - Source specification: SPEC-001
 - Source implementation plan: PLAN-001
 - Source execution graph: GRAPH-001
 - Status: draft
+- Delivery Level: L1 Walking Skeleton
+- Priority: P0
+- Rationale: These tasks are the executable planning units for the L1 attendee QR check-in flow.
 
 ## Rules
 

@@ -38,6 +38,7 @@ flowchart LR
 | Context metadata | ✅ no errors |
 | Use-case bundles | ✅ no errors |
 | Approval gates | ✅ no findings |
+| Delivery metadata | ✅ no findings |
 | Execution graph JSON and dependencies | ✅ no errors |
 | Decisions index | ✅ no findings |
 | Artifacts registry | ✅ no findings |

@@ -32,6 +32,19 @@ const requiredUseCaseFiles = [
   "audit.md",
 ];
 
+const allowedDeliveryLevels = new Set(["L0", "L1", "L2", "L3", "L4", "L5", "N/A"]);
+const allowedPriorities = new Set(["P0", "P1", "P2", "P3", "N/A"]);
+const deliveryRequiredTypes = new Set([
+  "domain",
+  "goal",
+  "feature",
+  "use-case",
+  "specification",
+  "implementation-plan",
+  "execution-graph",
+  "taskset",
+]);
+
 const results = [];
 let generatedRegistry = null;
 
@@ -137,6 +150,16 @@ function parseYamlDelivery(text) {
   }
   delivery.depends_on = parseYamlList(text.slice(text.indexOf("delivery:")), "depends_on");
   return delivery;
+}
+
+function normalizeDeliveryLevel(value) {
+  const match = String(value ?? "").trim().match(/^(L[0-5]|N\/A)\b/i);
+  return match ? match[1].toUpperCase() : "";
+}
+
+function normalizePriority(value) {
+  const match = String(value ?? "").trim().match(/^(P[0-3]|N\/A)\b/i);
+  return match ? match[1].toUpperCase() : "";
 }
 
 function findContextFiles() {
@@ -259,7 +282,12 @@ function artifactFromDocument(parentArtifact, documentKey, documentPath) {
       childIds: Array.isArray(graph.nodes) ? graph.nodes.map((node) => node.id).filter(Boolean) : [],
       dependsOn: [],
       decisions: [],
-      delivery: graph.delivery ?? {},
+      delivery: {
+        ...(graph.delivery ?? {}),
+        level: normalizeDeliveryLevel(graph.delivery?.level),
+        priority: normalizePriority(graph.delivery?.priority),
+        depends_on: graph.delivery?.depends_on ?? graph.delivery?.dependsOn ?? [],
+      },
       documents: {
         canonical: documentPath,
       },
@@ -291,8 +319,10 @@ function artifactFromDocument(parentArtifact, documentKey, documentPath) {
     dependsOn: [],
     decisions: parseDecisionIds(text.split(/\r?\n/)),
     delivery: {
-      level: parseMarkdownField(text, "Level"),
-      priority: parseMarkdownField(text, "Priority"),
+      level: normalizeDeliveryLevel(parseMarkdownField(text, "Delivery Level") || parseMarkdownField(text, "Level")),
+      priority: normalizePriority(parseMarkdownField(text, "Priority")),
+      depends_on: parseMarkdownSectionItems(text, "Dependencies").map((item) => item.split(" - ")[0].replace(/^`|`$/g, "")),
+      rationale: parseMarkdownField(text, "Rationale"),
     },
     documents: {
       canonical: documentPath,
@@ -410,6 +440,36 @@ function validateUseCaseBundles() {
           `Create ${fileName} or explain why the use case is not executable yet.`
         );
       }
+    }
+  }
+}
+
+function validateDeliveryMetadata() {
+  for (const artifact of currentArtifacts().filter((item) => deliveryRequiredTypes.has(item.type))) {
+    const delivery = artifact.delivery ?? {};
+    const level = normalizeDeliveryLevel(delivery.level);
+    const priority = normalizePriority(delivery.priority);
+    const file = artifact.path ? path.join(root, artifact.path) : null;
+
+    if (!level) {
+      addResult("warning", "delivery", file, `${artifact.id} is missing delivery.level.`, "Add delivery.level using L0-L5 or N/A for placeholders.");
+    } else if (!allowedDeliveryLevels.has(level)) {
+      addResult("warning", "delivery", file, `${artifact.id} has invalid delivery.level: ${delivery.level}.`, "Use L0, L1, L2, L3, L4, L5, or N/A.");
+    }
+
+    if (!priority) {
+      addResult("warning", "delivery", file, `${artifact.id} is missing delivery.priority.`, "Add delivery.priority using P0-P3 or N/A for placeholders.");
+    } else if (!allowedPriorities.has(priority)) {
+      addResult("warning", "delivery", file, `${artifact.id} has invalid delivery.priority: ${delivery.priority}.`, "Use P0, P1, P2, P3, or N/A.");
+    }
+
+    const dependsOn = delivery.depends_on ?? delivery.dependsOn ?? [];
+    if (!Array.isArray(dependsOn)) {
+      addResult("warning", "delivery", file, `${artifact.id} delivery dependencies must be a list.`, "Use delivery.depends_on as an array/list.");
+    }
+
+    if (!String(delivery.rationale ?? "").trim()) {
+      addResult("warning", "delivery", file, `${artifact.id} is missing delivery.rationale.`, "Explain why this level and priority were assigned.");
     }
   }
 }
@@ -871,6 +931,7 @@ flowchart LR
 | Context metadata | ${results.some((item) => item.check === "context" && item.severity === "error") ? "🔴 has errors" : "✅ no errors"} |
 | Use-case bundles | ${results.some((item) => item.check === "use-case-bundle" && item.severity === "error") ? "🔴 has errors" : "✅ no errors"} |
 | Approval gates | ${results.some((item) => item.check === "approval-gates" && item.severity === "error") ? "🔴 has errors" : results.some((item) => item.check === "approval-gates") ? "🟡 findings" : "✅ no findings"} |
+| Delivery metadata | ${results.some((item) => item.check === "delivery" && item.severity === "error") ? "🔴 has errors" : results.some((item) => item.check === "delivery") ? "🟡 findings" : "✅ no findings"} |
 | Execution graph JSON and dependencies | ${results.some((item) => item.check === "execution-graph" && item.severity === "error") ? "🔴 has errors" : "✅ no errors"} |
 | Decisions index | ${results.some((item) => item.check === "decisions-index") ? "🟡 findings" : "✅ no findings"} |
 | Artifacts registry | ${results.some((item) => item.check === "artifacts-registry" && item.severity === "error") ? "🔴 has errors" : results.some((item) => item.check === "artifacts-registry") ? "🟡 findings" : "✅ no findings"} |
@@ -901,6 +962,7 @@ if (writeRegistry) {
 }
 validateUseCaseBundles();
 validateApprovalGates();
+validateDeliveryMetadata();
 validateExecutionGraphs();
 validateContexts();
 validateProductPrefixLinks(allFiles);

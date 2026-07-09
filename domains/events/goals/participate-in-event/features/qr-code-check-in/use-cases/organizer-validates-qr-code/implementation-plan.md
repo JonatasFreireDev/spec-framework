@@ -8,6 +8,7 @@
 - Source design: DES-002
 - Delivery Level: L1 Walking Skeleton
 - Priority: P0
+- Rationale: Organizer validation closes the L1 event attendance loop by turning QR proof into server-authoritative check-in.
 
 ## Objective
 

@@ -16,6 +16,7 @@ The validator checks:
 
 - required use-case artifact bundles;
 - approval gates between Specification, Design, Implementation Plan, Execution Graph, and Tasks;
+- Delivery Level and Priority metadata for executable framework artifacts;
 - execution graph JSON shape and dependencies;
 - `context.md` required metadata;
 - `.product/artifacts.json` registry consistency;

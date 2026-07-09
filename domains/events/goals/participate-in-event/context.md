@@ -7,6 +7,12 @@ name: Participate in event
 status: draft
 owner_skill: user-goal
 last_updated: 2026-07-09
+delivery:
+  level: L1
+  priority: P0
+  depends_on:
+    - DOMAIN-001
+  rationale: Participating in an event is the user goal that the QR check-in walking skeleton proves end to end.
 ```
 
 ## Purpose

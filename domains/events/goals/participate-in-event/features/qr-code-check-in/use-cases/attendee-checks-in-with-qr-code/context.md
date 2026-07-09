@@ -7,6 +7,14 @@ name: Attendee checks in with QR code
 status: draft
 owner_skill: 08-use-case.md
 last_updated: 2026-07-09
+delivery:
+  level: L1
+  priority: P0
+  depends_on:
+    - FT-001
+    - DEC-001
+    - DEC-002
+  rationale: Attendee QR presentation is required to close the walking skeleton with organizer validation.
 ```
 
 ## Purpose

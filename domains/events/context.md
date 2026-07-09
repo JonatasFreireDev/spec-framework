@@ -7,6 +7,12 @@ name: Events
 status: draft
 owner_skill: domain-architect
 last_updated: 2026-07-09
+delivery:
+  level: L1
+  priority: P0
+  depends_on:
+    - DOMAIN-users
+  rationale: Events is part of the walking skeleton because QR check-in needs event ownership, attendance, and organizer context.
 ```
 
 ## Purpose

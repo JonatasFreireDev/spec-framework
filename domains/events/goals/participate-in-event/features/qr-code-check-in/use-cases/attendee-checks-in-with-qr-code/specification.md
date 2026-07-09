@@ -8,6 +8,16 @@
 - Source feature: FT-001
 - Context file: context.md
 
+## Delivery
+
+- Level: L1 Walking Skeleton
+- Priority: P0
+- Rationale: Attendee QR generation and presentation are required for the first end-to-end check-in flow.
+- Depends on:
+  - FT-001
+  - DEC-001
+  - DEC-002
+
 ## Product Context
 
 QR check-in supports the user goal of participating in an event and gives the product a stronger signal of real attendance than RSVP alone.

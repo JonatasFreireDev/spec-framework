@@ -6,6 +6,9 @@
 - Status: draft
 - Source specification: SPEC-001
 - Context file: context.md
+- Delivery Level: L1 Walking Skeleton
+- Priority: P0
+- Rationale: The plan sequences the minimum technical work needed to prove QR check-in in the walking skeleton.
 
 ## Technical Objective
 

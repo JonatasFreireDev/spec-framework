@@ -6,6 +6,9 @@
 - Status: draft
 - Source specification: UC-EXAMPLE:specification
 - Source design: UC-EXAMPLE:design
+- Delivery Level: N/A
+- Priority: N/A
+- Rationale: Placeholder artifact used only to demonstrate structure.
 
 ## Technical approach
 

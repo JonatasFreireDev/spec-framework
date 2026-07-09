@@ -3,6 +3,17 @@
     "status":  "draft",
     "sourceSpecification":  "SPEC-001",
     "sourceImplementationPlan":  "PLAN-001",
+    "delivery":  {
+                     "level":  "L1",
+                     "priority":  "P0",
+                     "dependsOn":  [
+                                       "SPEC-001",
+                                       "PLAN-001",
+                                       "DEC-001",
+                                       "DEC-002"
+                                   ],
+                     "rationale":  "The graph orders the minimum L1 work needed to generate, present, and validate attendee QR codes."
+                 },
     "nodes":  [
                   {
                       "id":  "TK-001",

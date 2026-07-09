@@ -5,6 +5,9 @@
 - ID: UC-EXAMPLE:specification
 - Status: draft
 - Source use case: UC-EXAMPLE
+- Delivery Level: N/A
+- Priority: N/A
+- Rationale: Placeholder artifact used only to demonstrate structure.
 
 ## Product context
 

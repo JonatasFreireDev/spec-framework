@@ -8,6 +8,7 @@
 - Source specification: SPEC-002
 - Delivery Level: L1 Walking Skeleton
 - Priority: P0
+- Rationale: These tasks derive the executable planning units for the L1 organizer validation flow.
 
 ## Task List
 
