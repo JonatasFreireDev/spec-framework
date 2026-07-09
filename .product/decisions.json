@@ -60,6 +60,22 @@
       "path": "knowledge/decisions/DEC-004-code-link-convention.md",
       "date": "2026-07-09",
       "supersedes": []
+    },
+    {
+      "id": "DEC-005",
+      "title": "Derived Staleness",
+      "affectedArtifacts": [
+        "FRAMEWORK.md",
+        "AGENTS.md",
+        "engineering/validators/framework-validator.mjs",
+        ".product/derivations.json",
+        "knowledge/templates/derivation-record-template.json"
+      ],
+      "status": "approved",
+      "scope": "governance/traceability/validation",
+      "path": "knowledge/decisions/DEC-005-derived-staleness.md",
+      "date": "2026-07-09",
+      "supersedes": []
     }
   ]
 }

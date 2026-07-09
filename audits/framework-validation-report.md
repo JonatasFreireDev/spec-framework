@@ -39,6 +39,7 @@ flowchart LR
 | Use-case bundles | ✅ no errors |
 | Approval gates | ✅ no findings |
 | Approval records | ✅ no findings |
+| Derived staleness | ✅ no findings |
 | Validation gates | ✅ no findings |
 | Traceability | ✅ no findings |
 | Status policy | ✅ no findings |

@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-09T19:31:02.070Z",
+  "generatedAt": "2026-07-09T22:02:48.801Z",
   "generator": "engineering/validators/framework-validator.mjs",
   "artifacts": [
     {
@@ -135,6 +135,29 @@
         "knowledge/templates/tasks-template.md",
         "knowledge/templates/qa-evidence-template.md",
         "engineering/validators/framework-validator.mjs"
+      ]
+    },
+    {
+      "id": "DEC-005",
+      "type": "decision",
+      "name": "Derived Staleness",
+      "status": "approved",
+      "ownerSkill": "product-historian",
+      "path": "knowledge/decisions/DEC-005-derived-staleness.md",
+      "parentIds": [],
+      "childIds": [],
+      "dependsOn": [],
+      "decisions": [],
+      "delivery": {},
+      "documents": {
+        "canonical": "knowledge/decisions/DEC-005-derived-staleness.md"
+      },
+      "affectedArtifacts": [
+        "FRAMEWORK.md",
+        "AGENTS.md",
+        "engineering/validators/framework-validator.mjs",
+        ".product/derivations.json",
+        "knowledge/templates/derivation-record-template.json"
       ]
     },
     {

@@ -556,6 +556,8 @@ Transicoes obrigatorias:
 
 Approval records usam hash SHA-256 do arquivo inteiro com conteudo normalizado para LF e sem trailing whitespace por linha. Eles fornecem auditabilidade e gate mecanico, nao prova criptografica de aprovacao humana.
 
+Staleness e uma condicao derivada pelo validator, nao um status editavel. Artefatos downstream registram os hashes dos artefatos de origem em `.product/derivations.json`; se o conteudo de origem mudar, o downstream fica stale e nao deve avancar por gates ate ser regenerado ou re-aprovado.
+
 ## 12. Decisoes
 
 Decisoes relevantes devem ser registradas em `product/knowledge/decisions/` e indexadas em `.product/decisions.json`.

@@ -19,7 +19,7 @@ Use these templates whenever a new canonical artifact is created or an existing 
 - `execution-graph-template.json`, `tasks-template.md`, `tests-template.md`: executable planning artifacts.
 - `qa-evidence-template.md`, `security-review-template.md`: validation evidence and security gate artifacts.
 - `analytics-template.md`, `audit-template.md`, `readiness-report-template.md`: validation and measurement artifacts.
-- `decision-template.md`, `approval-record-template.json`, `release-template.md`: human approval, decision, and release artifacts.
+- `decision-template.md`, `approval-record-template.json`, `derivation-record-template.json`, `release-template.md`: human approval, derivation, decision, and release artifacts.
 
 ## Responsible Skill
 

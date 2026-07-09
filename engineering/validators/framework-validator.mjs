@@ -104,6 +104,13 @@ function artifactContentHash(file) {
     .digest("hex");
 }
 
+function artifactCurrentHash(artifact) {
+  if (!artifact?.path) return "";
+  const file = path.join(root, artifact.path);
+  if (!fs.existsSync(file)) return "";
+  return artifactContentHash(file);
+}
+
 function findUseCaseDirs() {
   const dirs = [];
   const domainsDir = path.join(root, "domains");
@@ -763,6 +770,89 @@ function validateApprovalRecords() {
   }
 }
 
+function loadDerivations() {
+  const file = path.join(root, ".product", "derivations.json");
+  if (!fs.existsSync(file)) {
+    addResult("warning", "staleness", file, "Derivations index is missing.", "Generate .product/derivations.json for staleness checks.");
+    return [];
+  }
+
+  const parsed = parseJsonFile(file);
+  if (!parsed.ok) {
+    addResult("error", "staleness", file, `Invalid derivations JSON: ${parsed.error.message}`, "Fix JSON syntax.");
+    return [];
+  }
+
+  if (!Array.isArray(parsed.value.derivations)) {
+    addResult("error", "staleness", file, "derivations must be an array.", "Add a derivations array.");
+    return [];
+  }
+
+  return parsed.value.derivations;
+}
+
+function validateDerivationSchema(entry, index, file) {
+  for (const field of ["artifact_id", "path", "derived_from"]) {
+    if (!(field in entry)) {
+      addResult("error", "staleness", file, `Derivation entry ${index + 1} is missing ${field}.`, `Add ${field}.`);
+    }
+  }
+  if (!Array.isArray(entry.derived_from)) {
+    addResult("error", "staleness", file, `Derivation entry ${index + 1} derived_from must be an array.`, "Use derived_from as an array.");
+    return;
+  }
+  for (const [sourceIndex, source] of entry.derived_from.entries()) {
+    for (const field of ["artifact_id", "path", "content_hash"]) {
+      if (!(field in source)) {
+        addResult("error", "staleness", file, `Derivation entry ${index + 1} source ${sourceIndex + 1} is missing ${field}.`, `Add ${field}.`);
+      }
+    }
+  }
+}
+
+function validateStaleness() {
+  const file = path.join(root, ".product", "derivations.json");
+  const derivations = loadDerivations();
+  const artifactsById = artifactById();
+
+  for (const [index, entry] of derivations.entries()) {
+    validateDerivationSchema(entry, index, file);
+    const artifact = artifactsById.get(entry.artifact_id);
+    const artifactFile = entry.path ? path.join(root, entry.path) : file;
+
+    if (!artifact) {
+      addResult("warning", "staleness", file, `Derivation entry references unknown artifact ${entry.artifact_id}.`, "Regenerate derivations or fix the artifact id.");
+      continue;
+    }
+    if (entry.path !== artifact.path) {
+      addResult("warning", "staleness", artifactFile, `${entry.artifact_id} derivation path is ${entry.path}, but registry path is ${artifact.path}.`, "Update .product/derivations.json.");
+    }
+    if (!fs.existsSync(artifactFile)) {
+      addResult("error", "staleness", file, `Derived artifact path does not exist: ${entry.path}`, "Fix the path or remove the derivation entry.");
+      continue;
+    }
+
+    for (const source of Array.isArray(entry.derived_from) ? entry.derived_from : []) {
+      const sourceFile = source.path ? path.join(root, source.path) : null;
+      if (!sourceFile || !fs.existsSync(sourceFile)) {
+        addResult("error", "staleness", artifactFile, `${entry.artifact_id} source path does not exist: ${source.path ?? "missing"}`, "Fix the source path or regenerate the artifact.");
+        continue;
+      }
+
+      const currentHash = artifactContentHash(sourceFile);
+      if (currentHash !== source.content_hash) {
+        addResult(
+          statusRequiresApprovedParent(artifact.status) ? "error" : "warning",
+          "staleness",
+          artifactFile,
+          `${entry.artifact_id} is stale because source ${source.artifact_id} changed since derivation.`,
+          "Regenerate or re-approve the derived artifact, then update the derivation baseline."
+        );
+      }
+    }
+  }
+}
+
 function statusRequiresValidationEvidence(status) {
   return ["validated", "released"].includes(status);
 }
@@ -1389,6 +1479,7 @@ flowchart LR
 | Use-case bundles | ${results.some((item) => item.check === "use-case-bundle" && item.severity === "error") ? "🔴 has errors" : "✅ no errors"} |
 | Approval gates | ${results.some((item) => item.check === "approval-gates" && item.severity === "error") ? "🔴 has errors" : results.some((item) => item.check === "approval-gates") ? "🟡 findings" : "✅ no findings"} |
 | Approval records | ${results.some((item) => item.check === "approval-records" && item.severity === "error") ? "🔴 has errors" : results.some((item) => item.check === "approval-records") ? "🟡 findings" : "✅ no findings"} |
+| Derived staleness | ${results.some((item) => item.check === "staleness" && item.severity === "error") ? "🔴 has errors" : results.some((item) => item.check === "staleness") ? "🟡 findings" : "✅ no findings"} |
 | Validation gates | ${results.some((item) => item.check === "validation-gates" && item.severity === "error") ? "\u{1F534} has errors" : results.some((item) => item.check === "validation-gates") ? "\u{1F7E1} findings" : "\u{2705} no findings"} |
 | Traceability | ${results.some((item) => item.check === "traceability" && item.severity === "error") ? "🔴 has errors" : results.some((item) => item.check === "traceability") ? "🟡 findings" : "✅ no findings"} |
 | Status policy | ${results.some((item) => item.check === "status-policy" && item.severity === "error") ? "🔴 has errors" : results.some((item) => item.check === "status-policy") ? "🟡 findings" : "✅ no findings"} |
@@ -1427,6 +1518,7 @@ validateTraceability();
 validateStatusPolicy();
 validateApprovalGates();
 validateApprovalRecords();
+validateStaleness();
 validateValidationGates();
 validateDeliveryMetadata();
 validateExecutionGraphs();

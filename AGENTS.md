@@ -50,6 +50,7 @@ Do not skip gates.
 - Do not implement application code until the relevant Specification, Design, Implementation Plan, Execution Graph, and Tasks are approved or the user explicitly asks for a draft/prototype exception.
 - Artifacts with status `approved`, `in_progress`, `implemented`, `validated`, or `released` must have a matching approval record in `.product/history/`.
 - Agents must not create, edit, or repair approval records unless the user explicitly approves a migration that names approval-record generation as a deliverable. If approval records are missing or inconsistent, report the blocker and stop.
+- Staleness is derived by the validator from `.product/derivations.json`; agents must not set `stale` as an artifact status. If a derived artifact is stale, report it and regenerate or request re-approval through the appropriate approved flow.
 
 ## Delivery And Priority
 

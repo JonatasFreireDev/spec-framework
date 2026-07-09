@@ -1,0 +1,464 @@
+{
+  "generatedAt": "2026-07-09T22:01:07.227Z",
+  "generator": "EV-004 initial derivation baseline",
+  "hashAlgorithm": "sha256(normalize line endings to LF and trim trailing spaces/tabs per line)",
+  "derivations": [
+    {
+      "artifact_id": "ANA-002",
+      "path": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/organizer-validates-qr-code/analytics.md",
+      "derived_from": [
+        {
+          "artifact_id": "SPEC-002",
+          "path": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/organizer-validates-qr-code/specification.md",
+          "content_hash": "d85749146da99a06831e2ef3679be9a32a2c193b3c73d1d8e18cfdbb7a8483b5"
+        }
+      ],
+      "updated_at": "2026-07-09T22:01:07.117Z",
+      "notes": "initial derivation baseline for EV-004"
+    },
+    {
+      "artifact_id": "AUD-002",
+      "path": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/organizer-validates-qr-code/audit.md",
+      "derived_from": [
+        {
+          "artifact_id": "SPEC-002",
+          "path": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/organizer-validates-qr-code/specification.md",
+          "content_hash": "d85749146da99a06831e2ef3679be9a32a2c193b3c73d1d8e18cfdbb7a8483b5"
+        },
+        {
+          "artifact_id": "DES-002",
+          "path": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/organizer-validates-qr-code/design.md",
+          "content_hash": "1244b7b257fed677ec8292c13ed5b246ffa134db40ca209bab417b2d1d1968ca"
+        },
+        {
+          "artifact_id": "PLAN-002",
+          "path": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/organizer-validates-qr-code/implementation-plan.md",
+          "content_hash": "b2be5a0afe9fe6e71f12c7007acf91cceec91f30f68f74a4e0fba7f41ec95040"
+        },
+        {
+          "artifact_id": "GRAPH-002",
+          "path": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/organizer-validates-qr-code/execution-graph.json",
+          "content_hash": "353d1e41ce827133eff34ebb023c6ec5dddffc92a205197364d013b5af20d5f9"
+        },
+        {
+          "artifact_id": "TASKSET-002",
+          "path": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/organizer-validates-qr-code/tasks.md",
+          "content_hash": "e15f09ce5264e9174b84f2f589ce06acb5b2d40028e76c81ffa0b43c32f334bf"
+        },
+        {
+          "artifact_id": "TEST-002",
+          "path": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/organizer-validates-qr-code/tests.md",
+          "content_hash": "8b213ef21f10033abe2b8c6f7d314a34cab2d50de5d346cb6d7ba36106dfe9a9"
+        }
+      ],
+      "updated_at": "2026-07-09T22:01:07.147Z",
+      "notes": "initial derivation baseline for EV-004"
+    },
+    {
+      "artifact_id": "DES-002",
+      "path": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/organizer-validates-qr-code/design.md",
+      "derived_from": [
+        {
+          "artifact_id": "SPEC-002",
+          "path": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/organizer-validates-qr-code/specification.md",
+          "content_hash": "d85749146da99a06831e2ef3679be9a32a2c193b3c73d1d8e18cfdbb7a8483b5"
+        },
+        {
+          "artifact_id": "UC-002",
+          "path": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/organizer-validates-qr-code/use-case.md",
+          "content_hash": "b7a62ae58b5ac03acffeaefb7a030b8e6cb5f08af2850f63ae6890994a4831cc"
+        }
+      ],
+      "updated_at": "2026-07-09T22:01:07.148Z",
+      "notes": "initial derivation baseline for EV-004"
+    },
+    {
+      "artifact_id": "GRAPH-001",
+      "path": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/attendee-checks-in-with-qr-code/execution-graph.json",
+      "derived_from": [
+        {
+          "artifact_id": "SPEC-001",
+          "path": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/attendee-checks-in-with-qr-code/specification.md",
+          "content_hash": "837750e6f5b07c961d326d679a6a3464d740a80f5bafff7b364e920c309c4775"
+        },
+        {
+          "artifact_id": "PLAN-001",
+          "path": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/attendee-checks-in-with-qr-code/implementation-plan.md",
+          "content_hash": "c4e91448044fc7e94782e6994935b50140560fec22d09a495bed06204b443b0d"
+        }
+      ],
+      "updated_at": "2026-07-09T22:01:07.159Z",
+      "notes": "initial derivation baseline for EV-004"
+    },
+    {
+      "artifact_id": "GRAPH-002",
+      "path": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/organizer-validates-qr-code/execution-graph.json",
+      "derived_from": [
+        {
+          "artifact_id": "SPEC-002",
+          "path": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/organizer-validates-qr-code/specification.md",
+          "content_hash": "d85749146da99a06831e2ef3679be9a32a2c193b3c73d1d8e18cfdbb7a8483b5"
+        },
+        {
+          "artifact_id": "PLAN-002",
+          "path": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/organizer-validates-qr-code/implementation-plan.md",
+          "content_hash": "b2be5a0afe9fe6e71f12c7007acf91cceec91f30f68f74a4e0fba7f41ec95040"
+        }
+      ],
+      "updated_at": "2026-07-09T22:01:07.159Z",
+      "notes": "initial derivation baseline for EV-004"
+    },
+    {
+      "artifact_id": "PLAN-001",
+      "path": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/attendee-checks-in-with-qr-code/implementation-plan.md",
+      "derived_from": [
+        {
+          "artifact_id": "SPEC-001",
+          "path": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/attendee-checks-in-with-qr-code/specification.md",
+          "content_hash": "837750e6f5b07c961d326d679a6a3464d740a80f5bafff7b364e920c309c4775"
+        },
+        {
+          "artifact_id": "UC-001:design",
+          "path": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/attendee-checks-in-with-qr-code/design.md",
+          "content_hash": "cd9d99db455de6101671fec56180061e09e98f4f39159210ae45e86616860fb2"
+        }
+      ],
+      "updated_at": "2026-07-09T22:01:07.160Z",
+      "notes": "initial derivation baseline for EV-004"
+    },
+    {
+      "artifact_id": "PLAN-002",
+      "path": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/organizer-validates-qr-code/implementation-plan.md",
+      "derived_from": [
+        {
+          "artifact_id": "SPEC-002",
+          "path": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/organizer-validates-qr-code/specification.md",
+          "content_hash": "d85749146da99a06831e2ef3679be9a32a2c193b3c73d1d8e18cfdbb7a8483b5"
+        },
+        {
+          "artifact_id": "DES-002",
+          "path": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/organizer-validates-qr-code/design.md",
+          "content_hash": "1244b7b257fed677ec8292c13ed5b246ffa134db40ca209bab417b2d1d1968ca"
+        }
+      ],
+      "updated_at": "2026-07-09T22:01:07.162Z",
+      "notes": "initial derivation baseline for EV-004"
+    },
+    {
+      "artifact_id": "QA-002",
+      "path": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/organizer-validates-qr-code/qa-evidence.md",
+      "derived_from": [
+        {
+          "artifact_id": "TEST-002",
+          "path": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/organizer-validates-qr-code/tests.md",
+          "content_hash": "8b213ef21f10033abe2b8c6f7d314a34cab2d50de5d346cb6d7ba36106dfe9a9"
+        },
+        {
+          "artifact_id": "SPEC-002",
+          "path": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/organizer-validates-qr-code/specification.md",
+          "content_hash": "d85749146da99a06831e2ef3679be9a32a2c193b3c73d1d8e18cfdbb7a8483b5"
+        }
+      ],
+      "updated_at": "2026-07-09T22:01:07.163Z",
+      "notes": "initial derivation baseline for EV-004"
+    },
+    {
+      "artifact_id": "SEC-002",
+      "path": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/organizer-validates-qr-code/security-review.md",
+      "derived_from": [
+        {
+          "artifact_id": "SPEC-002",
+          "path": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/organizer-validates-qr-code/specification.md",
+          "content_hash": "d85749146da99a06831e2ef3679be9a32a2c193b3c73d1d8e18cfdbb7a8483b5"
+        },
+        {
+          "artifact_id": "QA-002",
+          "path": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/organizer-validates-qr-code/qa-evidence.md",
+          "content_hash": "93106d998564ae1afd94910f1d410aaf20320420bbf83a05b5bd38f7c4148ea2"
+        }
+      ],
+      "updated_at": "2026-07-09T22:01:07.166Z",
+      "notes": "initial derivation baseline for EV-004"
+    },
+    {
+      "artifact_id": "SPEC-001",
+      "path": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/attendee-checks-in-with-qr-code/specification.md",
+      "derived_from": [
+        {
+          "artifact_id": "UC-001",
+          "path": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/attendee-checks-in-with-qr-code/use-case.md",
+          "content_hash": "bf40e904dfaf76fa16582946100ea092561fa586df66b6baa063c6d731340572"
+        }
+      ],
+      "updated_at": "2026-07-09T22:01:07.166Z",
+      "notes": "initial derivation baseline for EV-004"
+    },
+    {
+      "artifact_id": "SPEC-002",
+      "path": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/organizer-validates-qr-code/specification.md",
+      "derived_from": [
+        {
+          "artifact_id": "UC-002",
+          "path": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/organizer-validates-qr-code/use-case.md",
+          "content_hash": "b7a62ae58b5ac03acffeaefb7a030b8e6cb5f08af2850f63ae6890994a4831cc"
+        }
+      ],
+      "updated_at": "2026-07-09T22:01:07.167Z",
+      "notes": "initial derivation baseline for EV-004"
+    },
+    {
+      "artifact_id": "TASKSET-002",
+      "path": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/organizer-validates-qr-code/tasks.md",
+      "derived_from": [
+        {
+          "artifact_id": "GRAPH-002",
+          "path": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/organizer-validates-qr-code/execution-graph.json",
+          "content_hash": "353d1e41ce827133eff34ebb023c6ec5dddffc92a205197364d013b5af20d5f9"
+        },
+        {
+          "artifact_id": "SPEC-002",
+          "path": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/organizer-validates-qr-code/specification.md",
+          "content_hash": "d85749146da99a06831e2ef3679be9a32a2c193b3c73d1d8e18cfdbb7a8483b5"
+        }
+      ],
+      "updated_at": "2026-07-09T22:01:07.167Z",
+      "notes": "initial derivation baseline for EV-004"
+    },
+    {
+      "artifact_id": "TEST-002",
+      "path": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/organizer-validates-qr-code/tests.md",
+      "derived_from": [
+        {
+          "artifact_id": "SPEC-002",
+          "path": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/organizer-validates-qr-code/specification.md",
+          "content_hash": "d85749146da99a06831e2ef3679be9a32a2c193b3c73d1d8e18cfdbb7a8483b5"
+        },
+        {
+          "artifact_id": "TASKSET-002",
+          "path": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/organizer-validates-qr-code/tasks.md",
+          "content_hash": "e15f09ce5264e9174b84f2f589ce06acb5b2d40028e76c81ffa0b43c32f334bf"
+        }
+      ],
+      "updated_at": "2026-07-09T22:01:07.168Z",
+      "notes": "initial derivation baseline for EV-004"
+    },
+    {
+      "artifact_id": "UC-001",
+      "path": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/attendee-checks-in-with-qr-code/context.md",
+      "derived_from": [
+        {
+          "artifact_id": "FT-001",
+          "path": "domains/events/goals/participate-in-event/features/qr-code-check-in/feature.md",
+          "content_hash": "d2f90404b77afb0efa786665faca1b6ffb66154e77f3b807aa68e42e99420542"
+        }
+      ],
+      "updated_at": "2026-07-09T22:01:07.170Z",
+      "notes": "initial derivation baseline for EV-004"
+    },
+    {
+      "artifact_id": "UC-001:analytics",
+      "path": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/attendee-checks-in-with-qr-code/analytics.md",
+      "derived_from": [
+        {
+          "artifact_id": "SPEC-001",
+          "path": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/attendee-checks-in-with-qr-code/specification.md",
+          "content_hash": "837750e6f5b07c961d326d679a6a3464d740a80f5bafff7b364e920c309c4775"
+        }
+      ],
+      "updated_at": "2026-07-09T22:01:07.170Z",
+      "notes": "initial derivation baseline for EV-004"
+    },
+    {
+      "artifact_id": "UC-001:audit",
+      "path": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/attendee-checks-in-with-qr-code/audit.md",
+      "derived_from": [
+        {
+          "artifact_id": "SPEC-001",
+          "path": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/attendee-checks-in-with-qr-code/specification.md",
+          "content_hash": "837750e6f5b07c961d326d679a6a3464d740a80f5bafff7b364e920c309c4775"
+        },
+        {
+          "artifact_id": "UC-001:design",
+          "path": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/attendee-checks-in-with-qr-code/design.md",
+          "content_hash": "cd9d99db455de6101671fec56180061e09e98f4f39159210ae45e86616860fb2"
+        },
+        {
+          "artifact_id": "PLAN-001",
+          "path": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/attendee-checks-in-with-qr-code/implementation-plan.md",
+          "content_hash": "c4e91448044fc7e94782e6994935b50140560fec22d09a495bed06204b443b0d"
+        },
+        {
+          "artifact_id": "GRAPH-001",
+          "path": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/attendee-checks-in-with-qr-code/execution-graph.json",
+          "content_hash": "fe067969a673982982fe2bab61ab1c28601f890f30032664e4be24c9a6dae74d"
+        },
+        {
+          "artifact_id": "UC-001:tasks",
+          "path": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/attendee-checks-in-with-qr-code/tasks.md",
+          "content_hash": "5bc22b945ab78452abbabc0a3e302c68ff1c0ecc69e44799370aeb86941dd695"
+        },
+        {
+          "artifact_id": "UC-001:tests",
+          "path": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/attendee-checks-in-with-qr-code/tests.md",
+          "content_hash": "2994205f5a0006a5646cba0fb4eb2fe1076c1084845e1081892789913518b40b"
+        }
+      ],
+      "updated_at": "2026-07-09T22:01:07.181Z",
+      "notes": "initial derivation baseline for EV-004"
+    },
+    {
+      "artifact_id": "UC-001:design",
+      "path": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/attendee-checks-in-with-qr-code/design.md",
+      "derived_from": [
+        {
+          "artifact_id": "SPEC-001",
+          "path": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/attendee-checks-in-with-qr-code/specification.md",
+          "content_hash": "837750e6f5b07c961d326d679a6a3464d740a80f5bafff7b364e920c309c4775"
+        },
+        {
+          "artifact_id": "UC-001",
+          "path": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/attendee-checks-in-with-qr-code/use-case.md",
+          "content_hash": "bf40e904dfaf76fa16582946100ea092561fa586df66b6baa063c6d731340572"
+        }
+      ],
+      "updated_at": "2026-07-09T22:01:07.182Z",
+      "notes": "initial derivation baseline for EV-004"
+    },
+    {
+      "artifact_id": "UC-001:tasks",
+      "path": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/attendee-checks-in-with-qr-code/tasks.md",
+      "derived_from": [
+        {
+          "artifact_id": "GRAPH-001",
+          "path": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/attendee-checks-in-with-qr-code/execution-graph.json",
+          "content_hash": "fe067969a673982982fe2bab61ab1c28601f890f30032664e4be24c9a6dae74d"
+        },
+        {
+          "artifact_id": "SPEC-001",
+          "path": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/attendee-checks-in-with-qr-code/specification.md",
+          "content_hash": "837750e6f5b07c961d326d679a6a3464d740a80f5bafff7b364e920c309c4775"
+        }
+      ],
+      "updated_at": "2026-07-09T22:01:07.185Z",
+      "notes": "initial derivation baseline for EV-004"
+    },
+    {
+      "artifact_id": "UC-001:tests",
+      "path": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/attendee-checks-in-with-qr-code/tests.md",
+      "derived_from": [
+        {
+          "artifact_id": "SPEC-001",
+          "path": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/attendee-checks-in-with-qr-code/specification.md",
+          "content_hash": "837750e6f5b07c961d326d679a6a3464d740a80f5bafff7b364e920c309c4775"
+        },
+        {
+          "artifact_id": "UC-001:tasks",
+          "path": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/attendee-checks-in-with-qr-code/tasks.md",
+          "content_hash": "5bc22b945ab78452abbabc0a3e302c68ff1c0ecc69e44799370aeb86941dd695"
+        }
+      ],
+      "updated_at": "2026-07-09T22:01:07.186Z",
+      "notes": "initial derivation baseline for EV-004"
+    },
+    {
+      "artifact_id": "UC-002",
+      "path": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/organizer-validates-qr-code/context.md",
+      "derived_from": [
+        {
+          "artifact_id": "FT-001",
+          "path": "domains/events/goals/participate-in-event/features/qr-code-check-in/feature.md",
+          "content_hash": "d2f90404b77afb0efa786665faca1b6ffb66154e77f3b807aa68e42e99420542"
+        }
+      ],
+      "updated_at": "2026-07-09T22:01:07.187Z",
+      "notes": "initial derivation baseline for EV-004"
+    },
+    {
+      "artifact_id": "UC-EXAMPLE:analytics",
+      "path": "domains/_example-domain/goals/_example-goal/features/_example-feature/use-cases/_example-use-case/analytics.md",
+      "derived_from": [
+        {
+          "artifact_id": "UC-EXAMPLE:specification",
+          "path": "domains/_example-domain/goals/_example-goal/features/_example-feature/use-cases/_example-use-case/specification.md",
+          "content_hash": "3de1fc1136a9cef3794fe3135e3aa01486463e467ae8ca70cf76f5e73174e567"
+        }
+      ],
+      "updated_at": "2026-07-09T22:01:07.190Z",
+      "notes": "initial derivation baseline for EV-004"
+    },
+    {
+      "artifact_id": "UC-EXAMPLE:audit",
+      "path": "domains/_example-domain/goals/_example-goal/features/_example-feature/use-cases/_example-use-case/audit.md",
+      "derived_from": [
+        {
+          "artifact_id": "UC-EXAMPLE:specification",
+          "path": "domains/_example-domain/goals/_example-goal/features/_example-feature/use-cases/_example-use-case/specification.md",
+          "content_hash": "3de1fc1136a9cef3794fe3135e3aa01486463e467ae8ca70cf76f5e73174e567"
+        },
+        {
+          "artifact_id": "UC-EXAMPLE:design",
+          "path": "domains/_example-domain/goals/_example-goal/features/_example-feature/use-cases/_example-use-case/design.md",
+          "content_hash": "0d787e56e74ebb627c5de65e7582ffe7e2da8d4625ede347ea26b767baac5f92"
+        },
+        {
+          "artifact_id": "UC-EXAMPLE:implementation-plan",
+          "path": "domains/_example-domain/goals/_example-goal/features/_example-feature/use-cases/_example-use-case/implementation-plan.md",
+          "content_hash": "33a5f8743a073caa35c72b135075b231b6fc843dbeaa68c0b84042fd9cdf046e"
+        },
+        {
+          "artifact_id": "GRAPH-EXAMPLE",
+          "path": "domains/_example-domain/goals/_example-goal/features/_example-feature/use-cases/_example-use-case/execution-graph.json",
+          "content_hash": "ff75417a7964fb5154f25ae70fa6fa9795cfbe177238d13d3d5107a70afac6e2"
+        },
+        {
+          "artifact_id": "UC-EXAMPLE:tasks",
+          "path": "domains/_example-domain/goals/_example-goal/features/_example-feature/use-cases/_example-use-case/tasks.md",
+          "content_hash": "56948125324cac5df89533ad060de9811b5dfd2522c618930c8ea684783fa8b5"
+        },
+        {
+          "artifact_id": "UC-EXAMPLE:tests",
+          "path": "domains/_example-domain/goals/_example-goal/features/_example-feature/use-cases/_example-use-case/tests.md",
+          "content_hash": "e3d0af4e995cae25e84d545200d02ade354a12a1d63a627bdf170b16b3a406a4"
+        }
+      ],
+      "updated_at": "2026-07-09T22:01:07.196Z",
+      "notes": "initial derivation baseline for EV-004"
+    },
+    {
+      "artifact_id": "UC-EXAMPLE:design",
+      "path": "domains/_example-domain/goals/_example-goal/features/_example-feature/use-cases/_example-use-case/design.md",
+      "derived_from": [
+        {
+          "artifact_id": "UC-EXAMPLE:specification",
+          "path": "domains/_example-domain/goals/_example-goal/features/_example-feature/use-cases/_example-use-case/specification.md",
+          "content_hash": "3de1fc1136a9cef3794fe3135e3aa01486463e467ae8ca70cf76f5e73174e567"
+        },
+        {
+          "artifact_id": "UC-EXAMPLE",
+          "path": "domains/_example-domain/goals/_example-goal/features/_example-feature/use-cases/_example-use-case/use-case.md",
+          "content_hash": "e659248c7050237f6c3a201e3988baa048f0c3f8e0ddd09de4da9ff91e93c22b"
+        }
+      ],
+      "updated_at": "2026-07-09T22:01:07.197Z",
+      "notes": "initial derivation baseline for EV-004"
+    },
+    {
+      "artifact_id": "UC-EXAMPLE:tests",
+      "path": "domains/_example-domain/goals/_example-goal/features/_example-feature/use-cases/_example-use-case/tests.md",
+      "derived_from": [
+        {
+          "artifact_id": "UC-EXAMPLE:specification",
+          "path": "domains/_example-domain/goals/_example-goal/features/_example-feature/use-cases/_example-use-case/specification.md",
+          "content_hash": "3de1fc1136a9cef3794fe3135e3aa01486463e467ae8ca70cf76f5e73174e567"
+        },
+        {
+          "artifact_id": "UC-EXAMPLE:tasks",
+          "path": "domains/_example-domain/goals/_example-goal/features/_example-feature/use-cases/_example-use-case/tasks.md",
+          "content_hash": "56948125324cac5df89533ad060de9811b5dfd2522c618930c8ea684783fa8b5"
+        }
+      ],
+      "updated_at": "2026-07-09T22:01:07.198Z",
+      "notes": "initial derivation baseline for EV-004"
+    }
+  ]
+}

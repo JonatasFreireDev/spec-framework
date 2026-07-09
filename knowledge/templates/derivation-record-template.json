@@ -1,0 +1,13 @@
+{
+  "artifact_id": "[ARTIFACT-ID]",
+  "path": "[repository-relative/path.md]",
+  "derived_from": [
+    {
+      "artifact_id": "[SOURCE-ID]",
+      "path": "[repository-relative/source.md]",
+      "content_hash": "[sha256 of normalized source content]"
+    }
+  ],
+  "updated_at": "[YYYY-MM-DDTHH:mm:ssZ]",
+  "notes": "[why this derivation baseline was captured]"
+}
