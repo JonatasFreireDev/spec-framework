@@ -1,50 +1,57 @@
 # Journey: [goal or scenario name]
 
-## Context
+## 🧭 Snapshot
 
-- ID: [JOURNEY-XXX]
-- Status: [draft | proposed | approved]
-- Source goal: [GOAL-XXX]
-- Context file: context.md
+| Field | Value |
+| --- | --- |
+| ID | `[JOURNEY-XXX]` |
+| Status | `[draft | proposed | approved]` |
+| Source goal | `[GOAL-XXX]` |
+| Owner skill | Journey AI |
+| Next skill | Feature AI |
 
-## Actor
+## 👤 Actor
 
 [Primary user or stakeholder moving through the journey.]
 
-## Trigger
-
-[What starts the journey.]
-
-## Desired Outcome
+## 🎯 Desired Outcome
 
 [What successful completion means for the user.]
 
-## Steps
+## 🗺️ Journey Flow
 
-1. [Step]
-2. [Step]
-3. [Step]
+```mermaid
+journey
+  title [Journey title]
+  section Trigger
+    User encounters need: 3: User
+  section Progress
+    User takes action: 4: User
+    System responds: 4: System
+  section Outcome
+    User reaches success: 5: User
+```
 
-## Decisions And Branches
+## 🧩 Steps
 
-- [Decision point] - [possible paths]
+| Step | User Action | System Response | Emotion/Friction | Opportunity |
+| --- | --- | --- | --- | --- |
+| 1 | `[action]` | `[response]` | `[emotion/friction]` | `[opportunity]` |
 
-## Friction And Risks
+## 🔀 Decisions And Branches
 
-- [Friction] - [impact]
+| Decision Point | Path A | Path B | Risk |
+| --- | --- | --- | --- |
+| `[decision]` | `[path]` | `[path]` | `[risk]` |
 
-## States
+## 📊 Metrics
 
-- [State] - [meaning]
+| Metric | Meaning |
+| --- | --- |
+| `[metric]` | `[meaning]` |
 
-## Metrics
+## ⚠️ Open Questions
 
-- [Metric that indicates progress or success.]
-
-## Open Questions
-
-- [Question needing approval or research.]
-
-## Handoff
-
-Next recommended skill: Feature AI.
+| Question | Owner | Blocks |
+| --- | --- | --- |
+| `[question]` | `[role]` | `[artifact]` |

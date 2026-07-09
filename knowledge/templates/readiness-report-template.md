@@ -1,30 +1,73 @@
 # Readiness Report: [feature/use case]
 
-## Context
+## 🧭 Executive Snapshot
 
-- Scope: [DOMAIN/GOAL/FT/UC/SPEC]
-- Auditor: [skill/orchestrator]
-- Date: [YYYY-MM-DD]
-- Verdict: [ready | ready_with_notes | not_ready]
+| Field | Value |
+| --- | --- |
+| Scope | `[DOMAIN/GOAL/FT/UC/SPEC]` |
+| Auditor | `[skill/orchestrator]` |
+| Date | `[YYYY-MM-DD]` |
+| Verdict | `[✅ ready | 🟡 ready_with_notes | 🔴 not_ready]` |
+| Next Skill | `[skill/orchestrator]` |
+| Can Generate Tasks | `[yes/no]` |
 
-## Summary
+## 🧩 Readiness Flow
+
+```mermaid
+flowchart LR
+  A["Context"] --> B["Use Case"]
+  B --> C["Specification"]
+  C --> D["Design"]
+  D --> E["Implementation Plan"]
+  E --> F["Execution Graph"]
+  F --> G["Tasks"]
+  G --> H["Ready For Implementation"]
+
+  C -. "missing or draft" .-> X["Blocked"]
+  D -. "missing UI decision" .-> X
+  F -. "invalid DAG" .-> X
+
+  classDef done fill:#dcfce7,stroke:#16a34a,color:#14532d;
+  classDef current fill:#fef3c7,stroke:#d97706,color:#78350f,stroke-width:3px;
+  classDef pending fill:#f8fafc,stroke:#94a3b8,color:#334155;
+  classDef blocked fill:#fee2e2,stroke:#dc2626,color:#7f1d1d;
+
+  class A,B,C,D,E,F,G done;
+  class H current;
+  class X blocked;
+```
+
+## 📌 Summary
 
 [Short explanation of whether this artifact can move to the next step.]
 
-## Required Artifacts
+## 📂 Required Artifacts
 
-| Artifact | Path | Status | Result |
+| Icon | Artifact | Path | Status | Result | Notes |
+| --- | --- | --- | --- | --- | --- |
+| 📘 | Domain context | `[path]` | `[status]` | `[✅ pass/🔴 fail]` | `[note]` |
+| 🎯 | Goal context | `[path]` | `[status]` | `[✅ pass/🔴 fail]` | `[note]` |
+| 🧱 | Feature | `[path]` | `[status]` | `[✅ pass/🔴 fail]` | `[note]` |
+| 🎬 | Use case | `[path]` | `[status]` | `[✅ pass/🔴 fail]` | `[note]` |
+| 📜 | Specification | `[path]` | `[status]` | `[✅ pass/🔴 fail]` | `[note]` |
+| 🎨 | Design | `[path]` | `[status]` | `[✅ pass/🔴 fail/➖ n/a]` | `[note]` |
+| 🛠️ | Implementation plan | `[path]` | `[status]` | `[✅ pass/🔴 fail]` | `[note]` |
+| 🕸️ | Execution graph | `[path]` | `[status]` | `[✅ pass/🔴 fail]` | `[note]` |
+| ✅ | Tasks | `[path]` | `[status]` | `[✅ pass/🔴 fail]` | `[note]` |
+
+## 🚦 Gate Matrix
+
+| Gate | Result | Evidence | Required Fix |
 | --- | --- | --- | --- |
-| Domain context | [path] | [status] | [pass/fail] |
-| Goal context | [path] | [status] | [pass/fail] |
-| Feature | [path] | [status] | [pass/fail] |
-| Use case | [path] | [status] | [pass/fail] |
-| Specification | [path] | [status] | [pass/fail] |
-| Implementation plan | [path] | [status] | [pass/fail] |
-| Execution graph | [path] | [status] | [pass/fail] |
-| Tasks | [path] | [status] | [pass/fail] |
+| Traceability | `[✅/🟡/🔴]` | `[path/section]` | `[fix or none]` |
+| Specification completeness | `[✅/🟡/🔴]` | `[path/section]` | `[fix or none]` |
+| Design readiness | `[✅/🟡/🔴/➖]` | `[path/section]` | `[fix or none]` |
+| Planning completeness | `[✅/🟡/🔴]` | `[path/section]` | `[fix or none]` |
+| Execution graph validity | `[✅/🟡/🔴]` | `[path/section]` | `[fix or none]` |
+| Task readiness | `[✅/🟡/🔴]` | `[path/section]` | `[fix or none]` |
+| Decisions resolved | `[✅/🟡/🔴]` | `[path/section]` | `[fix or none]` |
 
-## Gate Checks
+## ✅ Gate Checks
 
 ### Traceability
 
@@ -42,6 +85,13 @@
 - [ ] Permissions and security are covered.
 - [ ] Analytics and observability are covered.
 - [ ] Acceptance criteria are observable.
+
+### Design Readiness
+
+- [ ] `design.md` exists for UI work or explicitly says `Not applicable`.
+- [ ] UI states are complete.
+- [ ] Accessibility requirements are explicit.
+- [ ] UX blockers are either fixed or carried forward.
 
 ### Planning Completeness
 
@@ -66,21 +116,42 @@
 - [ ] Blocked tasks name the blocking decision or dependency.
 - [ ] No implementation task starts from an unapproved or incomplete specification unless explicitly marked exploratory.
 
-## Findings
+## 🔎 Findings
 
-### [Severity] [Finding]
+| Severity | Finding | Evidence | Impact | Required Fix | Owner |
+| --- | --- | --- | --- | --- | --- |
+| `[🔴 blocker/🟡 warning/🔵 note]` | `[finding]` | `[path/section]` | `[why it matters]` | `[fix]` | `[role]` |
 
-- Evidence: [path/section]
-- Impact: [why it matters]
-- Required fix: [fix]
-- Owner: [role]
+## 🔐 Blocking Decisions
 
-## Blocking Decisions
+| Decision Needed | Blocks | Recommended Owner | Status |
+| --- | --- | --- | --- |
+| `[decision]` | `[artifact/task]` | `[role]` | `[open/proposed/approved]` |
 
-- [Decision needed] - blocks: [artifact/task]
+## 🗺️ Next-Step Flow
 
-## Result
+```mermaid
+flowchart TD
+  R["Readiness Verdict"] -->|ready| T["Generate or execute tasks"]
+  R -->|ready_with_notes| C["Carry notes into next context"]
+  R -->|not_ready| F["Fix blocking findings"]
+  F --> A["Re-run readiness audit"]
+  C --> T
 
-- Verdict: [ready | ready_with_notes | not_ready]
-- Can generate/execute tasks: [yes/no]
-- Required next step: [skill/orchestrator]
+  classDef done fill:#dcfce7,stroke:#16a34a,color:#14532d;
+  classDef current fill:#fef3c7,stroke:#d97706,color:#78350f,stroke-width:3px;
+  classDef pending fill:#f8fafc,stroke:#94a3b8,color:#334155;
+  classDef blocked fill:#fee2e2,stroke:#dc2626,color:#7f1d1d;
+
+  class R current;
+  class T,C,A pending;
+  class F blocked;
+```
+
+## 🏁 Result
+
+| Field | Value |
+| --- | --- |
+| Verdict | `[✅ ready | 🟡 ready_with_notes | 🔴 not_ready]` |
+| Can generate/execute tasks | `[yes/no]` |
+| Required next step | `[skill/orchestrator]` |

@@ -1,68 +1,106 @@
 # Use Case: [use case name]
 
-## Context
+## 🧭 Snapshot
 
-- ID: [UC-XXX]
-- Status: [draft | proposed | approved]
-- Feature: [FT-XXX]
-- Context file: context.md
+| Field | Value |
+| --- | --- |
+| ID | `[UC-XXX]` |
+| Status | `[draft | proposed | approved]` |
+| Feature | `[FT-XXX]` |
+| Owner skill | Use Case AI |
+| Next skill | Specification AI |
 
-## Delivery
+## 🚚 Delivery
 
-- Level: [inherited from feature or approved change]
-- Priority: [inherited from feature or approved change]
-- Rationale: [why this use case keeps or changes the feature priority]
+| Field | Value |
+| --- | --- |
+| Level | `[L0 | L1 | L2 | L3 | L4 | L5]` |
+| Priority | `[P0 | P1 | P2 | P3]` |
+| Depends on | `[artifact ids/paths]` |
+| Rationale | `[why this belongs here]` |
 
-## Actor
+## 👤 Actors
 
-[Primary user, system, admin, or external actor.]
+| Actor | Role In Flow |
+| --- | --- |
+| `[primary actor]` | `[what they do]` |
+| `[secondary actor/system]` | `[what they do]` |
 
-## Goal
+## 🎯 Goal
 
-[What the actor is trying to accomplish in this interaction.]
+[Observable goal achieved by the actor.]
 
-## Preconditions
+## 🚦 Preconditions
 
-- [State, permission, data, or context required before the use case starts.]
+- [Condition that must be true before the flow starts.]
 
-## Main Flow
+## 🗺️ Flow Diagram
+
+```mermaid
+flowchart TD
+  A["Trigger"] --> B["Main action"]
+  B --> C{"Valid?"}
+  C -->|Yes| D["Success state"]
+  C -->|No| E["Error or recovery state"]
+
+  classDef done fill:#dcfce7,stroke:#16a34a,color:#14532d;
+  classDef current fill:#fef3c7,stroke:#d97706,color:#78350f,stroke-width:3px;
+  classDef pending fill:#f8fafc,stroke:#94a3b8,color:#334155;
+  classDef blocked fill:#fee2e2,stroke:#dc2626,color:#7f1d1d;
+
+  class A done;
+  class B,C current;
+  class D pending;
+  class E blocked;
+```
+
+## ✅ Main Flow
 
 1. [Step]
 2. [Step]
 3. [Step]
 
-## Alternate Flows
+## 🔁 Alternate Flows
 
-### [Flow name]
+| Flow | Expected Behavior |
+| --- | --- |
+| `[alternate]` | `[behavior]` |
 
-1. [Step]
-2. [Step]
+## ⚠️ Error And Edge Cases
 
-## Error And Edge Cases
+| Case | Expected Behavior | Analytics/Log |
+| --- | --- | --- |
+| `[case]` | `[behavior]` | `[event/log]` |
 
-- [Case] - expected behavior: [behavior]
+## 📏 Business Rules
 
-## Business Rules
+| Rule | Source |
+| --- | --- |
+| `[rule]` | `[decision/path]` |
 
-- [Rule] - source: [path/decision]
+## 🎨 UX States
 
-## UX States
+| State | Meaning |
+| --- | --- |
+| `[state]` | `[meaning]` |
 
-- Default:
-- Loading:
-- Empty:
-- Error:
-- Success:
-
-## Acceptance Criteria
+## ✅ Acceptance Criteria
 
 - [ ] [Observable behavior]
+- [ ] [Permission/security behavior]
+- [ ] [Failure behavior]
+- [ ] [Analytics/observability behavior]
 
-## Specification Readiness
+## 🔐 Decisions Needed
 
-- [ ] Scope is clear.
-- [ ] Delivery Level and Priority are declared.
-- [ ] Business rules are linked.
-- [ ] UI states are known.
-- [ ] Data and permission needs are known.
-- [ ] Analytics and observability needs are known.
+| Decision | Blocks | Owner |
+| --- | --- | --- |
+| `[decision]` | `[artifact]` | `[role]` |
+
+## 🏁 Approval
+
+| Field | Value |
+| --- | --- |
+| Approved by |  |
+| Date |  |
+| Notes |  |

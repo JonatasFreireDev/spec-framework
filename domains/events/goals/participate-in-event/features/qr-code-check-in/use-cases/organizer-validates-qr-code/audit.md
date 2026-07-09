@@ -1,61 +1,99 @@
 # Audit: Organizer Validates QR Code
 
-## Context
+## 🧭 Executive Snapshot
 
-- ID: AUD-002
-- Status: draft
-- Scope: UC-002, SPEC-002, DES-002, PLAN-002, GRAPH-002, TASKSET-002, TEST-002, ANA-002
+| Field | Value |
+| --- | --- |
+| ID | AUD-002 |
+| Status | draft |
+| Scope | UC-002, SPEC-002, DES-002, PLAN-002, GRAPH-002, TASKSET-002, TEST-002, ANA-002 |
+| Verdict | 🟡 approved_with_notes |
+| Next recommended skill | Impact Analysis AI, then Product Historian AI |
 
-## Verdict
+## 🗺️ Audit Flow
 
-Approved with notes.
+```mermaid
+flowchart LR
+  U["UC-002 Use Case"] --> S["SPEC-002"]
+  S --> D["DES-002"]
+  D --> P["PLAN-002"]
+  P --> G["GRAPH-002"]
+  G --> T["TASKSET-002"]
+  T --> Q["TEST-002"]
+  U --> A["ANA-002"]
+  Q --> V["Audit Verdict"]
+  A --> V
 
-## Findings
+  classDef done fill:#dcfce7,stroke:#16a34a,color:#14532d;
+  classDef current fill:#fef3c7,stroke:#d97706,color:#78350f,stroke-width:3px;
+  classDef pending fill:#f8fafc,stroke:#94a3b8,color:#334155;
+  classDef blocked fill:#fee2e2,stroke:#dc2626,color:#7f1d1d;
 
-### F-001 Online Versus Offline Validation Is Not Approved
+  class U,S,D,P,G,T,Q,A done;
+  class V current;
+```
 
-- Severity: medium
-- Evidence: `specification.md` lists offline validation as non-goal and open question.
-- Required fix: confirm online-only validation for L1 or approve an offline validation decision.
+## 🚦 Verdict Matrix
 
-### F-002 Organizer Permission Roles Need Human Approval
+| Area | Result | Evidence | Notes |
+| --- | --- | --- | --- |
+| Use-case behavior | ✅ pass | `use-case.md` | Main, alternate, error, and edge flows exist. |
+| Specification coverage | ✅ pass | `specification.md` | Required framework sections are present. |
+| Design readiness | 🟡 notes | `design.md` | Scanner states exist; mockups are not present. |
+| Planning readiness | 🟡 notes | `implementation-plan.md` | Sequencing exists; open decisions remain. |
+| Execution graph | ✅ pass | `execution-graph.json` | Graph is a DAG and includes dependency metadata. |
+| Task traceability | ✅ pass | `tasks.md` | Tasks point to specification-derived work. |
+| Test coverage | ✅ pass | `tests.md` | Behavior, permissions, data, UX, analytics, and accessibility are covered. |
+| Decision readiness | 🔴 blocked | `context.md`, `specification.md`, `implementation-plan.md` | Organizer roles, offline mode, and manual fallback need approval. |
 
-- Severity: high
-- Evidence: `context.md`, `specification.md`, and `implementation-plan.md` all list organizer roles as open.
-- Required fix: approve which roles can validate check-in.
+## 🔎 Findings
 
-### F-003 Manual Fallback Is Out Of Scope
+| Severity | Finding | Evidence | Impact | Required Fix | Owner |
+| --- | --- | --- | --- | --- | --- |
+| 🟡 medium | Online versus offline validation is not approved. | `specification.md` lists offline validation as non-goal and open question. | Venue operations may be affected by network dependency. | Confirm online-only validation for L1 or approve an offline validation decision. | Product + Security |
+| 🔴 high | Organizer permission roles need human approval. | `context.md`, `specification.md`, and `implementation-plan.md` list organizer roles as open. | Permission model cannot be safely implemented. | Approve which roles can validate check-in. | Product + Engineering |
+| 🟡 medium | Manual fallback is out of scope. | `design.md` and `implementation-plan.md` leave camera failure fallback open. | Camera failure may block check-in operations. | Decide whether L1 can ship without manual fallback. | Product + UX |
 
-- Severity: medium
-- Evidence: `design.md` and `implementation-plan.md` leave camera failure fallback as an open question.
-- Required fix: decide whether L1 can ship without manual fallback.
+## 🔐 Required Decisions Before Approval
 
-## Evidence
+| Decision | Blocks | Recommended Owner | Status |
+| --- | --- | --- | --- |
+| Which organizer roles can validate check-in? | Permission rules, API contract, tasks | Product + Engineering | Open |
+| Should L1 support offline validation? | Specification approval and rollout risk | Product + Security | Open |
+| Is manual fallback required for camera failure? | UX acceptance and release readiness | Product + UX | Open |
 
-- Use case contains main, alternate, error, and edge flows.
-- Specification includes required framework sections.
-- Design covers scanner states and accessibility.
-- Plan avoids application code and defines sequencing.
-- Execution graph is a DAG.
-- Tasks point to specification-derived work.
-- Tests cover behavior, permissions, data, UX, analytics, and accessibility.
+## 💡 Suggested Improvements
 
-## Required Fixes Before Approval
+| Improvement | Benefit | Timing |
+| --- | --- | --- |
+| Add UX review after mockups exist. | Reduces scanner usability risk. | Before implementation approval |
+| Add release readiness report. | Makes ship/no-ship criteria explicit. | Before release candidate |
+| Link this use case to a release candidate. | Preserves scope and readiness traceability. | After roadmap approval |
 
-- Approve organizer roles.
-- Approve online-only or offline validation scope.
-- Approve whether manual fallback is required for camera failure.
+## 🌡️ Residual Risk
 
-## Suggested Improvements
+| Risk | Likelihood | Impact | Mitigation |
+| --- | --- | --- | --- |
+| Venue operations suffer if network connectivity is poor and online-only validation remains the L1 choice. | Medium | High | Approve online-only explicitly for L1 or create an offline validation decision and follow-up spec update. |
 
-- Add a future UX review after mockups exist.
-- Add a release readiness report before shipping.
-- Link this use case to a concrete release candidate when roadmap is approved.
+## 🏁 Next-Step Flow
 
-## Residual Risk
+```mermaid
+flowchart TD
+  A["Resolve open decisions"] --> B["Record approved decisions"]
+  B --> C["Update context/spec/design/plan if needed"]
+  C --> D["Run readiness audit"]
+  D --> E{"Ready?"}
+  E -->|Yes| F["Prepare release candidate"]
+  E -->|No| G["Fix blockers"]
+  G --> D
 
-Venue operations may suffer if network connectivity is poor and online-only validation remains the L1 choice.
+  classDef done fill:#dcfce7,stroke:#16a34a,color:#14532d;
+  classDef current fill:#fef3c7,stroke:#d97706,color:#78350f,stroke-width:3px;
+  classDef pending fill:#f8fafc,stroke:#94a3b8,color:#334155;
+  classDef blocked fill:#fee2e2,stroke:#dc2626,color:#7f1d1d;
 
-## Next Recommended Skill
-
-Impact Analysis AI for the open decisions, then Product Historian AI to record approved decisions.
+  class A current;
+  class B,C,D,E,F pending;
+  class G blocked;
+```

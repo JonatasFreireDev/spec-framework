@@ -1,68 +1,98 @@
 # Feature: [feature name]
 
-## Context
+## 🧭 Snapshot
 
-- ID: [FT-XXX]
-- Status: [draft | proposed | approved]
-- Domain: [DOMAIN-XXX]
-- User goal: [GOAL-XXX]
-- Context file: context.md
+| Field | Value |
+| --- | --- |
+| ID | `[FT-XXX]` |
+| Status | `[draft | proposed | approved]` |
+| Domain | `[DOMAIN-XXX]` |
+| User goal | `[GOAL-XXX]` |
+| Owner skill | Feature AI |
+| Next skill | Use Case AI |
 
-## Delivery
+## 🚚 Delivery
 
-- Level: [L0 Foundation | L1 Walking Skeleton | L2 Core Loop | L3 Trust Safety Quality | L4 Operations Scale | L5 Growth Optimization]
-- Priority: [P0 | P1 | P2 | P3]
-- Rationale: [why this belongs to this level and priority]
+| Field | Value |
+| --- | --- |
+| Level | `[L0 | L1 | L2 | L3 | L4 | L5]` |
+| Priority | `[P0 | P1 | P2 | P3]` |
+| Depends on | `[artifact ids/paths]` |
+| Rationale | `[why this belongs here]` |
 
-## Summary
+## 📌 Summary
 
-[Short description of the feature and the user outcome it enables.]
+[Describe the concrete solution and how it supports the parent goal.]
 
-## Problem Fit
+## 🎯 Problem Fit
 
-- User problem:
-- Business reason:
-- Evidence:
+| User Problem | Business Reason | Evidence |
+| --- | --- | --- |
+| `[problem]` | `[reason]` | `[path/source]` |
 
-## Scope
+## 🧱 Scope
 
-### In Scope
+| In Scope | Non-Goals |
+| --- | --- |
+| `[behavior]` | `[excluded behavior]` |
 
-- [Behavior, UI, rule, integration, or data responsibility.]
+## 🎬 Use Cases
 
-### Non-Goals
+| Use Case | Status | Delivery | Priority | Notes |
+| --- | --- | --- | --- | --- |
+| `[UC-XXX] [name]` | `[status]` | `[L0-L5]` | `[P0-P3]` | `[notes]` |
 
-- [Explicitly excluded behavior or future possibility.]
+## 🗺️ Feature Flow
 
-## Use Cases
+```mermaid
+flowchart TD
+  G["[GOAL-XXX] Goal"] --> F["[FT-XXX] Feature"]
+  F --> U1["[UC-XXX] Use Case"]
+  U1 --> S1["[SPEC-XXX] Specification"]
 
-- [UC-XXX] - [use case name] - [status]
+  classDef done fill:#dcfce7,stroke:#16a34a,color:#14532d;
+  classDef current fill:#fef3c7,stroke:#d97706,color:#78350f,stroke-width:3px;
+  classDef pending fill:#f8fafc,stroke:#94a3b8,color:#334155;
+  classDef blocked fill:#fee2e2,stroke:#dc2626,color:#7f1d1d;
 
-## UX Notes
+  class G done;
+  class F current;
+  class U1,S1 pending;
+```
 
-- Entry points:
-- Core states:
-- Empty/loading/error states:
-- Accessibility notes:
+## 🎨 UX Notes
 
-## Data And Permissions
+| Area | Notes |
+| --- | --- |
+| Entry points | `[entry points]` |
+| Core states | `[states]` |
+| Empty/loading/error states | `[states]` |
+| Accessibility | `[requirements]` |
 
-- Data touched:
-- Permission model:
-- Sensitive data or abuse risks:
+## 🔐 Data, Permissions, And Risks
 
-## Analytics
+| Topic | Detail |
+| --- | --- |
+| Data touched | `[entities/fields]` |
+| Permission model | `[who can do what]` |
+| Sensitive data or abuse risks | `[risk]` |
 
-- [Event/metric] - [why it matters]
+## 📊 Analytics
 
-## Dependencies
+| Event | Meaning |
+| --- | --- |
+| `[event]` | `[meaning]` |
 
-- [Dependency] - [blocking? yes/no]
+## ⚠️ Open Questions
 
-## Acceptance Intent
+| Question | Blocks | Owner |
+| --- | --- | --- |
+| `[question]` | `[artifact]` | `[role]` |
 
-[What must be true before this feature can move to use-case specification.]
+## 🏁 Approval
 
-## Open Questions
-
-- [Question] - owner: [role]
+| Field | Value |
+| --- | --- |
+| Approved by |  |
+| Date |  |
+| Notes |  |

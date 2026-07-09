@@ -23,7 +23,7 @@
       },
       "writeScope": ["path/or/module"],
       "status": "pending",
-      "acceptance": ["observable check"]
+      "acceptanceChecks": ["observable check"]
     }
   ],
   "parallelLanes": [

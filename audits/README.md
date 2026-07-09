@@ -31,6 +31,16 @@ Each audit should include:
 - Residual risk.
 - Next recommended skill.
 
+## Visual Reporting Standard
+
+Reports should be easy to scan in GitHub and in Codex. Prefer:
+
+- status icons such as `✅`, `🟡`, `🔴`, and `➖`;
+- summary tables before long prose;
+- Mermaid diagrams for flows, dependencies, and gates;
+- finding matrices with severity, evidence, impact, required fix, and owner;
+- decision tables when human approval is needed.
+
 ## Next Step
 
 Run readiness checks on any use case before it feeds implementation planning or release preparation.

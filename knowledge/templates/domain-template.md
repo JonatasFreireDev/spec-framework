@@ -1,56 +1,70 @@
 # Domain: [domain name]
 
-## Context
+## 🧭 Snapshot
 
-- ID: [DOMAIN-XXX]
-- Status: [draft | proposed | approved]
-- Parent: [strategy/foundation artifact]
-- Context file: context.md
+| Field | Value |
+| --- | --- |
+| ID | `[DOMAIN-XXX]` |
+| Status | `[draft | proposed | approved]` |
+| Owner skill | Domain Architect AI |
+| Parent strategy | `[STRAT-XXX/path]` |
+| Next skill | User Goal AI |
 
-## Definition
+## 📌 Definition
 
-[What this domain owns in the product.]
+[Define the domain and the coherent product/business area it owns.]
 
-## User And Business Outcomes
+## 🧱 Boundaries
 
-- [Outcome this domain enables.]
+| Owns | Does Not Own | Depends On |
+| --- | --- | --- |
+| `[concept/workflow]` | `[out of scope]` | `[domain/system]` |
 
-## Boundaries
+## 🗺️ Domain Map
 
-### Owns
+```mermaid
+flowchart TD
+  D["[DOMAIN-XXX] [Domain]"] --> G1["[GOAL-XXX] [Goal]"]
+  G1 --> F1["[FT-XXX] [Feature]"]
+  F1 --> U1["[UC-XXX] [Use Case]"]
 
-- [Concept, data, rule, workflow, or decision owned by this domain.]
+  classDef done fill:#dcfce7,stroke:#16a34a,color:#14532d;
+  classDef current fill:#fef3c7,stroke:#d97706,color:#78350f,stroke-width:3px;
+  classDef pending fill:#f8fafc,stroke:#94a3b8,color:#334155;
+  classDef blocked fill:#fee2e2,stroke:#dc2626,color:#7f1d1d;
 
-### Does Not Own
+  class D current;
+  class G1,F1,U1 pending;
+```
 
-- [Concept that belongs elsewhere.]
+## 🧠 Core Concepts
 
-## Core Concepts
+| Concept | Definition | Notes |
+| --- | --- | --- |
+| `[concept]` | `[definition]` | `[notes]` |
 
-- [Term]: [definition]
+## 🎯 User Goals
 
-## User Goals
+| Goal | Status | Delivery | Priority |
+| --- | --- | --- | --- |
+| `[GOAL-XXX] [name]` | `[status]` | `[L0-L5]` | `[P0-P3]` |
 
-- [GOAL-XXX] - [goal name] - [status]
+## 📊 Metrics
 
-## Cross-Domain Dependencies
+| Metric | Purpose | Source |
+| --- | --- | --- |
+| `[metric]` | `[why it matters]` | `[artifact/event]` |
 
-- [Domain] - [dependency] - [risk]
+## ⚠️ Risks And Open Questions
 
-## Business Rules
+| Item | Impact | Owner |
+| --- | --- | --- |
+| `[risk/question]` | `[impact]` | `[role]` |
 
-- [Rule] - source: [path/decision]
+## 🏁 Approval
 
-## Metrics
-
-- [Metric] - [why it matters]
-
-## Risks And Open Questions
-
-- [Risk/question] - owner: [role]
-
-## Approval
-
-- Approved by:
-- Date:
-- Notes:
+| Field | Value |
+| --- | --- |
+| Approved by |  |
+| Date |  |
+| Notes |  |

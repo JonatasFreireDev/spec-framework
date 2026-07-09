@@ -1,59 +1,95 @@
-# Design: [use case or feature name]
+# Design: [use case name]
 
-## Context
+## 🧭 Snapshot
 
-- Source artifact: [FT/UC/SPEC-XXX]
-- Status: [draft | proposed | approved]
+| Field | Value |
+| --- | --- |
+| ID | `[DES-XXX]` |
+| Status | `[draft | proposed | approved | Not applicable]` |
+| Source specification | `[SPEC-XXX]` |
+| Owner skill | UX/UI AI |
+| Next skill | Implementation Planner AI |
 
-## Delivery
+## 🚚 Delivery
 
-- Level: [inherited from source specification]
-- Priority: [inherited from source specification]
-- Rationale: [design impact on this delivery level]
+| Field | Value |
+| --- | --- |
+| Level | `[L0 | L1 | L2 | L3 | L4 | L5]` |
+| Priority | `[P0 | P1 | P2 | P3]` |
+| Depends on | `[SPEC-XXX/path]` |
+| Rationale | `[why this design belongs here]` |
 
-## Applicability
+## 🎯 UX Goal
 
-- UI required: [yes | no]
-- If no, Not applicable rationale: [why no design/mockup is required]
+[Describe the user experience outcome this design must make possible.]
 
-## UX Goal
+## 🗺️ User Flow
 
-[What the user should be able to understand or do.]
+```mermaid
+flowchart TD
+  A["Entry point"] --> B["Primary action"]
+  B --> C{"System state"}
+  C -->|Success| D["Success state"]
+  C -->|Recoverable issue| E["Recovery state"]
+  C -->|Blocking issue| F["Error state"]
 
-## Entry Points
+  classDef done fill:#dcfce7,stroke:#16a34a,color:#14532d;
+  classDef current fill:#fef3c7,stroke:#d97706,color:#78350f,stroke-width:3px;
+  classDef pending fill:#f8fafc,stroke:#94a3b8,color:#334155;
+  classDef blocked fill:#fee2e2,stroke:#dc2626,color:#7f1d1d;
 
-- [Where the user starts.]
+  class A done;
+  class B,C current;
+  class D,E pending;
+  class F blocked;
+```
 
-## Screens Or Components
+## 🚪 Entry Points
 
-- [Screen/component] - purpose: [purpose]
+| Entry Point | User Intent | Notes |
+| --- | --- | --- |
+| `[entry point]` | `[intent]` | `[notes]` |
 
-## States
+## 🧩 UI Regions And Components
 
-- Default:
-- Loading:
-- Empty:
-- Error:
-- Success:
-- Disabled/permission denied:
+| Region | Components | Data Displayed |
+| --- | --- | --- |
+| `[region]` | `[components]` | `[data]` |
 
-## Interaction Rules
+## 🎛️ States
 
-- [Rule]
+| State | User Sees | System Behavior | Accessibility Requirement |
+| --- | --- | --- | --- |
+| Default | `[copy/UI]` | `[behavior]` | `[requirement]` |
+| Loading | `[copy/UI]` | `[behavior]` | `[requirement]` |
+| Empty | `[copy/UI]` | `[behavior]` | `[requirement]` |
+| Success | `[copy/UI]` | `[behavior]` | `[requirement]` |
+| Error | `[copy/UI]` | `[behavior]` | `[requirement]` |
 
-## Accessibility
+## ♿ Accessibility
 
-- Keyboard:
-- Screen reader:
-- Contrast:
-- Motion:
+- [Requirement]
 
-## Content
+## ✍️ Content Guidelines
 
-- Labels:
-- Error messages:
-- Confirmation messages:
+- [Copy or content rule.]
 
-## Open Questions
+## 🖼️ Mockups Or Wireframes
 
-- [Question]
+| Asset | Path/Link | Status |
+| --- | --- | --- |
+| `[mockup]` | `[path/link]` | `[draft/proposed/approved/missing]` |
+
+## 🔐 Open Questions And Decisions
+
+| Question/Decision | Owner | Blocks |
+| --- | --- | --- |
+| `[question]` | `[role]` | `[artifact]` |
+
+## 🏁 Approval
+
+| Field | Value |
+| --- | --- |
+| UX approved by |  |
+| Date |  |
+| Notes |  |

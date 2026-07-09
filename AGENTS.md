@@ -111,6 +111,23 @@ After a generation or orchestration task, report:
 
 For larger documentation bootstraps or audits, save the report under `audits/`.
 
+Reports should be visual and scannable:
+
+- use status icons such as `✅`, `🟡`, `🔴`, and `➖`;
+- use summary tables for status, files, findings, decisions, and next steps;
+- use Mermaid diagrams for flows, gates, dependencies, and artifact chains;
+- keep prose concise and use tables for comparison or review surfaces;
+- include a final result section with verdict, blockers, and next owner.
+
+Mermaid flow diagrams should show current progress when they represent a framework sequence:
+
+- use `done` for approved or completed prior steps;
+- use `current` for the step being created, reviewed, or executed now;
+- use `pending` for future steps;
+- use `blocked` for steps stopped by missing decisions, gaps, conflicts, or dependencies.
+
+The skill that changes an artifact status must update the related `context.md` and directly related Mermaid flow. The Documentation Orchestrator owns final synchronization across reports, templates, indexes, and context files. The Audit Orchestrator verifies that Mermaid visual state matches artifact status during audits.
+
 ## Boundaries
 
 Do not change the architecture defined in `FRAMEWORK.md` without asking for approval.

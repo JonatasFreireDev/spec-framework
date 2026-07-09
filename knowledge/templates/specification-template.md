@@ -1,36 +1,56 @@
 # Specification: [use case name]
 
-## Context
+## 🧭 Snapshot
 
-- ID: [SPEC-XXX]
-- Status: [draft | proposed | approved]
-- Source use case: [UC-XXX]
-- Source feature: [FT-XXX]
-- Context file: context.md
+| Field | Value |
+| --- | --- |
+| ID | `[SPEC-XXX]` |
+| Status | `[draft | proposed | approved]` |
+| Source use case | `[UC-XXX]` |
+| Source feature | `[FT-XXX]` |
+| Owner skill | Specification AI |
+| Next skill | UX/UI AI |
 
-## Delivery
+## 🚚 Delivery
 
-- Level: [L0 | L1 | L2 | L3 | L4 | L5]
-- Priority: [P0 | P1 | P2 | P3]
-- Rationale:
-- Depends on:
-  - [artifact id/path]
+| Field | Value |
+| --- | --- |
+| Level | `[L0 | L1 | L2 | L3 | L4 | L5]` |
+| Priority | `[P0 | P1 | P2 | P3]` |
+| Depends on | `[artifact ids/paths]` |
+| Rationale | `[why this belongs here]` |
 
-## Product Context
+## 🗺️ Contract Flow
+
+```mermaid
+flowchart LR
+  U["Use Case"] --> S["Specification"]
+  S --> D["Design"]
+  D --> P["Implementation Plan"]
+  P --> G["Execution Graph"]
+  G --> T["Tasks"]
+
+  classDef done fill:#dcfce7,stroke:#16a34a,color:#14532d;
+  classDef current fill:#fef3c7,stroke:#d97706,color:#78350f,stroke-width:3px;
+  classDef pending fill:#f8fafc,stroke:#94a3b8,color:#334155;
+  classDef blocked fill:#fee2e2,stroke:#dc2626,color:#7f1d1d;
+
+  class U done;
+  class S current;
+  class D,P,G,T pending;
+```
+
+## 📌 Product Context
 
 [Why this use case matters and which outcome it supports.]
 
-## Scope
+## 🧱 Scope
 
-### In Scope
+| In Scope | Non-Goals |
+| --- | --- |
+| `[behavior to implement]` | `[behavior explicitly excluded]` |
 
-- [Behavior to implement.]
-
-### Non-Goals
-
-- [Behavior explicitly excluded.]
-
-## Functional Behavior
+## ⚙️ Functional Behavior
 
 ### Main Flow
 
@@ -38,93 +58,94 @@
 2. [Step]
 3. [Step]
 
-### Alternate Flows
+### Alternate, Error, And Edge Flows
 
-- [Flow] - [expected behavior]
+| Type | Case | Expected Behavior |
+| --- | --- | --- |
+| Alternate | `[flow]` | `[behavior]` |
+| Error | `[error]` | `[behavior/logging/analytics]` |
+| Edge | `[edge case]` | `[behavior]` |
 
-### Error States
+## 📏 Business Rules
 
-- [Error] - user/system behavior - logging/analytics expectation
+| Rule | Source | Impact |
+| --- | --- | --- |
+| `[rule]` | `[decision/path]` | `[impact]` |
 
-### Edge Cases
+## 🎨 UX Contract
 
-- [Edge case] - expected behavior
+| Area | Requirement |
+| --- | --- |
+| Entry points | `[entry points]` |
+| UI states | `[states]` |
+| Accessibility | `[requirements]` |
+| Copy/content | `[requirements]` |
+| Design artifact required | `[yes/no]` |
 
-## Business Rules
+## 🔌 API Contract
 
-- [Rule] - source: [decision/path]
+| API | Request | Response | Errors |
+| --- | --- | --- | --- |
+| `[command/query]` | `[shape]` | `[shape]` | `[errors]` |
 
-## UX Contract
+## 🗃️ Data Contract
 
-- Entry points:
-- UI states:
-- Accessibility requirements:
-- Copy/content requirements:
-- Design artifact required: [yes | no]
+| Entity/Table | Fields | Constraints | Privacy/Retention |
+| --- | --- | --- | --- |
+| `[entity]` | `[fields]` | `[constraints]` | `[notes]` |
 
-## API Contract
+## 🔐 Permissions And Security
 
-### Commands / Mutations
+| Topic | Requirement |
+| --- | --- |
+| Who can read | `[actors]` |
+| Who can write | `[actors]` |
+| Server-authoritative checks | `[checks]` |
+| Abuse cases | `[cases]` |
+| Privacy/LGPD notes | `[notes]` |
 
-- Method/path or function:
-- Request:
-- Response:
-- Errors:
+## 📊 Analytics And Observability
 
-### Queries
+| Type | Name | Purpose |
+| --- | --- | --- |
+| Event | `[event]` | `[purpose]` |
+| Log | `[log]` | `[purpose]` |
+| Metric | `[metric]` | `[purpose]` |
+| Alert | `[alert]` | `[purpose]` |
 
-- Method/path or function:
-- Parameters:
-- Response:
+## ⚡ Performance And Reliability
 
-## Data Contract
+| Topic | Expectation |
+| --- | --- |
+| Latency | `[expectation]` |
+| Offline/retry behavior | `[behavior]` |
+| Concurrency/idempotency | `[behavior]` |
 
-- Tables/entities:
-- Fields:
-- Constraints:
-- Retention/privacy:
-- Migration needed: [yes/no]
+## 🚢 Rollout
 
-## Permissions And Security
+| Topic | Plan |
+| --- | --- |
+| Feature flag | `[flag or N/A]` |
+| Migration/backfill | `[plan or N/A]` |
+| Rollback | `[plan]` |
 
-- Who can read:
-- Who can write:
-- Server-authoritative checks:
-- Abuse cases:
-- Privacy/LGPD notes:
-
-## Analytics And Observability
-
-- Analytics events:
-- Logs:
-- Metrics:
-- Alerts:
-
-## Performance And Reliability
-
-- Latency expectations:
-- Offline/retry behavior:
-- Concurrency/idempotency:
-
-## Rollout
-
-- Feature flag:
-- Migration/backfill:
-- Rollback:
-
-## Acceptance Criteria
+## ✅ Acceptance Criteria
 
 - [ ] [End-to-end observable behavior]
 - [ ] [Permission/security behavior]
 - [ ] [Analytics/observability behavior]
 - [ ] [Failure mode behavior]
 
-## Open Questions
+## 🔐 Open Questions And Decisions
 
-- [Question] - owner: [role] - blocks: [artifact]
+| Question/Decision | Owner | Blocks |
+| --- | --- | --- |
+| `[question]` | `[role]` | `[artifact]` |
 
-## Approval
+## 🏁 Approval
 
-- Approved by:
-- Date:
-- Notes:
+| Field | Value |
+| --- | --- |
+| Approved by |  |
+| Date |  |
+| Notes |  |

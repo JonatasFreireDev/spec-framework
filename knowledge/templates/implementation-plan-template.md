@@ -1,81 +1,103 @@
 # Implementation Plan: [use case name]
 
-## Context
+## 🧭 Snapshot
 
-- ID: [PLAN-XXX]
-- Status: [draft | proposed | approved]
-- Source specification: [SPEC-XXX]
-- Source design: [DESIGN-XXX | Not applicable]
-- Context file: context.md
+| Field | Value |
+| --- | --- |
+| ID | `[PLAN-XXX]` |
+| Status | `[draft | proposed | approved]` |
+| Source specification | `[SPEC-XXX]` |
+| Source design | `[DES-XXX | Not applicable]` |
+| Owner skill | Implementation Planner AI |
+| Next skill | Execution Graph AI |
 
-## Delivery
+## 🚚 Delivery
 
-- Level: [inherited from specification/design]
-- Priority: [inherited from specification/design]
-- Rationale:
+| Field | Value |
+| --- | --- |
+| Level | `[L0 | L1 | L2 | L3 | L4 | L5]` |
+| Priority | `[P0 | P1 | P2 | P3]` |
+| Depends on | `[artifact ids/paths]` |
+| Rationale | `[why this plan belongs here]` |
 
-## Technical Objective
+## 🎯 Technical Objective
 
-[What engineering must build to satisfy the specification.]
+[Describe the technical outcome without writing application code.]
 
-## Constraints
+## 🧱 Scope
 
-- Product:
-- UX:
-- Architecture:
-- Data:
-- Security/privacy:
-- Delivery:
+| In Scope | Out Of Scope |
+| --- | --- |
+| `[technical area]` | `[excluded area]` |
 
-## Proposed Phases
+## 🗺️ Delivery Sequence
 
-### Phase 1 - [name]
+```mermaid
+flowchart LR
+  A["Data/model"] --> B["Rules and permissions"]
+  B --> C["API/services"]
+  C --> D["UI/states"]
+  D --> E["Analytics and observability"]
+  E --> F["Tests and QA"]
+  F --> G["Release readiness"]
 
-- Goal:
-- Work:
-- Dependencies:
-- Exit criteria:
+  classDef done fill:#dcfce7,stroke:#16a34a,color:#14532d;
+  classDef current fill:#fef3c7,stroke:#d97706,color:#78350f,stroke-width:3px;
+  classDef pending fill:#f8fafc,stroke:#94a3b8,color:#334155;
+  classDef blocked fill:#fee2e2,stroke:#dc2626,color:#7f1d1d;
 
-### Phase 2 - [name]
+  class A current;
+  class B,C,D,E,F,G pending;
+```
 
-- Goal:
-- Work:
-- Dependencies:
-- Exit criteria:
+## 🧩 Phases
 
-## Candidate Tasks
+| Phase | Output | Dependencies | Risks |
+| --- | --- | --- | --- |
+| `[phase]` | `[output]` | `[dependencies]` | `[risks]` |
 
-- [TK-XXX] - [title] - type: [database/backend/frontend/test/analytics/docs] - delivery: [Lx/Px] - depends on: [ids]
+## 🔗 Dependencies
 
-## Files Or Modules Likely Touched
+| Dependency | Type | Blocking | Notes |
+| --- | --- | --- | --- |
+| `[dependency]` | `[data/api/design/decision]` | `[yes/no]` | `[notes]` |
 
-- [path/module] - [reason]
+## ⚠️ Risks
 
-## Test Strategy
+| Risk | Impact | Mitigation |
+| --- | --- | --- |
+| `[risk]` | `[impact]` | `[mitigation]` |
 
-- Unit:
-- Integration:
-- E2E/manual:
-- Security/RLS:
-- Regression:
+## 🧪 Test Plan
 
-## Rollout And Rollback
+| Test Area | Coverage |
+| --- | --- |
+| Unit | `[coverage]` |
+| Integration | `[coverage]` |
+| UI | `[coverage]` |
+| Accessibility | `[coverage]` |
+| Analytics/observability | `[coverage]` |
 
-- Rollout:
-- Feature flag:
-- Rollback:
-- Data recovery:
+## 🔙 Rollback Plan
 
-## Risks
+| Scenario | Rollback Action | Owner |
+| --- | --- | --- |
+| `[scenario]` | `[action]` | `[role]` |
 
-- [Risk] - likelihood: [low/med/high] - mitigation: [plan]
+## 📁 Probable Application Areas
 
-## Decisions Needed
+These are planning hints, not files to create in this framework repo.
 
-- [Decision] - owner: [role] - blocks: [task/spec]
+| Area | Expected Work |
+| --- | --- |
+| `[module/service/screen]` | `[work]` |
 
-## Approval
+## 🔐 Decisions Needing ADR Or Approval
 
-- Approved by:
-- Date:
-- Notes:
+| Decision | Blocks | Owner |
+| --- | --- | --- |
+| `[decision]` | `[artifact/task]` | `[role]` |
+
+## ✅ Candidate Tasks
+
+- [Task candidate that will become a graph node.]

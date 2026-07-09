@@ -26,6 +26,43 @@ Primary owner: Documentation Writer AI.
 
 Supporting skills: Product Historian AI for decisions, Specification AI for specification completeness, UX/UI AI for design coverage, Task AI for executable task structure.
 
+## Visual Standard
+
+Templates should produce artifacts that are easy to scan in GitHub and Codex:
+
+- use a `🧭 Snapshot` table near the top;
+- use status icons such as `✅`, `🟡`, `🔴`, and `➖` where a report or gate has a result;
+- use tables for scope, decisions, risks, dependencies, owners, and acceptance;
+- use Mermaid diagrams for flows, artifact chains, gates, journeys, and dependencies;
+- keep prose focused on decisions, evidence, and handoff.
+
+## Mermaid Progress Classes
+
+When a Mermaid flow represents framework progress, include visual classes:
+
+```mermaid
+flowchart LR
+  A["Problem"] --> B["Vision"] --> C["Strategy"] --> D["Domain"] --> E["User Goal"] --> F["Feature"] --> G["Use Case"] --> H["Specification"] --> I["Design"] --> J["Implementation Plan"] --> K["Execution Graph"] --> L["Tasks"]
+
+  classDef done fill:#dcfce7,stroke:#16a34a,color:#14532d;
+  classDef current fill:#fef3c7,stroke:#d97706,color:#78350f,stroke-width:3px;
+  classDef pending fill:#f8fafc,stroke:#94a3b8,color:#334155;
+  classDef blocked fill:#fee2e2,stroke:#dc2626,color:#7f1d1d;
+
+  class A,B,C,D,E,F,G done;
+  class H current;
+  class I,J,K,L pending;
+```
+
+Responsibility:
+
+| Owner | Responsibility |
+| --- | --- |
+| Skill that owns the current artifact | Update the local Mermaid flow and `context.md` when artifact status changes. |
+| Documentation Orchestrator | Synchronize Mermaid progress across reports, templates, indexes, and context files. |
+| Audit Orchestrator | Verify visual state matches real artifact status during audits. |
+| Release Orchestrator | Verify release/readiness visual flows before release approval. |
+
 ## Next Step
 
 When creating an artifact, read the relevant parent `context.md`, copy the matching template structure into the target document, replace placeholders with concrete content, and leave the artifact in `draft` or `proposed` until human approval is recorded.

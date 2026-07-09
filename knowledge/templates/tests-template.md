@@ -1,34 +1,67 @@
 # Tests: [use case name]
 
-## Context
+## 🧭 Snapshot
 
-- Source specification: [SPEC-XXX]
-- Source tasks: [TK-XXX]
-- Status: [draft | proposed | approved]
+| Field | Value |
+| --- | --- |
+| ID | `[TEST-XXX]` |
+| Status | `[draft | proposed | approved]` |
+| Source specification | `[SPEC-XXX]` |
+| Owner skill | QA AI |
+| Next skill | Audit Orchestrator or Release Orchestrator |
 
-## Test Matrix
+## 🎯 Test Goal
 
-| ID | Scenario | Type | Source acceptance criteria | Expected result |
-| --- | --- | --- | --- | --- |
-| T-001 | [scenario] | [unit/integration/e2e/manual/security] | [AC ref] | [result] |
+[Describe what confidence this test plan must provide.]
 
-## Required Coverage
+## 🧪 Coverage Matrix
 
-- Happy path:
-- Permission denied:
-- Validation errors:
-- Edge cases:
-- Analytics/observability:
-- Regression:
+| Area | Required Coverage | Status |
+| --- | --- | --- |
+| Behavioral | `[main and alternate flows]` | `[draft/proposed/approved]` |
+| Permissions/security | `[checks]` | `[status]` |
+| Data | `[constraints and mutations]` | `[status]` |
+| UX states | `[states]` | `[status]` |
+| Accessibility | `[requirements]` | `[status]` |
+| Analytics/observability | `[events/logs/metrics]` | `[status]` |
+| Performance/reliability | `[expectations]` | `[status]` |
 
-## Test Data
+## 🗺️ Test Flow
 
-- [Fixture/data needed]
+```mermaid
+flowchart LR
+  A["Fixtures"] --> B["Behavior tests"]
+  B --> C["Permission tests"]
+  C --> D["UX and accessibility checks"]
+  D --> E["Analytics assertions"]
+  E --> F["QA verdict"]
 
-## Commands Or Manual Steps
+  classDef done fill:#dcfce7,stroke:#16a34a,color:#14532d;
+  classDef current fill:#fef3c7,stroke:#d97706,color:#78350f,stroke-width:3px;
+  classDef pending fill:#f8fafc,stroke:#94a3b8,color:#334155;
+  classDef blocked fill:#fee2e2,stroke:#dc2626,color:#7f1d1d;
 
-- [command or step]
+  class A done;
+  class B current;
+  class C,D,E,F pending;
+```
 
-## Risks Not Covered
+## ✅ Test Cases
 
-- [Risk] - reason: [why not covered]
+| Test | Preconditions | Steps | Expected Result |
+| --- | --- | --- | --- |
+| `[test name]` | `[preconditions]` | `[steps]` | `[result]` |
+
+## ⚠️ Residual Risk
+
+| Risk | Why It Remains | Mitigation |
+| --- | --- | --- |
+| `[risk]` | `[reason]` | `[mitigation]` |
+
+## 🏁 QA Result
+
+| Field | Value |
+| --- | --- |
+| Verdict | `[passed | passed_with_notes | blocked]` |
+| Required fixes | `[fixes]` |
+| Next owner | `[role/skill]` |
