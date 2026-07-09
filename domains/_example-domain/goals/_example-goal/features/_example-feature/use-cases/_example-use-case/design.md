@@ -1,4 +1,10 @@
-﻿# Design: _example-use-case
+# Design: _example-use-case
+
+## Context
+
+- ID: UC-EXAMPLE:design
+- Status: draft
+- Source specification: UC-EXAMPLE:specification
 
 ## UX flow
 

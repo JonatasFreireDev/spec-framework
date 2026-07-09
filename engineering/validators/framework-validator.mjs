@@ -380,6 +380,23 @@ function writeArtifactsRegistry() {
   console.log(`Wrote ${rel(file)}`);
 }
 
+function currentArtifactsRegistry() {
+  return generatedRegistry ?? parseJsonFile(path.join(root, ".product", "artifacts.json")).value;
+}
+
+function currentArtifacts() {
+  const registry = currentArtifactsRegistry();
+  return Array.isArray(registry?.artifacts) ? registry.artifacts : [];
+}
+
+function statusCanFeedDownstream(status) {
+  return ["approved", "implemented", "validated", "released"].includes(status);
+}
+
+function isDraftLike(status) {
+  return status === "draft";
+}
+
 function validateUseCaseBundles() {
   for (const dir of findUseCaseDirs()) {
     for (const fileName of requiredUseCaseFiles) {
@@ -393,6 +410,58 @@ function validateUseCaseBundles() {
           `Create ${fileName} or explain why the use case is not executable yet.`
         );
       }
+    }
+  }
+}
+
+function addGateResult(file, child, parent, rule, fix) {
+  const severity = statusCanFeedDownstream(child?.status) ? "error" : "warning";
+  addResult(
+    severity,
+    "approval-gates",
+    file,
+    `${child?.id ?? "Downstream artifact"} is ${child?.status ?? "missing"}, but ${parent?.id ?? "required parent"} is ${parent?.status ?? "missing"}: ${rule}`,
+    fix
+  );
+}
+
+function artifactByType(artifacts, parentId, type) {
+  return artifacts.find((artifact) => artifact.type === type && artifact.parentIds?.includes(parentId));
+}
+
+function validateApprovalGates() {
+  const artifacts = currentArtifacts();
+  const useCases = artifacts.filter((artifact) => artifact.type === "use-case");
+
+  for (const useCase of useCases) {
+    const spec = artifactByType(artifacts, useCase.id, "specification");
+    const design = artifactByType(artifacts, useCase.id, "design");
+    const plan = artifactByType(artifacts, useCase.id, "implementation-plan");
+    const graph = artifactByType(artifacts, useCase.id, "execution-graph");
+    const tasks = artifactByType(artifacts, useCase.id, "taskset");
+
+    if (design && !spec) {
+      addGateResult(path.join(root, design.path), design, spec, "design requires an existing Specification.", "Create specification.md before design.md.");
+    } else if (design && !statusCanFeedDownstream(spec.status) && !isDraftLike(design.status)) {
+      addGateResult(path.join(root, design.path), design, spec, "design should not move beyond draft before Specification approval.", "Approve the Specification or keep Design as draft.");
+    }
+
+    if (plan && !design) {
+      addGateResult(path.join(root, plan.path), plan, design, "implementation plan requires design.md.", "Create design.md or mark Design as Not applicable.");
+    } else if (plan && !statusCanFeedDownstream(design.status) && !isDraftLike(plan.status)) {
+      addGateResult(path.join(root, plan.path), plan, design, "implementation plan should not move beyond draft before Design approval.", "Approve Design, mark Design Not applicable, or keep Implementation Plan as draft.");
+    }
+
+    if (graph && !plan) {
+      addGateResult(path.join(root, graph.path), graph, plan, "execution graph requires implementation-plan.md.", "Create implementation-plan.md before execution-graph.json.");
+    } else if (graph && !statusCanFeedDownstream(plan.status) && !isDraftLike(graph.status)) {
+      addGateResult(path.join(root, graph.path), graph, plan, "execution graph should not move beyond draft before Implementation Plan approval.", "Approve Implementation Plan or keep Execution Graph as draft.");
+    }
+
+    if (tasks && !graph) {
+      addGateResult(path.join(root, tasks.path), tasks, graph, "tasks require execution-graph.json.", "Create and validate execution-graph.json before tasks.md.");
+    } else if (tasks && !statusCanFeedDownstream(graph.status) && !isDraftLike(tasks.status)) {
+      addGateResult(path.join(root, tasks.path), tasks, graph, "tasks should not move beyond draft before Execution Graph approval.", "Approve Execution Graph or keep Tasks as draft.");
     }
   }
 }
@@ -622,9 +691,7 @@ function artifactStatusToMermaidState(status) {
 }
 
 function artifactRegistryById() {
-  const registry = generatedRegistry ?? parseJsonFile(path.join(root, ".product", "artifacts.json")).value;
-  const artifacts = Array.isArray(registry?.artifacts) ? registry.artifacts : [];
-  return new Map(artifacts.map((artifact) => [artifact.id, artifact]));
+  return new Map(currentArtifacts().map((artifact) => [artifact.id, artifact]));
 }
 
 function validateMermaidProgressState(file, block, index, artifactsById) {
@@ -803,6 +870,7 @@ flowchart LR
 | --- | --- |
 | Context metadata | ${results.some((item) => item.check === "context" && item.severity === "error") ? "🔴 has errors" : "✅ no errors"} |
 | Use-case bundles | ${results.some((item) => item.check === "use-case-bundle" && item.severity === "error") ? "🔴 has errors" : "✅ no errors"} |
+| Approval gates | ${results.some((item) => item.check === "approval-gates" && item.severity === "error") ? "🔴 has errors" : results.some((item) => item.check === "approval-gates") ? "🟡 findings" : "✅ no findings"} |
 | Execution graph JSON and dependencies | ${results.some((item) => item.check === "execution-graph" && item.severity === "error") ? "🔴 has errors" : "✅ no errors"} |
 | Decisions index | ${results.some((item) => item.check === "decisions-index") ? "🟡 findings" : "✅ no findings"} |
 | Artifacts registry | ${results.some((item) => item.check === "artifacts-registry" && item.severity === "error") ? "🔴 has errors" : results.some((item) => item.check === "artifacts-registry") ? "🟡 findings" : "✅ no findings"} |
@@ -832,6 +900,7 @@ if (writeRegistry) {
   writeArtifactsRegistry();
 }
 validateUseCaseBundles();
+validateApprovalGates();
 validateExecutionGraphs();
 validateContexts();
 validateProductPrefixLinks(allFiles);

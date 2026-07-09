@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-09T16:32:33.262Z",
+  "generatedAt": "2026-07-09T17:10:04.881Z",
   "generator": "engineering/validators/framework-validator.mjs",
   "artifacts": [
     {
@@ -92,7 +92,7 @@
       "id": "DES-002",
       "type": "design",
       "name": "Organizer Validates QR Code",
-      "status": "proposed",
+      "status": "draft",
       "ownerSkill": "ux-ui",
       "path": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/organizer-validates-qr-code/design.md",
       "parentIds": [
@@ -761,7 +761,7 @@
       "id": "UC-EXAMPLE:design",
       "type": "design",
       "name": "_example-use-case",
-      "status": "unknown",
+      "status": "draft",
       "ownerSkill": "ux-ui",
       "path": "domains/_example-domain/goals/_example-goal/features/_example-feature/use-cases/_example-use-case/design.md",
       "parentIds": [
@@ -779,10 +779,10 @@
       }
     },
     {
-      "id": "UC-EXAMPLE:implementationPlan",
+      "id": "UC-EXAMPLE:implementation-plan",
       "type": "implementation-plan",
       "name": "_example-use-case",
-      "status": "unknown",
+      "status": "draft",
       "ownerSkill": "implementation-planner",
       "path": "domains/_example-domain/goals/_example-goal/features/_example-feature/use-cases/_example-use-case/implementation-plan.md",
       "parentIds": [
@@ -803,7 +803,7 @@
       "id": "UC-EXAMPLE:specification",
       "type": "specification",
       "name": "_example-use-case",
-      "status": "unknown",
+      "status": "draft",
       "ownerSkill": "specification",
       "path": "domains/_example-domain/goals/_example-goal/features/_example-feature/use-cases/_example-use-case/specification.md",
       "parentIds": [
@@ -824,7 +824,7 @@
       "id": "UC-EXAMPLE:tasks",
       "type": "taskset",
       "name": "_example-use-case",
-      "status": "pending",
+      "status": "draft",
       "ownerSkill": "task-generator",
       "path": "domains/_example-domain/goals/_example-goal/features/_example-feature/use-cases/_example-use-case/tasks.md",
       "parentIds": [

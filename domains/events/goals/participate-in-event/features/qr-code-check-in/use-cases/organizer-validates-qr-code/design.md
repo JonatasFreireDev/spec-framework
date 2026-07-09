@@ -3,7 +3,7 @@
 ## Context
 
 - ID: DES-002
-- Status: proposed
+- Status: draft
 - Source specification: SPEC-002
 - Use case: UC-002
 - Delivery Level: L1 Walking Skeleton

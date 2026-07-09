@@ -1,4 +1,10 @@
-﻿# Tasks: _example-use-case
+# Tasks: _example-use-case
+
+## Context
+
+- ID: UC-EXAMPLE:tasks
+- Status: draft
+- Source graph: GRAPH-EXAMPLE
 
 Tasks are generated from the execution graph. Do not create implementation tasks without a linked Specification and graph node.
 
@@ -7,5 +13,5 @@ Tasks are generated from the execution graph. Do not create implementation tasks
 - Type: example
 - Depends on: none
 - Source: `execution-graph.json`
-- Status: pending
+- Status: draft
 - Acceptance criteria:

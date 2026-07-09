@@ -15,6 +15,7 @@ node engineering/validators/framework-validator.mjs --write-registry --write-rep
 The validator checks:
 
 - required use-case artifact bundles;
+- approval gates between Specification, Design, Implementation Plan, Execution Graph, and Tasks;
 - execution graph JSON shape and dependencies;
 - `context.md` required metadata;
 - `.product/artifacts.json` registry consistency;

@@ -1,4 +1,10 @@
-﻿# Specification: _example-use-case
+# Specification: _example-use-case
+
+## Context
+
+- ID: UC-EXAMPLE:specification
+- Status: draft
+- Source use case: UC-EXAMPLE
 
 ## Product context
 

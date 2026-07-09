@@ -1,4 +1,11 @@
-﻿# Implementation Plan: _example-use-case
+# Implementation Plan: _example-use-case
+
+## Context
+
+- ID: UC-EXAMPLE:implementation-plan
+- Status: draft
+- Source specification: UC-EXAMPLE:specification
+- Source design: UC-EXAMPLE:design
 
 ## Technical approach
 
