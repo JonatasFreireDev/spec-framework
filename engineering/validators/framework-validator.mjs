@@ -197,9 +197,11 @@ function parseLeadingIds(items) {
 }
 
 function parseDecisionIds(items) {
-  return items
-    .map((item) => item.match(/\bDEC-\d+\b/)?.[0])
-    .filter(Boolean);
+  return [...new Set(
+    items
+      .flatMap((item) => [...String(item).matchAll(/\bDEC-\d+\b/g)].map((match) => match[0]))
+      .filter(Boolean)
+  )];
 }
 
 function pathExistsMaybeProductPrefix(value) {
@@ -281,7 +283,10 @@ function artifactFromDocument(parentArtifact, documentKey, documentPath) {
       parentIds: [parentArtifact.id],
       childIds: Array.isArray(graph.nodes) ? graph.nodes.map((node) => node.id).filter(Boolean) : [],
       dependsOn: [],
-      decisions: [],
+      decisions: parseDecisionIds([
+        ...(graph.delivery?.depends_on ?? []),
+        ...(graph.delivery?.dependsOn ?? []),
+      ]),
       delivery: {
         ...(graph.delivery ?? {}),
         level: normalizeDeliveryLevel(graph.delivery?.level),
@@ -470,6 +475,47 @@ function validateDeliveryMetadata() {
 
     if (!String(delivery.rationale ?? "").trim()) {
       addResult("warning", "delivery", file, `${artifact.id} is missing delivery.rationale.`, "Explain why this level and priority were assigned.");
+    }
+  }
+}
+
+function decisionIndexById() {
+  const parsed = parseJsonFile(path.join(root, ".product", "decisions.json"));
+  const decisions = Array.isArray(parsed.value?.decisions) ? parsed.value.decisions : [];
+  return new Map(decisions.map((decision) => [decision.id, decision]));
+}
+
+function artifactDecisionReferences(artifact) {
+  const deliveryDependsOn = artifact.delivery?.depends_on ?? artifact.delivery?.dependsOn ?? [];
+  return [...new Set([
+    ...parseDecisionIds(artifact.decisions ?? []),
+    ...parseDecisionIds(artifact.dependsOn ?? []),
+    ...parseDecisionIds(Array.isArray(deliveryDependsOn) ? deliveryDependsOn : []),
+  ])];
+}
+
+function validateDecisionReferences() {
+  const decisionsById = decisionIndexById();
+
+  for (const artifact of currentArtifacts().filter((item) => item.type !== "decision")) {
+    const file = artifact.path ? path.join(root, artifact.path) : null;
+    const deliveryDependsOn = artifact.delivery?.depends_on ?? artifact.delivery?.dependsOn ?? [];
+    const deliveryDecisionRefs = parseDecisionIds(Array.isArray(deliveryDependsOn) ? deliveryDependsOn : []);
+
+    for (const decisionId of artifactDecisionReferences(artifact)) {
+      const decision = decisionsById.get(decisionId);
+      if (!decision) {
+        addResult("error", "decision-references", file, `${artifact.id} references ${decisionId}, but it is missing from .product/decisions.json.`, "Add the decision to .product/decisions.json or remove the reference.");
+        continue;
+      }
+
+      if (decision.path && !fs.existsSync(path.join(root, decision.path))) {
+        addResult("error", "decision-references", file, `${artifact.id} references ${decisionId}, but its decision file is missing.`, "Fix the decision path or create the decision record.");
+      }
+
+      if (deliveryDecisionRefs.includes(decisionId) && decision.status !== "approved") {
+        addResult("warning", "decision-references", file, `${artifact.id} depends on ${decisionId}, but decision status is ${decision.status}.`, "Approve the decision or remove it from delivery dependencies.");
+      }
     }
   }
 }
@@ -934,6 +980,7 @@ flowchart LR
 | Delivery metadata | ${results.some((item) => item.check === "delivery" && item.severity === "error") ? "🔴 has errors" : results.some((item) => item.check === "delivery") ? "🟡 findings" : "✅ no findings"} |
 | Execution graph JSON and dependencies | ${results.some((item) => item.check === "execution-graph" && item.severity === "error") ? "🔴 has errors" : "✅ no errors"} |
 | Decisions index | ${results.some((item) => item.check === "decisions-index") ? "🟡 findings" : "✅ no findings"} |
+| Decision references | ${results.some((item) => item.check === "decision-references" && item.severity === "error") ? "🔴 has errors" : results.some((item) => item.check === "decision-references") ? "🟡 findings" : "✅ no findings"} |
 | Artifacts registry | ${results.some((item) => item.check === "artifacts-registry" && item.severity === "error") ? "🔴 has errors" : results.some((item) => item.check === "artifacts-registry") ? "🟡 findings" : "✅ no findings"} |
 | Mermaid visual standard | ${results.some((item) => item.check === "mermaid") ? "🟡 findings" : "✅ no findings"} |
 | Mermaid progress state | ${results.some((item) => item.check === "mermaid-progress") ? "🟡 findings" : "✅ no findings"} |
@@ -967,6 +1014,7 @@ validateExecutionGraphs();
 validateContexts();
 validateProductPrefixLinks(allFiles);
 validateDecisionsIndex();
+validateDecisionReferences();
 validateArtifactsRegistry();
 validateMermaidAndTemplates(allFiles);
 validateMarkdownLinks(allFiles);

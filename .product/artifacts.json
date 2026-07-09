@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-09T17:18:52.738Z",
+  "generatedAt": "2026-07-09T17:21:14.949Z",
   "generator": "engineering/validators/framework-validator.mjs",
   "artifacts": [
     {
@@ -315,7 +315,10 @@
         "TK-006"
       ],
       "dependsOn": [],
-      "decisions": [],
+      "decisions": [
+        "DEC-001",
+        "DEC-002"
+      ],
       "delivery": {
         "level": "L1",
         "priority": "P0",
@@ -357,7 +360,10 @@
         "TK-002-007"
       ],
       "dependsOn": [],
-      "decisions": [],
+      "decisions": [
+        "DEC-001",
+        "DEC-002"
+      ],
       "delivery": {
         "level": "L1",
         "priority": "P0",
@@ -413,8 +419,6 @@
       "childIds": [],
       "dependsOn": [],
       "decisions": [
-        "DEC-001",
-        "DEC-001",
         "DEC-001",
         "DEC-002"
       ],
@@ -498,9 +502,6 @@
       "dependsOn": [],
       "decisions": [
         "DEC-001",
-        "DEC-002",
-        "DEC-001",
-        "DEC-001",
         "DEC-002"
       ],
       "delivery": {
@@ -526,8 +527,6 @@
       "childIds": [],
       "dependsOn": [],
       "decisions": [
-        "DEC-001",
-        "DEC-002",
         "DEC-001",
         "DEC-002"
       ],

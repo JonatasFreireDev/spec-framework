@@ -41,6 +41,7 @@ flowchart LR
 | Delivery metadata | ✅ no findings |
 | Execution graph JSON and dependencies | ✅ no errors |
 | Decisions index | ✅ no findings |
+| Decision references | ✅ no findings |
 | Artifacts registry | ✅ no findings |
 | Mermaid visual standard | ✅ no findings |
 | Mermaid progress state | ✅ no findings |
