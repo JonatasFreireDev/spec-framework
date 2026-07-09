@@ -59,12 +59,12 @@ A use case can generate executable tasks only when all of these are true:
 
 ## Output
 
-Use `product/knowledge/templates/readiness-report-template.md`.
+Use `knowledge/templates/readiness-report-template.md`.
 
 Save reports under:
 
 ```text
-product/audits/readiness/<scope-id>-readiness.md
+audits/readiness/<scope-id>-readiness.md
 ```
 
 ## Validator Command
@@ -78,7 +78,7 @@ npm run product:readiness -- <use-case-dir>
 Example:
 
 ```bash
-npm run product:readiness -- product/domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/attendee-checks-in-with-qr-code
+npm run product:readiness -- domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/attendee-checks-in-with-qr-code
 ```
 
 Use JSON output for automation:

@@ -5,7 +5,7 @@ id: DOMAIN-001
 type: domain
 name: Events
 status: draft
-owner_skill: 04-domain-architect.md
+owner_skill: domain-architect
 last_updated: 2026-07-09
 ```
 
@@ -15,7 +15,7 @@ Owns the product knowledge related to organizing and participating in events.
 
 ## Parent Artifacts
 
-- strategy - product/foundation/strategy/README.md - product direction placeholder
+- STRAT-001 - foundation/strategy/context.md - product strategy placeholder
 
 ## Child Artifacts
 
@@ -28,7 +28,7 @@ Owns the product knowledge related to organizing and participating in events.
 
 ## Related Artifacts
 
-- product/FRAMEWORK.md - framework source of truth
+- FRAMEWORK.md - framework source of truth
 
 ## Canonical Documents
 
@@ -53,7 +53,7 @@ Owns the product knowledge related to organizing and participating in events.
 
 ## Handoff
 
-Next recommended skill: 05-user-goal.md
+Next recommended skill: user-goal
 Required reading before next step:
 - domain.md
 - goals/participate-in-event/context.md

@@ -5,7 +5,7 @@ id: GOAL-001
 type: goal
 name: Participate in event
 status: draft
-owner_skill: 05-user-goal.md
+owner_skill: user-goal
 last_updated: 2026-07-09
 ```
 
@@ -27,7 +27,7 @@ Represents the user's goal of successfully attending an event they intend to joi
 
 ## Related Artifacts
 
-- product/FRAMEWORK.md - framework source of truth
+- FRAMEWORK.md - framework source of truth
 
 ## Canonical Documents
 
@@ -51,7 +51,7 @@ Represents the user's goal of successfully attending an event they intend to joi
 
 ## Handoff
 
-Next recommended skill: 07-feature.md
+Next recommended skill: feature
 Required reading before next step:
 - goal.md
 - features/qr-code-check-in/context.md

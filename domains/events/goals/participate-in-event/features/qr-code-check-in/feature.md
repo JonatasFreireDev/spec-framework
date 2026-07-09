@@ -36,6 +36,7 @@ QR Code Check-in lets an attendee prove presence at an event and lets an organiz
 ## Use Cases
 
 - UC-001 - Attendee checks in with QR code - draft
+- UC-002 - Organizer validates QR code - proposed
 
 ## UX Notes
 
@@ -55,6 +56,7 @@ QR Code Check-in lets an attendee prove presence at an event and lets an organiz
 - qr_check_in_generated - attendee generated QR.
 - qr_check_in_validated - organizer validated QR.
 - qr_check_in_failed - validation failed.
+- qr_check_in_duplicate_detected - duplicate organizer scan detected.
 
 ## Dependencies
 
@@ -70,3 +72,4 @@ The feature can move to use-case specification when QR ownership, expiration, va
 
 - Should QR payload be opaque token or signed payload?
 - What exact roles can validate attendance?
+- Is online-only validation acceptable for L1 venue operations?

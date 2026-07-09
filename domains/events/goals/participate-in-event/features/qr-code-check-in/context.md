@@ -5,7 +5,7 @@ id: FT-001
 type: feature
 name: QR Code Check-in
 status: draft
-owner_skill: 07-feature.md
+owner_skill: feature
 last_updated: 2026-07-09
 ```
 
@@ -19,7 +19,8 @@ Provides a concrete way for attendees and organizers to confirm event attendance
 
 ## Child Artifacts
 
-- UC-001 - use-cases/attendee-checks-in-with-qr-code/context.md - use case
+- UC-001 - use-cases/attendee-checks-in-with-qr-code/context.md - attendee-facing use case
+- UC-002 - use-cases/organizer-validates-qr-code/context.md - organizer-facing use case
 
 ## Dependencies
 
@@ -28,15 +29,23 @@ Provides a concrete way for attendees and organizers to confirm event attendance
 
 ## Related Artifacts
 
-- product/knowledge/templates/specification-template.md - expected specification shape
+- knowledge/templates/specification-template.md - expected specification shape
 
 ## Canonical Documents
 
 - Primary: feature.md
-- Specification: use-cases/attendee-checks-in-with-qr-code/specification.md
-- Implementation plan: use-cases/attendee-checks-in-with-qr-code/implementation-plan.md
-- Execution graph: use-cases/attendee-checks-in-with-qr-code/execution-graph.json
-- Tasks: use-cases/attendee-checks-in-with-qr-code/tasks.md
+- Specifications:
+  - use-cases/attendee-checks-in-with-qr-code/specification.md
+  - use-cases/organizer-validates-qr-code/specification.md
+- Implementation plans:
+  - use-cases/attendee-checks-in-with-qr-code/implementation-plan.md
+  - use-cases/organizer-validates-qr-code/implementation-plan.md
+- Execution graphs:
+  - use-cases/attendee-checks-in-with-qr-code/execution-graph.json
+  - use-cases/organizer-validates-qr-code/execution-graph.json
+- Tasks:
+  - use-cases/attendee-checks-in-with-qr-code/tasks.md
+  - use-cases/organizer-validates-qr-code/tasks.md
 
 ## Decisions
 
@@ -50,11 +59,12 @@ Provides a concrete way for attendees and organizers to confirm event attendance
 ## Open Questions
 
 - What is the expiration window for generated QR codes?
-- Should organizers scan attendee QR codes, or should attendees scan event QR codes?
+- Should organizer validation remain online-only for L1?
 
 ## Handoff
 
-Next recommended skill: 08-use-case.md
+Next recommended skill: use-case
 Required reading before next step:
 - feature.md
 - use-cases/attendee-checks-in-with-qr-code/context.md
+- use-cases/organizer-validates-qr-code/context.md

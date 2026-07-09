@@ -15,14 +15,14 @@ The QR Code Check-in example is structurally ready and no longer has blocking de
 
 | Artifact | Path | Status | Result |
 | --- | --- | --- | --- |
-| Domain context | product/domains/events/context.md | draft | pass |
-| Goal context | product/domains/events/goals/participate-in-event/context.md | draft | pass |
-| Feature | product/domains/events/goals/participate-in-event/features/qr-code-check-in/feature.md | draft | pass |
-| Use case | product/domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/attendee-checks-in-with-qr-code/use-case.md | draft | pass |
-| Specification | product/domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/attendee-checks-in-with-qr-code/specification.md | draft | pass |
-| Implementation plan | product/domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/attendee-checks-in-with-qr-code/implementation-plan.md | draft | pass |
-| Execution graph | product/domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/attendee-checks-in-with-qr-code/execution-graph.json | draft | pass |
-| Tasks | product/domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/attendee-checks-in-with-qr-code/tasks.md | draft | pass |
+| Domain context | domains/events/context.md | draft | pass |
+| Goal context | domains/events/goals/participate-in-event/context.md | draft | pass |
+| Feature | domains/events/goals/participate-in-event/features/qr-code-check-in/feature.md | draft | pass |
+| Use case | domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/attendee-checks-in-with-qr-code/use-case.md | draft | pass |
+| Specification | domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/attendee-checks-in-with-qr-code/specification.md | draft | pass |
+| Implementation plan | domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/attendee-checks-in-with-qr-code/implementation-plan.md | draft | pass |
+| Execution graph | domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/attendee-checks-in-with-qr-code/execution-graph.json | draft | pass |
+| Tasks | domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/attendee-checks-in-with-qr-code/tasks.md | draft | pass |
 
 ## Gate Checks
 
