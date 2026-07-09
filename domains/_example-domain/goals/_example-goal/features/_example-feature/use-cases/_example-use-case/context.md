@@ -25,8 +25,14 @@ This context demonstrates the executable artifact bundle expected for a use case
 
 ## Child Artifacts
 
-- SPEC-EXAMPLE - specification.md - example specification.
+- UC-EXAMPLE:specification - specification.md - example specification.
+- UC-EXAMPLE:design - design.md - example design.
+- UC-EXAMPLE:implementation-plan - implementation-plan.md - example implementation plan.
 - GRAPH-EXAMPLE - execution-graph.json - example execution graph.
+- UC-EXAMPLE:tasks - tasks.md - example task set.
+- UC-EXAMPLE:tests - tests.md - example tests.
+- UC-EXAMPLE:analytics - analytics.md - example analytics.
+- UC-EXAMPLE:audit - audit.md - example audit.
 
 ## Dependencies
 

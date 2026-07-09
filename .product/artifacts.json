@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-09T17:21:14.949Z",
+  "generatedAt": "2026-07-09T17:26:08.884Z",
   "generator": "engineering/validators/framework-validator.mjs",
   "artifacts": [
     {
@@ -466,29 +466,6 @@
       }
     },
     {
-      "id": "Scenario",
-      "type": "tests",
-      "name": "Attendee Checks In With QR Code",
-      "status": "draft",
-      "ownerSkill": "qa",
-      "path": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/attendee-checks-in-with-qr-code/tests.md",
-      "parentIds": [
-        "UC-001"
-      ],
-      "childIds": [],
-      "dependsOn": [],
-      "decisions": [],
-      "delivery": {
-        "level": "",
-        "priority": "",
-        "depends_on": [],
-        "rationale": ""
-      },
-      "documents": {
-        "canonical": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/attendee-checks-in-with-qr-code/tests.md"
-      }
-    },
-    {
       "id": "SPEC-001",
       "type": "specification",
       "name": "Attendee Checks In With QR Code",
@@ -598,8 +575,13 @@
       ],
       "childIds": [
         "SPEC-001",
+        "UC-001:design",
         "PLAN-001",
         "GRAPH-001",
+        "UC-001:tasks",
+        "UC-001:tests",
+        "UC-001:analytics",
+        "UC-001:audit",
         "TK-001..TK-006"
       ],
       "dependsOn": [
@@ -734,6 +716,29 @@
       }
     },
     {
+      "id": "UC-001:tests",
+      "type": "tests",
+      "name": "Attendee Checks In With QR Code",
+      "status": "draft",
+      "ownerSkill": "qa",
+      "path": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/attendee-checks-in-with-qr-code/tests.md",
+      "parentIds": [
+        "UC-001"
+      ],
+      "childIds": [],
+      "dependsOn": [],
+      "decisions": [],
+      "delivery": {
+        "level": "",
+        "priority": "",
+        "depends_on": [],
+        "rationale": ""
+      },
+      "documents": {
+        "canonical": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/attendee-checks-in-with-qr-code/tests.md"
+      }
+    },
+    {
       "id": "UC-002",
       "type": "use-case",
       "name": "Organizer Validates QR Code",
@@ -744,7 +749,14 @@
         "FT-001"
       ],
       "childIds": [
-        "SPEC-002"
+        "SPEC-002",
+        "DES-002",
+        "PLAN-002",
+        "GRAPH-002",
+        "TASKSET-002",
+        "TEST-002",
+        "ANA-002",
+        "AUD-002"
       ],
       "dependsOn": [
         "UC-001"
@@ -789,8 +801,14 @@
         "FT-EXAMPLE"
       ],
       "childIds": [
-        "SPEC-EXAMPLE",
-        "GRAPH-EXAMPLE"
+        "UC-EXAMPLE:specification",
+        "UC-EXAMPLE:design",
+        "UC-EXAMPLE:implementation-plan",
+        "GRAPH-EXAMPLE",
+        "UC-EXAMPLE:tasks",
+        "UC-EXAMPLE:tests",
+        "UC-EXAMPLE:analytics",
+        "UC-EXAMPLE:audit"
       ],
       "dependsOn": [
         "FT-EXAMPLE"

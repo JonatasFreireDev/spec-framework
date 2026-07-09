@@ -28,8 +28,13 @@ Defines the concrete interaction where an attendee presents a QR code and an org
 ## Child Artifacts
 
 - SPEC-001 - specification.md - implementation contract
+- UC-001:design - design.md - UX flow and states
 - PLAN-001 - implementation-plan.md - build strategy
 - GRAPH-001 - execution-graph.json - task DAG
+- UC-001:tasks - tasks.md - executable task set
+- UC-001:tests - tests.md - validation plan
+- UC-001:analytics - analytics.md - measurement plan
+- UC-001:audit - audit.md - audit evidence
 - TK-001..TK-006 - tasks.md - executable work
 
 ## Dependencies

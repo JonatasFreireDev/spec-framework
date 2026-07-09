@@ -10,6 +10,13 @@ parents:
   - FT-001
 children:
   - SPEC-002
+  - DES-002
+  - PLAN-002
+  - GRAPH-002
+  - TASKSET-002
+  - TEST-002
+  - ANA-002
+  - AUD-002
 depends_on:
   - UC-001
 used_by:

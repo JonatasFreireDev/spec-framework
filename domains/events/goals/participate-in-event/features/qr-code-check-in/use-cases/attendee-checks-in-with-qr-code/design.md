@@ -2,7 +2,8 @@
 
 ## Context
 
-- Source artifact: SPEC-001
+- ID: UC-001:design
+- Source specification: SPEC-001
 - Status: draft
 
 ## UX Goal

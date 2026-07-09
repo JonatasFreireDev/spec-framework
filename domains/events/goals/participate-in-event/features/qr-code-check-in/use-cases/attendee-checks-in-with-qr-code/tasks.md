@@ -5,7 +5,7 @@
 - ID: UC-001:tasks
 - Source specification: SPEC-001
 - Source implementation plan: PLAN-001
-- Source execution graph: GRAPH-001
+- Source graph: GRAPH-001
 - Status: draft
 - Delivery Level: L1 Walking Skeleton
 - Priority: P0

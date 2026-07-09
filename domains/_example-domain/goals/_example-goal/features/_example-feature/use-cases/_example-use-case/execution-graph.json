@@ -1,11 +1,11 @@
 {
   "id": "GRAPH-EXAMPLE",
   "status": "draft",
-  "sourceSpecification": "SPEC-EXAMPLE",
+  "sourceSpecification": "UC-EXAMPLE:specification",
   "sourceDesign": "DESIGN-EXAMPLE",
-  "sourceImplementationPlan": "PLAN-EXAMPLE",
-  "featureId": "FT-000",
-  "useCaseId": "UC-000",
+  "sourceImplementationPlan": "UC-EXAMPLE:implementation-plan",
+  "featureId": "FT-EXAMPLE",
+  "useCaseId": "UC-EXAMPLE",
   "delivery": {
     "level": "N/A",
     "priority": "N/A",

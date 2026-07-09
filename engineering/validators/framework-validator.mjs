@@ -193,7 +193,7 @@ function parseMarkdownSectionItems(text, heading) {
 function parseLeadingIds(items) {
   return items
     .map((item) => item.split(/\s+-\s+/)[0]?.trim())
-    .filter((item) => item && item !== "N/A" && /^[A-Z]+-[A-Z0-9.-]+$/.test(item));
+    .filter((item) => item && item !== "N/A" && /^[A-Z]+-[A-Za-z0-9.:-]+$/.test(item));
 }
 
 function parseDecisionIds(items) {
@@ -254,7 +254,11 @@ function parseMarkdownField(text, field) {
   const bullet = text.match(new RegExp(`^-\\s+${escaped}:\\s*(.+?)\\s*$`, "im"));
   if (bullet) return bullet[1].trim();
   const table = text.match(new RegExp(`\\|\\s*${escaped}\\s*\\|\\s*(.+?)\\s*\\|`, "i"));
-  if (table) return table[1].trim().replace(/^`|`$/g, "");
+  if (table) {
+    const value = table[1].trim().replace(/^`|`$/g, "");
+    if (field === "ID" && /^(Scenario|Task|Artifact|Decision|Metric|Persona|Opportunity)$/i.test(value)) return "";
+    return value;
+  }
   return "";
 }
 
@@ -533,6 +537,79 @@ function addGateResult(file, child, parent, rule, fix) {
 
 function artifactByType(artifacts, parentId, type) {
   return artifacts.find((artifact) => artifact.type === type && artifact.parentIds?.includes(parentId));
+}
+
+function artifactById() {
+  return new Map(currentArtifacts().map((artifact) => [artifact.id, artifact]));
+}
+
+function isPlaceholderArtifact(artifact) {
+  return artifact?.id?.includes("EXAMPLE") || artifact?.delivery?.level === "N/A";
+}
+
+function validateSourceField(artifact, field, expectedId, rule) {
+  if (!artifact?.path || !expectedId) return;
+  const file = path.join(root, artifact.path);
+  if (!fs.existsSync(file) || !artifact.path.endsWith(".md")) return;
+  const actual = parseMarkdownField(readText(file), field);
+  if (!actual && isPlaceholderArtifact(artifact)) return;
+  if (!actual) {
+    addResult("warning", "traceability", file, `${artifact.id} is missing ${field}.`, `Set ${field} to ${expectedId}.`);
+  } else if (actual !== expectedId) {
+    addResult("error", "traceability", file, `${artifact.id} ${field} is ${actual}, expected ${expectedId}: ${rule}`, `Update ${field} to ${expectedId}.`);
+  }
+}
+
+function validateTraceability() {
+  const artifacts = currentArtifacts();
+  const byId = artifactById();
+
+  for (const artifact of artifacts) {
+    const file = artifact.path ? path.join(root, artifact.path) : null;
+    for (const parentId of artifact.parentIds ?? []) {
+      const parent = byId.get(parentId);
+      if (parent && !(parent.childIds ?? []).includes(artifact.id)) {
+        addResult("warning", "traceability", file, `${artifact.id} points to parent ${parentId}, but the parent does not list it as a child.`, `Add ${artifact.id} to ${parentId} children or remove the parent link.`);
+      }
+    }
+
+    for (const childId of artifact.childIds ?? []) {
+      if (childId.includes("..") || /^(TK|TASK)-/.test(childId)) continue;
+      const child = byId.get(childId);
+      if (child && !(child.parentIds ?? []).includes(artifact.id)) {
+        addResult("warning", "traceability", file, `${artifact.id} lists child ${childId}, but the child does not point back to it.`, `Add ${artifact.id} to ${childId} parents or remove the child link.`);
+      }
+    }
+  }
+
+  for (const useCase of artifacts.filter((artifact) => artifact.type === "use-case")) {
+    const spec = artifactByType(artifacts, useCase.id, "specification");
+    const design = artifactByType(artifacts, useCase.id, "design");
+    const plan = artifactByType(artifacts, useCase.id, "implementation-plan");
+    const graph = artifactByType(artifacts, useCase.id, "execution-graph");
+    const tasks = artifactByType(artifacts, useCase.id, "taskset");
+
+    validateSourceField(spec, "Source use case", useCase.id, "Specification must trace to its use case.");
+    validateSourceField(design, "Source specification", spec?.id, "Design must trace to the use-case Specification.");
+    validateSourceField(plan, "Source specification", spec?.id, "Implementation Plan must trace to the use-case Specification.");
+    validateSourceField(tasks, "Source graph", graph?.id, "Tasks must trace to the use-case Execution Graph.");
+    if (tasks && parseMarkdownField(readText(path.join(root, tasks.path)), "Source specification")) {
+      validateSourceField(tasks, "Source specification", spec?.id, "Tasks must trace to the use-case Specification.");
+    }
+
+    if (graph?.path) {
+      const graphFile = path.join(root, graph.path);
+      const parsed = parseJsonFile(graphFile);
+      if (parsed.ok) {
+        if (parsed.value.sourceSpecification !== spec?.id) {
+          addResult("error", "traceability", graphFile, `${graph.id} sourceSpecification is ${parsed.value.sourceSpecification ?? "missing"}, expected ${spec?.id}.`, `Set sourceSpecification to ${spec?.id}.`);
+        }
+        if (parsed.value.sourceImplementationPlan && parsed.value.sourceImplementationPlan !== plan?.id) {
+          addResult("error", "traceability", graphFile, `${graph.id} sourceImplementationPlan is ${parsed.value.sourceImplementationPlan}, expected ${plan?.id}.`, `Set sourceImplementationPlan to ${plan?.id}.`);
+        }
+      }
+    }
+  }
 }
 
 function validateApprovalGates() {
@@ -977,6 +1054,7 @@ flowchart LR
 | Context metadata | ${results.some((item) => item.check === "context" && item.severity === "error") ? "🔴 has errors" : "✅ no errors"} |
 | Use-case bundles | ${results.some((item) => item.check === "use-case-bundle" && item.severity === "error") ? "🔴 has errors" : "✅ no errors"} |
 | Approval gates | ${results.some((item) => item.check === "approval-gates" && item.severity === "error") ? "🔴 has errors" : results.some((item) => item.check === "approval-gates") ? "🟡 findings" : "✅ no findings"} |
+| Traceability | ${results.some((item) => item.check === "traceability" && item.severity === "error") ? "🔴 has errors" : results.some((item) => item.check === "traceability") ? "🟡 findings" : "✅ no findings"} |
 | Delivery metadata | ${results.some((item) => item.check === "delivery" && item.severity === "error") ? "🔴 has errors" : results.some((item) => item.check === "delivery") ? "🟡 findings" : "✅ no findings"} |
 | Execution graph JSON and dependencies | ${results.some((item) => item.check === "execution-graph" && item.severity === "error") ? "🔴 has errors" : "✅ no errors"} |
 | Decisions index | ${results.some((item) => item.check === "decisions-index") ? "🟡 findings" : "✅ no findings"} |
@@ -1008,6 +1086,7 @@ if (writeRegistry) {
   writeArtifactsRegistry();
 }
 validateUseCaseBundles();
+validateTraceability();
 validateApprovalGates();
 validateDeliveryMetadata();
 validateExecutionGraphs();
