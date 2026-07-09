@@ -8,7 +8,7 @@
 | Status | `[draft | proposed | approved]` |
 | Source specification | `[SPEC-XXX]` |
 | Owner skill | QA AI |
-| Next skill | Audit Orchestrator or Release Orchestrator |
+| Next skill | QA AI for evidence or Security Review AI |
 
 ## 🎯 Test Goal
 
@@ -16,15 +16,15 @@
 
 ## 🧪 Coverage Matrix
 
-| Area | Required Coverage | Status |
-| --- | --- | --- |
-| Behavioral | `[main and alternate flows]` | `[draft/proposed/approved]` |
-| Permissions/security | `[checks]` | `[status]` |
-| Data | `[constraints and mutations]` | `[status]` |
-| UX states | `[states]` | `[status]` |
-| Accessibility | `[requirements]` | `[status]` |
-| Analytics/observability | `[events/logs/metrics]` | `[status]` |
-| Performance/reliability | `[expectations]` | `[status]` |
+| Area | Required Coverage | Evidence Required | Status |
+| --- | --- | --- | --- |
+| Behavioral | `[main and alternate flows]` | `[test/evidence path]` | `[draft/proposed/approved]` |
+| Permissions/security | `[checks]` | `[test/evidence path]` | `[status]` |
+| Data | `[constraints and mutations]` | `[test/evidence path]` | `[status]` |
+| UX states | `[states]` | `[test/evidence path]` | `[status]` |
+| Accessibility | `[requirements]` | `[test/evidence path]` | `[status]` |
+| Analytics/observability | `[events/logs/metrics]` | `[test/evidence path]` | `[status]` |
+| Performance/reliability | `[expectations]` | `[test/evidence path]` | `[status]` |
 
 ## 🗺️ Test Flow
 
@@ -32,9 +32,11 @@
 flowchart LR
   A["Fixtures"] --> B["Behavior tests"]
   B --> C["Permission tests"]
-  C --> D["UX and accessibility checks"]
-  D --> E["Analytics assertions"]
-  E --> F["QA verdict"]
+  C --> D["Security evidence"]
+  D --> E["UX and accessibility checks"]
+  E --> F["Analytics assertions"]
+  F --> G["QA evidence"]
+  G --> H["QA verdict"]
 
   classDef done fill:#dcfce7,stroke:#16a34a,color:#14532d;
   classDef current fill:#fef3c7,stroke:#d97706,color:#78350f,stroke-width:3px;
@@ -43,7 +45,7 @@ flowchart LR
 
   class A done;
   class B current;
-  class C,D,E,F pending;
+  class C,D,E,F,G,H pending;
 ```
 
 ## ✅ Test Cases
@@ -51,6 +53,24 @@ flowchart LR
 | Test | Preconditions | Steps | Expected Result |
 | --- | --- | --- | --- |
 | `[test name]` | `[preconditions]` | `[steps]` | `[result]` |
+
+## 🔎 Evidence Requirements
+
+| Requirement | Evidence Type | Required For Validation |
+| --- | --- | --- |
+| Every acceptance criterion maps to at least one validation method. | `[test/log/screenshot/review]` | yes |
+| Every task marked done has validation evidence. | `[test/log/review]` | yes |
+| Security and privacy controls have explicit evidence or a documented N/A. | `[test/security review/manual evidence]` | yes |
+| Failed tests and blockers have fix verification evidence. | `[test rerun/review]` | yes |
+
+## 🔐 Security Test Matrix
+
+| Control | Scenario | Expected Result | Evidence |
+| --- | --- | --- | --- |
+| Authorization | `[unauthorized actor/action]` | `[denied/logged]` | `[path]` |
+| Privacy | `[sensitive data path]` | `[not exposed/minimized]` | `[path]` |
+| Abuse/replay | `[abuse scenario]` | `[limited/rejected/idempotent]` | `[path]` |
+| Safe logging | `[failure/success event]` | `[no sensitive data leaked]` | `[path]` |
 
 ## ⚠️ Residual Risk
 
@@ -64,4 +84,6 @@ flowchart LR
 | --- | --- |
 | Verdict | `[passed | passed_with_notes | blocked]` |
 | Required fixes | `[fixes]` |
+| QA evidence | [qa-evidence.md](qa-evidence.md) |
+| Security review | [security-review.md](security-review.md) |
 | Next owner | `[role/skill]` |

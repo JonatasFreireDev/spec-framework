@@ -9,6 +9,7 @@
 | Scope | Use cases with real delivery level |
 | Use cases checked | 2 |
 | Ready for task generation | 0 |
+| Ready for validation/release | 0 |
 | Overall verdict | 🟡 in_progress |
 
 ## 🗺️ Readiness Flow
@@ -20,7 +21,9 @@ flowchart LR
   D --> P["Implementation Plan"]
   P --> G["Execution Graph"]
   G --> T["Tasks"]
-  T --> R["Ready For Execution"]
+  T --> Q["QA Evidence"]
+  Q --> SR["Security Review"]
+  SR --> R["Ready For Validation"]
 
   classDef done fill:#dcfce7,stroke:#16a34a,color:#14532d;
   classDef current fill:#fef3c7,stroke:#d97706,color:#78350f,stroke-width:3px;
@@ -29,15 +32,15 @@ flowchart LR
 
   class U done;
   class S current;
-  class D,P,G,T,R pending;
+  class D,P,G,T,Q,SR,R pending;
 ```
 
 ## 🚦 Use Case Matrix
 
-| Use Case | Name | Verdict | Score | Spec | Design | Plan | Graph | Tasks | Can Generate Tasks | Next Owner |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| [UC-001](../../domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/attendee-checks-in-with-qr-code/context.md) | Attendee checks in with QR code | 🟡 in_progress | 0% | ➖ draft | ➖ draft | ➖ draft | ➖ draft | ➖ draft | no | Specification AI |
-| [UC-002](../../domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/organizer-validates-qr-code/context.md) | Organizer Validates QR Code | 🟡 in_progress | 0% | 🟡 proposed | ➖ draft | ➖ draft | ➖ draft | ➖ draft | no | Specification AI |
+| Use Case | Name | Verdict | Score | Spec | Design | Plan | Graph | Tasks | Tests | QA Evidence | Security Review | Can Generate Tasks | Validation Ready | Next Owner |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| [UC-001](../../domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/attendee-checks-in-with-qr-code/context.md) | Attendee checks in with QR code | 🟡 in_progress | 0% | ➖ draft | ➖ draft | ➖ draft | ➖ draft | ➖ draft | ➖ draft | 🔴 missing | 🔴 missing | no | no | Specification AI |
+| [UC-002](../../domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/organizer-validates-qr-code/context.md) | Organizer Validates QR Code | 🟡 in_progress | 0% | 🟡 proposed | ➖ draft | ➖ draft | ➖ draft | ➖ draft | ➖ draft | ➖ draft | ➖ draft | no | no | Specification AI |
 
 ## 🏁 Result
 

@@ -15,20 +15,21 @@
 ```mermaid
 flowchart LR
   A["Approved artifacts"] --> B["Implementation complete"]
-  B --> C["QA"]
-  C --> D["Audit"]
-  D --> E["Release approval"]
-  E --> F["Rollout"]
-  F --> G["Monitor"]
+  B --> C["QA evidence"]
+  C --> D["Security review"]
+  D --> E["Audit"]
+  E --> F["Release approval"]
+  F --> G["Rollout"]
+  G --> H["Monitor"]
 
   classDef done fill:#dcfce7,stroke:#16a34a,color:#14532d;
   classDef current fill:#fef3c7,stroke:#d97706,color:#78350f,stroke-width:3px;
   classDef pending fill:#f8fafc,stroke:#94a3b8,color:#334155;
   classDef blocked fill:#fee2e2,stroke:#dc2626,color:#7f1d1d;
 
-  class A,B,C,D done;
-  class E current;
-  class F,G pending;
+  class A,B,C,D,E done;
+  class F current;
+  class G,H pending;
 ```
 
 ## 📦 Scope
@@ -50,6 +51,8 @@ flowchart LR
 | Execution graphs | `[paths]` | `[status]` |
 | Tasks | `[paths]` | `[status]` |
 | Tests | `[paths]` | `[status]` |
+| QA evidence | `[paths]` | `[status]` |
+| Security reviews | `[paths]` | `[status]` |
 | Audits | `[paths]` | `[status]` |
 
 ## 🚦 Readiness Gate
@@ -60,7 +63,9 @@ flowchart LR
 | UX approval | `[✅/🟡/🔴/➖]` | `[path]` | `[fix]` |
 | Engineering approval | `[✅/🟡/🔴]` | `[path]` | `[fix]` |
 | QA approval | `[✅/🟡/🔴]` | `[path]` | `[fix]` |
-| Security approval | `[✅/🟡/🔴/➖]` | `[path]` | `[fix]` |
+| QA evidence completeness | `[✅/🟡/🔴]` | `[qa-evidence.md]` | `[fix]` |
+| Security approval | `[✅/🟡/🔴/➖]` | `[security-review.md]` | `[fix]` |
+| Residual risk approval | `[✅/🟡/🔴/➖]` | `[decision path]` | `[fix]` |
 | Release approval | `[✅/🟡/🔴]` | `[path]` | `[fix]` |
 
 ## 🚢 Rollout

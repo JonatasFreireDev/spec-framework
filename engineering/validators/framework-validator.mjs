@@ -235,6 +235,8 @@ function inferArtifactDocuments(contextFile, meta) {
       executionGraph: "execution-graph.json",
       tasks: "tasks.md",
       tests: "tests.md",
+      qaEvidence: "qa-evidence.md",
+      securityReview: "security-review.md",
       analytics: "analytics.md",
       audit: "audit.md",
       readme: "README.md",
@@ -310,6 +312,8 @@ function artifactFromDocument(parentArtifact, documentKey, documentPath) {
     implementationPlan: { type: "implementation-plan", prefixes: ["PLAN"], ownerSkill: "implementation-planner" },
     tasks: { type: "taskset", prefixes: ["TASKSET"], ownerSkill: "task-generator" },
     tests: { type: "tests", prefixes: ["TEST"], ownerSkill: "qa" },
+    qaEvidence: { type: "qa-evidence", prefixes: ["QA"], ownerSkill: "qa" },
+    securityReview: { type: "security-review", prefixes: ["SEC"], ownerSkill: "security-review" },
     analytics: { type: "analytics", prefixes: ["ANA"], ownerSkill: "documentation-writer" },
     audit: { type: "audit", prefixes: ["AUD"], ownerSkill: "audit-orchestrator" },
   }[documentKey];
@@ -319,7 +323,7 @@ function artifactFromDocument(parentArtifact, documentKey, documentPath) {
   return {
     id: parseMarkdownField(text, "ID") || firstKnownId(text, config.prefixes) || `${parentArtifact.id}:${documentKey}`,
     type: config.type,
-    name: heading.replace(/^(Specification|Design|Implementation Plan|Tasks|Tests|Analytics|Audit):\s*/i, ""),
+    name: heading.replace(/^(Specification|Design|Implementation Plan|Tasks|Tests|QA Evidence|Security Review|Analytics|Audit):\s*/i, ""),
     status: parseMarkdownField(text, "Status") || "unknown",
     ownerSkill: config.ownerSkill,
     path: documentPath,
@@ -372,7 +376,7 @@ function buildArtifactsRegistry() {
     artifacts.push(artifact);
 
     if (type === "use-case") {
-      for (const key of ["specification", "design", "implementationPlan", "executionGraph", "tasks", "tests", "analytics", "audit"]) {
+      for (const key of ["specification", "design", "implementationPlan", "executionGraph", "tasks", "tests", "qaEvidence", "securityReview", "analytics", "audit"]) {
         const documentPath = artifact.documents[key];
         const documentArtifact = documentPath ? artifactFromDocument(artifact, key, documentPath) : null;
         if (documentArtifact) artifacts.push(documentArtifact);
@@ -666,6 +670,100 @@ function validateApprovalGates() {
       addGateResult(path.join(root, tasks.path), tasks, graph, "tasks require execution-graph.json.", "Create and validate execution-graph.json before tasks.md.");
     } else if (tasks && !statusCanFeedDownstream(graph.status) && !isDraftLike(tasks.status)) {
       addGateResult(path.join(root, tasks.path), tasks, graph, "tasks should not move beyond draft before Execution Graph approval.", "Approve Execution Graph or keep Tasks as draft.");
+    }
+  }
+}
+
+function statusRequiresValidationEvidence(status) {
+  return ["validated", "released"].includes(status);
+}
+
+function useCaseRequiresValidationEvidence(useCase, parts) {
+  return [
+    useCase,
+    parts.spec,
+    parts.design,
+    parts.plan,
+    parts.graph,
+    parts.tasks,
+    parts.tests,
+    parts.qaEvidence,
+    parts.securityReview,
+    parts.audit,
+  ].some((artifact) => statusRequiresValidationEvidence(artifact?.status));
+}
+
+function addValidationGateResult(file, child, requiredArtifact, rule, fix) {
+  addResult(
+    "error",
+    "validation-gates",
+    file,
+    `${child?.id ?? "Artifact"} is ${child?.status ?? "missing"}, but ${requiredArtifact ?? "required evidence"} is not approved: ${rule}`,
+    fix
+  );
+}
+
+function validateValidationGates() {
+  const artifacts = currentArtifacts();
+  const useCases = artifacts.filter((artifact) => artifact.type === "use-case");
+
+  for (const useCase of useCases) {
+    const parts = {
+      spec: artifactByType(artifacts, useCase.id, "specification"),
+      design: artifactByType(artifacts, useCase.id, "design"),
+      plan: artifactByType(artifacts, useCase.id, "implementation-plan"),
+      graph: artifactByType(artifacts, useCase.id, "execution-graph"),
+      tasks: artifactByType(artifacts, useCase.id, "taskset"),
+      tests: artifactByType(artifacts, useCase.id, "tests"),
+      qaEvidence: artifactByType(artifacts, useCase.id, "qa-evidence"),
+      securityReview: artifactByType(artifacts, useCase.id, "security-review"),
+      audit: artifactByType(artifacts, useCase.id, "audit"),
+    };
+
+    if (!useCaseRequiresValidationEvidence(useCase, parts)) continue;
+
+    const target = [useCase, parts.audit, parts.tasks, parts.graph, parts.plan, parts.design, parts.spec]
+      .find((artifact) => statusRequiresValidationEvidence(artifact?.status)) ?? useCase;
+    const targetFile = target.path ? path.join(root, target.path) : null;
+
+    if (!statusCanFeedDownstream(parts.tests?.status)) {
+      addValidationGateResult(
+        targetFile,
+        target,
+        parts.tests ? `${parts.tests.id} (${parts.tests.status})` : "tests.md",
+        "validation requires approved tests before an artifact can be validated or released.",
+        "Approve tests.md or keep the target artifact below validated."
+      );
+    }
+
+    if (!statusCanFeedDownstream(parts.qaEvidence?.status)) {
+      addValidationGateResult(
+        targetFile,
+        target,
+        parts.qaEvidence ? `${parts.qaEvidence.id} (${parts.qaEvidence.status})` : "qa-evidence.md",
+        "validation requires approved QA evidence covering acceptance criteria, tasks, security controls, and residual risks.",
+        "Create and approve qa-evidence.md or keep the target artifact below validated."
+      );
+    }
+
+    if (!statusCanFeedDownstream(parts.securityReview?.status)) {
+      addValidationGateResult(
+        targetFile,
+        target,
+        parts.securityReview ? `${parts.securityReview.id} (${parts.securityReview.status})` : "security-review.md",
+        "validation and release require approved Security Review for executable use cases.",
+        "Create and approve security-review.md or keep the target artifact below validated."
+      );
+    }
+
+    if (!statusCanFeedDownstream(parts.audit?.status)) {
+      addValidationGateResult(
+        targetFile,
+        target,
+        parts.audit ? `${parts.audit.id} (${parts.audit.status})` : "audit.md",
+        "release-grade validation requires an approved audit with no blocking findings.",
+        "Approve audit.md or keep the target artifact below validated."
+      );
     }
   }
 }
@@ -1040,6 +1138,9 @@ function nextReadinessOwner(parts) {
   if (!statusCanFeedDownstream(parts.plan?.status)) return "Implementation Planner AI";
   if (!statusCanFeedDownstream(parts.graph?.status)) return "Execution Graph AI";
   if (!statusCanFeedDownstream(parts.tasks?.status)) return "Task AI";
+  if (!statusCanFeedDownstream(parts.tests?.status)) return "QA AI";
+  if (!statusCanFeedDownstream(parts.qaEvidence?.status)) return "QA AI";
+  if (!statusCanFeedDownstream(parts.securityReview?.status)) return "Security Review AI";
   return "Audit Orchestrator";
 }
 
@@ -1052,21 +1153,26 @@ function useCaseReadiness(useCase) {
     graph: artifactByType(artifacts, useCase.id, "execution-graph"),
     tasks: artifactByType(artifacts, useCase.id, "taskset"),
     tests: artifactByType(artifacts, useCase.id, "tests"),
+    qaEvidence: artifactByType(artifacts, useCase.id, "qa-evidence"),
+    securityReview: artifactByType(artifacts, useCase.id, "security-review"),
     analytics: artifactByType(artifacts, useCase.id, "analytics"),
     audit: artifactByType(artifacts, useCase.id, "audit"),
   };
   const required = [parts.spec, parts.design, parts.plan, parts.graph, parts.tasks];
+  const validationRequired = [parts.tests, parts.qaEvidence, parts.securityReview, parts.audit];
   const missing = required.filter((item) => !item).length;
   const approved = required.filter((item) => statusCanFeedDownstream(item?.status)).length;
-  const score = missing > 0 ? Math.round((required.length - missing) / required.length * 100) : Math.round(approved / required.length * 100);
+  const score = missing > 0 ? Math.round(((required.length - missing) / required.length) * 100) : Math.round((approved / required.length) * 100);
   const canGenerateTasks = statusCanFeedDownstream(parts.spec?.status) && statusCanFeedDownstream(parts.design?.status) && statusCanFeedDownstream(parts.plan?.status) && parts.graph;
-  const verdictLabel = missing > 0 ? "🔴 not_ready" : canGenerateTasks ? "✅ ready" : "🟡 in_progress";
+  const validationReady = canGenerateTasks && validationRequired.every((item) => statusCanFeedDownstream(item?.status));
+  const verdictLabel = missing > 0 ? "\u{1F534} not_ready" : canGenerateTasks ? "\u{2705} ready" : "\u{1F7E1} in_progress";
 
   return {
     useCase,
     parts,
     score,
     canGenerateTasks,
+    validationReady,
     verdictLabel,
     nextOwner: nextReadinessOwner(parts),
   };
@@ -1079,18 +1185,19 @@ function generateReadinessReport() {
     .map(useCaseReadiness)
     .sort((a, b) => a.useCase.id.localeCompare(b.useCase.id));
   const readyCount = useCases.filter((item) => item.canGenerateTasks).length;
+  const validationReadyCount = useCases.filter((item) => item.validationReady).length;
   const rows = useCases.length
     ? useCases
         .map((item) => {
           const link = item.useCase.path ? `[${item.useCase.id}](../../${item.useCase.path})` : item.useCase.id;
-          return `| ${link} | ${markdownEscape(item.useCase.name)} | ${item.verdictLabel} | ${item.score}% | ${artifactStatusCell(item.parts.spec)} | ${artifactStatusCell(item.parts.design)} | ${artifactStatusCell(item.parts.plan)} | ${artifactStatusCell(item.parts.graph)} | ${artifactStatusCell(item.parts.tasks)} | ${item.canGenerateTasks ? "yes" : "no"} | ${item.nextOwner} |`;
+          return `| ${link} | ${markdownEscape(item.useCase.name)} | ${item.verdictLabel} | ${item.score}% | ${artifactStatusCell(item.parts.spec)} | ${artifactStatusCell(item.parts.design)} | ${artifactStatusCell(item.parts.plan)} | ${artifactStatusCell(item.parts.graph)} | ${artifactStatusCell(item.parts.tasks)} | ${artifactStatusCell(item.parts.tests)} | ${artifactStatusCell(item.parts.qaEvidence)} | ${artifactStatusCell(item.parts.securityReview)} | ${item.canGenerateTasks ? "yes" : "no"} | ${item.validationReady ? "yes" : "no"} | ${item.nextOwner} |`;
         })
         .join("\n")
-    : "| ➖ none | No use cases found. | ➖ | 0% | ➖ | ➖ | ➖ | ➖ | ➖ | no | Product Orchestrator |";
+    : "| \u{2796} none | No use cases found. | \u{2796} | 0% | \u{2796} | \u{2796} | \u{2796} | \u{2796} | \u{2796} | \u{2796} | \u{2796} | \u{2796} | no | no | Product Orchestrator |";
 
   return `# Framework Readiness Matrix
 
-## 🧭 Executive Snapshot
+## \u{1F9ED} Executive Snapshot
 
 | Field | Value |
 | --- | --- |
@@ -1099,9 +1206,10 @@ function generateReadinessReport() {
 | Scope | Use cases with real delivery level |
 | Use cases checked | ${useCases.length} |
 | Ready for task generation | ${readyCount} |
-| Overall verdict | ${readyCount === useCases.length && useCases.length > 0 ? "✅ ready" : "🟡 in_progress"} |
+| Ready for validation/release | ${validationReadyCount} |
+| Overall verdict | ${readyCount === useCases.length && useCases.length > 0 ? "\u{2705} ready" : "\u{1F7E1} in_progress"} |
 
-## 🗺️ Readiness Flow
+## \u{1F5FA}\u{FE0F} Readiness Flow
 
 \`\`\`mermaid
 flowchart LR
@@ -1110,7 +1218,9 @@ flowchart LR
   D --> P["Implementation Plan"]
   P --> G["Execution Graph"]
   G --> T["Tasks"]
-  T --> R["Ready For Execution"]
+  T --> Q["QA Evidence"]
+  Q --> SR["Security Review"]
+  SR --> R["Ready For Validation"]
 
   classDef done fill:#dcfce7,stroke:#16a34a,color:#14532d;
   classDef current fill:#fef3c7,stroke:#d97706,color:#78350f,stroke-width:3px;
@@ -1119,16 +1229,16 @@ flowchart LR
 
   class U done;
   class S current;
-  class D,P,G,T,R pending;
+  class D,P,G,T,Q,SR,R pending;
 \`\`\`
 
-## 🚦 Use Case Matrix
+## \u{1F6A6} Use Case Matrix
 
-| Use Case | Name | Verdict | Score | Spec | Design | Plan | Graph | Tasks | Can Generate Tasks | Next Owner |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Use Case | Name | Verdict | Score | Spec | Design | Plan | Graph | Tasks | Tests | QA Evidence | Security Review | Can Generate Tasks | Validation Ready | Next Owner |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 ${rows}
 
-## 🏁 Result
+## \u{1F3C1} Result
 
 | Field | Value |
 | --- | --- |
@@ -1137,7 +1247,6 @@ ${rows}
 | Required next step | Review and approve or revise draft/proposed specifications before design, plan, graph, and tasks advance. |
 `;
 }
-
 function generateReport() {
   const counts = severityCounts();
   const now = new Date().toISOString().slice(0, 10);
@@ -1190,6 +1299,7 @@ flowchart LR
 | Context metadata | ${results.some((item) => item.check === "context" && item.severity === "error") ? "🔴 has errors" : "✅ no errors"} |
 | Use-case bundles | ${results.some((item) => item.check === "use-case-bundle" && item.severity === "error") ? "🔴 has errors" : "✅ no errors"} |
 | Approval gates | ${results.some((item) => item.check === "approval-gates" && item.severity === "error") ? "🔴 has errors" : results.some((item) => item.check === "approval-gates") ? "🟡 findings" : "✅ no findings"} |
+| Validation gates | ${results.some((item) => item.check === "validation-gates" && item.severity === "error") ? "\u{1F534} has errors" : results.some((item) => item.check === "validation-gates") ? "\u{1F7E1} findings" : "\u{2705} no findings"} |
 | Traceability | ${results.some((item) => item.check === "traceability" && item.severity === "error") ? "🔴 has errors" : results.some((item) => item.check === "traceability") ? "🟡 findings" : "✅ no findings"} |
 | Status policy | ${results.some((item) => item.check === "status-policy" && item.severity === "error") ? "🔴 has errors" : results.some((item) => item.check === "status-policy") ? "🟡 findings" : "✅ no findings"} |
 | Delivery metadata | ${results.some((item) => item.check === "delivery" && item.severity === "error") ? "🔴 has errors" : results.some((item) => item.check === "delivery") ? "🟡 findings" : "✅ no findings"} |
@@ -1226,6 +1336,7 @@ validateUseCaseBundles();
 validateTraceability();
 validateStatusPolicy();
 validateApprovalGates();
+validateValidationGates();
 validateDeliveryMetadata();
 validateExecutionGraphs();
 validateContexts();

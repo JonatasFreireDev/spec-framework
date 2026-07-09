@@ -15,6 +15,8 @@ children:
   - GRAPH-002
   - TASKSET-002
   - TEST-002
+  - QA-002
+  - SEC-002
   - ANA-002
   - AUD-002
 depends_on:
@@ -31,6 +33,8 @@ documents:
   execution_graph: execution-graph.json
   tasks: tasks.md
   tests: tests.md
+  qa_evidence: qa-evidence.md
+  security_review: security-review.md
   analytics: analytics.md
   audit: audit.md
 delivery:
@@ -76,6 +80,8 @@ This context gives agents the local map for the organizer validation use case. I
 | Execution Graph | [execution-graph.json](execution-graph.json) |
 | Tasks | [tasks.md](tasks.md) |
 | Tests | [tests.md](tests.md) |
+| QA Evidence | [qa-evidence.md](qa-evidence.md) |
+| Security Review | [security-review.md](security-review.md) |
 | Analytics | [analytics.md](analytics.md) |
 | Audit | [audit.md](audit.md) |
 

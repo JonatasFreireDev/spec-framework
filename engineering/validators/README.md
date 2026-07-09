@@ -18,6 +18,7 @@ The validator checks:
 - traceability between parent, child, source, graph, and task artifacts;
 - status policy between parent and child artifacts;
 - approval gates between Specification, Design, Implementation Plan, Execution Graph, and Tasks;
+- validation gates for approved tests, QA evidence, Security Review, and audit before `validated` or `released`;
 - Delivery Level and Priority metadata for executable framework artifacts;
 - execution graph JSON shape and dependencies;
 - `context.md` required metadata;
@@ -50,4 +51,4 @@ When `--write-registry` is provided, the validator writes:
 
 Primary owner: Documentation Orchestrator.
 
-Supporting skills: Audit Orchestrator, Dependency Analyzer, Gap Finder, Product Historian.
+Supporting skills: Audit Orchestrator, Dependency Analyzer, Gap Finder, QA AI, Security Review AI, Product Historian.

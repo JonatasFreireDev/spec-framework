@@ -1,0 +1,65 @@
+---
+name: security-review
+description: "Security Review Skill. Use when Codex needs to evaluate authentication, authorization, privacy, abuse, secrets, data exposure, logging, dependency, rollout, and residual-risk controls before an executable artifact can be validated or released in this repository's Spec Framework workflow."
+---
+
+# Security Review Skill
+
+## Layer
+Validation
+
+## Responsibility
+Evaluate whether an executable artifact can move forward without unacceptable security, privacy, permission, abuse, or operational-risk gaps.
+
+Security Review does not replace QA. QA verifies the complete delivery contract and evidence matrix. Security Review owns security findings, required mitigations, and residual-risk classification.
+
+## Operating Modes
+- create: produce a first `security-review.md` from approved specification, design, implementation plan, execution graph, tasks, tests, code evidence, and known risks.
+- update: revise a security review after fixes or scope changes.
+- audit: inspect an artifact bundle for security gaps without changing product scope.
+- explain: summarize security posture, blockers, residual risks, and required approvals.
+
+## Inputs
+Specification; design; implementation plan; execution graph; tasks; tests; QA evidence; implementation notes; dependency reports; audit logs; approved decisions.
+
+## Outputs
+Security verdict; threat model summary; control checklist; blocking findings; residual risks; required fixes; approval or release-blocking recommendation.
+
+## Required Reading
+- FRAMEWORK.md.
+- Relevant parent and local `context.md` files.
+- `knowledge/templates/security-review-template.md`.
+- Approved decisions in `knowledge/decisions/` and `.product/decisions.json`.
+- Related `tests.md`, `qa-evidence.md`, and `audit.md` when present.
+
+## Workflow
+1. Read the local context and identify artifact status, delivery level, priority, and release intent.
+2. Confirm the Specification contains permissions, data classification, privacy, abuse, observability, error handling, rollout, and acceptance criteria.
+3. Confirm the Design avoids unsafe data exposure in UI states, errors, empty states, permission prompts, and accessibility flows.
+4. Confirm the Implementation Plan covers server-authoritative checks, secrets, dependency risk, migrations, rollback, observability, and security tests.
+5. Confirm the Execution Graph and Tasks include explicit security work when the flow touches data, permissions, tokens, payments, uploads, messaging, search, public endpoints, or admin operations.
+6. Review QA evidence and verify that security controls have evidence, not only intention.
+7. Classify findings as blocker, required fix, note, or accepted residual risk.
+8. Do not mark the artifact secure when a blocker remains. Request a decision for any accepted high or hard-to-reverse residual risk.
+
+## Review Checklist
+- [ ] Authentication and authorization are server-authoritative.
+- [ ] Least privilege is explicit for all actors and roles.
+- [ ] Sensitive data and PII are minimized, protected, and retained only as needed.
+- [ ] Inputs are validated and unsafe outputs are escaped or avoided.
+- [ ] Abuse cases, replay, enumeration, rate limits, and idempotency are addressed where relevant.
+- [ ] Secrets, tokens, and credentials are not exposed in UI, logs, analytics, code, or documentation examples.
+- [ ] Logs, analytics, and audit trails support investigation without leaking sensitive data.
+- [ ] Dependencies, migrations, rollout, rollback, and monitoring have security-aware handling.
+- [ ] Security tests or manual security evidence exist for every security acceptance criterion.
+- [ ] Residual risks are documented with owner, severity, mitigation, and approval status.
+
+## Verdict Rules
+- `passed`: no blocking findings; required controls have evidence; residual risks are low or explicitly approved.
+- `passed_with_notes`: no blocker, but non-blocking fixes or monitoring actions remain.
+- `blocked`: any high-risk gap, missing evidence for a required control, unapproved permission/privacy decision, or release-impacting unknown remains.
+
+## Handoff
+Next: QA AI, Audit Orchestrator, or Release Orchestrator.
+
+Pass forward the verdict, evidence links, blockers, residual risks, required decisions, and whether release is blocked.

@@ -20,6 +20,8 @@ Use this use case when specifying, designing, planning, testing, or auditing org
 | Execution Graph | [execution-graph.json](execution-graph.json) | Task dependency graph. |
 | Tasks | [tasks.md](tasks.md) | Executable task list. |
 | Tests | [tests.md](tests.md) | Validation plan. |
+| QA Evidence | [qa-evidence.md](qa-evidence.md) | Evidence matrix for acceptance, task, and security validation. |
+| Security Review | [security-review.md](security-review.md) | Security/privacy gate before validation or release. |
 | Analytics | [analytics.md](analytics.md) | Analytics and observability events. |
 | Audit | [audit.md](audit.md) | Readiness and residual risks. |
 
@@ -27,7 +29,7 @@ Use this use case when specifying, designing, planning, testing, or auditing org
 
 Primary owner: Use Case AI.
 
-Downstream owners: Specification AI, UX/UI AI, Implementation Planner AI, Execution Graph AI, Task AI, QA AI.
+Downstream owners: Specification AI, UX/UI AI, Implementation Planner AI, Execution Graph AI, Task AI, QA AI, Security Review AI.
 
 ## Next Step
 

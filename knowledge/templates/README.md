@@ -17,6 +17,7 @@ Use these templates whenever a new canonical artifact is created or an existing 
 - `journey-template.md`: user journey artifact.
 - `specification-template.md`, `design-template.md`, `implementation-plan-template.md`: planning contracts.
 - `execution-graph-template.json`, `tasks-template.md`, `tests-template.md`: executable planning artifacts.
+- `qa-evidence-template.md`, `security-review-template.md`: validation evidence and security gate artifacts.
 - `analytics-template.md`, `audit-template.md`, `readiness-report-template.md`: validation and measurement artifacts.
 - `decision-template.md`, `release-template.md`: human approval, decision, and release artifacts.
 
@@ -24,7 +25,7 @@ Use these templates whenever a new canonical artifact is created or an existing 
 
 Primary owner: Documentation Writer AI.
 
-Supporting skills: Product Historian AI for decisions, Specification AI for specification completeness, UX/UI AI for design coverage, Task AI for executable task structure.
+Supporting skills: Product Historian AI for decisions, Specification AI for specification completeness, UX/UI AI for design coverage, Task AI for executable task structure, QA AI for evidence coverage, Security Review AI for security gates.
 
 ## Visual Standard
 

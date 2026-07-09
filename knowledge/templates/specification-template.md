@@ -22,6 +22,8 @@
 | Execution Graph | [execution-graph.json](execution-graph.json) |
 | Tasks | [tasks.md](tasks.md) |
 | Tests | [tests.md](tests.md) |
+| QA Evidence | [qa-evidence.md](qa-evidence.md) |
+| Security Review | [security-review.md](security-review.md) |
 | Analytics | [analytics.md](analytics.md) |
 | Audit | [audit.md](audit.md) |
 
@@ -43,6 +45,8 @@ flowchart LR
   D --> P["Implementation Plan"]
   P --> G["Execution Graph"]
   G --> T["Tasks"]
+  T --> Q["QA Evidence"]
+  Q --> SR["Security Review"]
 
   classDef done fill:#dcfce7,stroke:#16a34a,color:#14532d;
   classDef current fill:#fef3c7,stroke:#d97706,color:#78350f,stroke-width:3px;
@@ -51,7 +55,7 @@ flowchart LR
 
   class U done;
   class S current;
-  class D,P,G,T pending;
+  class D,P,G,T,Q,SR pending;
 ```
 
 ## 📌 Product Context

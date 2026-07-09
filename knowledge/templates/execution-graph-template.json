@@ -14,7 +14,7 @@
       "id": "TK-001",
       "title": "[task title]",
       "type": "database|backend|frontend|test|analytics|docs|security",
-      "ownerSkill": "task-runner|documentation-writer|qa|security-reviewer",
+      "ownerSkill": "task-runner|documentation-writer|qa|security-review",
       "dependsOn": [],
       "sourceSections": ["Specification > Data Contract"],
       "delivery": {

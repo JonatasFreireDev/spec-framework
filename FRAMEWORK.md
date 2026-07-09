@@ -248,10 +248,12 @@ decisions:
 O fluxo de uma nova feature deve ser:
 
 ```text
-Feature -> Use Cases -> Specification -> Design -> Implementation Plan -> Execution Graph -> Tasks -> Implementation -> QA -> Review -> Audit -> Release
+Feature -> Use Cases -> Specification -> Design -> Implementation Plan -> Execution Graph -> Tasks -> Implementation -> QA Evidence -> Security Review -> Review -> Audit -> Release
 ```
 
 O Design e obrigatorio para qualquer use case com interface. Para entregas sem UI, `design.md` deve existir como artefato curto com `Not applicable`, justificativa e impactos para acessibilidade, observabilidade ou operacao quando houver.
+
+QA Evidence e Security Review sao gates de validacao. QA Evidence comprova que os criterios de aceite, tasks, fluxos, bordas, regressao, acessibilidade, observabilidade e controles de seguranca foram verificados. Security Review avalia autenticacao, autorizacao, privacidade, abuso, dados sensiveis, tokens, logs, dependencias, rollout, rollback e risco residual. Um artefato nao deve chegar a `validated` ou `released` quando houver blocker de QA ou seguranca.
 
 A Specification deve responder:
 
@@ -294,6 +296,8 @@ Feature flags
 Acceptance criteria
 Open questions
 ```
+
+Security Review nao e uma promessa absoluta de ausencia de risco. O papel do gate e garantir que todos os controles definidos foram verificados com evidencia, que blockers estao resolvidos, e que riscos residuais estao documentados e aprovados por humanos quando forem relevantes.
 
 ## 6.1. Priorizacao De Entrega
 
@@ -447,9 +451,9 @@ As skills sao especialistas. Elas podem operar em modos como `create`, `update`,
 ### Engineering And Validation
 
 - Code Runner AI: implementa tasks.
-- QA AI: valida comportamento, testes, bordas e performance.
+- QA AI: valida comportamento, testes, bordas, performance e matriz de evidencias.
 - Code Review AI: revisa qualidade, manutencao e regressao.
-- Security Review AI: avalia superficie sensivel.
+- Security Review AI: avalia autenticacao, autorizacao, privacidade, abuso, exposicao de dados, tokens, logs, dependencias, rollout e risco residual.
 
 ### Audit
 
@@ -509,8 +513,9 @@ Antes de release, verifica:
 - tasks
 - testes
 - QA
+- QA evidence
 - review
-- seguranca quando aplicavel
+- security review para entregas executaveis, com profundidade proporcional ao risco
 
 ## 11. Gates De Aprovacao
 
@@ -535,10 +540,17 @@ Regras:
 - `approved`: pode alimentar a proxima etapa.
 - `in_progress`: esta sendo implementado.
 - `implemented`: codigo ou artefato foi produzido.
-- `validated`: passou por QA, review e gates aplicaveis.
+- `validated`: passou por QA, review, Security Review quando aplicavel, e possui evidencias suficientes.
 - `released`: chegou ao usuario ou ambiente alvo.
 - `deprecated`: nao deve orientar novas implementacoes.
 - `superseded`: substituido por outro artefato.
+
+Transicoes obrigatorias:
+
+- `implemented -> validated`: exige QA Evidence aprovada e sem blockers; exige Security Review aprovada quando houver codigo, dados, permissoes, tokens, API, pagamentos, uploads, mensagens, busca, admin, analytics sensivel ou qualquer risco de privacidade/abuso.
+- `validated -> released`: exige Release Orchestrator, auditoria sem blockers, Security Review sem blockers, riscos residuais aceitos e rollback/monitoramento definidos.
+- QA pode bloquear validacao quando qualquer criterio de aceite, task, controle de seguranca, regressao critica ou evidencia obrigatoria estiver ausente.
+- Security Review pode bloquear validacao e release quando houver falha de autorizacao, vazamento de dados, decisao de permissao sem aprovacao, segredo exposto, abuso nao mitigado, logging inseguro ou risco residual alto sem decisao humana.
 
 ## 12. Decisoes
 
@@ -566,6 +578,8 @@ Tipos de auditoria:
 - Consistency: os nomes, estados, ids e links batem?
 - Security: ha risco de acesso indevido, abuso ou vazamento?
 - UX: a experiencia fecha para a persona?
+
+QA e Security Review devem produzir ou referenciar evidencias. Auditorias podem verificar a coerencia dessas evidencias, mas nao devem declarar uma entrega como segura quando os gates especializados estao ausentes ou bloqueados.
 
 Saida esperada:
 

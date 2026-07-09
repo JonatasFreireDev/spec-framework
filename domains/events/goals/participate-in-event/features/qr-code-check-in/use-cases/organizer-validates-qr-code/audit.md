@@ -6,7 +6,7 @@
 | --- | --- |
 | ID | AUD-002 |
 | Status | draft |
-| Scope | UC-002, SPEC-002, DES-002, PLAN-002, GRAPH-002, TASKSET-002, TEST-002, ANA-002 |
+| Scope | UC-002, SPEC-002, DES-002, PLAN-002, GRAPH-002, TASKSET-002, TEST-002, QA-002, SEC-002, ANA-002 |
 | Verdict | 🟡 approved_with_notes |
 | Next recommended skill | Impact Analysis AI, then Product Historian AI |
 
@@ -21,8 +21,10 @@ flowchart LR
   P --> G["GRAPH-002"]
   G --> T["TASKSET-002"]
   T --> Q["TEST-002"]
+  Q --> QE["QA-002"]
+  QE --> SR["SEC-002"]
   U --> A["ANA-002"]
-  Q --> V["Audit Verdict"]
+  SR --> V["Audit Verdict"]
   A --> V
 
   classDef done fill:#dcfce7,stroke:#16a34a,color:#14532d;
@@ -31,7 +33,7 @@ flowchart LR
   classDef blocked fill:#fee2e2,stroke:#dc2626,color:#7f1d1d;
 
   class S,D,P,G,T,Q,A done;
-  class U,V current;
+  class U,QE,SR,V current;
 ```
 
 ## 🚦 Verdict Matrix
@@ -45,6 +47,8 @@ flowchart LR
 | Execution graph | ✅ pass | `execution-graph.json` | Graph is a DAG and includes dependency metadata. |
 | Task traceability | ✅ pass | `tasks.md` | Tasks point to specification-derived work. |
 | Test coverage | ✅ pass | `tests.md` | Behavior, permissions, data, UX, analytics, and accessibility are covered. |
+| QA evidence | blocked | `qa-evidence.md` | Evidence is planned but not executed; validation remains blocked. |
+| Security review | blocked | `security-review.md` | Security review is drafted and blocks validation until role and rollout decisions are approved. |
 | Decision readiness | 🔴 blocked | `context.md`, `specification.md`, `implementation-plan.md` | Organizer roles, offline mode, and manual fallback need approval. |
 
 ## 🔎 Findings

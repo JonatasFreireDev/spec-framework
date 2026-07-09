@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-09T17:32:02.476Z",
+  "generatedAt": "2026-07-09T19:13:45.893Z",
   "generator": "engineering/validators/framework-validator.mjs",
   "artifacts": [
     {
@@ -466,6 +466,55 @@
       }
     },
     {
+      "id": "QA-002",
+      "type": "qa-evidence",
+      "name": "Organizer Validates QR Code",
+      "status": "draft",
+      "ownerSkill": "qa",
+      "path": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/organizer-validates-qr-code/qa-evidence.md",
+      "parentIds": [
+        "UC-002"
+      ],
+      "childIds": [],
+      "dependsOn": [],
+      "decisions": [],
+      "delivery": {
+        "level": "",
+        "priority": "",
+        "depends_on": [],
+        "rationale": ""
+      },
+      "documents": {
+        "canonical": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/organizer-validates-qr-code/qa-evidence.md"
+      }
+    },
+    {
+      "id": "SEC-002",
+      "type": "security-review",
+      "name": "Organizer Validates QR Code",
+      "status": "draft",
+      "ownerSkill": "security-review",
+      "path": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/organizer-validates-qr-code/security-review.md",
+      "parentIds": [
+        "UC-002"
+      ],
+      "childIds": [],
+      "dependsOn": [],
+      "decisions": [
+        "DEC-001",
+        "DEC-002"
+      ],
+      "delivery": {
+        "level": "L1",
+        "priority": "P0",
+        "depends_on": [],
+        "rationale": "Organizer validation is a server-authoritative attendance action and must be reviewed before validation or release."
+      },
+      "documents": {
+        "canonical": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/organizer-validates-qr-code/security-review.md"
+      }
+    },
+    {
       "id": "SPEC-001",
       "type": "specification",
       "name": "Attendee Checks In With QR Code",
@@ -755,6 +804,8 @@
         "GRAPH-002",
         "TASKSET-002",
         "TEST-002",
+        "QA-002",
+        "SEC-002",
         "ANA-002",
         "AUD-002"
       ],
@@ -785,6 +836,8 @@
         "executionGraph": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/organizer-validates-qr-code/execution-graph.json",
         "tasks": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/organizer-validates-qr-code/tasks.md",
         "tests": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/organizer-validates-qr-code/tests.md",
+        "qaEvidence": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/organizer-validates-qr-code/qa-evidence.md",
+        "securityReview": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/organizer-validates-qr-code/security-review.md",
         "analytics": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/organizer-validates-qr-code/analytics.md",
         "audit": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/organizer-validates-qr-code/audit.md",
         "readme": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/organizer-validates-qr-code/README.md"

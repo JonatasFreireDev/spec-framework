@@ -21,6 +21,8 @@
 | Execution Graph | [execution-graph.json](execution-graph.json) |
 | Tasks | [tasks.md](tasks.md) |
 | Tests | [tests.md](tests.md) |
+| QA Evidence | [qa-evidence.md](qa-evidence.md) |
+| Security Review | [security-review.md](security-review.md) |
 | Audit | [audit.md](audit.md) |
 
 ## 🚚 Delivery
@@ -50,8 +52,9 @@ flowchart LR
   B --> C["API/services"]
   C --> D["UI/states"]
   D --> E["Analytics and observability"]
-  E --> F["Tests and QA"]
-  F --> G["Release readiness"]
+  E --> F["Tests and QA evidence"]
+  F --> G["Security review"]
+  G --> H["Release readiness"]
 
   classDef done fill:#dcfce7,stroke:#16a34a,color:#14532d;
   classDef current fill:#fef3c7,stroke:#d97706,color:#78350f,stroke-width:3px;
@@ -59,7 +62,7 @@ flowchart LR
   classDef blocked fill:#fee2e2,stroke:#dc2626,color:#7f1d1d;
 
   class A current;
-  class B,C,D,E,F,G pending;
+  class B,C,D,E,F,G,H pending;
 ```
 
 ## 🧩 Phases
@@ -88,6 +91,7 @@ flowchart LR
 | Integration | `[coverage]` |
 | UI | `[coverage]` |
 | Accessibility | `[coverage]` |
+| Security/privacy | `[authz, data, abuse, logging, secrets]` |
 | Analytics/observability | `[coverage]` |
 
 ## 🔙 Rollback Plan
