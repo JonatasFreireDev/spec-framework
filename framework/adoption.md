@@ -25,6 +25,20 @@ npm link
 spec-framework init --target ../my-product
 ```
 
+Packaged CLI from a local tarball:
+
+```bash
+npm pack
+mkdir ../my-consumer
+cd ../my-consumer
+npm install ../spec-framework/spec-framework-0.1.0.tgz --no-save
+npx spec-framework init --target ../my-product
+cd ../my-product
+npx spec-framework validate
+```
+
+The package path is currently a controlled local/Git-based adoption path, not a public npm release contract. Keep using `starter/`, `.spec-framework/`, and `product/` as the canonical boundary inside generated repositories.
+
 Manual bootstrap:
 
 1. Create an empty product repository.
@@ -92,9 +106,9 @@ node scripts/upgrade-product.mjs --target ../my-product
 Future framework versions should support:
 
 ```bash
-node scripts/init-product.mjs --target ../my-product
-node .spec-framework/tools/validate-product.mjs
-node scripts/upgrade-product.mjs --target ../my-product
+spec-framework init --target ../my-product
+spec-framework validate
+spec-framework upgrade --target ../my-product
 ```
 
-Until then, adoption is a documented copy process backed by the validator and the `.spec-framework/` / `product/` boundary.
+Adoption is backed by the validator, package smoke tests, and the `.spec-framework/` / `product/` boundary.

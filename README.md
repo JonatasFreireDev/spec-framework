@@ -48,6 +48,18 @@ spec-framework validate
 spec-framework upgrade --target ../my-product
 ```
 
+Packaged CLI smoke path:
+
+```bash
+npm pack
+mkdir ../my-consumer
+cd ../my-consumer
+npm install ../spec-framework/spec-framework-0.1.0.tgz --no-save
+npx spec-framework init --target ../my-product
+cd ../my-product
+npx spec-framework validate
+```
+
 See [framework/adoption.md](framework/adoption.md).
 
 ## Ladder
@@ -70,6 +82,9 @@ Problem -> Vision -> Strategy -> Domain -> User Goal -> Feature -> Use Case -> S
 Run:
 
 ```bash
+npm run check
+npm test
+npm run pack:dry
+npm run validate
 node engineering/validators/framework-validator.mjs --write-registry --write-report
-node engineering/tests/run-tests.mjs
 ```

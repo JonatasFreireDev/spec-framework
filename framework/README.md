@@ -24,12 +24,13 @@ The repository root still hosts the executable framework while the project trans
 | Model | Status | Best Use |
 | --- | --- | --- |
 | Template copy | Supported manually through `starter/`. | First real adopters and fast experiments. |
-| CLI bootstrap | Recommended target. | Repeatable product creation with versioned framework assets. |
-| Package/submodule | Future option. | Larger teams that need strict framework versioning. |
+| CLI bootstrap | Supported through `scripts/spec-framework.mjs` and local links. | Repeatable product creation with versioned framework assets. |
+| Package tarball | Smoke-tested locally. | Controlled installs before a public package contract exists. |
+| Submodule | Future option. | Larger teams that need strict framework versioning. |
 
 ## Current Transition Rule
 
-Until the CLI exists, treat the root repository as the framework laboratory and treat `starter/` as the copyable product skeleton.
+Treat the root repository as the framework laboratory and treat `starter/` as the copyable product skeleton.
 
 Do not use root-level `domains/`, `foundation/`, `.product/history/`, or `audits/` as the canonical starter. They contain framework development history and examples. New products should contain product artifacts under `product/` and method assets under `.spec-framework/`.
 
@@ -40,3 +41,5 @@ Use `scripts/init-product.mjs` to copy `starter/`, install framework assets into
 Use `scripts/upgrade-product.mjs` to refresh `.spec-framework/` assets in an existing product without touching `product/`.
 
 For local CLI testing, run `npm link` from this repository and then use `spec-framework init`, `spec-framework validate`, and `spec-framework upgrade`.
+
+For package smoke testing, run `npm pack`, install the generated `.tgz` in a consumer repository, and use `npx spec-framework init` followed by `npx spec-framework validate`.
