@@ -20,6 +20,7 @@ Product decisions do not live here. Product decisions continue to live in `knowl
 | [FDR-008](FDR-008-delivery-commits-and-prs.md) | Delivery commits and PR finalization | approved | EV-010 |
 | [FDR-009](FDR-009-threat-modeling-baseline.md) | Threat modeling baseline | approved | EV-014 |
 | [FDR-010](FDR-010-markdown-link-validation.md) | Markdown link validation | approved | EV-013 |
+| [FDR-011](FDR-011-core-starter-example-boundary.md) | Framework core, product starter, and examples boundary | approved | EV-015 |
 
 ## Rule
 

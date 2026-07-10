@@ -227,6 +227,36 @@ product/
   skills/
 ```
 
+Em um repositorio de produto adotante, a estrutura acima deve viver sob `product/`. Os ativos que ensinam como executar o framework devem viver fora dela, em `.spec-framework/`:
+
+```text
+repo/
+  .spec-framework/
+    FRAMEWORK.md
+    decisions/
+    skills/
+    templates/
+    validators/
+    tools/
+
+  product/
+    .product/
+    foundation/
+    knowledge/
+    domains/
+    design/
+    engineering/
+    audits/
+    releases/
+```
+
+Neste repositorio `spec-framework`, a estrutura existe em dois modos durante a transicao para adoção reutilizavel:
+
+- `starter/` representa o esqueleto limpo que deve ser copiado para novos repositorios de produto, ja separado entre `.spec-framework/` e `product/`.
+- a raiz do repositorio permanece como laboratorio executavel do framework, contendo validator, skills, historico de evolucao, exemplos e artefatos de bootstrap.
+
+Novos produtos nao devem copiar a raiz inteira do `spec-framework`; devem partir de `starter/` e instalar os ativos do framework em `.spec-framework/` conforme `framework/adoption.md`.
+
 ## 5. Context.md
 
 Todo `context.md` deve permitir que uma IA entenda onde esta, o que precisa ler e qual e o proximo passo seguro.
@@ -710,6 +740,8 @@ Observation -> Opportunity -> Proposal -> Impact Analysis -> Approval -> Updated
 Isso evita que sugestoes de IA virem escopo silencioso.
 
 ## 15. Como Usar Com Codex
+
+Neste repositorio, Codex esta trabalhando no framework em si. Em repositorios de produto, Codex deve operar sobre uma instancia criada a partir de `starter/`, lendo o metodo em `.spec-framework/` e escrevendo artefatos de produto em `product/`.
 
 Prompt recomendado para fase de arquitetura:
 

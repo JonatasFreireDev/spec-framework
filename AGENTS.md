@@ -8,7 +8,9 @@ This repository is a Product Engineering Framework. Documentation is the executi
 
 Always read `FRAMEWORK.md` first.
 
-Use the repository root as the framework root. The canonical structure shown as `product/` in `FRAMEWORK.md` is represented by this repository root.
+Use the repository root as the framework laboratory root. The reusable product skeleton for new repositories lives in `starter/`.
+
+During the current transition, root-level `foundation/`, `domains/`, `.product/`, `knowledge/`, `audits/`, and `engineering/` remain the executable lab state used by validators and tests. Do not treat those root-level product-shaped folders as the clean starter for new repos; use `starter/` for that.
 
 ## Project Skills
 
@@ -84,6 +86,8 @@ A decision is required when work changes:
 - hard-to-reverse strategy.
 
 Approved decisions should also be indexed in `.product/decisions.json`.
+
+Framework method decisions belong in `engineering/decisions/FDR-*`, not in product decision logs.
 
 ## Context Files
 

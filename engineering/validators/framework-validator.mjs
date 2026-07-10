@@ -1660,9 +1660,19 @@ function validateArtifactsRegistry() {
 
 function validateProductPrefixLinks(files) {
   const staleProductPath = /(^|[^.\w-])product\/(domains|knowledge|audits|foundation|design|engineering|releases|skills|FRAMEWORK\.md)/;
+  const allowedAdoptionDocs = new Set([
+    "FRAMEWORK.md",
+    "README.md",
+    "framework/adoption.md",
+    "starter/README.md",
+    "starter/AGENTS.md",
+    "starter/.spec-framework/README.md",
+    "starter/.spec-framework/decisions/README.md",
+    "audits/framework-validation-report.md",
+  ]);
   for (const file of files.filter((item) => /\.(md|json)$/.test(item))) {
     const fileRel = rel(file);
-    if (fileRel === "FRAMEWORK.md" || fileRel === "audits/framework-validation-report.md") continue;
+    if (allowedAdoptionDocs.has(fileRel)) continue;
     const text = readText(file);
     if (staleProductPath.test(text)) {
       addResult(
@@ -1670,7 +1680,7 @@ function validateProductPrefixLinks(files) {
         "paths",
         file,
         "Found product/ path prefix outside FRAMEWORK.md.",
-        "Use repository-root-relative paths unless quoting FRAMEWORK.md."
+        "Use repository-root-relative paths unless documenting product-root adoption."
       );
     }
   }

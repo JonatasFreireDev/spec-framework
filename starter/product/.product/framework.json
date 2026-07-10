@@ -1,0 +1,15 @@
+{
+  "framework": "spec-framework",
+  "adoption_model": "starter-copy",
+  "version": "TBD",
+  "framework_assets_path": "../.spec-framework",
+  "product_root": ".",
+  "source_repository": "https://github.com/JonatasFreireDev/spec-framework",
+  "installed_assets": {
+    "framework_document": false,
+    "skills": false,
+    "templates": false,
+    "validators": false,
+    "ci": false
+  }
+}

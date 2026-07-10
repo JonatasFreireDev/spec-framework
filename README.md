@@ -1,28 +1,58 @@
 # Product Engineering Framework v2
 
-This workspace turns product ideas into structured product engineering artifacts through Specification Driven Development.
+This repository is the framework laboratory and reusable base for Specification Driven Development.
 
-Start here:
+## Start Here
 
-- FRAMEWORK.md is the canonical architecture for this framework.
-- knowledge/templates/ contains the artifact templates.
-- skills/v2/ contains the proposed specialist skills and orchestrators.
+| Area | Purpose |
+| --- | --- |
+| [FRAMEWORK.md](FRAMEWORK.md) | Canonical method and architecture. |
+| [framework/](framework/) | Framework core boundary and adoption guide. |
+| [starter/](starter/) | Clean product skeleton for new repositories. |
+| [examples/](examples/) | Worked examples and learning material. |
+| [.codex/skills/](.codex/skills/) | Operational Codex skills. |
+| [knowledge/templates/](knowledge/templates/) | Reusable artifact templates. |
+| [engineering/validators/](engineering/validators/) | Mechanical validation gates. |
+
+## Adoption
+
+For a new product repository, start from [starter/](starter/) rather than copying this repository root.
+
+The starter creates two explicit roots:
+
+```text
+.spec-framework/  # how the framework works
+product/          # the product being built
+```
+
+Current recommended flow:
+
+```text
+copy starter/ -> install framework assets into .spec-framework/ -> fill product/foundation -> create product/domains -> run validator
+```
+
+See [framework/adoption.md](framework/adoption.md).
 
 ## Ladder
 
-Problem -> Vision -> Strategy -> Domain -> User Goal -> Feature -> Use Case -> Specification -> Implementation Plan -> Execution Graph -> Tasks -> Code -> Validation -> Audit
+```text
+Problem -> Vision -> Strategy -> Domain -> User Goal -> Feature -> Use Case -> Specification -> Design -> Implementation Plan -> Execution Graph -> Tasks -> Code -> Validation -> Audit
+```
 
-## Source of truth
+## Repository Boundary
 
-- Domains contain user goals.
-- User goals contain features.
-- Features contain use cases.
-- Use cases contain specification, design, analytics, tests, audit, implementation plan, execution graph, and tasks.
-- The Specification is the source of truth for downstream implementation artifacts.
-- Tasks are generated from the Specification through the Implementation Plan and Execution Graph.
-- Decisions are recorded in knowledge/decisions/ and indexed in .product/decisions.json.
+| Concern | Lives In |
+| --- | --- |
+| Framework method, validators, skills, templates, and FDRs | This repository core |
+| New product state and product scope | `product/` in a repo created from `starter/` |
+| Installed framework method assets | `.spec-framework/` in a repo created from `starter/` |
+| Example domains and use cases | `examples/` |
 
-## Quality gates
+## Quality Gates
 
-- audits/readiness/ defines the readiness gate for moving artifacts toward executable tasks.
-- audits/readiness/UC-001-readiness.md applies the gate to the QR Code Check-in example.
+Run:
+
+```bash
+node engineering/validators/framework-validator.mjs --write-registry --write-report
+node engineering/tests/run-tests.mjs
+```

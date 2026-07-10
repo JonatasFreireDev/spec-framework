@@ -1,0 +1,5 @@
+{
+  "policy": "slug-scoped",
+  "deprecated_counters": true,
+  "scopes": []
+}

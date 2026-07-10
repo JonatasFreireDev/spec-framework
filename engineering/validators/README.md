@@ -36,7 +36,7 @@ The validator checks:
 - `writeScope` and `sharedResources` safety for parallel graph nodes, currently as Phase A warnings;
 - `context.md` required metadata;
 - `.product/artifacts.json` registry consistency;
-- stale `product/...` paths outside `FRAMEWORK.md`;
+- stale `product/...` paths outside framework adoption documentation;
 - decision index paths in `.product/decisions.json`;
 - decision references against `.product/decisions.json`, including approved delivery dependencies;
 - visual Mermaid standards for flowcharts;
