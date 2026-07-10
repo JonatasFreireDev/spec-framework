@@ -18,16 +18,25 @@
       "type": "example",
       "ownerSkill": "task-generator",
       "dependsOn": [],
-      "sourceSections": ["Specification > Acceptance Criteria"],
-      "writeScope": ["example-only"],
+      "sourceSections": [
+        "Specification > Acceptance Criteria"
+      ],
+      "writeScope": [
+        "example-only"
+      ],
       "status": "pending",
-      "acceptanceChecks": ["Example task has a visible acceptance check."]
+      "acceptanceChecks": [
+        "Example task has a visible acceptance check."
+      ],
+      "path": "tasks/TASK-000.md"
     }
   ],
   "parallelLanes": [
     {
       "name": "example-lane",
-      "nodes": ["TASK-000"]
+      "nodes": [
+        "TASK-000"
+      ]
     }
   ],
   "blockedNodes": [],

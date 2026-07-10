@@ -30,7 +30,8 @@
 ```mermaid
 flowchart LR
   A["Acceptance criteria"] --> T["Test cases"]
-  T --> E["Evidence"]
+  T --> C["Code traceability"]
+  C --> E["Evidence"]
   E --> S["Security checks"]
   S --> V["QA verdict"]
   V --> R["Security review or audit"]
@@ -44,6 +45,28 @@ flowchart LR
   class E current;
   class S,V,R pending;
 ```
+
+## Code Traceability
+
+| Task | Branch | Commits | PR | Code Paths |
+| --- | --- | --- | --- | --- |
+| TK-002-001 | N/A until implementation | N/A until implementation | N/A until implementation | N/A until implementation |
+| TK-002-002 | N/A until implementation | N/A until implementation | N/A until implementation | N/A until implementation |
+| TK-002-003 | N/A until implementation | N/A until implementation | N/A until implementation | N/A until implementation |
+| TK-002-004 | N/A until implementation | N/A until implementation | N/A until implementation | N/A until implementation |
+| TK-002-005 | N/A until implementation | N/A until implementation | N/A until implementation | N/A until implementation |
+| TK-002-006 | N/A until implementation | N/A until implementation | N/A until implementation | N/A until implementation |
+| TK-002-007 | N/A until implementation | N/A until implementation | N/A until implementation | N/A until implementation |
+
+## Gate Evidence
+
+| Field | Value |
+| --- | --- |
+| Test command | N/A until implementation |
+| Gate logs | N/A until validation |
+| CI URL | N/A until validation |
+| Screenshots | N/A until validation |
+| Environment | N/A until validation |
 
 ## Acceptance Evidence Matrix
 

@@ -8,6 +8,7 @@ type: [domain | goal | feature | use-case | specification | implementation-plan 
 name: [human readable name]
 status: [draft | proposed | approved | in_progress | implemented | validated | released | deprecated | superseded]
 owner_skill: [skill name]
+rigor_tier: [S | M | L | N/A]
 last_updated: [YYYY-MM-DD]
 delivery:
   level: [L0 | L1 | L2 | L3 | L4 | L5 | N/A]
@@ -20,6 +21,15 @@ delivery:
 ## 📌 Purpose
 
 [One paragraph explaining why this artifact exists and what decision or work it enables.]
+
+## Rigor Tier
+
+| Field | Value |
+| --- | --- |
+| Tier | `[S | M | L | N/A]` |
+| Trigger checklist | `[auth/permissions/payment/PII/upload/UGC/public/RLS/policies/none]` |
+| Human approval | `[approval record or use-case gate]` |
+| Rationale | `[why this tier is proportional]` |
 
 ## 🗺️ Artifact Map
 

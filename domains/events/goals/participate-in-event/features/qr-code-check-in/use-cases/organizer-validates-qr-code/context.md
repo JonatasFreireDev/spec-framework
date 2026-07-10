@@ -6,6 +6,7 @@ type: use_case
 name: Organizer Validates QR Code
 status: proposed
 owner_skill: use-case
+rigor_tier: L
 parents:
   - FT-001
 children:
@@ -52,11 +53,21 @@ open_questions:
 decisions:
   - DEC-001
   - DEC-002
+  - DEC-008
 ```
 
 ## Purpose
 
 This context gives agents the local map for the organizer validation use case. It links the behavior, implementation contract, UX, planning, task graph, tests, analytics, and audit evidence.
+
+## Rigor Tier
+
+| Field | Value |
+| --- | --- |
+| Tier | L |
+| Trigger checklist | auth, permissions, roles, token privacy, check-in state mutation |
+| Human approval | Approved by EV-003 policy rollout |
+| Rationale | Organizer validation authorizes a server-side attendance write and handles sensitive event attendance signals. |
 
 ## Required Reading
 

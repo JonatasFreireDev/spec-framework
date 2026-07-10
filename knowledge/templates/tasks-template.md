@@ -1,6 +1,9 @@
-# Tasks: [use case name]
+# Tasks Index: [use case name]
 
-## 🧭 Snapshot
+> Generated index. Do not edit manually.
+> Source of truth: `execution-graph.json` and `tasks/<task-id>.md`.
+
+## Snapshot
 
 | Field | Value |
 | --- | --- |
@@ -8,10 +11,11 @@
 | Status | `[draft | proposed | approved]` |
 | Source graph | `[GRAPH-XXX]` |
 | Source specification | `[SPEC-XXX]` |
+| Generated from | `execution-graph.json` + `tasks/*.md` |
 | Owner skill | Task AI |
 | Next skill | Code Runner AI or QA AI |
 
-## 🔗 Navigation
+## Navigation
 
 | Artifact | Link |
 | --- | --- |
@@ -22,16 +26,16 @@
 | Tests | [tests.md](tests.md) |
 | Audit | [audit.md](audit.md) |
 
-## 🚚 Delivery
+## Delivery
 
 | Field | Value |
 | --- | --- |
-| Level | `[L0 | L1 | L2 | L3 | L4 | L5]` |
-| Priority | `[P0 | P1 | P2 | P3]` |
+| Level | `[L0 | L1 | L2 | L3 | L4 | L5 | N/A]` |
+| Priority | `[P0 | P1 | P2 | P3 | N/A]` |
 | Depends on | `[artifact ids/paths]` |
 | Rationale | `[why this task set belongs here]` |
 
-## 🕸️ Task Graph
+## Task Graph
 
 ```mermaid
 flowchart LR
@@ -49,29 +53,39 @@ flowchart LR
   class T2,T3,T4 pending;
 ```
 
-## ✅ Task List
+## Task Files
 
-| Task | Type | Depends On | Write Scope | Status | Acceptance |
+| Task | File | Type | Depends On | Status | Acceptance |
 | --- | --- | --- | --- | --- | --- |
-| `TK-XXX-001` `[title]` | `[database/backend/frontend/test/analytics/docs/security]` | `[]` | `[paths/modules]` | `[pending/blocked/done]` | `[observable check]` |
+| `TK-XXX-001` `[title]` | [tasks/TK-XXX-001.md](tasks/TK-XXX-001.md) | `[database/backend/frontend/test/analytics/docs/security]` | `[]` | `[draft/proposed/approved/in_progress/implemented/validated/released]` | `[observable check]` |
 
-## 🚧 Blocked Tasks
+## Canonical Ownership
+
+| Concern | Source of Truth |
+| --- | --- |
+| Dependency order | `execution-graph.json` |
+| Task status | `tasks/<task-id>.md` |
+| Task contract | `tasks/<task-id>.md` |
+| Implementation links | `tasks/<task-id>.md` |
+| Validation evidence | `tasks/<task-id>.md` and QA evidence artifacts |
+
+## Blocked Tasks
 
 | Task | Blocking Reason | Decision/Dependency Needed | Owner |
 | --- | --- | --- | --- |
 | `[task]` | `[reason]` | `[decision/dependency]` | `[role]` |
 
-## 🧪 Validation Methods
+## Validation Methods
 
 | Task | Validation |
 | --- | --- |
 | `[task]` | `[test/check/review]` |
 
-## ⚠️ Parallelism Notes
+## Parallelism Notes
 
 - [Which tasks can run in parallel and why their write scopes do not overlap.]
 
-## 🏁 Handoff
+## Handoff
 
 | Field | Value |
 | --- | --- |

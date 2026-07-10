@@ -1,167 +1,169 @@
 {
-    "id":  "GRAPH-001",
-    "status":  "draft",
-    "sourceSpecification":  "SPEC-001",
-    "sourceImplementationPlan":  "PLAN-001",
-    "delivery":  {
-                     "level":  "L1",
-                     "priority":  "P0",
-                     "dependsOn":  [
-                                       "SPEC-001",
-                                       "PLAN-001",
-                                       "DEC-001",
-                                       "DEC-002"
-                                   ],
-                     "rationale":  "The graph orders the minimum L1 work needed to generate, present, and validate attendee QR codes."
-                 },
-    "nodes":  [
-                  {
-                      "id":  "TK-001",
-                      "title":  "Add attendance check-in persistence",
-                      "type":  "database",
-                      "ownerSkill":  "task-runner",
-                      "dependsOn":  [
-
-                                    ],
-                      "sourceSections":  [
-                                             "Specification \u003e Data Contract",
-                                             "Specification \u003e Permissions And Security"
-                                         ],
-                      "writeScope":  [
-                                         "supabase/migrations"
-                                     ],
-                      "status":  "pending",
-                      "acceptanceChecks":  [
-                                         "attendance check-in state and token persistence are constrained and testable"
-                                     ]
-                  },
-                  {
-                      "id":  "TK-002",
-                      "title":  "Implement QR token generation",
-                      "type":  "backend",
-                      "ownerSkill":  "task-runner",
-                      "dependsOn":  [
-                                        "TK-001"
-                                    ],
-                      "sourceSections":  [
-                                             "Specification \u003e API Contract",
-                                             "Specification \u003e Business Rules"
-                                         ],
-                      "writeScope":  [
-                                         "mobile services/actions",
-                                         "server functions"
-                                     ],
-                      "status":  "pending",
-                      "acceptanceChecks":  [
-                                         "attendee can generate event-scoped non-PII QR token"
-                                     ]
-                  },
-                  {
-                      "id":  "TK-003",
-                      "title":  "Implement QR token validation",
-                      "type":  "backend",
-                      "ownerSkill":  "task-runner",
-                      "dependsOn":  [
-                                        "TK-001",
-                                        "TK-002"
-                                    ],
-                      "sourceSections":  [
-                                             "Specification \u003e Functional Behavior",
-                                             "Specification \u003e Permissions And Security"
-                                         ],
-                      "writeScope":  [
-                                         "mobile services/actions",
-                                         "server functions"
-                                     ],
-                      "status":  "pending",
-                      "acceptanceChecks":  [
-                                         "organizer validation is permissioned, idempotent, and rejects invalid tokens"
-                                     ]
-                  },
-                  {
-                      "id":  "TK-004",
-                      "title":  "Build attendee QR UI states",
-                      "type":  "frontend",
-                      "ownerSkill":  "task-runner",
-                      "dependsOn":  [
-                                        "TK-002"
-                                    ],
-                      "sourceSections":  [
-                                             "Specification \u003e UX Contract"
-                                         ],
-                      "writeScope":  [
-                                         "mobile event screens"
-                                     ],
-                      "status":  "pending",
-                      "acceptanceChecks":  [
-                                         "attendee sees active, loading, expired, error, and refresh states"
-                                     ]
-                  },
-                  {
-                      "id":  "TK-005",
-                      "title":  "Build organizer validation UI states",
-                      "type":  "frontend",
-                      "ownerSkill":  "task-runner",
-                      "dependsOn":  [
-                                        "TK-003"
-                                    ],
-                      "sourceSections":  [
-                                             "Specification \u003e UX Contract"
-                                         ],
-                      "writeScope":  [
-                                         "mobile organizer event screens"
-                                     ],
-                      "status":  "pending",
-                      "acceptanceChecks":  [
-                                         "organizer sees success, already checked in, invalid, expired, and permission denied states"
-                                     ]
-                  },
-                  {
-                      "id":  "TK-006",
-                      "title":  "Add analytics, tests, and QA evidence",
-                      "type":  "test",
-                      "ownerSkill":  "qa",
-                      "dependsOn":  [
-                                        "TK-003",
-                                        "TK-004",
-                                        "TK-005"
-                                    ],
-                      "sourceSections":  [
-                                             "Specification \u003e Analytics And Observability",
-                                             "Specification \u003e Acceptance Criteria"
-                                         ],
-                      "writeScope":  [
-                                         "tests",
-                                         "analytics instrumentation",
-                                         "product audit notes"
-                                     ],
-                      "status":  "pending",
-                      "acceptanceChecks":  [
-                                         "acceptance criteria have automated or documented validation"
-                                     ]
-                  }
-              ],
-    "parallelLanes":  [
-                          {
-                              "name":  "backend-after-data",
-                              "nodes":  [
-                                            "TK-002",
-                                            "TK-003"
-                                        ]
-                          },
-                          {
-                              "name":  "ui-after-api-contracts",
-                              "nodes":  [
-                                            "TK-004",
-                                            "TK-005"
-                                        ]
-                          }
-                      ],
-    "blockedNodes":  [
-
-                     ],
-    "risks":  [
-                  "DEC-001 and DEC-002 approved; implementation must enforce 5-minute expiry and opaque server-stored tokens."
-              ],
-    "updatedAt":  "2026-07-09"
+  "id": "GRAPH-001",
+  "status": "draft",
+  "sourceSpecification": "SPEC-001",
+  "sourceImplementationPlan": "PLAN-001",
+  "delivery": {
+    "level": "L1",
+    "priority": "P0",
+    "dependsOn": [
+      "SPEC-001",
+      "PLAN-001",
+      "DEC-001",
+      "DEC-002"
+    ],
+    "rationale": "The graph orders the minimum L1 work needed to generate, present, and validate attendee QR codes."
+  },
+  "nodes": [
+    {
+      "id": "TK-001",
+      "title": "Add attendance check-in persistence",
+      "type": "database",
+      "ownerSkill": "task-runner",
+      "dependsOn": [],
+      "sourceSections": [
+        "Specification > Data Contract",
+        "Specification > Permissions And Security"
+      ],
+      "writeScope": [
+        "supabase/migrations"
+      ],
+      "status": "pending",
+      "acceptanceChecks": [
+        "attendance check-in state and token persistence are constrained and testable"
+      ],
+      "path": "tasks/TK-001.md"
+    },
+    {
+      "id": "TK-002",
+      "title": "Implement QR token generation",
+      "type": "backend",
+      "ownerSkill": "task-runner",
+      "dependsOn": [
+        "TK-001"
+      ],
+      "sourceSections": [
+        "Specification > API Contract",
+        "Specification > Business Rules"
+      ],
+      "writeScope": [
+        "mobile services/actions",
+        "server functions"
+      ],
+      "status": "pending",
+      "acceptanceChecks": [
+        "attendee can generate event-scoped non-PII QR token"
+      ],
+      "path": "tasks/TK-002.md"
+    },
+    {
+      "id": "TK-003",
+      "title": "Implement QR token validation",
+      "type": "backend",
+      "ownerSkill": "task-runner",
+      "dependsOn": [
+        "TK-001",
+        "TK-002"
+      ],
+      "sourceSections": [
+        "Specification > Functional Behavior",
+        "Specification > Permissions And Security"
+      ],
+      "writeScope": [
+        "mobile services/actions",
+        "server functions"
+      ],
+      "status": "pending",
+      "acceptanceChecks": [
+        "organizer validation is permissioned, idempotent, and rejects invalid tokens"
+      ],
+      "path": "tasks/TK-003.md"
+    },
+    {
+      "id": "TK-004",
+      "title": "Build attendee QR UI states",
+      "type": "frontend",
+      "ownerSkill": "task-runner",
+      "dependsOn": [
+        "TK-002"
+      ],
+      "sourceSections": [
+        "Specification > UX Contract"
+      ],
+      "writeScope": [
+        "mobile event screens"
+      ],
+      "status": "pending",
+      "acceptanceChecks": [
+        "attendee sees active, loading, expired, error, and refresh states"
+      ],
+      "path": "tasks/TK-004.md"
+    },
+    {
+      "id": "TK-005",
+      "title": "Build organizer validation UI states",
+      "type": "frontend",
+      "ownerSkill": "task-runner",
+      "dependsOn": [
+        "TK-003"
+      ],
+      "sourceSections": [
+        "Specification > UX Contract"
+      ],
+      "writeScope": [
+        "mobile organizer event screens"
+      ],
+      "status": "pending",
+      "acceptanceChecks": [
+        "organizer sees success, already checked in, invalid, expired, and permission denied states"
+      ],
+      "path": "tasks/TK-005.md"
+    },
+    {
+      "id": "TK-006",
+      "title": "Add analytics, tests, and QA evidence",
+      "type": "test",
+      "ownerSkill": "qa",
+      "dependsOn": [
+        "TK-003",
+        "TK-004",
+        "TK-005"
+      ],
+      "sourceSections": [
+        "Specification > Analytics And Observability",
+        "Specification > Acceptance Criteria"
+      ],
+      "writeScope": [
+        "tests",
+        "analytics instrumentation",
+        "product audit notes"
+      ],
+      "status": "pending",
+      "acceptanceChecks": [
+        "acceptance criteria have automated or documented validation"
+      ],
+      "path": "tasks/TK-006.md"
+    }
+  ],
+  "parallelLanes": [
+    {
+      "name": "backend-after-data",
+      "nodes": [
+        "TK-002",
+        "TK-003"
+      ]
+    },
+    {
+      "name": "ui-after-api-contracts",
+      "nodes": [
+        "TK-004",
+        "TK-005"
+      ]
+    }
+  ],
+  "blockedNodes": [],
+  "risks": [
+    "DEC-001 and DEC-002 approved; implementation must enforce 5-minute expiry and opaque server-stored tokens."
+  ],
+  "updatedAt": "2026-07-09"
 }

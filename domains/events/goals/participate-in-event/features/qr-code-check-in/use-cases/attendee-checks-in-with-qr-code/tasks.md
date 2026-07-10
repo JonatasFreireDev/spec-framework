@@ -1,148 +1,107 @@
-# Tasks: Attendee Checks In With QR Code
+# Tasks Index: Attendee Checks In With Qr Code
 
-## Context
+> Generated index. Do not edit manually.
+> Source of truth: [execution-graph.json](execution-graph.json) and [tasks/](tasks/).
 
-- ID: UC-001:tasks
-- Source specification: SPEC-001
-- Source implementation plan: PLAN-001
-- Source graph: GRAPH-001
-- Status: draft
-- Delivery Level: L1 Walking Skeleton
-- Priority: P0
-- Rationale: These tasks are the executable planning units for the L1 attendee QR check-in flow.
+## Snapshot
 
-## Rules
+| Field | Value |
+| --- | --- |
+| ID | UC-001:tasks |
+| Status | draft |
+| Source graph | GRAPH-001 |
+| Source specification | SPEC-001 |
+| Generated from | execution-graph.json + tasks/*.md |
+| Owner skill | Task AI |
+| Next skill | Code Runner AI or QA AI |
 
-- Tasks must trace back to `specification.md`.
-- Tasks must follow dependency order from `execution-graph.json`.
-- A task must be independently reviewable and testable.
-- Parallel tasks must have disjoint write scopes.
+## Navigation
 
-## Task: TK-001 Add Attendance Check-in Persistence
+| Artifact | Link |
+| --- | --- |
+| Context | [context.md](context.md) |
+| Specification | [specification.md](specification.md) |
+| Implementation Plan | [implementation-plan.md](implementation-plan.md) |
+| Execution Graph | [execution-graph.json](execution-graph.json) |
+| Tests | [tests.md](tests.md) |
+| Audit | [audit.md](audit.md) |
 
-- Type: database
-- Status: pending
-- Depends on: none
-- Source specification sections:
-  - Data Contract
-  - Permissions And Security
-- Write scope:
-  - supabase/migrations
-- Objective:
-  - Add persistence needed for checked-in attendance and QR validation.
-- Acceptance criteria:
-  - [ ] Attendance check-in timestamp can be stored once per event attendee.
-  - [ ] Token data is event-scoped and attendee-scoped.
-- Validation:
-  - migration tests or SQL checks
-- Handoff:
-  - Next task(s): TK-002, TK-003
-  - Risks: DEC-002 token strategy is approved; implement opaque server-stored token persistence.
+## Delivery
 
-## Task: TK-002 Implement QR Token Generation
+| Field | Value |
+| --- | --- |
+| Level | L1 |
+| Priority | P0 |
+| Depends on | SPEC-001, PLAN-001, DEC-001, DEC-002 |
+| Rationale | The graph orders the minimum L1 work needed to generate, present, and validate attendee QR codes. |
 
-- Type: backend
-- Status: blocked
-- Depends on: TK-001
-- Source specification sections:
-  - API Contract
-  - Business Rules
-- Write scope:
-  - mobile services/actions
-  - server functions
-- Objective:
-  - Generate opaque QR token for authenticated attendee and event.
-- Acceptance criteria:
-  - [ ] Token contains no raw PII.
-  - [ ] Token expires.
-  - [ ] Non-attendees cannot generate token.
-- Validation:
-  - unit/integration tests
-- Handoff:
-  - Next task(s): TK-004
-  - Risks: DEC-001 expiration duration is approved; enforce 5-minute expiry.
+## Task Graph
 
-## Task: TK-003 Implement QR Token Validation
+```mermaid
+flowchart LR
+  TK_001["TK-001"] --> TK_002["TK-002"]
+  TK_001["TK-001"] --> TK_003["TK-003"]
+  TK_002["TK-002"] --> TK_003["TK-003"]
+  TK_002["TK-002"] --> TK_004["TK-004"]
+  TK_003["TK-003"] --> TK_005["TK-005"]
+  TK_003["TK-003"] --> TK_006["TK-006"]
+  TK_004["TK-004"] --> TK_006["TK-006"]
+  TK_005["TK-005"] --> TK_006["TK-006"]
 
-- Type: backend
-- Status: pending
-- Depends on: TK-001, TK-002
-- Source specification sections:
-  - Functional Behavior
-  - Permissions And Security
-- Write scope:
-  - mobile services/actions
-  - server functions
-- Objective:
-  - Validate scanned QR server-side and mark attendance idempotently.
-- Acceptance criteria:
-  - [ ] Organizer permission is enforced.
-  - [ ] Invalid, expired, and wrong-event tokens are rejected.
-  - [ ] Duplicate scans are idempotent.
-- Validation:
-  - integration and security tests
-- Handoff:
-  - Next task(s): TK-005, TK-006
-  - Risks: permission model must match existing app roles.
+  classDef done fill:#dcfce7,stroke:#16a34a,color:#14532d;
+  classDef current fill:#fef3c7,stroke:#d97706,color:#78350f,stroke-width:3px;
+  classDef pending fill:#f8fafc,stroke:#94a3b8,color:#334155;
+  classDef blocked fill:#fee2e2,stroke:#dc2626,color:#7f1d1d;
 
-## Task: TK-004 Build Attendee QR UI States
+  class TK_001,TK_002,TK_003,TK_004,TK_005,TK_006 current;
+```
 
-- Type: frontend
-- Status: pending
-- Depends on: TK-002
-- Source specification sections:
-  - UX Contract
-- Write scope:
-  - mobile event screens
-- Objective:
-  - Let attendee view QR, expiration, refresh, loading, and error states.
-- Acceptance criteria:
-  - [ ] QR active and expired states are visible.
-  - [ ] Text fallback is available for accessibility.
-- Validation:
-  - component tests or manual QA
-- Handoff:
-  - Next task(s): TK-006
-  - Risks: screen ownership needs codebase confirmation.
+## Task Files
 
-## Task: TK-005 Build Organizer Validation UI States
+| Task | File | Type | Depends On | Status | Acceptance |
+| --- | --- | --- | --- | --- | --- |
+| `TK-001` Add attendance check-in persistence | [tasks/TK-001.md](tasks/TK-001.md) | database | none | draft | attendance check-in state and token persistence are constrained and testable |
+| `TK-002` Implement QR token generation | [tasks/TK-002.md](tasks/TK-002.md) | backend | TK-001 | draft | attendee can generate event-scoped non-PII QR token |
+| `TK-003` Implement QR token validation | [tasks/TK-003.md](tasks/TK-003.md) | backend | TK-001, TK-002 | draft | organizer validation is permissioned, idempotent, and rejects invalid tokens |
+| `TK-004` Build attendee QR UI states | [tasks/TK-004.md](tasks/TK-004.md) | frontend | TK-002 | draft | attendee sees active, loading, expired, error, and refresh states |
+| `TK-005` Build organizer validation UI states | [tasks/TK-005.md](tasks/TK-005.md) | frontend | TK-003 | draft | organizer sees success, already checked in, invalid, expired, and permission denied states |
+| `TK-006` Add analytics, tests, and QA evidence | [tasks/TK-006.md](tasks/TK-006.md) | test | TK-003, TK-004, TK-005 | draft | acceptance criteria have automated or documented validation |
 
-- Type: frontend
-- Status: pending
-- Depends on: TK-003
-- Source specification sections:
-  - UX Contract
-- Write scope:
-  - mobile organizer event screens
-- Objective:
-  - Let organizer scan or submit QR payload and see validation results.
-- Acceptance criteria:
-  - [ ] Success, already checked in, invalid, expired, and permission denied states are shown.
-- Validation:
-  - component tests or manual QA
-- Handoff:
-  - Next task(s): TK-006
-  - Risks: scanner dependency needs selection.
+## Canonical Ownership
 
-## Task: TK-006 Add Analytics, Tests, And QA Evidence
+| Concern | Source of Truth |
+| --- | --- |
+| Dependency order | [execution-graph.json](execution-graph.json) |
+| Task status | [tasks/](tasks/) |
+| Task contract | [tasks/](tasks/) |
+| Implementation links | [tasks/](tasks/) |
+| Validation evidence | [tasks/](tasks/) and QA evidence artifacts |
 
-- Type: test/analytics
-- Status: pending
-- Depends on: TK-003, TK-004, TK-005
-- Source specification sections:
-  - Analytics And Observability
-  - Acceptance Criteria
-- Write scope:
-  - tests
-  - analytics instrumentation
-  - product audit notes
-- Objective:
-  - Verify acceptance criteria and instrument success/failure events.
-- Acceptance criteria:
-  - [ ] qr_check_in_generated, qr_check_in_validated, and qr_check_in_failed are emitted.
-  - [ ] QA evidence covers happy path and failure cases.
-- Validation:
-  - test run and QA report
-- Handoff:
-  - Next task(s): release readiness audit
-  - Risks: analytics provider/event naming conventions need confirmation.
+## Blocked Tasks
+
+| Task | Blocking Reason | Decision/Dependency Needed | Owner |
+| --- | --- | --- | --- |
+| None | None | None | None |
+
+## Validation Methods
+
+| Task | Validation |
+| --- | --- |
+| `TK-001` | attendance check-in state and token persistence are constrained and testable |
+| `TK-002` | attendee can generate event-scoped non-PII QR token |
+| `TK-003` | organizer validation is permissioned, idempotent, and rejects invalid tokens |
+| `TK-004` | attendee sees active, loading, expired, error, and refresh states |
+| `TK-005` | organizer sees success, already checked in, invalid, expired, and permission denied states |
+| `TK-006` | acceptance criteria have automated or documented validation |
+
+## Parallelism Notes
+
+- Parallel execution follows dependency order and write scopes declared in [execution-graph.json](execution-graph.json).
+
+## Handoff
+
+| Field | Value |
+| --- | --- |
+| Ready for implementation | no |
+| Required next skill | Task AI |
+| Notes | Regenerate this index whenever graph nodes or task files change. |

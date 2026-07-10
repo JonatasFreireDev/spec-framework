@@ -1,66 +1,113 @@
-# Tasks: Organizer Validates QR Code
+# Tasks Index: Organizer Validates Qr Code
 
-## Context
+> Generated index. Do not edit manually.
+> Source of truth: [execution-graph.json](execution-graph.json) and [tasks/](tasks/).
 
-- ID: TASKSET-002
-- Status: draft
-- Source graph: GRAPH-002
-- Source specification: SPEC-002
-- Delivery Level: L1 Walking Skeleton
-- Priority: P0
-- Rationale: These tasks derive the executable planning units for the L1 organizer validation flow.
+## Snapshot
 
-## Task List
+| Field | Value |
+| --- | --- |
+| ID | TASKSET-002 |
+| Status | draft |
+| Source graph | GRAPH-002 |
+| Source specification | SPEC-002 |
+| Generated from | execution-graph.json + tasks/*.md |
+| Owner skill | Task AI |
+| Next skill | Code Runner AI or QA AI |
 
-### TK-002-001 Define Attendance Idempotency And Audit Persistence
+## Navigation
 
-- Type: data
-- Depends on: none
-- Output: documented data constraints for one check-in per attendee per event and audit logging expectations.
-- Acceptance: duplicate scans cannot create duplicate attendance records.
+| Artifact | Link |
+| --- | --- |
+| Context | [context.md](context.md) |
+| Specification | [specification.md](specification.md) |
+| Implementation Plan | [implementation-plan.md](implementation-plan.md) |
+| Execution Graph | [execution-graph.json](execution-graph.json) |
+| Tests | [tests.md](tests.md) |
+| Audit | [audit.md](audit.md) |
 
-### TK-002-002 Define Organizer Permission Validation
+## Delivery
 
-- Type: security
-- Depends on: none
-- Output: permission rule for organizer check-in access.
-- Acceptance: validation is denied when organizer lacks event permission.
+| Field | Value |
+| --- | --- |
+| Level | L1 |
+| Priority | P0 |
+| Depends on | DEC-001, DEC-002 |
+| Rationale | Organizer validation is required to close the walking skeleton for event attendance. |
 
-### TK-002-003 Define QR Token Validation Service Contract
+## Task Graph
 
-- Type: backend
-- Depends on: TK-002-001, TK-002-002
-- Output: validation outcomes for valid, duplicate, expired, invalid, wrong event, outside window, and denied cases.
-- Acceptance: every outcome maps to specification and UI state.
+```mermaid
+flowchart LR
+  TK_002_001["TK-002-001"] --> TK_002_003["TK-002-003"]
+  TK_002_002["TK-002-002"] --> TK_002_003["TK-002-003"]
+  TK_002_003["TK-002-003"] --> TK_002_004["TK-002-004"]
+  TK_002_004["TK-002-004"] --> TK_002_005["TK-002-005"]
+  TK_002_003["TK-002-003"] --> TK_002_006["TK-002-006"]
+  TK_002_005["TK-002-005"] --> TK_002_006["TK-002-006"]
+  TK_002_001["TK-002-001"] --> TK_002_007["TK-002-007"]
+  TK_002_002["TK-002-002"] --> TK_002_007["TK-002-007"]
+  TK_002_003["TK-002-003"] --> TK_002_007["TK-002-007"]
+  TK_002_004["TK-002-004"] --> TK_002_007["TK-002-007"]
+  TK_002_005["TK-002-005"] --> TK_002_007["TK-002-007"]
+  TK_002_006["TK-002-006"] --> TK_002_007["TK-002-007"]
 
-### TK-002-004 Define Check-in API Contract
+  classDef done fill:#dcfce7,stroke:#16a34a,color:#14532d;
+  classDef current fill:#fef3c7,stroke:#d97706,color:#78350f,stroke-width:3px;
+  classDef pending fill:#f8fafc,stroke:#94a3b8,color:#334155;
+  classDef blocked fill:#fee2e2,stroke:#dc2626,color:#7f1d1d;
 
-- Type: api
-- Depends on: TK-002-003
-- Output: query and mutation contract for scanner session and validation.
-- Acceptance: response shape supports UI states without leaking private data.
+  class TK_002_001,TK_002_002,TK_002_003,TK_002_004,TK_002_005,TK_002_006,TK_002_007 current;
+```
 
-### TK-002-005 Define Organizer Scanner UI States
+## Task Files
 
-- Type: frontend
-- Depends on: TK-002-004
-- Output: scanner state model and UX copy requirements.
-- Acceptance: all design states are represented.
+| Task | File | Type | Depends On | Status | Acceptance |
+| --- | --- | --- | --- | --- | --- |
+| `TK-002-001` Define attendance idempotency and audit persistence | [tasks/TK-002-001.md](tasks/TK-002-001.md) | data | none | draft | One check-in per attendee per event is explicitly protected. |
+| `TK-002-002` Define organizer permission validation | [tasks/TK-002-002.md](tasks/TK-002-002.md) | security | none | draft | Organizer permission is checked server-side for validation. |
+| `TK-002-003` Define QR token validation service contract | [tasks/TK-002-003.md](tasks/TK-002-003.md) | backend | TK-002-001, TK-002-002 | draft | All validation outcomes map to specification result states. |
+| `TK-002-004` Define check-in session query and validation mutation | [tasks/TK-002-004.md](tasks/TK-002-004.md) | api | TK-002-003 | draft | API responses support UI states without unsafe data exposure. |
+| `TK-002-005` Define organizer scanner UI states | [tasks/TK-002-005.md](tasks/TK-002-005.md) | frontend | TK-002-004 | draft | Every design state is represented in the UI state model. |
+| `TK-002-006` Define analytics and observability instrumentation | [tasks/TK-002-006.md](tasks/TK-002-006.md) | analytics | TK-002-003, TK-002-005 | draft | Validation attempts and failure reasons are measurable. |
+| `TK-002-007` Define validation test coverage | [tasks/TK-002-007.md](tasks/TK-002-007.md) | qa | TK-002-001, TK-002-002, TK-002-003, TK-002-004, TK-002-005, TK-002-006 | draft | Tests cover behavior, security, UX, analytics, and accessibility. |
 
-### TK-002-006 Define Analytics And Observability Instrumentation
+## Canonical Ownership
 
-- Type: analytics
-- Depends on: TK-002-003, TK-002-005
-- Output: events, logs, metrics, and alert candidates.
-- Acceptance: validation attempts and failure reasons are measurable.
+| Concern | Source of Truth |
+| --- | --- |
+| Dependency order | [execution-graph.json](execution-graph.json) |
+| Task status | [tasks/](tasks/) |
+| Task contract | [tasks/](tasks/) |
+| Implementation links | [tasks/](tasks/) |
+| Validation evidence | [tasks/](tasks/) and QA evidence artifacts |
 
-### TK-002-007 Define Validation Test Coverage
+## Blocked Tasks
 
-- Type: qa
-- Depends on: TK-002-001, TK-002-002, TK-002-003, TK-002-004, TK-002-005, TK-002-006
-- Output: test plan covering behavior, security, UX states, and observability.
-- Acceptance: tests prove acceptance criteria in `specification.md`.
+| Task | Blocking Reason | Decision/Dependency Needed | Owner |
+| --- | --- | --- | --- |
+| None | None | None | None |
 
-## Notes
+## Validation Methods
 
-These are planning tasks for a future implementation repository. They do not implement application code in this framework repository.
+| Task | Validation |
+| --- | --- |
+| `TK-002-001` | One check-in per attendee per event is explicitly protected. |
+| `TK-002-002` | Organizer permission is checked server-side for validation. |
+| `TK-002-003` | All validation outcomes map to specification result states. |
+| `TK-002-004` | API responses support UI states without unsafe data exposure. |
+| `TK-002-005` | Every design state is represented in the UI state model. |
+| `TK-002-006` | Validation attempts and failure reasons are measurable. |
+| `TK-002-007` | Tests cover behavior, security, UX, analytics, and accessibility. |
+
+## Parallelism Notes
+
+- Parallel execution follows dependency order and write scopes declared in [execution-graph.json](execution-graph.json).
+
+## Handoff
+
+| Field | Value |
+| --- | --- |
+| Ready for implementation | no |
+| Required next skill | Task AI |
+| Notes | Regenerate this index whenever graph nodes or task files change. |

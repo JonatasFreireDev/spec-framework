@@ -33,6 +33,24 @@ const requiredUseCaseFiles = [
   "audit.md",
 ];
 
+const requiredUseCaseFilesByTier = {
+  S: ["context.md", "use-case.md", "specification.md", "tasks.md", "tests.md"],
+  M: ["context.md", "use-case.md", "specification.md", "design.md", "implementation-plan.md", "execution-graph.json", "tasks.md", "tests.md"],
+  L: ["context.md", "use-case.md", "specification.md", "design.md", "implementation-plan.md", "execution-graph.json", "tasks.md", "tests.md", "analytics.md", "audit.md", "qa-evidence.md", "security-review.md"],
+  "N/A": requiredUseCaseFiles,
+};
+
+const allowedRigorTiers = new Set(["S", "M", "L", "N/A"]);
+const tierLTriggerPatterns = [
+  { name: "auth", pattern: /\bauth(?:entication|enticated)?\b|\blogin\b|\bsession\b/i },
+  { name: "permissions", pattern: /\bpermission(?:s)?\b|\bauthori[sz]ation\b|\brole(?:s)?\b/i },
+  { name: "payment", pattern: /\bpayment(?:s)?\b|\bpaid\b|\bbilling\b|\bticketing\b/i },
+  { name: "PII", pattern: /\bPII\b|\bpersonal data\b|\bLGPD\b|\bprivacy\b|\bsensitive\b/i },
+  { name: "upload/UGC", pattern: /\bupload\b|\bUGC\b|\buser-generated\b/i },
+  { name: "public surface", pattern: /\bpublic surface\b|\bpublic endpoint\b|\bpublic page\b|\bpublic\b/i },
+  { name: "RLS/policies", pattern: /\bRLS\b|\bpolic(?:y|ies)\b|\bmigration\b/i },
+];
+
 const allowedDeliveryLevels = new Set(["L0", "L1", "L2", "L3", "L4", "L5", "N/A"]);
 const allowedPriorities = new Set(["P0", "P1", "P2", "P3", "N/A"]);
 const deliveryRequiredTypes = new Set([
@@ -44,6 +62,7 @@ const deliveryRequiredTypes = new Set([
   "implementation-plan",
   "execution-graph",
   "taskset",
+  "task",
 ]);
 
 const results = [];
@@ -142,6 +161,13 @@ function parseContextMeta(text) {
     if (simple) meta[simple[1]] = simple[2].replace(/^["']|["']$/g, "");
   }
   return meta;
+}
+
+function parseContextRigorTier(text) {
+  const field = parseMarkdownField(text, "Tier");
+  const source = field || text.match(/^rigor_tier:\s*(.+?)\s*$/im)?.[1] || "";
+  const value = source.trim().replace(/^["'`]+|["'`]+$/g, "").toUpperCase();
+  return value === "N/A" || ["S", "M", "L"].includes(value) ? value : "";
 }
 
 function parseYamlList(text, key) {
@@ -276,15 +302,43 @@ function inferArtifactDocuments(contextFile, meta) {
 
 function parseMarkdownField(text, field) {
   const escaped = field.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-  const bullet = text.match(new RegExp(`^-\\s+${escaped}:\\s*(.+?)\\s*$`, "im"));
-  if (bullet) return bullet[1].trim();
   const table = text.match(new RegExp(`\\|\\s*${escaped}\\s*\\|\\s*(.+?)\\s*\\|`, "i"));
   if (table) {
     const value = table[1].trim().replace(/^`|`$/g, "");
     if (field === "ID" && /^(Scenario|Task|Artifact|Decision|Metric|Persona|Opportunity)$/i.test(value)) return "";
     return value;
   }
+  const bullet = text.match(new RegExp(`^-\\s+${escaped}:\\s*(.+?)\\s*$`, "im"));
+  if (bullet) return bullet[1].trim();
   return "";
+}
+
+function parseDelimitedValueList(value) {
+  const clean = String(value ?? "").trim();
+  if (!clean || /^none$/i.test(clean) || /^N\/A$/i.test(clean)) return [];
+  return clean
+    .replace(/^\[|\]$/g, "")
+    .split(/\s*,\s*|\s*;\s*/)
+    .map((item) => item.trim().replace(/^`|`$/g, ""))
+    .filter(Boolean);
+}
+
+function isPlaceholderValue(value) {
+  const clean = String(value ?? "").trim();
+  if (!clean) return true;
+  if (/^`?N\/A/i.test(clean)) return true;
+  if (/^`?pending`?$/i.test(clean)) return true;
+  if (/until implementation|until validation|to be produced|link or notes|path or URL/i.test(clean)) return true;
+  if (/^\[.+\]$/.test(clean)) return true;
+  return false;
+}
+
+function statusRequiresImplementationEvidence(status) {
+  return ["implemented", "validated", "released"].includes(status);
+}
+
+function statusRequiresConcreteValidationEvidence(status) {
+  return ["validated", "released"].includes(status);
 }
 
 function firstKnownId(text, prefixes) {
@@ -366,6 +420,37 @@ function artifactFromDocument(parentArtifact, documentKey, documentPath) {
   };
 }
 
+function taskArtifactFromFile(useCaseArtifact, graphArtifact, documentPath, node = {}) {
+  const fullPath = path.join(root, documentPath);
+  if (!fs.existsSync(fullPath)) return null;
+
+  const text = readText(fullPath);
+  const id = parseMarkdownField(text, "ID") || firstKnownId(text, ["TK", "TASK"]) || node.id;
+  const heading = text.match(/^#\s+(.+?)\s*$/m)?.[1]?.trim() ?? id;
+
+  return {
+    id,
+    type: "task",
+    name: heading.replace(/^Task:\s*/i, ""),
+    status: parseMarkdownField(text, "Status") || "unknown",
+    ownerSkill: normalizeOwnerSkill(parseMarkdownField(text, "Owner skill") || node.ownerSkill || "task-generator"),
+    path: documentPath,
+    parentIds: graphArtifact?.id ? [graphArtifact.id] : [useCaseArtifact.id],
+    childIds: [],
+    dependsOn: parseDelimitedValueList(parseMarkdownField(text, "Depends on")),
+    decisions: parseDecisionIds(text.split(/\r?\n/)),
+    delivery: {
+      level: normalizeDeliveryLevel(parseMarkdownField(text, "Delivery Level") || parseMarkdownField(text, "Level")),
+      priority: normalizePriority(parseMarkdownField(text, "Priority")),
+      depends_on: parseDelimitedValueList(parseMarkdownField(text, "Depends on")),
+      rationale: parseMarkdownField(text, "Rationale"),
+    },
+    documents: {
+      canonical: documentPath,
+    },
+  };
+}
+
 function buildArtifactsRegistry() {
   const artifacts = [];
   const contextFiles = findContextFiles();
@@ -394,15 +479,31 @@ function buildArtifactsRegistry() {
       dependsOn: parseYamlList(text, "depends_on"),
       decisions: [...new Set([...yamlDecisions, ...markdownDecisions])],
       delivery: parseYamlDelivery(text),
+      rigorTier: parseContextRigorTier(text),
       documents: inferArtifactDocuments(contextFile, meta),
     };
     artifacts.push(artifact);
 
     if (type === "use-case") {
+      const documentArtifacts = [];
       for (const key of ["specification", "design", "implementationPlan", "executionGraph", "tasks", "tests", "qaEvidence", "securityReview", "analytics", "audit"]) {
         const documentPath = artifact.documents[key];
         const documentArtifact = documentPath ? artifactFromDocument(artifact, key, documentPath) : null;
-        if (documentArtifact) artifacts.push(documentArtifact);
+        if (documentArtifact) documentArtifacts.push(documentArtifact);
+      }
+      artifacts.push(...documentArtifacts);
+
+      const graphPath = artifact.documents.executionGraph;
+      const graphArtifact = documentArtifacts.find((item) => item.type === "execution-graph");
+      const graphFile = graphPath ? path.join(root, graphPath) : null;
+      const parsedGraph = graphFile && fs.existsSync(graphFile) ? parseJsonFile(graphFile) : { ok: false };
+      if (parsedGraph.ok && Array.isArray(parsedGraph.value.nodes)) {
+        for (const node of parsedGraph.value.nodes) {
+          if (!node.path) continue;
+          const taskPath = rel(path.resolve(path.dirname(graphFile), node.path));
+          const taskArtifact = taskArtifactFromFile(artifact, graphArtifact, taskPath, node);
+          if (taskArtifact) artifacts.push(taskArtifact);
+        }
       }
     }
   }
@@ -473,16 +574,69 @@ function isDraftLike(status) {
 
 function validateUseCaseBundles() {
   for (const dir of findUseCaseDirs()) {
-    for (const fileName of requiredUseCaseFiles) {
+    const contextFile = path.join(dir, "context.md");
+    const contextText = fs.existsSync(contextFile) ? readText(contextFile) : "";
+    const tier = parseContextRigorTier(contextText) || "L";
+    const requiredFiles = requiredUseCaseFilesByTier[tier] ?? requiredUseCaseFilesByTier.L;
+    for (const fileName of requiredFiles) {
       const file = path.join(dir, fileName);
       if (!fs.existsSync(file)) {
         addResult(
           "error",
           "use-case-bundle",
           dir,
-          `Missing required use-case artifact: ${fileName}`,
-          `Create ${fileName} or explain why the use case is not executable yet.`
+          `Missing required Tier ${tier} use-case artifact: ${fileName}`,
+          `Create ${fileName}, lower the tier with approval, or mark the use case as N/A if it is only structural.`
         );
+      }
+    }
+  }
+}
+
+function validateRigorTiers() {
+  for (const dir of findUseCaseDirs()) {
+    const contextFile = path.join(dir, "context.md");
+    if (!fs.existsSync(contextFile)) continue;
+
+    const contextText = readText(contextFile);
+    const meta = parseContextMeta(contextText);
+    const tier = parseContextRigorTier(contextText);
+    const fileText = walk(dir)
+      .filter((file) => /\.(md|json)$/.test(file))
+      .map((file) => readText(file))
+      .join("\n");
+
+    if (!tier) {
+      addResult("error", "rigor-tier", contextFile, `${meta?.id ?? rel(dir)} is missing rigor_tier.`, "Add rigor_tier: S, M, L, or N/A to context.md.");
+      continue;
+    }
+
+    if (!allowedRigorTiers.has(tier)) {
+      addResult("error", "rigor-tier", contextFile, `${meta?.id ?? rel(dir)} has invalid rigor_tier: ${tier}.`, "Use S, M, L, or N/A.");
+      continue;
+    }
+
+    if (tier === "N/A") continue;
+
+    const triggers = tierLTriggerPatterns
+      .filter((trigger) => trigger.pattern.test(fileText))
+      .map((trigger) => trigger.name);
+    if (triggers.length > 0 && tier !== "L") {
+      addResult(
+        "error",
+        "rigor-tier",
+        contextFile,
+        `${meta?.id ?? rel(dir)} is Tier ${tier}, but Tier L trigger(s) were detected: ${[...new Set(triggers)].join(", ")}.`,
+        "Raise rigor_tier to L or remove/clarify the trigger with human approval."
+      );
+    }
+
+    if (tier === "S") {
+      for (const optionalFile of ["design.md", "analytics.md", "audit.md"]) {
+        const file = path.join(dir, optionalFile);
+        if (fs.existsSync(file) && !/Not applicable/i.test(readText(file))) {
+          addResult("error", "rigor-tier", file, `Tier S optional artifact ${optionalFile} exists but is not marked Not applicable.`, "Mark it Not applicable or raise the use case tier.");
+        }
       }
     }
   }
@@ -947,6 +1101,61 @@ function validateValidationGates() {
   }
 }
 
+function validateCodeEvidenceGates() {
+  for (const task of currentArtifacts().filter((artifact) => artifact.type === "task")) {
+    if (!statusRequiresImplementationEvidence(task.status)) continue;
+
+    const file = task.path ? path.join(root, task.path) : null;
+    if (!file || !fs.existsSync(file)) continue;
+    const text = readText(file);
+
+    const branch = parseMarkdownField(text, "Branch");
+    const commits = parseMarkdownField(text, "Commits");
+    const codePaths = parseMarkdownField(text, "Code paths");
+
+    if (isPlaceholderValue(branch)) {
+      addResult("error", "code-evidence", file, `${task.id} is ${task.status}, but Branch is missing or placeholder.`, "Add the implementation branch to the task file.");
+    }
+    if (isPlaceholderValue(commits)) {
+      addResult("error", "code-evidence", file, `${task.id} is ${task.status}, but Commits is missing or placeholder.`, "Add one or more implementation commit hashes.");
+    }
+    if (isPlaceholderValue(codePaths)) {
+      addResult("error", "code-evidence", file, `${task.id} is ${task.status}, but Code paths is missing or placeholder.`, "Add repository-relative code paths touched by this task.");
+    }
+
+    for (const codePath of parseDelimitedValueList(codePaths)) {
+      if (isPlaceholderValue(codePath) || /^https?:\/\//i.test(codePath)) continue;
+      const resolved = path.resolve(root, codePath);
+      if (!resolved.startsWith(root)) {
+        addResult("error", "code-evidence", file, `${task.id} code path points outside repository: ${codePath}`, "Use repository-relative code paths inside the monorepo.");
+      } else if (!fs.existsSync(resolved)) {
+        addResult("warning", "code-evidence", file, `${task.id} code path does not exist yet: ${codePath}`, "Confirm the path or keep the task below implemented until code exists.");
+      }
+    }
+
+    if (!statusRequiresConcreteValidationEvidence(task.status)) continue;
+
+    const pr = parseMarkdownField(text, "PR");
+    const testStatus = parseMarkdownField(text, "Test status");
+    const evidenceFields = [
+      parseMarkdownField(text, "Gate logs"),
+      parseMarkdownField(text, "CI URL"),
+      parseMarkdownField(text, "Screenshots"),
+      parseMarkdownField(text, "QA evidence"),
+    ];
+
+    if (isPlaceholderValue(pr)) {
+      addResult("error", "code-evidence", file, `${task.id} is ${task.status}, but PR is missing or placeholder.`, "Add the PR URL, PR id, or equivalent review surface.");
+    }
+    if (!/^(passed|approved|success|succeeded)$/i.test(String(testStatus ?? "").trim())) {
+      addResult("error", "code-evidence", file, `${task.id} is ${task.status}, but Test status is not passing.`, "Set Test status to passed/approved/success only after QA evidence exists.");
+    }
+    if (!evidenceFields.some((value) => !isPlaceholderValue(value))) {
+      addResult("error", "code-evidence", file, `${task.id} is ${task.status}, but no concrete validation evidence is linked.`, "Add gate logs, CI URL, screenshots, or QA evidence.");
+    }
+  }
+}
+
 function validateExecutionGraphs() {
   for (const file of walk(path.join(root, "domains")).filter((item) =>
     item.endsWith("execution-graph.json")
@@ -967,6 +1176,13 @@ function validateExecutionGraphs() {
       continue;
     }
 
+    const graphDir = path.dirname(file);
+    const tasksIndexFile = path.join(graphDir, "tasks.md");
+    const tasksIndexText = fs.existsSync(tasksIndexFile) ? readText(tasksIndexFile) : "";
+    if (!tasksIndexText.includes("Generated index")) {
+      addResult("error", "tasks-index", tasksIndexFile, "tasks.md must be marked as a generated index.", "Regenerate tasks.md from execution-graph.json and tasks/*.md.");
+    }
+
     const ids = new Set();
     for (const node of graph.nodes) {
       if (!node.id) {
@@ -977,20 +1193,55 @@ function validateExecutionGraphs() {
         addResult("error", "execution-graph", file, `Duplicate graph node id: ${node.id}`, "Use unique task ids.");
       }
       ids.add(node.id);
-      for (const field of ["title", "type", "dependsOn"]) {
+      for (const field of ["id", "path", "dependsOn"]) {
         if (!(field in node)) {
           addResult("error", "execution-graph", file, `Node ${node.id} is missing ${field}.`, `Add ${field}.`);
         }
       }
-      if (!("ownerSkill" in node)) {
-        addResult("warning", "execution-graph", file, `Node ${node.id} is missing ownerSkill.`, "Assign the responsible skill.");
+
+      if (node.path) {
+        if (typeof node.path !== "string" || !node.path.startsWith("tasks/") || !node.path.endsWith(".md")) {
+          addResult("error", "execution-graph", file, `Node ${node.id} path must point to tasks/<task-id>.md.`, "Set path to the canonical task file.");
+        }
+
+        const taskFile = path.resolve(graphDir, node.path);
+        if (!taskFile.startsWith(graphDir)) {
+          addResult("error", "execution-graph", file, `Node ${node.id} path points outside the use-case directory.`, "Keep task files inside the use-case tasks/ directory.");
+        } else if (!fs.existsSync(taskFile)) {
+          addResult("error", "execution-graph", file, `Node ${node.id} task file does not exist: ${node.path}`, "Create the task file from knowledge/templates/task-template.md.");
+        } else {
+          const taskText = readText(taskFile);
+          const taskId = parseMarkdownField(taskText, "ID");
+          const taskStatus = parseMarkdownField(taskText, "Status");
+          const taskSourceGraph = parseMarkdownField(taskText, "Source graph");
+          const taskSourceNode = parseMarkdownField(taskText, "Source node");
+          const taskTitle = parseMarkdownField(taskText, "Title");
+          const taskType = parseMarkdownField(taskText, "Type");
+
+          if (taskId !== node.id) {
+            addResult("error", "task-file", taskFile, `Task file ID is ${taskId || "missing"}, expected ${node.id}.`, `Set ID to ${node.id}.`);
+          }
+          if (!taskStatus || !allowedStatuses.has(taskStatus)) {
+            addResult("error", "task-file", taskFile, `Task ${node.id} has invalid status: ${taskStatus || "missing"}.`, "Use a framework-approved artifact status.");
+          }
+          if (taskSourceGraph !== graph.id) {
+            addResult("error", "task-file", taskFile, `Task ${node.id} Source graph is ${taskSourceGraph || "missing"}, expected ${graph.id}.`, `Set Source graph to ${graph.id}.`);
+          }
+          if (taskSourceNode !== node.id) {
+            addResult("error", "task-file", taskFile, `Task ${node.id} Source node is ${taskSourceNode || "missing"}, expected ${node.id}.`, `Set Source node to ${node.id}.`);
+          }
+          if (node.title && taskTitle && node.title !== taskTitle) {
+            addResult("error", "task-file", taskFile, `Task ${node.id} title snapshot differs from graph title.`, "Regenerate graph snapshot or update the task file from the approved source.");
+          }
+          if (node.type && taskType && node.type !== taskType) {
+            addResult("error", "task-file", taskFile, `Task ${node.id} type snapshot differs from graph type.`, "Regenerate graph snapshot or update the task file from the approved source.");
+          }
+          if (tasksIndexText && !tasksIndexText.includes(node.path)) {
+            addResult("error", "tasks-index", tasksIndexFile, `tasks.md does not link task file ${node.path}.`, "Regenerate tasks.md from the graph and task files.");
+          }
+        }
       }
-      if (!("writeScope" in node)) {
-        addResult("warning", "execution-graph", file, `Node ${node.id} is missing writeScope.`, "Declare write scope.");
-      }
-      if (!("acceptanceChecks" in node)) {
-        addResult("warning", "execution-graph", file, `Node ${node.id} is missing acceptanceChecks.`, "Add acceptanceChecks.");
-      }
+
       if (Array.isArray(node.dependsOn)) {
         for (const dependency of node.dependsOn) {
           if (!ids.has(dependency) && !graph.nodes.some((candidate) => candidate.id === dependency)) {
@@ -1003,6 +1254,8 @@ function validateExecutionGraphs() {
             );
           }
         }
+      } else {
+        addResult("error", "execution-graph", file, `Node ${node.id} dependsOn must be an array.`, "Set dependsOn to an array of task ids.");
       }
     }
   }
@@ -1477,10 +1730,12 @@ flowchart LR
 | --- | --- |
 | Context metadata | ${results.some((item) => item.check === "context" && item.severity === "error") ? "🔴 has errors" : "✅ no errors"} |
 | Use-case bundles | ${results.some((item) => item.check === "use-case-bundle" && item.severity === "error") ? "🔴 has errors" : "✅ no errors"} |
+| Rigor tiers | ${results.some((item) => item.check === "rigor-tier" && item.severity === "error") ? "\u{1F534} has errors" : results.some((item) => item.check === "rigor-tier") ? "\u{1F7E1} findings" : "\u{2705} no findings"} |
 | Approval gates | ${results.some((item) => item.check === "approval-gates" && item.severity === "error") ? "🔴 has errors" : results.some((item) => item.check === "approval-gates") ? "🟡 findings" : "✅ no findings"} |
 | Approval records | ${results.some((item) => item.check === "approval-records" && item.severity === "error") ? "🔴 has errors" : results.some((item) => item.check === "approval-records") ? "🟡 findings" : "✅ no findings"} |
 | Derived staleness | ${results.some((item) => item.check === "staleness" && item.severity === "error") ? "🔴 has errors" : results.some((item) => item.check === "staleness") ? "🟡 findings" : "✅ no findings"} |
 | Validation gates | ${results.some((item) => item.check === "validation-gates" && item.severity === "error") ? "\u{1F534} has errors" : results.some((item) => item.check === "validation-gates") ? "\u{1F7E1} findings" : "\u{2705} no findings"} |
+| Code evidence gates | ${results.some((item) => item.check === "code-evidence" && item.severity === "error") ? "\u{1F534} has errors" : results.some((item) => item.check === "code-evidence") ? "\u{1F7E1} findings" : "\u{2705} no findings"} |
 | Traceability | ${results.some((item) => item.check === "traceability" && item.severity === "error") ? "🔴 has errors" : results.some((item) => item.check === "traceability") ? "🟡 findings" : "✅ no findings"} |
 | Status policy | ${results.some((item) => item.check === "status-policy" && item.severity === "error") ? "🔴 has errors" : results.some((item) => item.check === "status-policy") ? "🟡 findings" : "✅ no findings"} |
 | Delivery metadata | ${results.some((item) => item.check === "delivery" && item.severity === "error") ? "🔴 has errors" : results.some((item) => item.check === "delivery") ? "🟡 findings" : "✅ no findings"} |
@@ -1514,12 +1769,14 @@ if (writeRegistry) {
   writeArtifactsRegistry();
 }
 validateUseCaseBundles();
+validateRigorTiers();
 validateTraceability();
 validateStatusPolicy();
 validateApprovalGates();
 validateApprovalRecords();
 validateStaleness();
 validateValidationGates();
+validateCodeEvidenceGates();
 validateDeliveryMetadata();
 validateExecutionGraphs();
 validateContexts();

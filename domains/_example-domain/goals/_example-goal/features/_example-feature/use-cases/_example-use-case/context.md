@@ -6,6 +6,7 @@ type: use-case
 name: Example Use Case
 status: draft
 owner_skill: use-case
+rigor_tier: N/A
 last_updated: 2026-07-09
 delivery:
   level: N/A
@@ -18,6 +19,15 @@ delivery:
 ## Purpose
 
 This context demonstrates the executable artifact bundle expected for a use case.
+
+## Rigor Tier
+
+| Field | Value |
+| --- | --- |
+| Tier | N/A |
+| Trigger checklist | none |
+| Human approval | N/A; structural example only |
+| Rationale | This use case is a placeholder and is not product delivery scope. |
 
 ## Parent Artifacts
 

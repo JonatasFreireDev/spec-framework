@@ -76,6 +76,67 @@
       "path": "knowledge/decisions/DEC-005-derived-staleness.md",
       "date": "2026-07-09",
       "supersedes": []
+    },
+    {
+      "id": "DEC-006",
+      "title": "Task Files As Canonical Task Records",
+      "affectedArtifacts": [
+        "FRAMEWORK.md",
+        "AGENTS.md",
+        "engineering/validators/framework-validator.mjs",
+        "knowledge/templates/task-template.md",
+        "knowledge/templates/tasks-template.md",
+        "knowledge/templates/execution-graph-template.json",
+        "domains/_example-domain/goals/_example-goal/features/_example-feature/use-cases/_example-use-case/execution-graph.json",
+        "domains/_example-domain/goals/_example-goal/features/_example-feature/use-cases/_example-use-case/tasks.md",
+        "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/attendee-checks-in-with-qr-code/execution-graph.json",
+        "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/attendee-checks-in-with-qr-code/tasks.md",
+        "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/organizer-validates-qr-code/execution-graph.json",
+        "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/organizer-validates-qr-code/tasks.md"
+      ],
+      "status": "approved",
+      "scope": "planning/tasks/execution-graph",
+      "path": "knowledge/decisions/DEC-006-task-files.md",
+      "date": "2026-07-09",
+      "supersedes": []
+    },
+    {
+      "id": "DEC-007",
+      "title": "Code Evidence Gates",
+      "affectedArtifacts": [
+        "FRAMEWORK.md",
+        "AGENTS.md",
+        "engineering/validators/framework-validator.mjs",
+        "knowledge/templates/task-template.md",
+        "knowledge/templates/qa-evidence-template.md",
+        "domains/_example-domain/goals/_example-goal/features/_example-feature/use-cases/_example-use-case/tasks/",
+        "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/attendee-checks-in-with-qr-code/tasks/",
+        "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/organizer-validates-qr-code/tasks/"
+      ],
+      "status": "approved",
+      "scope": "engineering/code-links/validation-gates",
+      "path": "knowledge/decisions/DEC-007-code-evidence-gates.md",
+      "date": "2026-07-09",
+      "supersedes": []
+    },
+    {
+      "id": "DEC-008",
+      "title": "Rigor Tiers For Use Cases",
+      "affectedArtifacts": [
+        "FRAMEWORK.md",
+        "AGENTS.md",
+        "engineering/validators/framework-validator.mjs",
+        "knowledge/templates/context-template.md",
+        "knowledge/templates/use-case-template.md",
+        "domains/_example-domain/goals/_example-goal/features/_example-feature/use-cases/_example-use-case/context.md",
+        "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/attendee-checks-in-with-qr-code/context.md",
+        "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/organizer-validates-qr-code/context.md"
+      ],
+      "status": "approved",
+      "scope": "governance/use-case-rigor/validation",
+      "path": "knowledge/decisions/DEC-008-rigor-tiers.md",
+      "date": "2026-07-09",
+      "supersedes": []
     }
   ]
 }

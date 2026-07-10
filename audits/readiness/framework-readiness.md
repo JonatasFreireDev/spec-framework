@@ -4,7 +4,7 @@
 
 | Field | Value |
 | --- | --- |
-| Date | 2026-07-09 |
+| Date | 2026-07-10 |
 | Auditor | `engineering/validators/framework-validator.mjs` |
 | Scope | Use cases with real delivery level |
 | Use cases checked | 2 |
@@ -39,7 +39,7 @@ flowchart LR
 
 | Use Case | Name | Verdict | Score | Spec | Design | Plan | Graph | Tasks | Tests | QA Evidence | Security Review | Can Generate Tasks | Validation Ready | Next Owner |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| [UC-001](../../domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/attendee-checks-in-with-qr-code/context.md) | Attendee checks in with QR code | 🟡 in_progress | 0% | ➖ draft | ➖ draft | ➖ draft | ➖ draft | ➖ draft | ➖ draft | 🔴 missing | 🔴 missing | no | no | Specification AI |
+| [UC-001](../../domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/attendee-checks-in-with-qr-code/context.md) | Attendee checks in with QR code | 🟡 in_progress | 0% | ➖ draft | ➖ draft | ➖ draft | ➖ draft | ➖ draft | ➖ draft | ➖ draft | ➖ draft | no | no | Specification AI |
 | [UC-002](../../domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/organizer-validates-qr-code/context.md) | Organizer Validates QR Code | 🟡 in_progress | 0% | 🟡 proposed | ➖ draft | ➖ draft | ➖ draft | ➖ draft | ➖ draft | ➖ draft | ➖ draft | no | no | Specification AI |
 
 ## 🏁 Result

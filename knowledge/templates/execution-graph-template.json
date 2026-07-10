@@ -12,6 +12,7 @@
   "nodes": [
     {
       "id": "TK-001",
+      "path": "tasks/TK-001.md",
       "title": "[task title]",
       "type": "database|backend|frontend|test|analytics|docs|security",
       "ownerSkill": "task-runner|documentation-writer|qa|security-review",

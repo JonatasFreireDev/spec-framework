@@ -46,11 +46,13 @@ Do not skip gates.
 - A downstream artifact must not advance to `proposed`, `approved`, or a later status while its required parent gate is incomplete.
 - No `design.md` should be generated before a Specification exists.
 - No `implementation-plan.md` should be generated until `design.md` is approved or explicitly marked `Not applicable`.
-- No `tasks.md` should be generated until `execution-graph.json` exists and is valid.
+- No task file or generated `tasks.md` index should be generated until `execution-graph.json` exists and is valid.
 - Do not implement application code until the relevant Specification, Design, Implementation Plan, Execution Graph, and Tasks are approved or the user explicitly asks for a draft/prototype exception.
 - Artifacts with status `approved`, `in_progress`, `implemented`, `validated`, or `released` must have a matching approval record in `.product/history/`.
 - Agents must not create, edit, or repair approval records unless the user explicitly approves a migration that names approval-record generation as a deliverable. If approval records are missing or inconsistent, report the blocker and stop.
 - Staleness is derived by the validator from `.product/derivations.json`; agents must not set `stale` as an artifact status. If a derived artifact is stale, report it and regenerate or request re-approval through the appropriate approved flow.
+- A task must not move to `implemented` unless its task file contains structured `Branch`, `Commits`, and `Code paths`.
+- A task must not move to `validated` or `released` unless its task file contains `PR`, passing `Test status`, and concrete evidence such as gate logs, CI URL, screenshots, or QA evidence.
 
 ## Delivery And Priority
 
@@ -101,6 +103,34 @@ Use context files to preserve:
 ## Templates
 
 Use `knowledge/templates/` as the starting structure for new artifacts. Replace placeholders with useful content. Do not create title-only documents.
+
+## Tasks
+
+Tasks are canonical one-file artifacts under `tasks/<task-id>.md`.
+
+- Edit task status, contract, delivery metadata, code links, and evidence only in the task file.
+- Treat `tasks.md` as a generated index from `execution-graph.json` and `tasks/*.md`; do not edit it by hand except when regenerating the index.
+- Every `execution-graph.json` node must include `path` pointing to its task file.
+- If graph snapshot fields such as `title` or `type` disagree with the task file, stop and reconcile the source artifact before continuing.
+
+## Rigor Tiers
+
+Every use case context must declare `rigor_tier: S | M | L | N/A`.
+
+- Tier S requires specification, tasks, and tests; design, analytics, and audit may be `Not applicable`.
+- Tier M adds design, implementation plan, and execution graph.
+- Tier L adds analytics, audit, QA evidence, and Security Review.
+- Auth, permissions, roles, payments, PII, uploads, UGC, public surfaces, or migrations touching RLS/policies force Tier L.
+- Do not lower or change a tier without a matching approval record for the use case.
+
+## Code Links And Evidence
+
+The framework uses a monorepo delivery convention: product documentation and product code live in the same product repository. This `spec-framework` repository remains a template/lab.
+
+- Use repository-relative paths for code paths whenever the code lives in the same repository.
+- Keep branch, commits, PR, code paths, gate logs, CI URL, screenshots, and QA evidence in structured task or QA evidence fields.
+- Do not mark task code as `implemented` with only prose notes.
+- Do not mark task code as `validated` without passing test evidence and a PR/equivalent review surface.
 
 ## Reporting
 

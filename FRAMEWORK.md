@@ -110,11 +110,28 @@ Traduz a Specification em estrategia tecnica. Pensa como um Tech Lead: sequencia
 
 ### Execution Graph
 
-Representa as tarefas como um DAG. Cada no e uma unidade executavel com dependencias explicitas. Isso permite paralelismo seguro entre agentes e deixa claro quando algo esta bloqueado.
+Representa as tarefas como um DAG. Cada no e uma unidade executavel com dependencias explicitas e um `path` para seu arquivo canonico em `tasks/<task-id>.md`. Isso permite paralelismo seguro entre agentes e deixa claro quando algo esta bloqueado.
 
 ### Task
 
-Unidade executavel derivada da Specification e do Execution Graph. Uma task deve ser pequena o suficiente para implementacao, teste, review e rollback.
+Unidade executavel derivada da Specification e do Execution Graph. Uma task deve ser pequena o suficiente para implementacao, teste, review e rollback. Cada task vive em um arquivo proprio em `tasks/<task-id>.md`; esse arquivo e a fonte canonica para status, contrato, Delivery Level/Priority, links com codigo e evidencias. `tasks.md` e apenas um indice gerado para navegacao humana.
+
+### Code Link
+
+O framework usa modelo monorepo para entrega de produto: documentacao, codigo e evidencias vivem no mesmo repositorio do produto, e este repositorio `spec-framework` permanece como template/laboratorio. Links entre task e codigo devem usar caminhos relativos ao repositorio quando apontarem para arquivos internos; PRs podem usar URL ou identificador externo.
+
+Uma task em `implemented` deve registrar `Branch`, `Commits` e `Code paths` em seu arquivo canonico. Uma task em `validated` ou `released` deve registrar tambem `PR`, `Test status` aprovado e pelo menos uma evidencia concreta, como `Gate logs`, `CI URL`, `Screenshots` ou `QA evidence`.
+
+### Rigor Tier
+
+Use cases declaram `rigor_tier` no `context.md` para ajustar o rigor documental ao risco:
+
+- `S`: pequeno e baixo risco; requer specification, tasks e tests.
+- `M`: fluxo normal de produto; requer tambem design, implementation plan e execution graph.
+- `L`: fluxo critico ou sensivel; requer tambem analytics, audit, QA evidence e Security Review.
+- `N/A`: exemplo estrutural ou placeholder sem escopo de produto.
+
+Gatilhos automaticos de Tier L: auth, permissoes, roles, pagamento, PII, upload, UGC, superficie publica, ou migracao que toque RLS/policies. Mudanca de tier exige approval record do use case, mas nao uma nova DEC quando a politica permanece igual.
 ## 4. Estrutura De Pastas
 
 Estrutura canonica:
@@ -181,6 +198,8 @@ product/
                   specification.md
                   implementation-plan.md
                   execution-graph.json
+                  tasks/
+                    <task-id>.md
                   tasks.md
                   tests.md
                   analytics.md
@@ -206,6 +225,7 @@ type: feature
 name: QR Code Check-in
 status: draft
 owner_skill: feature-ai
+rigor_tier: L
 
 parents:
   - GOAL-003
@@ -255,6 +275,8 @@ O Design e obrigatorio para qualquer use case com interface. Para entregas sem U
 
 QA Evidence e Security Review sao gates de validacao. QA Evidence comprova que os criterios de aceite, tasks, fluxos, bordas, regressao, acessibilidade, observabilidade e controles de seguranca foram verificados. Security Review avalia autenticacao, autorizacao, privacidade, abuso, dados sensiveis, tokens, logs, dependencias, rollout, rollback e risco residual. Um artefato nao deve chegar a `validated` ou `released` quando houver blocker de QA ou seguranca.
 
+QA Evidence deve trazer a evidencia real de volta ao use case: branch, commits, PR, caminhos de codigo, comandos ou metodos de teste, logs de gate, URL de CI quando houver e screenshots quando a entrega tiver superficie visual.
+
 A Specification deve responder:
 
 - O que exatamente deve acontecer?
@@ -298,6 +320,8 @@ Open questions
 ```
 
 Security Review nao e uma promessa absoluta de ausencia de risco. O papel do gate e garantir que todos os controles definidos foram verificados com evidencia, que blockers estao resolvidos, e que riscos residuais estao documentados e aprovados por humanos quando forem relevantes.
+
+Rigor documental e proporcional ao tier do use case. Tier S evita artefatos pesados quando design, analytics ou audit sao `Not applicable`; Tier L exige QA Evidence e Security Review por padrao.
 
 ## 6.1. Priorizacao De Entrega
 
@@ -377,7 +401,7 @@ Exemplo de fases:
 
 ## 8. Execution Graph
 
-O Execution Graph e um DAG. Ele define dependencia entre tasks e permite execucao paralela por agentes.
+O Execution Graph e um DAG. Ele define dependencia entre tasks e permite execucao paralela por agentes. Cada no referencia o arquivo canonico da task por `path`.
 
 Exemplo:
 
@@ -388,24 +412,28 @@ Exemplo:
   "nodes": [
     {
       "id": "TK-001",
+      "path": "tasks/TK-001.md",
       "title": "Create event tables and policies",
       "type": "database",
       "dependsOn": []
     },
     {
       "id": "TK-002",
+      "path": "tasks/TK-002.md",
       "title": "Create event service",
       "type": "backend",
       "dependsOn": ["TK-001"]
     },
     {
       "id": "TK-003",
+      "path": "tasks/TK-003.md",
       "title": "Create event form UI",
       "type": "frontend",
       "dependsOn": ["TK-002"]
     },
     {
       "id": "TK-004",
+      "path": "tasks/TK-004.md",
       "title": "Instrument analytics",
       "type": "analytics",
       "dependsOn": ["TK-002", "TK-003"]
@@ -419,6 +447,8 @@ Regras:
 - Uma task so pode iniciar quando suas dependencias estao aprovadas.
 - Tasks paralelas devem ter escopo de escrita separado.
 - Toda task aponta para a Specification de origem.
+- Todo no deve apontar para o arquivo canonico em `tasks/<task-id>.md`.
+- Snapshots no grafo, como `title` e `type`, sao permitidos apenas quando batem com o arquivo de task referenciado.
 - Toda mudanca de dependencia atualiza o grafo.
 - Falhas de QA podem criar novos nos no grafo.
 ## 9. Skills
@@ -549,7 +579,10 @@ Transicoes obrigatorias:
 
 - `proposed`: nao exige approval record, mas nao deve avancar a partir de um parent gate incompleto.
 - `approved` e estados posteriores: exigem approval record correspondente em `.product/history/`, com `artifact_id`, `path`, `content_hash`, `status_granted`, `approved_by`, `approved_at` e `notes`.
+- `approved -> in_progress`: exige task aprovada ou excecao explicita de prototipo/draft.
+- `in_progress -> implemented`: exige evidencia estruturada no arquivo da task: branch, commits e code paths.
 - `implemented -> validated`: exige QA Evidence aprovada e sem blockers; exige Security Review aprovada quando houver codigo, dados, permissoes, tokens, API, pagamentos, uploads, mensagens, busca, admin, analytics sensivel ou qualquer risco de privacidade/abuso.
+- `implemented -> validated`: para task individual, tambem exige PR, test status aprovado e evidencia concreta como logs de gate, CI URL, screenshots ou QA evidence.
 - `validated -> released`: exige Release Orchestrator, auditoria sem blockers, Security Review sem blockers, riscos residuais aceitos e rollback/monitoramento definidos.
 - QA pode bloquear validacao quando qualquer criterio de aceite, task, controle de seguranca, regressao critica ou evidencia obrigatoria estiver ausente.
 - Security Review pode bloquear validacao e release quando houver falha de autorizacao, vazamento de dados, decisao de permissao sem aprovacao, segredo exposto, abuso nao mitigado, logging inseguro ou risco residual alto sem decisao humana.

@@ -5,7 +5,10 @@
   "delivery": {
     "level": "L1",
     "priority": "P0",
-    "dependsOn": ["DEC-001", "DEC-002"],
+    "dependsOn": [
+      "DEC-001",
+      "DEC-002"
+    ],
     "rationale": "Organizer validation is required to close the walking skeleton for event attendance."
   },
   "nodes": [
@@ -15,10 +18,18 @@
       "type": "data",
       "ownerSkill": "implementation-planner",
       "dependsOn": [],
-      "sourceSections": ["Data Model", "Observability"],
-      "writeScope": ["future application data model documentation"],
+      "sourceSections": [
+        "Data Model",
+        "Observability"
+      ],
+      "writeScope": [
+        "future application data model documentation"
+      ],
       "status": "draft",
-      "acceptanceChecks": ["One check-in per attendee per event is explicitly protected."]
+      "acceptanceChecks": [
+        "One check-in per attendee per event is explicitly protected."
+      ],
+      "path": "tasks/TK-002-001.md"
     },
     {
       "id": "TK-002-002",
@@ -26,65 +37,132 @@
       "type": "security",
       "ownerSkill": "implementation-planner",
       "dependsOn": [],
-      "sourceSections": ["Permissions", "Security"],
-      "writeScope": ["future application permission contract documentation"],
+      "sourceSections": [
+        "Permissions",
+        "Security"
+      ],
+      "writeScope": [
+        "future application permission contract documentation"
+      ],
       "status": "draft",
-      "acceptanceChecks": ["Organizer permission is checked server-side for validation."]
+      "acceptanceChecks": [
+        "Organizer permission is checked server-side for validation."
+      ],
+      "path": "tasks/TK-002-002.md"
     },
     {
       "id": "TK-002-003",
       "title": "Define QR token validation service contract",
       "type": "backend",
       "ownerSkill": "implementation-planner",
-      "dependsOn": ["TK-002-001", "TK-002-002"],
-      "sourceSections": ["Business Rules", "API Contracts", "Error States"],
-      "writeScope": ["future application validation service contract documentation"],
+      "dependsOn": [
+        "TK-002-001",
+        "TK-002-002"
+      ],
+      "sourceSections": [
+        "Business Rules",
+        "API Contracts",
+        "Error States"
+      ],
+      "writeScope": [
+        "future application validation service contract documentation"
+      ],
       "status": "draft",
-      "acceptanceChecks": ["All validation outcomes map to specification result states."]
+      "acceptanceChecks": [
+        "All validation outcomes map to specification result states."
+      ],
+      "path": "tasks/TK-002-003.md"
     },
     {
       "id": "TK-002-004",
       "title": "Define check-in session query and validation mutation",
       "type": "api",
       "ownerSkill": "implementation-planner",
-      "dependsOn": ["TK-002-003"],
-      "sourceSections": ["API Contracts", "UX Flow"],
-      "writeScope": ["future application API contract documentation"],
+      "dependsOn": [
+        "TK-002-003"
+      ],
+      "sourceSections": [
+        "API Contracts",
+        "UX Flow"
+      ],
+      "writeScope": [
+        "future application API contract documentation"
+      ],
       "status": "draft",
-      "acceptanceChecks": ["API responses support UI states without unsafe data exposure."]
+      "acceptanceChecks": [
+        "API responses support UI states without unsafe data exposure."
+      ],
+      "path": "tasks/TK-002-004.md"
     },
     {
       "id": "TK-002-005",
       "title": "Define organizer scanner UI states",
       "type": "frontend",
       "ownerSkill": "ux-ui",
-      "dependsOn": ["TK-002-004"],
-      "sourceSections": ["UI States", "Accessibility"],
-      "writeScope": ["future application organizer scanner UI documentation"],
+      "dependsOn": [
+        "TK-002-004"
+      ],
+      "sourceSections": [
+        "UI States",
+        "Accessibility"
+      ],
+      "writeScope": [
+        "future application organizer scanner UI documentation"
+      ],
       "status": "draft",
-      "acceptanceChecks": ["Every design state is represented in the UI state model."]
+      "acceptanceChecks": [
+        "Every design state is represented in the UI state model."
+      ],
+      "path": "tasks/TK-002-005.md"
     },
     {
       "id": "TK-002-006",
       "title": "Define analytics and observability instrumentation",
       "type": "analytics",
       "ownerSkill": "documentation-writer",
-      "dependsOn": ["TK-002-003", "TK-002-005"],
-      "sourceSections": ["Analytics", "Observability"],
-      "writeScope": ["future application analytics and logging documentation"],
+      "dependsOn": [
+        "TK-002-003",
+        "TK-002-005"
+      ],
+      "sourceSections": [
+        "Analytics",
+        "Observability"
+      ],
+      "writeScope": [
+        "future application analytics and logging documentation"
+      ],
       "status": "draft",
-      "acceptanceChecks": ["Validation attempts and failure reasons are measurable."]
+      "acceptanceChecks": [
+        "Validation attempts and failure reasons are measurable."
+      ],
+      "path": "tasks/TK-002-006.md"
     },
     {
       "id": "TK-002-007",
       "title": "Define validation test coverage",
       "type": "qa",
       "ownerSkill": "qa",
-      "dependsOn": ["TK-002-001", "TK-002-002", "TK-002-003", "TK-002-004", "TK-002-005", "TK-002-006"],
-      "sourceSections": ["Acceptance Criteria", "Error States", "Edge Cases"],
-      "writeScope": ["future application test plan documentation"],
+      "dependsOn": [
+        "TK-002-001",
+        "TK-002-002",
+        "TK-002-003",
+        "TK-002-004",
+        "TK-002-005",
+        "TK-002-006"
+      ],
+      "sourceSections": [
+        "Acceptance Criteria",
+        "Error States",
+        "Edge Cases"
+      ],
+      "writeScope": [
+        "future application test plan documentation"
+      ],
       "status": "draft",
-      "acceptanceChecks": ["Tests cover behavior, security, UX, analytics, and accessibility."]
+      "acceptanceChecks": [
+        "Tests cover behavior, security, UX, analytics, and accessibility."
+      ],
+      "path": "tasks/TK-002-007.md"
     }
   ]
 }

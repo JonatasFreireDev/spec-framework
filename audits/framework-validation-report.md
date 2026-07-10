@@ -4,7 +4,7 @@
 
 | Field | Value |
 | --- | --- |
-| Date | 2026-07-09 |
+| Date | 2026-07-10 |
 | Validator | `engineering/validators/framework-validator.mjs` |
 | Verdict | ✅ ready |
 | Errors | 0 |
@@ -37,10 +37,12 @@ flowchart LR
 | --- | --- |
 | Context metadata | ✅ no errors |
 | Use-case bundles | ✅ no errors |
+| Rigor tiers | ✅ no findings |
 | Approval gates | ✅ no findings |
 | Approval records | ✅ no findings |
 | Derived staleness | ✅ no findings |
 | Validation gates | ✅ no findings |
+| Code evidence gates | ✅ no findings |
 | Traceability | ✅ no findings |
 | Status policy | ✅ no findings |
 | Delivery metadata | ✅ no findings |

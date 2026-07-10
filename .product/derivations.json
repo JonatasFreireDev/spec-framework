@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-07-09T22:01:07.227Z",
-  "generator": "EV-004 initial derivation baseline",
+  "generatedAt": "2026-07-09T22:18:06.345Z",
+  "generator": "EV-005 code evidence gate baseline refresh",
   "hashAlgorithm": "sha256(normalize line endings to LF and trim trailing spaces/tabs per line)",
   "derivations": [
     {
@@ -13,8 +13,8 @@
           "content_hash": "d85749146da99a06831e2ef3679be9a32a2c193b3c73d1d8e18cfdbb7a8483b5"
         }
       ],
-      "updated_at": "2026-07-09T22:01:07.117Z",
-      "notes": "initial derivation baseline for EV-004"
+      "updated_at": "2026-07-09T22:18:06.345Z",
+      "notes": "derivation baseline refreshed after EV-005 code evidence gates"
     },
     {
       "artifact_id": "AUD-002",
@@ -38,12 +38,12 @@
         {
           "artifact_id": "GRAPH-002",
           "path": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/organizer-validates-qr-code/execution-graph.json",
-          "content_hash": "353d1e41ce827133eff34ebb023c6ec5dddffc92a205197364d013b5af20d5f9"
+          "content_hash": "962ee3971d2561a35f54aae7ddd351b3b9f3cd146e12b703015ef670e268429e"
         },
         {
           "artifact_id": "TASKSET-002",
           "path": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/organizer-validates-qr-code/tasks.md",
-          "content_hash": "e15f09ce5264e9174b84f2f589ce06acb5b2d40028e76c81ffa0b43c32f334bf"
+          "content_hash": "15aa4a6407d6965244ab75ac1e6f730071abe61434e9a0b40864b9bf054ecf61"
         },
         {
           "artifact_id": "TEST-002",
@@ -51,8 +51,8 @@
           "content_hash": "8b213ef21f10033abe2b8c6f7d314a34cab2d50de5d346cb6d7ba36106dfe9a9"
         }
       ],
-      "updated_at": "2026-07-09T22:01:07.147Z",
-      "notes": "initial derivation baseline for EV-004"
+      "updated_at": "2026-07-09T22:18:06.345Z",
+      "notes": "derivation baseline refreshed after EV-005 code evidence gates"
     },
     {
       "artifact_id": "DES-002",
@@ -69,8 +69,8 @@
           "content_hash": "b7a62ae58b5ac03acffeaefb7a030b8e6cb5f08af2850f63ae6890994a4831cc"
         }
       ],
-      "updated_at": "2026-07-09T22:01:07.148Z",
-      "notes": "initial derivation baseline for EV-004"
+      "updated_at": "2026-07-09T22:18:06.345Z",
+      "notes": "derivation baseline refreshed after EV-005 code evidence gates"
     },
     {
       "artifact_id": "GRAPH-001",
@@ -87,8 +87,8 @@
           "content_hash": "c4e91448044fc7e94782e6994935b50140560fec22d09a495bed06204b443b0d"
         }
       ],
-      "updated_at": "2026-07-09T22:01:07.159Z",
-      "notes": "initial derivation baseline for EV-004"
+      "updated_at": "2026-07-09T22:18:06.345Z",
+      "notes": "derivation baseline refreshed after EV-005 code evidence gates"
     },
     {
       "artifact_id": "GRAPH-002",
@@ -105,8 +105,8 @@
           "content_hash": "b2be5a0afe9fe6e71f12c7007acf91cceec91f30f68f74a4e0fba7f41ec95040"
         }
       ],
-      "updated_at": "2026-07-09T22:01:07.159Z",
-      "notes": "initial derivation baseline for EV-004"
+      "updated_at": "2026-07-09T22:18:06.345Z",
+      "notes": "derivation baseline refreshed after EV-005 code evidence gates"
     },
     {
       "artifact_id": "PLAN-001",
@@ -123,8 +123,8 @@
           "content_hash": "cd9d99db455de6101671fec56180061e09e98f4f39159210ae45e86616860fb2"
         }
       ],
-      "updated_at": "2026-07-09T22:01:07.160Z",
-      "notes": "initial derivation baseline for EV-004"
+      "updated_at": "2026-07-09T22:18:06.345Z",
+      "notes": "derivation baseline refreshed after EV-005 code evidence gates"
     },
     {
       "artifact_id": "PLAN-002",
@@ -141,8 +141,8 @@
           "content_hash": "1244b7b257fed677ec8292c13ed5b246ffa134db40ca209bab417b2d1d1968ca"
         }
       ],
-      "updated_at": "2026-07-09T22:01:07.162Z",
-      "notes": "initial derivation baseline for EV-004"
+      "updated_at": "2026-07-09T22:18:06.345Z",
+      "notes": "derivation baseline refreshed after EV-005 code evidence gates"
     },
     {
       "artifact_id": "QA-002",
@@ -159,8 +159,8 @@
           "content_hash": "d85749146da99a06831e2ef3679be9a32a2c193b3c73d1d8e18cfdbb7a8483b5"
         }
       ],
-      "updated_at": "2026-07-09T22:01:07.163Z",
-      "notes": "initial derivation baseline for EV-004"
+      "updated_at": "2026-07-09T22:18:06.345Z",
+      "notes": "derivation baseline refreshed after EV-005 code evidence gates"
     },
     {
       "artifact_id": "SEC-002",
@@ -174,11 +174,11 @@
         {
           "artifact_id": "QA-002",
           "path": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/organizer-validates-qr-code/qa-evidence.md",
-          "content_hash": "93106d998564ae1afd94910f1d410aaf20320420bbf83a05b5bd38f7c4148ea2"
+          "content_hash": "d2ead27993fc1102cd037c535a3ea943005b8ead8a00af66249c77a5403e94b8"
         }
       ],
-      "updated_at": "2026-07-09T22:01:07.166Z",
-      "notes": "initial derivation baseline for EV-004"
+      "updated_at": "2026-07-09T22:18:06.345Z",
+      "notes": "derivation baseline refreshed after EV-005 code evidence gates"
     },
     {
       "artifact_id": "SPEC-001",
@@ -190,8 +190,8 @@
           "content_hash": "bf40e904dfaf76fa16582946100ea092561fa586df66b6baa063c6d731340572"
         }
       ],
-      "updated_at": "2026-07-09T22:01:07.166Z",
-      "notes": "initial derivation baseline for EV-004"
+      "updated_at": "2026-07-09T22:18:06.345Z",
+      "notes": "derivation baseline refreshed after EV-005 code evidence gates"
     },
     {
       "artifact_id": "SPEC-002",
@@ -203,8 +203,8 @@
           "content_hash": "b7a62ae58b5ac03acffeaefb7a030b8e6cb5f08af2850f63ae6890994a4831cc"
         }
       ],
-      "updated_at": "2026-07-09T22:01:07.167Z",
-      "notes": "initial derivation baseline for EV-004"
+      "updated_at": "2026-07-09T22:18:06.345Z",
+      "notes": "derivation baseline refreshed after EV-005 code evidence gates"
     },
     {
       "artifact_id": "TASKSET-002",
@@ -213,7 +213,7 @@
         {
           "artifact_id": "GRAPH-002",
           "path": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/organizer-validates-qr-code/execution-graph.json",
-          "content_hash": "353d1e41ce827133eff34ebb023c6ec5dddffc92a205197364d013b5af20d5f9"
+          "content_hash": "962ee3971d2561a35f54aae7ddd351b3b9f3cd146e12b703015ef670e268429e"
         },
         {
           "artifact_id": "SPEC-002",
@@ -221,8 +221,8 @@
           "content_hash": "d85749146da99a06831e2ef3679be9a32a2c193b3c73d1d8e18cfdbb7a8483b5"
         }
       ],
-      "updated_at": "2026-07-09T22:01:07.167Z",
-      "notes": "initial derivation baseline for EV-004"
+      "updated_at": "2026-07-09T22:18:06.345Z",
+      "notes": "derivation baseline refreshed after EV-005 code evidence gates"
     },
     {
       "artifact_id": "TEST-002",
@@ -236,11 +236,11 @@
         {
           "artifact_id": "TASKSET-002",
           "path": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/organizer-validates-qr-code/tasks.md",
-          "content_hash": "e15f09ce5264e9174b84f2f589ce06acb5b2d40028e76c81ffa0b43c32f334bf"
+          "content_hash": "15aa4a6407d6965244ab75ac1e6f730071abe61434e9a0b40864b9bf054ecf61"
         }
       ],
-      "updated_at": "2026-07-09T22:01:07.168Z",
-      "notes": "initial derivation baseline for EV-004"
+      "updated_at": "2026-07-09T22:18:06.345Z",
+      "notes": "derivation baseline refreshed after EV-005 code evidence gates"
     },
     {
       "artifact_id": "UC-001",
@@ -252,8 +252,8 @@
           "content_hash": "d2f90404b77afb0efa786665faca1b6ffb66154e77f3b807aa68e42e99420542"
         }
       ],
-      "updated_at": "2026-07-09T22:01:07.170Z",
-      "notes": "initial derivation baseline for EV-004"
+      "updated_at": "2026-07-09T22:18:06.345Z",
+      "notes": "derivation baseline refreshed after EV-005 code evidence gates"
     },
     {
       "artifact_id": "UC-001:analytics",
@@ -265,8 +265,8 @@
           "content_hash": "837750e6f5b07c961d326d679a6a3464d740a80f5bafff7b364e920c309c4775"
         }
       ],
-      "updated_at": "2026-07-09T22:01:07.170Z",
-      "notes": "initial derivation baseline for EV-004"
+      "updated_at": "2026-07-09T22:18:06.345Z",
+      "notes": "derivation baseline refreshed after EV-005 code evidence gates"
     },
     {
       "artifact_id": "UC-001:audit",
@@ -290,12 +290,12 @@
         {
           "artifact_id": "GRAPH-001",
           "path": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/attendee-checks-in-with-qr-code/execution-graph.json",
-          "content_hash": "fe067969a673982982fe2bab61ab1c28601f890f30032664e4be24c9a6dae74d"
+          "content_hash": "78787a976ebe1630e0e2f5ba3e5d82d1f3014b0a099da1c0d15a431a5645ecba"
         },
         {
           "artifact_id": "UC-001:tasks",
           "path": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/attendee-checks-in-with-qr-code/tasks.md",
-          "content_hash": "5bc22b945ab78452abbabc0a3e302c68ff1c0ecc69e44799370aeb86941dd695"
+          "content_hash": "3f380e1d82e86ea1a933a635430d077b20a9afde06da3aec1eb2b78b4b8bf83e"
         },
         {
           "artifact_id": "UC-001:tests",
@@ -303,8 +303,8 @@
           "content_hash": "2994205f5a0006a5646cba0fb4eb2fe1076c1084845e1081892789913518b40b"
         }
       ],
-      "updated_at": "2026-07-09T22:01:07.181Z",
-      "notes": "initial derivation baseline for EV-004"
+      "updated_at": "2026-07-09T22:18:06.345Z",
+      "notes": "derivation baseline refreshed after EV-005 code evidence gates"
     },
     {
       "artifact_id": "UC-001:design",
@@ -321,8 +321,8 @@
           "content_hash": "bf40e904dfaf76fa16582946100ea092561fa586df66b6baa063c6d731340572"
         }
       ],
-      "updated_at": "2026-07-09T22:01:07.182Z",
-      "notes": "initial derivation baseline for EV-004"
+      "updated_at": "2026-07-09T22:18:06.345Z",
+      "notes": "derivation baseline refreshed after EV-005 code evidence gates"
     },
     {
       "artifact_id": "UC-001:tasks",
@@ -331,7 +331,7 @@
         {
           "artifact_id": "GRAPH-001",
           "path": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/attendee-checks-in-with-qr-code/execution-graph.json",
-          "content_hash": "fe067969a673982982fe2bab61ab1c28601f890f30032664e4be24c9a6dae74d"
+          "content_hash": "78787a976ebe1630e0e2f5ba3e5d82d1f3014b0a099da1c0d15a431a5645ecba"
         },
         {
           "artifact_id": "SPEC-001",
@@ -339,8 +339,8 @@
           "content_hash": "837750e6f5b07c961d326d679a6a3464d740a80f5bafff7b364e920c309c4775"
         }
       ],
-      "updated_at": "2026-07-09T22:01:07.185Z",
-      "notes": "initial derivation baseline for EV-004"
+      "updated_at": "2026-07-09T22:18:06.345Z",
+      "notes": "derivation baseline refreshed after EV-005 code evidence gates"
     },
     {
       "artifact_id": "UC-001:tests",
@@ -354,11 +354,11 @@
         {
           "artifact_id": "UC-001:tasks",
           "path": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/attendee-checks-in-with-qr-code/tasks.md",
-          "content_hash": "5bc22b945ab78452abbabc0a3e302c68ff1c0ecc69e44799370aeb86941dd695"
+          "content_hash": "3f380e1d82e86ea1a933a635430d077b20a9afde06da3aec1eb2b78b4b8bf83e"
         }
       ],
-      "updated_at": "2026-07-09T22:01:07.186Z",
-      "notes": "initial derivation baseline for EV-004"
+      "updated_at": "2026-07-09T22:18:06.345Z",
+      "notes": "derivation baseline refreshed after EV-005 code evidence gates"
     },
     {
       "artifact_id": "UC-002",
@@ -370,8 +370,8 @@
           "content_hash": "d2f90404b77afb0efa786665faca1b6ffb66154e77f3b807aa68e42e99420542"
         }
       ],
-      "updated_at": "2026-07-09T22:01:07.187Z",
-      "notes": "initial derivation baseline for EV-004"
+      "updated_at": "2026-07-09T22:18:06.345Z",
+      "notes": "derivation baseline refreshed after EV-005 code evidence gates"
     },
     {
       "artifact_id": "UC-EXAMPLE:analytics",
@@ -383,8 +383,8 @@
           "content_hash": "3de1fc1136a9cef3794fe3135e3aa01486463e467ae8ca70cf76f5e73174e567"
         }
       ],
-      "updated_at": "2026-07-09T22:01:07.190Z",
-      "notes": "initial derivation baseline for EV-004"
+      "updated_at": "2026-07-09T22:18:06.345Z",
+      "notes": "derivation baseline refreshed after EV-005 code evidence gates"
     },
     {
       "artifact_id": "UC-EXAMPLE:audit",
@@ -408,12 +408,12 @@
         {
           "artifact_id": "GRAPH-EXAMPLE",
           "path": "domains/_example-domain/goals/_example-goal/features/_example-feature/use-cases/_example-use-case/execution-graph.json",
-          "content_hash": "ff75417a7964fb5154f25ae70fa6fa9795cfbe177238d13d3d5107a70afac6e2"
+          "content_hash": "adcabd4413d21140c4d1a63a3c39feffd81144d44d5895cacc499575434bab2f"
         },
         {
           "artifact_id": "UC-EXAMPLE:tasks",
           "path": "domains/_example-domain/goals/_example-goal/features/_example-feature/use-cases/_example-use-case/tasks.md",
-          "content_hash": "56948125324cac5df89533ad060de9811b5dfd2522c618930c8ea684783fa8b5"
+          "content_hash": "2e4044167e6b8eed0a95474dd7f1e17f3feef9f639c6e8e75c5acd7c6165cb26"
         },
         {
           "artifact_id": "UC-EXAMPLE:tests",
@@ -421,8 +421,8 @@
           "content_hash": "e3d0af4e995cae25e84d545200d02ade354a12a1d63a627bdf170b16b3a406a4"
         }
       ],
-      "updated_at": "2026-07-09T22:01:07.196Z",
-      "notes": "initial derivation baseline for EV-004"
+      "updated_at": "2026-07-09T22:18:06.345Z",
+      "notes": "derivation baseline refreshed after EV-005 code evidence gates"
     },
     {
       "artifact_id": "UC-EXAMPLE:design",
@@ -439,8 +439,8 @@
           "content_hash": "e659248c7050237f6c3a201e3988baa048f0c3f8e0ddd09de4da9ff91e93c22b"
         }
       ],
-      "updated_at": "2026-07-09T22:01:07.197Z",
-      "notes": "initial derivation baseline for EV-004"
+      "updated_at": "2026-07-09T22:18:06.345Z",
+      "notes": "derivation baseline refreshed after EV-005 code evidence gates"
     },
     {
       "artifact_id": "UC-EXAMPLE:tests",
@@ -454,11 +454,11 @@
         {
           "artifact_id": "UC-EXAMPLE:tasks",
           "path": "domains/_example-domain/goals/_example-goal/features/_example-feature/use-cases/_example-use-case/tasks.md",
-          "content_hash": "56948125324cac5df89533ad060de9811b5dfd2522c618930c8ea684783fa8b5"
+          "content_hash": "2e4044167e6b8eed0a95474dd7f1e17f3feef9f639c6e8e75c5acd7c6165cb26"
         }
       ],
-      "updated_at": "2026-07-09T22:01:07.198Z",
-      "notes": "initial derivation baseline for EV-004"
+      "updated_at": "2026-07-09T22:18:06.345Z",
+      "notes": "derivation baseline refreshed after EV-005 code evidence gates"
     }
   ]
 }

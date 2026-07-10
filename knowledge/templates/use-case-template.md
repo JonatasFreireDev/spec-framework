@@ -10,6 +10,15 @@
 | Owner skill | Use Case AI |
 | Next skill | Specification AI |
 
+## Rigor Tier
+
+| Field | Value |
+| --- | --- |
+| Tier | `[S | M | L]` |
+| Trigger checklist | `[auth/permissions/payment/PII/upload/UGC/public/RLS/policies/none]` |
+| Required artifact set | `[tier-required artifacts]` |
+| Rationale | `[why this tier is proportional to risk and complexity]` |
+
 ## 🔗 Navigation
 
 | Artifact | Link |

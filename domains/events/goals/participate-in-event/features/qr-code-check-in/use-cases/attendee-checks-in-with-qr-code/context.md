@@ -6,6 +6,7 @@ type: use-case
 name: Attendee checks in with QR code
 status: draft
 owner_skill: 08-use-case.md
+rigor_tier: L
 last_updated: 2026-07-09
 delivery:
   level: L1
@@ -33,6 +34,8 @@ Defines the concrete interaction where an attendee presents a QR code and an org
 - GRAPH-001 - execution-graph.json - task DAG
 - UC-001:tasks - tasks.md - executable task set
 - UC-001:tests - tests.md - validation plan
+- QA-001 - qa-evidence.md - validation evidence
+- SEC-001 - security-review.md - security review
 - UC-001:analytics - analytics.md - measurement plan
 - UC-001:audit - audit.md - audit evidence
 - TK-001..TK-006 - tasks.md - executable work
@@ -42,6 +45,15 @@ Defines the concrete interaction where an attendee presents a QR code and an org
 - Authenticated attendee identity - blocking: yes
 - Organizer permission model - blocking: yes
 - Event attendance persistence - blocking: yes
+
+## Rigor Tier
+
+| Field | Value |
+| --- | --- |
+| Tier | L |
+| Trigger checklist | auth, permissions, token privacy, database migration |
+| Human approval | Approved by EV-003 policy rollout |
+| Rationale | The flow authenticates attendees, validates organizer permissions, handles QR tokens, and writes attendance state. |
 
 ## Related Artifacts
 
@@ -54,11 +66,14 @@ Defines the concrete interaction where an attendee presents a QR code and an org
 - Implementation plan: implementation-plan.md
 - Execution graph: execution-graph.json
 - Tasks: tasks.md
+- QA evidence: qa-evidence.md
+- Security review: security-review.md
 
 ## Decisions
 
 - DEC-001 - QR expiration duration - approved.
 - DEC-002 - QR token strategy - approved.
+- DEC-008 - Rigor tiers for use cases - approved.
 
 ## Assumptions
 
