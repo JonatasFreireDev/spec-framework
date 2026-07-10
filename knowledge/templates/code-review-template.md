@@ -54,6 +54,8 @@ flowchart LR
 | PR | `[PR URL/id or N/A]` |
 | Code paths | `[repo-relative paths]` |
 | Gates reviewed | `[gate ids/logs]` |
+| Commit convention | `knowledge/conventions/commits.md` |
+| PR convention | `knowledge/conventions/pull-requests.md` |
 
 ## Completeness
 

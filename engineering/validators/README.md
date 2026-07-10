@@ -30,6 +30,7 @@ The validator checks:
 - derived staleness through `.product/derivations.json`;
 - validation gates for approved tests, QA evidence, Security Review, and audit before `validated` or `released`;
 - Code Review gate and review verdict quality before `validated` or `released`;
+- traceable commit hashes/URLs for implemented tasks and traceable PR references for validated tasks;
 - Delivery Level and Priority metadata for executable framework artifacts;
 - execution graph JSON shape and dependencies;
 - `writeScope` and `sharedResources` safety for parallel graph nodes, currently as Phase A warnings;

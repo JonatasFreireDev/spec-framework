@@ -478,6 +478,16 @@ function statusRequiresConcreteValidationEvidence(status) {
   return ["validated", "released"].includes(status);
 }
 
+function looksLikeCommitReference(value) {
+  const clean = String(value ?? "").trim();
+  return /\b[a-f0-9]{7,40}\b/i.test(clean) || /^https?:\/\/\S+\/commit\/[a-f0-9]{7,40}\b/i.test(clean);
+}
+
+function looksLikePrReference(value) {
+  const clean = String(value ?? "").trim();
+  return /^#?\d+$/.test(clean) || /^PR-\d+$/i.test(clean) || /^https?:\/\/\S+\/pull\/\d+\b/i.test(clean);
+}
+
 function firstKnownId(text, prefixes) {
   for (const prefix of prefixes) {
     const match = text.match(new RegExp(`\\b${prefix}-[A-Z0-9.]+\\b`));
@@ -1268,6 +1278,12 @@ function validateCodeEvidenceGates() {
     }
     if (isPlaceholderValue(commits)) {
       addResult("error", "code-evidence", file, `${task.id} is ${task.status}, but Commits is missing or placeholder.`, "Add one or more implementation commit hashes.");
+    } else {
+      const commitRefs = parseDelimitedValueList(commits);
+      const refsToCheck = commitRefs.length > 0 ? commitRefs : [commits];
+      if (!refsToCheck.some(looksLikeCommitReference)) {
+        addResult("error", "code-evidence", file, `${task.id} is ${task.status}, but Commits does not contain a traceable commit hash or commit URL.`, "Add at least one 7-40 character git hash or commit URL.");
+      }
     }
     if (isPlaceholderValue(codePaths)) {
       addResult("error", "code-evidence", file, `${task.id} is ${task.status}, but Code paths is missing or placeholder.`, "Add repository-relative code paths touched by this task.");
@@ -1296,6 +1312,8 @@ function validateCodeEvidenceGates() {
 
     if (isPlaceholderValue(pr)) {
       addResult("error", "code-evidence", file, `${task.id} is ${task.status}, but PR is missing or placeholder.`, "Add the PR URL, PR id, or equivalent review surface.");
+    } else if (!looksLikePrReference(pr)) {
+      addResult("error", "code-evidence", file, `${task.id} is ${task.status}, but PR is not a traceable PR reference.`, "Use a PR number, #number, PR-number, or pull request URL.");
     }
     if (!/^(passed|approved|success|succeeded)$/i.test(String(testStatus ?? "").trim())) {
       addResult("error", "code-evidence", file, `${task.id} is ${task.status}, but Test status is not passing.`, "Set Test status to passed/approved/success only after QA evidence exists.");

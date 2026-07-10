@@ -17,6 +17,7 @@ Product decisions do not live here. Product decisions continue to live in `knowl
 | [FDR-005](FDR-005-code-runner-contract.md) | Code Runner operational contract | approved | EV-007 |
 | [FDR-006](FDR-006-failure-routing-and-regression.md) | Failure routing and permanent regression fixes | approved | EV-008 |
 | [FDR-007](FDR-007-code-review-contract.md) | Code Review operational contract | approved | EV-009 |
+| [FDR-008](FDR-008-delivery-commits-and-prs.md) | Delivery commits and PR finalization | approved | EV-010 |
 
 ## Rule
 

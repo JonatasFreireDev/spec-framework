@@ -61,6 +61,8 @@
 | PR | `N/A until implementation` |
 | Code paths | `N/A until implementation` |
 | Monorepo model | `docs and code live in the same product repository` |
+| Commit convention | `knowledge/conventions/commits.md` |
+| PR convention | `knowledge/conventions/pull-requests.md` |
 
 ## Validation Evidence
 

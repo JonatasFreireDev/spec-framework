@@ -512,6 +512,8 @@ As skills sao especialistas. Elas podem operar em modos como `create`, `update`,
 - QA AI: valida comportamento, testes, bordas, performance e matriz de evidencias.
 - Code Review AI: revisa implementacao de forma read-only nas lentes de completude, aderencia e qualidade; findings usam severidade e rota FDR-006.
 - Security Review AI: avalia autenticacao, autorizacao, privacidade, abuso, exposicao de dados, tokens, logs, dependencias, rollout e risco residual.
+- Commit Crafter AI: transforma mudancas verificadas em commits locais atomicos por concern, seguindo `knowledge/conventions/commits.md`, sem push.
+- PR Finalizer AI: prepara ou abre PR com evidencias e links obrigatorios, seguindo `knowledge/conventions/pull-requests.md`, sem merge.
 
 ### Audit
 
@@ -575,6 +577,10 @@ Falhas seguem FDR-006. Defeito, regressao, vulnerabilidade com comportamento esp
 
 Code Review e um gate read-only antes de validacao e release de trabalho executavel. O review avalia completude contra Specification/tasks, aderencia a contratos aprovados e qualidade de implementacao. Findings `blocker` ou `required_fix` precisam de route e owner via FDR-006; Code Review nao corrige codigo nem aprova QA.
 
+### Delivery Orchestration
+
+Commit Crafter cria commits locais atomicos apenas quando explicitamente invocado, separando concerns e seguindo `knowledge/conventions/commits.md`; ele nao faz push. PR Finalizer verifica gates, QA Evidence, Code Review e Security Review quando aplicavel, prepara ou abre PR com links de evidencia seguindo `knowledge/conventions/pull-requests.md`, registra o PR de volta nas tasks quando apropriado e nao faz merge.
+
 ### Release Orchestrator
 
 Antes de release, verifica:
@@ -626,10 +632,12 @@ Transicoes obrigatorias:
 - `approved -> in_progress`: exige task aprovada ou excecao explicita de prototipo/draft.
 - `in_progress -> implemented`: exige evidencia estruturada no arquivo da task: branch, commits e code paths.
 - Code Runner pode produzir codigo e evidencia tecnica, mas nao faz commit, push, merge, approval record ou aprovacao de QA.
+- Commit Crafter pode criar commits locais quando explicitamente invocado, mas nao faz push, merge ou approval record.
 - Bug Fixer reproduz o defeito com teste falhando antes de corrigir, corrige causa raiz com mudanca minima, deixa teste de regressao permanente e retorna para QA.
 - `implemented -> validated`: exige QA Evidence aprovada e sem blockers; exige Security Review aprovada quando houver codigo, dados, permissoes, tokens, API, pagamentos, uploads, mensagens, busca, admin, analytics sensivel ou qualquer risco de privacidade/abuso.
 - `implemented -> validated`: exige Code Review aprovado e sem findings `blocker` ou `required_fix` para entregas executaveis.
 - `implemented -> validated`: para task individual, tambem exige PR, test status aprovado e evidencia concreta como logs de gate, CI URL, screenshots ou QA evidence.
+- PR Finalizer pode preparar ou abrir PR quando os gates duros estiverem verdes ou quando o usuario pedir um draft/prototype explicito; ele nao faz merge.
 - Portoes tecnicos do produto vivem em `knowledge/conventions/gates.md`. Skills que executam ou verificam codigo devem ler esse arquivo e registrar a saida real dos gates aplicaveis.
 - `validated` e estados posteriores exigem QA Evidence nao-placeholder para gates aplicaveis. Quando um gate nao puder ser executado por indisponibilidade de ambiente, QA deve registrar a limitacao explicitamente em vez de forjar evidencia.
 - Entregas com superficie visual exigem evidencia visual proporcional, como screenshot local ou artefato de CI, alem de verificacao basica de acessibilidade: role/label, foco, alvo de toque e contraste.

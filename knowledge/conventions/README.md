@@ -12,6 +12,8 @@ Use this folder when a convention applies across the framework and should be reu
 
 - `README.md`: folder purpose and usage.
 - `gates.md`: product-specific technical gates consumed by implementation and QA skills.
+- `commits.md`: local commit grouping and safety convention.
+- `pull-requests.md`: PR body, evidence, and no-merge convention.
 - Future convention files for IDs, statuses, naming, artifact quality, and approval gates.
 
 ## Responsible Skill

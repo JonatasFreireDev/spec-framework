@@ -502,6 +502,96 @@ test("validator blocks approved Code Review required fixes without route and own
   });
 });
 
+test("validator blocks implemented tasks without traceable commit references", () => {
+  withFixture("commit-reference", (root) => {
+    write(root, "src/app.ts", "export const value = 1;\n");
+    const task = `# Task
+
+| Field | Value |
+| --- | --- |
+| ID | TK-COMMIT |
+| Status | implemented |
+
+## Implementation Links
+
+| Field | Value |
+| --- | --- |
+| Branch | feature/test |
+| Commits | not-a-hash |
+| PR | N/A until validation |
+| Code paths | src/app.ts |
+`;
+    writeApprovedArtifact(root, { id: "TK-COMMIT", type: "task", status: "implemented", path: "task.md", content: task });
+    write(root, ".product/artifacts.json", JSON.stringify({
+      artifacts: [
+        {
+          id: "TK-COMMIT",
+          type: "task",
+          status: "implemented",
+          path: "task.md",
+          documents: { canonical: "task.md" },
+        },
+      ],
+    }, null, 2));
+
+    const result = runValidator(root);
+
+    assert.notEqual(result.status, 0, output(result));
+    assert.match(output(result), /code-evidence/);
+    assert.match(output(result), /traceable commit hash or commit URL/);
+  });
+});
+
+test("validator blocks validated tasks without traceable PR references", () => {
+  withFixture("pr-reference", (root) => {
+    write(root, "src/app.ts", "export const value = 1;\n");
+    const task = `# Task
+
+| Field | Value |
+| --- | --- |
+| ID | TK-PR |
+| Status | validated |
+
+## Implementation Links
+
+| Field | Value |
+| --- | --- |
+| Branch | feature/test |
+| Commits | abc1234 |
+| PR | review surface pending |
+| Code paths | src/app.ts |
+
+## Validation Evidence
+
+| Field | Value |
+| --- | --- |
+| Test status | passed |
+| Gate logs | test.log |
+| CI URL | N/A |
+| Screenshots | N/A |
+| QA evidence | qa.md |
+`;
+    writeApprovedArtifact(root, { id: "TK-PR", type: "task", status: "validated", path: "task.md", content: task });
+    write(root, ".product/artifacts.json", JSON.stringify({
+      artifacts: [
+        {
+          id: "TK-PR",
+          type: "task",
+          status: "validated",
+          path: "task.md",
+          documents: { canonical: "task.md" },
+        },
+      ],
+    }, null, 2));
+
+    const result = runValidator(root);
+
+    assert.notEqual(result.status, 0, output(result));
+    assert.match(output(result), /code-evidence/);
+    assert.match(output(result), /not a traceable PR reference/);
+  });
+});
+
 test("move-artifact moves folders, rewrites Markdown links and JSON paths, and reports free-text mentions", () => {
   withFixture("move", (root) => {
     write(root, "domains/old/use-case/file.md", "# Target\n\nMoved content.\n");
