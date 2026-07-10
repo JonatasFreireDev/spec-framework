@@ -10,6 +10,7 @@ import { fileURLToPath } from "node:url";
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..", "..");
 const validatorScript = path.join(repoRoot, "engineering", "validators", "framework-validator.mjs");
 const moveScript = path.join(repoRoot, "engineering", "move-artifact.mjs");
+const initProductScript = path.join(repoRoot, "scripts", "init-product.mjs");
 
 const tests = [];
 
@@ -647,6 +648,33 @@ test("move-artifact moves folders, rewrites Markdown links and JSON paths, and r
     assert.match(output(result), /Free-text mentions requiring review: 1/);
     assert.match(output(result), /docs\/free-text\.md:1/);
   });
+});
+
+test("init-product creates a product repo with installed framework assets", () => {
+  const parent = fs.mkdtempSync(path.join(os.tmpdir(), "spec-framework-init-"));
+  const target = path.join(parent, "new-product");
+  try {
+    const result = runNode(initProductScript, repoRoot, ["--target", target]);
+
+    assert.equal(result.status, 0, output(result));
+    assert.equal(fs.existsSync(path.join(target, "product", ".product", "framework.json")), true);
+    assert.equal(fs.existsSync(path.join(target, ".spec-framework", "FRAMEWORK.md")), true);
+    assert.equal(fs.existsSync(path.join(target, ".spec-framework", "validators", "framework-validator.mjs")), true);
+    assert.equal(fs.existsSync(path.join(target, ".spec-framework", "tools", "move-artifact.mjs")), true);
+    assert.equal(fs.existsSync(path.join(target, ".spec-framework", "skills", "code-runner", "SKILL.md")), true);
+    assert.equal(fs.existsSync(path.join(target, ".codex", "skills", "code-runner", "SKILL.md")), true);
+
+    const manifest = JSON.parse(fs.readFileSync(path.join(target, ".spec-framework", "manifest.json"), "utf8"));
+    assert.equal(manifest.product_root, "product");
+    assert.equal(manifest.installed_assets.validators, true);
+
+    const installedValidator = path.join(target, ".spec-framework", "validators", "framework-validator.mjs");
+    const validation = runNode(installedValidator, target, ["--product-root", "product", "--framework-root", ".spec-framework"]);
+    assert.equal(validation.status, 0, output(validation));
+    assert.match(output(validation), /ready/);
+  } finally {
+    fs.rmSync(parent, { recursive: true, force: true });
+  }
 });
 
 let passed = 0;

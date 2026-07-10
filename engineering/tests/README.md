@@ -10,6 +10,7 @@ This folder contains local fixture-based tests for framework engineering tools. 
 | --- | --- |
 | `engineering/validators/framework-validator.mjs` | Approval-record enforcement, derived staleness blocking, Phase A writeScope warnings, task handoff skill references, concrete QA evidence enforcement, Code Review gate enforcement, Code Review quality enforcement, traceable commit/PR references, Markdown link validation, and blocker route/owner enforcement. |
 | `engineering/move-artifact.mjs` | Folder move, Markdown link rewrite, JSON path rewrite, and free-text mention reporting. |
+| `scripts/init-product.mjs` | Starter copy, `.spec-framework/` asset installation, `.codex/skills` mirroring, manifest update, and installed validator execution. |
 
 ## Run
 
@@ -21,4 +22,4 @@ Run these tests before changing validator gates, identity policy, staleness beha
 
 ## Next Step
 
-Add fixtures for task-file validation, rigor-tier gates, Mermaid semantic bindings, anchor validation, and future Phase B writeScope errors as those areas evolve.
+Add fixtures for task-file validation, rigor-tier gates, Mermaid semantic bindings, anchor validation, bootstrap upgrade behavior, and future Phase B writeScope errors as those areas evolve.

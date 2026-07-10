@@ -35,4 +35,4 @@ Do not use root-level `domains/`, `foundation/`, `.product/history/`, or `audits
 
 ## Next Step
 
-Create `scripts/init-product.mjs` to copy `starter/`, install framework assets, and record the adopted framework version in `.product/framework.json`.
+Use `scripts/init-product.mjs` to copy `starter/`, install framework assets into `.spec-framework/`, mirror skills for Codex discovery, and record the adopted framework version in `product/.product/framework.json`.

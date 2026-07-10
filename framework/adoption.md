@@ -6,6 +6,14 @@ Create a new Specification Driven Development product repository without mixing 
 
 ## Recommended Path
 
+Automated bootstrap:
+
+```bash
+node scripts/init-product.mjs --target ../my-product
+```
+
+Manual bootstrap:
+
 1. Create an empty product repository.
 2. Copy the contents of `starter/` into the product repository root.
 3. Install framework assets into `.spec-framework/`:
@@ -59,7 +67,7 @@ node .spec-framework/validators/framework-validator.mjs --product-root product -
 Future framework versions should support:
 
 ```bash
-npx spec-framework init
+node scripts/init-product.mjs --target ../my-product
 npx spec-framework validate
 npx spec-framework upgrade
 ```

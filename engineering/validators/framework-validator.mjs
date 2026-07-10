@@ -3,8 +3,15 @@ import fs from "node:fs";
 import path from "node:path";
 import crypto from "node:crypto";
 
-const root = process.cwd();
-const args = new Set(process.argv.slice(2));
+const cwd = process.cwd();
+const rawArgs = process.argv.slice(2);
+const args = new Set(rawArgs);
+function argValue(name, fallback = "") {
+  const index = rawArgs.indexOf(name);
+  return index === -1 ? fallback : rawArgs[index + 1] ?? fallback;
+}
+const root = path.resolve(cwd, argValue("--product-root", "."));
+const frameworkRoot = path.resolve(cwd, argValue("--framework-root", root === cwd ? "." : ".spec-framework"));
 const writeReport = args.has("--write-report");
 const writeRegistry = args.has("--write-registry");
 
@@ -369,13 +376,20 @@ function normalizedStringArray(value) {
 }
 
 function knownSkillNames() {
-  const skillsDir = path.join(root, ".codex", "skills");
-  if (!fs.existsSync(skillsDir)) return new Set();
-  return new Set(
-    fs.readdirSync(skillsDir, { withFileTypes: true })
-      .filter((entry) => entry.isDirectory() && fs.existsSync(path.join(skillsDir, entry.name, "SKILL.md")))
-      .map((entry) => entry.name)
-  );
+  const skillDirs = [
+    path.join(cwd, ".codex", "skills"),
+    path.join(frameworkRoot, "skills"),
+  ];
+  const names = new Set();
+  for (const skillsDir of skillDirs) {
+    if (!fs.existsSync(skillsDir)) continue;
+    for (const entry of fs.readdirSync(skillsDir, { withFileTypes: true })) {
+      if (entry.isDirectory() && fs.existsSync(path.join(skillsDir, entry.name, "SKILL.md"))) {
+        names.add(entry.name);
+      }
+    }
+  }
+  return names;
 }
 
 function normalizeSkillReference(value) {
@@ -396,7 +410,7 @@ function validateSkillReference(file, field, value, skills) {
       "skill-reference",
       file,
       `${field} references missing skill ${value}.`,
-      `Create .codex/skills/${skill}/SKILL.md or update ${field} to an existing skill.`
+      `Create .codex/skills/${skill}/SKILL.md or .spec-framework/skills/${skill}/SKILL.md, or update ${field} to an existing skill.`
     );
   }
 }
@@ -1604,9 +1618,11 @@ function validateIdentityPolicy() {
     addResult("error", "identity", idsFile, `Central numeric counters remain: ${numericCounters.map(([key]) => key).join(", ")}.`, "Remove central counters and use parent-scoped IDs.");
   }
 
-  const moveTool = path.join(root, "engineering", "move-artifact.mjs");
+  const moveTool = fs.existsSync(path.join(root, "engineering", "move-artifact.mjs"))
+    ? path.join(root, "engineering", "move-artifact.mjs")
+    : path.join(frameworkRoot, "tools", "move-artifact.mjs");
   if (!fs.existsSync(moveTool)) {
-    addResult("error", "identity", moveTool, "Move tooling is missing.", "Create engineering/move-artifact.mjs.");
+    addResult("error", "identity", moveTool, "Move tooling is missing.", "Create engineering/move-artifact.mjs or .spec-framework/tools/move-artifact.mjs.");
   }
 }
 
@@ -1825,7 +1841,9 @@ function validateMermaidAndTemplates(files) {
     }
   }
 
-  const templateDir = path.join(root, "knowledge", "templates");
+  const templateDir = root === cwd && fs.existsSync(path.join(root, "knowledge", "templates"))
+    ? path.join(root, "knowledge", "templates")
+    : path.join(frameworkRoot, "templates");
   for (const file of walk(templateDir).filter((item) => item.endsWith(".md"))) {
     const text = readText(file);
     if (!/Snapshot|Executive Snapshot/.test(text)) {
