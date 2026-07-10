@@ -12,6 +12,12 @@ Automated bootstrap:
 node scripts/init-product.mjs --target ../my-product
 ```
 
+CLI-style bootstrap from the framework repository:
+
+```bash
+node scripts/spec-framework.mjs init --target ../my-product
+```
+
 Manual bootstrap:
 
 1. Create an empty product repository.

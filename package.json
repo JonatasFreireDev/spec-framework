@@ -1,0 +1,14 @@
+{
+  "name": "spec-framework",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "bin": {
+    "spec-framework": "scripts/spec-framework.mjs"
+  },
+  "scripts": {
+    "check": "node --check scripts/spec-framework.mjs && node --check scripts/init-product.mjs && node --check scripts/upgrade-product.mjs && node --check scripts/validate-product.mjs && node --check engineering/validators/framework-validator.mjs && node --check engineering/tests/run-tests.mjs",
+    "test": "node engineering/tests/run-tests.mjs",
+    "validate": "node engineering/validators/framework-validator.mjs"
+  }
+}

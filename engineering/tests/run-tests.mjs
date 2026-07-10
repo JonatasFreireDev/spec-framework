@@ -10,6 +10,7 @@ import { fileURLToPath } from "node:url";
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..", "..");
 const validatorScript = path.join(repoRoot, "engineering", "validators", "framework-validator.mjs");
 const moveScript = path.join(repoRoot, "engineering", "move-artifact.mjs");
+const cliScript = path.join(repoRoot, "scripts", "spec-framework.mjs");
 const initProductScript = path.join(repoRoot, "scripts", "init-product.mjs");
 const upgradeProductScript = path.join(repoRoot, "scripts", "upgrade-product.mjs");
 
@@ -707,6 +708,26 @@ test("upgrade-product refreshes framework assets without touching product conten
     const validation = runNode(validateProduct, target);
     assert.equal(validation.status, 0, output(validation));
     assert.match(output(validation), /ready/);
+  } finally {
+    fs.rmSync(parent, { recursive: true, force: true });
+  }
+});
+
+test("spec-framework CLI dispatches init, validate, and upgrade", () => {
+  const parent = fs.mkdtempSync(path.join(os.tmpdir(), "spec-framework-cli-"));
+  const target = path.join(parent, "cli-product");
+  try {
+    const init = runNode(cliScript, repoRoot, ["init", "--target", target]);
+    assert.equal(init.status, 0, output(init));
+    assert.equal(fs.existsSync(path.join(target, ".spec-framework", "tools", "validate-product.mjs")), true);
+
+    const validate = runNode(cliScript, target, ["validate"]);
+    assert.equal(validate.status, 0, output(validate));
+    assert.match(output(validate), /ready/);
+
+    const upgrade = runNode(cliScript, repoRoot, ["upgrade", "--target", target]);
+    assert.equal(upgrade.status, 0, output(upgrade));
+    assert.match(output(upgrade), /Upgraded Spec Framework assets/);
   } finally {
     fs.rmSync(parent, { recursive: true, force: true });
   }

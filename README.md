@@ -31,6 +31,14 @@ Current recommended flow:
 node scripts/init-product.mjs --target ../my-product -> fill product/foundation -> create product/domains -> node .spec-framework/tools/validate-product.mjs
 ```
 
+Local CLI form:
+
+```bash
+node scripts/spec-framework.mjs init --target ../my-product
+node scripts/spec-framework.mjs validate
+node scripts/spec-framework.mjs upgrade --target ../my-product
+```
+
 See [framework/adoption.md](framework/adoption.md).
 
 ## Ladder

@@ -12,6 +12,7 @@ This folder contains local fixture-based tests for framework engineering tools. 
 | `engineering/move-artifact.mjs` | Folder move, Markdown link rewrite, JSON path rewrite, and free-text mention reporting. |
 | `scripts/init-product.mjs` | Starter copy, `.spec-framework/` asset installation, `.codex/skills` mirroring, manifest update, installed validator execution, and friendly validation wrapper installation. |
 | `scripts/upgrade-product.mjs` | Framework asset refresh while preserving product-owned files. |
+| `scripts/spec-framework.mjs` | CLI dispatch for init, validate, and upgrade commands. |
 
 ## Run
 

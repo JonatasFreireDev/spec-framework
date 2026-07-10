@@ -30,6 +30,7 @@ jobs:
           node --check engineering/move-artifact.mjs
           node --check engineering/tests/run-tests.mjs
           node --check scripts/framework-assets.mjs
+          node --check scripts/spec-framework.mjs
           node --check scripts/init-product.mjs
           node --check scripts/upgrade-product.mjs
           node --check scripts/validate-product.mjs
