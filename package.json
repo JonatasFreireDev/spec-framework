@@ -8,6 +8,7 @@
   },
   "scripts": {
     "check": "node --check scripts/spec-framework.mjs && node --check scripts/init-product.mjs && node --check scripts/upgrade-product.mjs && node --check scripts/validate-product.mjs && node --check engineering/validators/framework-validator.mjs && node --check engineering/tests/run-tests.mjs",
+    "cli:help": "node scripts/spec-framework.mjs help",
     "test": "node engineering/tests/run-tests.mjs",
     "validate": "node engineering/validators/framework-validator.mjs"
   }

@@ -18,6 +18,13 @@ CLI-style bootstrap from the framework repository:
 node scripts/spec-framework.mjs init --target ../my-product
 ```
 
+Local linked CLI:
+
+```bash
+npm link
+spec-framework init --target ../my-product
+```
+
 Manual bootstrap:
 
 1. Create an empty product repository.

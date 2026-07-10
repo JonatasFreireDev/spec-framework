@@ -39,6 +39,15 @@ node scripts/spec-framework.mjs validate
 node scripts/spec-framework.mjs upgrade --target ../my-product
 ```
 
+Local linked CLI:
+
+```bash
+npm link
+spec-framework init --target ../my-product
+spec-framework validate
+spec-framework upgrade --target ../my-product
+```
+
 See [framework/adoption.md](framework/adoption.md).
 
 ## Ladder
