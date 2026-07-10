@@ -323,6 +323,109 @@ function parseDelimitedValueList(value) {
     .filter(Boolean);
 }
 
+function normalizeWriteScopePath(value) {
+  return String(value ?? "")
+    .trim()
+    .replace(/\\/g, "/")
+    .replace(/^\.\//, "")
+    .replace(/\/+$/g, "");
+}
+
+function isPlaceholderScope(value) {
+  const clean = normalizeWriteScopePath(value);
+  return !clean || /^\[.+\]$/.test(clean) || /path\/or\/module|TBD|placeholder/i.test(clean);
+}
+
+function writeScopesOverlap(left, right) {
+  const a = normalizeWriteScopePath(left);
+  const b = normalizeWriteScopePath(right);
+  if (!a || !b) return false;
+  return a === b || a.startsWith(`${b}/`) || b.startsWith(`${a}/`);
+}
+
+function graphDependencyMap(nodes) {
+  return new Map(nodes.map((node) => [node.id, Array.isArray(node.dependsOn) ? node.dependsOn : []]));
+}
+
+function hasDependencyPath(fromId, toId, dependencies, visited = new Set()) {
+  if (fromId === toId) return true;
+  if (visited.has(fromId)) return false;
+  visited.add(fromId);
+  for (const dependency of dependencies.get(fromId) ?? []) {
+    if (dependency === toId || hasDependencyPath(dependency, toId, dependencies, visited)) return true;
+  }
+  return false;
+}
+
+function nodesAreParallel(left, right, dependencies) {
+  return !hasDependencyPath(left.id, right.id, dependencies) && !hasDependencyPath(right.id, left.id, dependencies);
+}
+
+function normalizedStringArray(value) {
+  return Array.isArray(value)
+    ? value.map((item) => String(item ?? "").trim()).filter(Boolean)
+    : [];
+}
+
+function validateWriteScopeSafety(file, graph) {
+  const nodes = Array.isArray(graph.nodes) ? graph.nodes : [];
+  const dependencies = graphDependencyMap(nodes);
+
+  for (const node of nodes) {
+    const writeScope = normalizedStringArray(node.writeScope);
+    if (!Array.isArray(node.writeScope) || writeScope.length === 0 || writeScope.some(isPlaceholderScope)) {
+      addResult(
+        "warning",
+        "write-scope",
+        file,
+        `Node ${node.id ?? "(missing id)"} is missing a concrete writeScope.`,
+        "Declare the paths or modules this task may create or change. FDR-003 keeps this as warning during Phase A."
+      );
+    }
+    if ("sharedResources" in node && !Array.isArray(node.sharedResources)) {
+      addResult("warning", "write-scope", file, `Node ${node.id ?? "(missing id)"} sharedResources must be an array.`, "Set sharedResources to an array of stable resource names or remove it.");
+    }
+  }
+
+  for (let leftIndex = 0; leftIndex < nodes.length; leftIndex += 1) {
+    for (let rightIndex = leftIndex + 1; rightIndex < nodes.length; rightIndex += 1) {
+      const left = nodes[leftIndex];
+      const right = nodes[rightIndex];
+      if (!left.id || !right.id || !nodesAreParallel(left, right, dependencies)) continue;
+
+      const leftScopes = normalizedStringArray(left.writeScope).filter((item) => !isPlaceholderScope(item));
+      const rightScopes = normalizedStringArray(right.writeScope).filter((item) => !isPlaceholderScope(item));
+      for (const leftScope of leftScopes) {
+        for (const rightScope of rightScopes) {
+          if (writeScopesOverlap(leftScope, rightScope)) {
+            addResult(
+              "warning",
+              "write-scope",
+              file,
+              `Parallel nodes ${left.id} and ${right.id} have overlapping writeScope: ${leftScope} <-> ${rightScope}.`,
+              "Add a dependency, split the scope, or merge the tasks. FDR-003 keeps this as warning during Phase A."
+            );
+          }
+        }
+      }
+
+      const leftResources = normalizedStringArray(left.sharedResources);
+      const rightResources = normalizedStringArray(right.sharedResources);
+      for (const resource of leftResources) {
+        if (rightResources.includes(resource)) {
+          addResult(
+            "warning",
+            "write-scope",
+            file,
+            `Parallel nodes ${left.id} and ${right.id} share resource ${resource}.`,
+            "Serialize tasks with a dependency or assign the shared resource to one node. FDR-003 keeps this as warning during Phase A."
+          );
+        }
+      }
+    }
+  }
+}
+
 function isPlaceholderValue(value) {
   const clean = String(value ?? "").trim();
   if (!clean) return true;
@@ -1156,6 +1259,36 @@ function validateCodeEvidenceGates() {
   }
 }
 
+function validateQaEvidenceQuality() {
+  for (const qaEvidence of currentArtifacts().filter((artifact) => artifact.type === "qa-evidence")) {
+    if (!statusCanFeedDownstream(qaEvidence.status)) continue;
+
+    const file = qaEvidence.path ? path.join(root, qaEvidence.path) : null;
+    if (!file || !fs.existsSync(file)) continue;
+    const text = readText(file);
+
+    const gateLogs = parseMarkdownField(text, "Gate logs");
+    const testCommand = parseMarkdownField(text, "Test command");
+    const environment = parseMarkdownField(text, "Environment");
+    const verdictValue = parseMarkdownField(text, "Verdict");
+    const limitations = parseMarkdownField(text, "Limitations");
+    const hasConcreteEvidence = [gateLogs, limitations].some((value) => !isPlaceholderValue(value));
+
+    if (isPlaceholderValue(testCommand)) {
+      addResult("error", "qa-evidence", file, `${qaEvidence.id} is ${qaEvidence.status}, but Test command is missing or placeholder.`, "Record the actual gate command, method, CI job, or manual verification method.");
+    }
+    if (isPlaceholderValue(environment)) {
+      addResult("error", "qa-evidence", file, `${qaEvidence.id} is ${qaEvidence.status}, but Environment is missing or placeholder.`, "Record local, CI, staging, production, or another concrete verification environment.");
+    }
+    if (!hasConcreteEvidence) {
+      addResult("error", "qa-evidence", file, `${qaEvidence.id} is ${qaEvidence.status}, but no real gate output or limitation is recorded.`, "Add gate logs, captured output, CI URL, or an explicit limitation explaining why the gate could not run.");
+    }
+    if (!/^(passed|passed_with_notes)$/i.test(String(verdictValue).trim())) {
+      addResult("error", "qa-evidence", file, `${qaEvidence.id} is ${qaEvidence.status}, but Verdict is not passing.`, "Use passed or passed_with_notes only after independent QA evidence exists.");
+    }
+  }
+}
+
 function validateExecutionGraphs() {
   for (const file of walk(path.join(root, "domains")).filter((item) =>
     item.endsWith("execution-graph.json")
@@ -1175,6 +1308,7 @@ function validateExecutionGraphs() {
       addResult("error", "execution-graph", file, "Graph nodes must be an array.", "Add nodes array.");
       continue;
     }
+    validateWriteScopeSafety(file, graph);
 
     const graphDir = path.dirname(file);
     const tasksIndexFile = path.join(graphDir, "tasks.md");
@@ -1773,10 +1907,12 @@ flowchart LR
 | Derived staleness | ${results.some((item) => item.check === "staleness" && item.severity === "error") ? "🔴 has errors" : results.some((item) => item.check === "staleness") ? "🟡 findings" : "✅ no findings"} |
 | Validation gates | ${results.some((item) => item.check === "validation-gates" && item.severity === "error") ? "\u{1F534} has errors" : results.some((item) => item.check === "validation-gates") ? "\u{1F7E1} findings" : "\u{2705} no findings"} |
 | Code evidence gates | ${results.some((item) => item.check === "code-evidence" && item.severity === "error") ? "\u{1F534} has errors" : results.some((item) => item.check === "code-evidence") ? "\u{1F7E1} findings" : "\u{2705} no findings"} |
+| QA evidence quality | ${results.some((item) => item.check === "qa-evidence" && item.severity === "error") ? "\u{1F534} has errors" : results.some((item) => item.check === "qa-evidence") ? "\u{1F7E1} findings" : "\u{2705} no findings"} |
 | Traceability | ${results.some((item) => item.check === "traceability" && item.severity === "error") ? "🔴 has errors" : results.some((item) => item.check === "traceability") ? "🟡 findings" : "✅ no findings"} |
 | Status policy | ${results.some((item) => item.check === "status-policy" && item.severity === "error") ? "🔴 has errors" : results.some((item) => item.check === "status-policy") ? "🟡 findings" : "✅ no findings"} |
 | Delivery metadata | ${results.some((item) => item.check === "delivery" && item.severity === "error") ? "🔴 has errors" : results.some((item) => item.check === "delivery") ? "🟡 findings" : "✅ no findings"} |
 | Execution graph JSON and dependencies | ${results.some((item) => item.check === "execution-graph" && item.severity === "error") ? "🔴 has errors" : "✅ no errors"} |
+| WriteScope safety | ${results.some((item) => item.check === "write-scope" && item.severity === "error") ? "🔴 has errors" : results.some((item) => item.check === "write-scope") ? "🟡 findings" : "✅ no findings"} |
 | Decisions index | ${results.some((item) => item.check === "decisions-index") ? "🟡 findings" : "✅ no findings"} |
 | Decision references | ${results.some((item) => item.check === "decision-references" && item.severity === "error") ? "🔴 has errors" : results.some((item) => item.check === "decision-references") ? "🟡 findings" : "✅ no findings"} |
 | Artifacts registry | ${results.some((item) => item.check === "artifacts-registry" && item.severity === "error") ? "🔴 has errors" : results.some((item) => item.check === "artifacts-registry") ? "🟡 findings" : "✅ no findings"} |
@@ -1814,6 +1950,7 @@ validateApprovalRecords();
 validateStaleness();
 validateValidationGates();
 validateCodeEvidenceGates();
+validateQaEvidenceQuality();
 validateDeliveryMetadata();
 validateExecutionGraphs();
 validateContexts();

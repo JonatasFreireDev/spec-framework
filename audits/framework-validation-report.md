@@ -44,10 +44,12 @@ flowchart LR
 | Derived staleness | ✅ no findings |
 | Validation gates | ✅ no findings |
 | Code evidence gates | ✅ no findings |
+| QA evidence quality | ✅ no findings |
 | Traceability | ✅ no findings |
 | Status policy | ✅ no findings |
 | Delivery metadata | ✅ no findings |
 | Execution graph JSON and dependencies | ✅ no errors |
+| WriteScope safety | ✅ no findings |
 | Decisions index | ✅ no findings |
 | Decision references | ✅ no findings |
 | Artifacts registry | ✅ no findings |

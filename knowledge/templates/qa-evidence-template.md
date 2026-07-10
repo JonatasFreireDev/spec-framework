@@ -56,11 +56,33 @@ flowchart LR
 
 | Field | Value |
 | --- | --- |
+| Gate source | `knowledge/conventions/gates.md` |
 | Test command | `[command or method]` |
-| Gate logs | `[path or URL]` |
+| Gate logs | `[path, URL, or captured command output]` |
 | CI URL | `[URL or N/A]` |
 | Screenshots | `[paths or N/A]` |
 | Environment | `[local/staging/production/CI]` |
+| Limitations | `[unavailable gate/environment limitation or N/A]` |
+
+## Independent QA Checks
+
+| Check | Evidence | Result | Notes |
+| --- | --- | --- | --- |
+| Gates re-run independently | `[log/output/path]` | `[passed/failed/blocked/not run]` | `[notes]` |
+| Hollow test scan | `[test/path/review notes]` | `[passed/failed/blocked/not run]` | `[notes]` |
+| Negative and permission cases | `[test/path/review notes]` | `[passed/failed/blocked/not run]` | `[notes]` |
+| Scope drift against writeScope | `[diff/path/review notes]` | `[passed/failed/blocked/not run]` | `[notes]` |
+| Specification divergence | `[spec section/evidence]` | `[passed/failed/blocked/not run]` | `[notes]` |
+
+## Visual And Accessibility Evidence
+
+| Requirement | Evidence | Result | Notes |
+| --- | --- | --- | --- |
+| Visual surface applies | `[yes/no]` | `[N/A or required]` | `[why]` |
+| Screenshot | `[path/CI artifact/N/A]` | `[passed/failed/blocked/not run/N/A]` | `[notes]` |
+| Roles and labels | `[review/test/N/A]` | `[passed/failed/blocked/not run/N/A]` | `[notes]` |
+| Focus and touch targets | `[review/test/N/A]` | `[passed/failed/blocked/not run/N/A]` | `[notes]` |
+| Contrast | `[review/test/N/A]` | `[passed/failed/blocked/not run/N/A]` | `[notes]` |
 
 ## Acceptance Evidence Matrix
 

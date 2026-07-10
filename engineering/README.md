@@ -50,3 +50,19 @@ node engineering/move-artifact.mjs --from domains/old/path --to domains/new/path
 ```
 
 The move tool rewrites Markdown links and JSON paths it can resolve mechanically, then reports free-text mentions for human review.
+
+Run engineering tool tests with:
+
+```bash
+node engineering/tests/run-tests.mjs
+```
+
+The GitHub Actions workflow at `.github/workflows/framework-validation.yml` runs the same checks on pushes and pull requests:
+
+```bash
+node --check engineering/validators/framework-validator.mjs
+node --check engineering/move-artifact.mjs
+node --check engineering/tests/run-tests.mjs
+node engineering/tests/run-tests.mjs
+node engineering/validators/framework-validator.mjs
+```

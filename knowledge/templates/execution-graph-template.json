@@ -23,6 +23,7 @@
         "priority": "P0"
       },
       "writeScope": ["path/or/module"],
+      "sharedResources": ["generated index/locales/local database/schema or N/A"],
       "status": "pending",
       "acceptanceChecks": ["observable check"]
     }

@@ -32,16 +32,22 @@ tasks.md; task files or task records with Delivery Level/Priority; acceptance ch
 ## Workflow
 1. Read the parent context and confirm the artifact status.
 2. Identify missing information, assumptions, conflicts, and dependencies.
-3. Propose the artifact or revision using the matching template.
-4. Record decision candidates for high-impact or hard-to-reverse choices.
-5. Ask for approval before moving the artifact to the next ladder step.
-6. Update context.md with new links, dependencies, questions, and status changes.
+3. For every graph node, declare concrete `writeScope` paths/modules and `sharedResources` when generated files, indexes, locales, local database state, schema, contracts, or other shared assets are touched.
+4. Guarantee safe parallelism by construction: nodes with no dependency path between them must have disjoint `writeScope` values and must not share the same `sharedResources`.
+5. When scopes or shared resources overlap, choose exactly one: split the scopes, merge the tasks, add a dependency to serialize the work, or assign the shared resource to a single node.
+6. Propose the artifact or revision using the matching template.
+7. Record decision candidates for high-impact or hard-to-reverse choices.
+8. Ask for approval before moving the artifact to the next ladder step.
+9. Update context.md with new links, dependencies, questions, and status changes.
 
 ## Quality checklist
 - [ ] Preserves traceability to the parent artifact.
 - [ ] Uses the correct template and naming conventions.
 - [ ] States scope, non-goals, assumptions, and open questions.
 - [ ] Each task carries Delivery Level and Priority inherited from the graph or an approved exception.
+- [ ] Every graph node has concrete `writeScope`.
+- [ ] Parallel graph nodes have disjoint `writeScope`.
+- [ ] Parallel graph nodes do not compete for the same `sharedResources`.
 - [ ] Detects gaps, conflicts, and dependencies.
 - [ ] Records meaningful decisions or decision candidates.
 - [ ] Leaves a clear handoff for the next skill.

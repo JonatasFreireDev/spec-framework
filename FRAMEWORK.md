@@ -430,28 +430,36 @@ Exemplo:
       "path": "tasks/TK-001.md",
       "title": "Create event tables and policies",
       "type": "database",
-      "dependsOn": []
+      "dependsOn": [],
+      "writeScope": ["supabase/migrations"],
+      "sharedResources": ["local database schema"]
     },
     {
       "id": "TK-002",
       "path": "tasks/TK-002.md",
       "title": "Create event service",
       "type": "backend",
-      "dependsOn": ["TK-001"]
+      "dependsOn": ["TK-001"],
+      "writeScope": ["src/server/events"],
+      "sharedResources": []
     },
     {
       "id": "TK-003",
       "path": "tasks/TK-003.md",
       "title": "Create event form UI",
       "type": "frontend",
-      "dependsOn": ["TK-002"]
+      "dependsOn": ["TK-002"],
+      "writeScope": ["src/app/events"],
+      "sharedResources": []
     },
     {
       "id": "TK-004",
       "path": "tasks/TK-004.md",
       "title": "Instrument analytics",
       "type": "analytics",
-      "dependsOn": ["TK-002", "TK-003"]
+      "dependsOn": ["TK-002", "TK-003"],
+      "writeScope": ["src/analytics/events"],
+      "sharedResources": ["analytics event catalog"]
     }
   ]
 }
@@ -461,6 +469,11 @@ Regras:
 
 - Uma task so pode iniciar quando suas dependencias estao aprovadas.
 - Tasks paralelas devem ter escopo de escrita separado.
+- Todo no deve declarar `writeScope`: paths ou modulos que a task pode criar ou alterar.
+- `sharedResources` declara recursos gerados ou compartilhados, como indices, locales, schema local, banco local, contratos gerados ou catalogos. Dois nos paralelos que disputam o mesmo recurso devem virar dependencia ou ser unidos.
+- Dois nos sao paralelos quando nao ha caminho de dependencia entre eles no DAG. Nos paralelos nao devem ter `writeScope` sobreposto.
+- Overlap de path e prefix-based: `src/` cobre `src/foo.ts`.
+- O rollout do check de `writeScope` segue FDR-003: Fase A reporta warnings; Fase B, apos migracao aprovada dos grafos existentes, pode promover os mesmos achados a errors.
 - Toda task aponta para a Specification de origem.
 - Todo no deve apontar para o arquivo canonico em `tasks/<task-id>.md`.
 - Snapshots no grafo, como `title` e `type`, sao permitidos apenas quando batem com o arquivo de task referenciado.
@@ -546,6 +559,10 @@ Agrupa melhorias candidatas, pergunta quais serao aprovadas e cria plano de evol
 
 Mantem `context.md`, indices, templates, decisoes e artefatos derivados sincronizados.
 
+### QA Orchestration
+
+QA e verificador independente e read-only. QA re-executa os gates declarados em `knowledge/conventions/gates.md` quando possivel, registra saida real ou limitacao explicita, e devolve blockers para a rota apropriada em vez de corrigir codigo. Rotas especializadas como bug-fixer e code-runner serao formalizadas por evolucoes futuras.
+
 ### Release Orchestrator
 
 Antes de release, verifica:
@@ -598,6 +615,9 @@ Transicoes obrigatorias:
 - `in_progress -> implemented`: exige evidencia estruturada no arquivo da task: branch, commits e code paths.
 - `implemented -> validated`: exige QA Evidence aprovada e sem blockers; exige Security Review aprovada quando houver codigo, dados, permissoes, tokens, API, pagamentos, uploads, mensagens, busca, admin, analytics sensivel ou qualquer risco de privacidade/abuso.
 - `implemented -> validated`: para task individual, tambem exige PR, test status aprovado e evidencia concreta como logs de gate, CI URL, screenshots ou QA evidence.
+- Portoes tecnicos do produto vivem em `knowledge/conventions/gates.md`. Skills que executam ou verificam codigo devem ler esse arquivo e registrar a saida real dos gates aplicaveis.
+- `validated` e estados posteriores exigem QA Evidence nao-placeholder para gates aplicaveis. Quando um gate nao puder ser executado por indisponibilidade de ambiente, QA deve registrar a limitacao explicitamente em vez de forjar evidencia.
+- Entregas com superficie visual exigem evidencia visual proporcional, como screenshot local ou artefato de CI, alem de verificacao basica de acessibilidade: role/label, foco, alvo de toque e contraste.
 - `validated -> released`: exige Release Orchestrator, auditoria sem blockers, Security Review sem blockers, riscos residuais aceitos e rollback/monitoramento definidos.
 - QA pode bloquear validacao quando qualquer criterio de aceite, task, controle de seguranca, regressao critica ou evidencia obrigatoria estiver ausente.
 - Security Review pode bloquear validacao e release quando houver falha de autorizacao, vazamento de dados, decisao de permissao sem aprovacao, segredo exposto, abuso nao mitigado, logging inseguro ou risco residual alto sem decisao humana.
@@ -608,7 +628,9 @@ Staleness e uma condicao derivada pelo validator, nao um status editavel. Artefa
 
 ## 12. Decisoes
 
-Decisoes relevantes devem ser registradas em `product/knowledge/decisions/` e indexadas em `.product/decisions.json`.
+Decisoes de produto relevantes devem ser registradas em `knowledge/decisions/` e indexadas em `.product/decisions.json`.
+
+Decisoes de framework ou metodo vivem em `engineering/decisions/FDR-*` ou como emendas explicitas a este documento. Contratos de skill, gates, writeScope, politicas de QA, roteamento de falhas, commit policy, validadores e regras de orquestracao nao devem ser registrados em `knowledge/decisions/`, porque essa pasta e reservada ao produto adotante.
 
 Uma decisao deve ser criada quando:
 

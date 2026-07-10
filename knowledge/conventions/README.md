@@ -11,6 +11,7 @@ Use this folder when a convention applies across the framework and should be reu
 ## Expected Files
 
 - `README.md`: folder purpose and usage.
+- `gates.md`: product-specific technical gates consumed by implementation and QA skills.
 - Future convention files for IDs, statuses, naming, artifact quality, and approval gates.
 
 ## Responsible Skill

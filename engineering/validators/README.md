@@ -12,6 +12,14 @@ Run the framework validator from the repository root:
 node engineering/validators/framework-validator.mjs --write-registry --write-report
 ```
 
+Run validator and move-tool fixture tests with:
+
+```bash
+node engineering/tests/run-tests.mjs
+```
+
+The GitHub Actions workflow `.github/workflows/framework-validation.yml` runs syntax checks, engineering tests, and the validator without write flags so CI verifies the committed framework state without mutating generated reports.
+
 The validator checks:
 
 - required use-case artifact bundles;
@@ -23,6 +31,7 @@ The validator checks:
 - validation gates for approved tests, QA evidence, Security Review, and audit before `validated` or `released`;
 - Delivery Level and Priority metadata for executable framework artifacts;
 - execution graph JSON shape and dependencies;
+- `writeScope` and `sharedResources` safety for parallel graph nodes, currently as Phase A warnings;
 - `context.md` required metadata;
 - `.product/artifacts.json` registry consistency;
 - stale `product/...` paths outside `FRAMEWORK.md`;
@@ -35,6 +44,7 @@ The validator checks:
 - template snapshots.
 - identity policy metadata in `.product/ids.json`;
 - immutable `slug` metadata in `context.md`.
+- concrete QA evidence for approved or later `qa-evidence.md` artifacts.
 
 ## Output
 

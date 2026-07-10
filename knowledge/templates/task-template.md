@@ -41,6 +41,7 @@
 | Depends on | `[task ids or none]` |
 | Source sections | `[Specification sections or plan sections]` |
 | Write scope | `[paths/modules this task may touch]` |
+| Shared resources | `[generated indexes/locales/local database/schema/contracts or none]` |
 | Graph node status | `[graph node operational status]` |
 
 ## Objective
