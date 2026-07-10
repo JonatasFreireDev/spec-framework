@@ -7,8 +7,11 @@
   "source_repository": "https://github.com/JonatasFreireDev/spec-framework",
   "installed_assets": {
     "framework_document": false,
+    "framework_agent": false,
+    "decisions": false,
     "skills": false,
     "templates": false,
+    "tools": false,
     "validators": false,
     "ci": false
   }

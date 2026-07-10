@@ -678,6 +678,7 @@ test("init-product creates a product repo with installed framework assets", () =
     assert.equal(result.status, 0, output(result));
     assert.equal(fs.existsSync(path.join(target, "product", ".product", "framework.json")), true);
     assert.equal(fs.existsSync(path.join(target, ".spec-framework", "FRAMEWORK.md")), true);
+    assert.equal(fs.existsSync(path.join(target, ".spec-framework", "AGENTS.framework.md")), true);
     assert.equal(fs.existsSync(path.join(target, ".spec-framework", "validators", "framework-validator.mjs")), true);
     assert.equal(fs.existsSync(path.join(target, ".spec-framework", "tools", "move-artifact.mjs")), true);
     assert.equal(fs.existsSync(path.join(target, ".spec-framework", "tools", "validate-product.mjs")), true);
@@ -686,6 +687,7 @@ test("init-product creates a product repo with installed framework assets", () =
 
     const manifest = JSON.parse(fs.readFileSync(path.join(target, ".spec-framework", "manifest.json"), "utf8"));
     assert.equal(manifest.product_root, "product");
+    assert.equal(manifest.installed_assets.framework_agent, true);
     assert.equal(manifest.installed_assets.validators, true);
 
     const installedValidator = path.join(target, ".spec-framework", "validators", "framework-validator.mjs");
@@ -764,6 +766,7 @@ test("npm package includes framework assets required by bootstrap", () => {
     "scripts/validate-product.mjs",
     "scripts/upgrade-product.mjs",
     "starter/README.md",
+    "framework/AGENTS.framework.md",
     ".codex/skills/code-runner/SKILL.md",
     "knowledge/templates/specification-template.md",
     "engineering/validators/framework-validator.mjs",

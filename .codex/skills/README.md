@@ -8,6 +8,19 @@ This folder contains repository-local skills that operationalize the framework. 
 
 Use these skills when creating, updating, auditing, explaining, routing, or handing off framework artifacts. Specialist skills own canonical artifact content. Orchestrator skills own flow, gates, sequencing, and handoff.
 
+## Path Resolution
+
+Skills are written to work in both this framework repository and adopter repositories.
+
+| Path kind | In this repository | In adopter repositories |
+| --- | --- | --- |
+| Framework method assets | repository root, `.codex/skills/`, `knowledge/templates/`, `engineering/` | `.spec-framework/` |
+| Active product artifacts | `examples/events/` | `product/` |
+| Product decisions and state | `examples/events/knowledge/decisions/`, `examples/events/.product/` | `product/knowledge/decisions/`, `product/.product/` |
+| Product gates and conventions | `examples/events/knowledge/conventions/` | `product/knowledge/conventions/` |
+
+When a skill mentions a product-relative path such as `knowledge/conventions/gates.md`, `.product/decisions.json`, `domains/`, `audits/`, or `releases/`, resolve it under the active product root. When it mentions framework assets such as `FRAMEWORK.md`, `templates/`, `validators/`, or FDRs, resolve it under the framework root.
+
 ## Expected Files
 
 - `<skill-name>/SKILL.md`: one skill per folder.

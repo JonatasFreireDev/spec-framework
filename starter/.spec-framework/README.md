@@ -11,6 +11,7 @@ It explains how to do Specification Driven Development. It is not product scope.
 | Area | Purpose |
 | --- | --- |
 | `FRAMEWORK.md` | Method contract copied from the framework release. |
+| `AGENTS.framework.md` | Agent instructions for using the installed framework without mixing product scope into `.spec-framework/`. |
 | `manifest.json` | Installed framework version and asset map. |
 | `decisions/` | Framework Decision Records copied from the framework release. |
 | `skills/` | Operational agent skills. |

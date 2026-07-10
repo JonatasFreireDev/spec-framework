@@ -6,11 +6,13 @@ This folder stores Codex-facing assets that belong to this repository. It keeps 
 
 ## When To Use
 
-Use this folder when maintaining repository-local skills, skill metadata, or future Codex configuration. Do not store product artifacts here; product artifacts belong in `foundation/`, `knowledge/`, `domains/`, `audits/`, `engineering/`, and `releases/`.
+Use this folder when maintaining repository-local skills, skill metadata, or future Codex configuration. Do not store product artifacts here.
+
+In this framework repository, worked product artifacts live under `examples/events/`. In adopter repositories, product artifacts live under `product/`. Framework method assets live under `.spec-framework/`.
 
 ## Expected Files
 
-- `skills/`: repository-local Codex skills in folder-per-skill format.
+- `skills/`: repository-local Codex skills in folder-per-skill format. These are mirrored into adopter repositories for Codex discovery.
 
 ## Responsible Skill
 
@@ -18,4 +20,4 @@ Primary owner: Documentation Orchestrator.
 
 ## Next Step
 
-When a skill changes, validate that its `SKILL.md` still has frontmatter with `name` and `description`, and that the instructions point to real framework paths.
+When a skill changes, validate that its `SKILL.md` still has frontmatter with `name` and `description`, and that the instructions resolve product paths through the active product root instead of assuming product folders at the framework repository root.

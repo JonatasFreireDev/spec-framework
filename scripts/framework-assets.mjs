@@ -84,6 +84,7 @@ jobs:
 export function installedAssets() {
   return {
     framework_document: true,
+    framework_agent: true,
     decisions: true,
     skills: true,
     templates: true,
@@ -104,7 +105,7 @@ export function installFrameworkAssets(target, options = {}) {
   copyDir(path.join(frameworkRepo, "engineering", "validators"), path.join(specRoot, "validators"));
   copyFile(path.join(frameworkRepo, "engineering", "move-artifact.mjs"), path.join(specRoot, "tools", "move-artifact.mjs"));
   copyFile(path.join(frameworkRepo, "scripts", "validate-product.mjs"), path.join(specRoot, "tools", "validate-product.mjs"));
-  copyFile(path.join(frameworkRepo, "AGENTS.md"), path.join(specRoot, "AGENTS.framework.md"));
+  copyFile(path.join(frameworkRepo, "framework", "AGENTS.framework.md"), path.join(specRoot, "AGENTS.framework.md"));
 
   if (mirrorCodexSkills) {
     copyDir(path.join(frameworkRepo, ".codex", "skills"), path.join(target, ".codex", "skills"));
