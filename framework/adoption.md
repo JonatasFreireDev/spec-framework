@@ -45,6 +45,7 @@ Manual bootstrap:
 2. Copy the contents of `starter/` into the product repository root.
 3. Install framework assets into `.spec-framework/`:
    - `.spec-framework/FRAMEWORK.md`
+   - `.spec-framework/AGENTS.framework.md`
    - `.spec-framework/decisions/FDR-*`
    - `.spec-framework/skills/`
    - `.spec-framework/templates/`
@@ -52,16 +53,16 @@ Manual bootstrap:
    - `.spec-framework/tools/`
 4. Optionally copy skills into `.codex/skills/` for Codex auto-discovery.
 5. Replace `product/` starter placeholders with product-specific content.
-6. Run the validator against the product root.
-
-```bash
-node .spec-framework/validators/framework-validator.mjs --product-root product --write-registry --write-report
-```
-
-Preferred validation wrapper after bootstrap:
+6. Run the validation wrapper against the product root.
 
 ```bash
 node .spec-framework/tools/validate-product.mjs
+```
+
+Direct validator form when debugging:
+
+```bash
+node .spec-framework/validators/framework-validator.mjs --product-root product --framework-root .spec-framework --write-registry --write-report
 ```
 
 Upgrade an initialized product from the framework repository:
@@ -88,6 +89,7 @@ node scripts/upgrade-product.mjs --target ../my-product
 | Framework-Owned Area | Purpose |
 | --- | --- |
 | `.spec-framework/FRAMEWORK.md` | Method contract. |
+| `.spec-framework/AGENTS.framework.md` | Agent instructions for resolving framework and product roots. |
 | `.spec-framework/decisions/FDR-*` | Framework method decisions. |
 | `.spec-framework/validators/` | Mechanical validation gates. |
 | `.spec-framework/skills/` | Operational skills. |

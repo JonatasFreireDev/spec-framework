@@ -818,6 +818,18 @@ test("project skills resolve framework and product paths through explicit roots"
   }
 });
 
+test("framework documentation keeps method assets outside the product root", () => {
+  const framework = fs.readFileSync(path.join(repoRoot, "FRAMEWORK.md"), "utf8");
+
+  assert.doesNotMatch(framework, /product\/FRAMEWORK\.md/, "FRAMEWORK.md must not instruct adopters to read product/FRAMEWORK.md");
+  assert.match(framework, /\.spec-framework\/FRAMEWORK\.md/, "FRAMEWORK.md must point adopters to .spec-framework/FRAMEWORK.md");
+  assert.match(framework, /AGENTS\.framework\.md/, "FRAMEWORK.md must list the installed framework agent instructions");
+
+  const productTree = framework.match(/product\/\n(?<tree>[\s\S]*?)\n```\n\nIn an adopter product repository/);
+  assert.ok(productTree, "FRAMEWORK.md must include the canonical product tree");
+  assert.doesNotMatch(productTree.groups.tree, /FRAMEWORK\.md/, "The product tree must not include framework method files");
+});
+
 test("npm package installs and runs the CLI from a consumer project", () => {
   const parent = fs.mkdtempSync(path.join(os.tmpdir(), "spec-framework-package-"));
   const packDir = path.join(parent, "pack");

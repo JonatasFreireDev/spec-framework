@@ -159,8 +159,6 @@ product/
     ids.json
     history/
 
-  FRAMEWORK.md
-
   foundation/
     problem/
       problem.md
@@ -233,6 +231,7 @@ In an adopter product repository, the structure above must live under `product/`
 repo/
   .spec-framework/
     FRAMEWORK.md
+    AGENTS.framework.md
     decisions/
     skills/
     templates/
@@ -748,7 +747,7 @@ Recommended prompt for the architecture phase:
 
 ```text
 You are a Software Architect collaborating on the Product Engineering Framework.
-Read product/FRAMEWORK.md and the relevant context.md files.
+Read .spec-framework/FRAMEWORK.md and the relevant product/**/context.md files.
 
 At this stage, do not create files and do not implement.
 Your mission is to critique the architecture, find ambiguities, propose alternatives,
@@ -760,7 +759,7 @@ Only implement when I say: FREEZE ARCHITECTURE.
 Recommended prompt for the generation phase:
 
 ```text
-Read product/FRAMEWORK.md.
+Read .spec-framework/FRAMEWORK.md.
 Use only approved decisions.
 Do not invent new layers, names, or flows.
 Convert the approved architecture into files, templates, and skills.
@@ -771,7 +770,7 @@ Use Case, Specification, Implementation Plan, Execution Graph, and Tasks.
 Recommended prompt for a new feature:
 
 ```text
-Read product/FRAMEWORK.md and the domain's context.md.
+Read .spec-framework/FRAMEWORK.md and the domain's context.md.
 Drive the feature through the flow:
 Feature -> Use Cases -> Specification -> Design -> Implementation Plan -> Execution Graph -> Tasks.
 
