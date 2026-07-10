@@ -105,11 +105,20 @@ flowchart LR
 | Abuse/edge cases | `[path/test/log]` | `[passed/failed/blocked/not run]` | `[notes]` |
 | Safe logging/analytics | `[path/test/log]` | `[passed/failed/blocked/not run]` | `[notes]` |
 
+## Failure Routing
+
+| Finding Type | Route | Owner | Re-entry Gate |
+| --- | --- | --- | --- |
+| Defect/regression/security bug with known expected behavior | `bug-fixer` | `[owner]` | QA |
+| Missing or hollow test coverage | `qa` | `[owner]` | QA |
+| Incomplete implementation or code outside task contract | `code-runner` | `[owner]` | QA |
+| Missing decision or ambiguous product/security rule | `product-historian` | `[human owner]` | Approval gate |
+
 ## Defects And Fix Verification
 
-| Finding | Severity | Fix Evidence | Status |
-| --- | --- | --- | --- |
-| `[finding]` | `[blocker/high/medium/low]` | `[path]` | `[open/fixed/accepted]` |
+| Finding | Severity | Fix Evidence | Status | Route | Owner |
+| --- | --- | --- | --- | --- | --- |
+| `[finding]` | `[blocker/high/medium/low]` | `[path]` | `[open/fixed/accepted]` | `[bug-fixer/code-runner/qa/product-historian]` | `[skill/person]` |
 
 ## Residual Risk
 

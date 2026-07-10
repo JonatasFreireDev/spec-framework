@@ -1322,6 +1322,69 @@ function validateQaEvidenceQuality() {
   }
 }
 
+function parseMarkdownTableRows(text) {
+  const lines = text.split(/\r?\n/);
+  const tables = [];
+  for (let index = 0; index < lines.length; index += 1) {
+    if (!lines[index].trim().startsWith("|")) continue;
+    const header = splitMarkdownTableRow(lines[index]);
+    const separator = lines[index + 1] ? splitMarkdownTableRow(lines[index + 1]) : [];
+    if (!header.length || !separator.every((cell) => /^:?-{3,}:?$/.test(cell.trim()))) continue;
+
+    const rows = [];
+    let cursor = index + 2;
+    while (cursor < lines.length && lines[cursor].trim().startsWith("|")) {
+      rows.push(splitMarkdownTableRow(lines[cursor]));
+      cursor += 1;
+    }
+    tables.push({ header, rows });
+    index = cursor;
+  }
+  return tables;
+}
+
+function splitMarkdownTableRow(line) {
+  return line
+    .trim()
+    .replace(/^\|/, "")
+    .replace(/\|$/, "")
+    .split("|")
+    .map((cell) => cell.trim().replace(/^`|`$/g, ""));
+}
+
+function isBlockingFindingSeverity(value) {
+  return /(^|\s|\/)(blocker|high)(\s|\/|$)/i.test(String(value ?? "")) || String(value ?? "").includes("🔴");
+}
+
+function validateBlockingFindingRoutes() {
+  const routedArtifactTypes = new Set(["qa-evidence", "security-review", "audit"]);
+  for (const artifact of currentArtifacts().filter((item) => routedArtifactTypes.has(item.type))) {
+    if (!statusCanFeedDownstream(artifact.status)) continue;
+    const file = artifact.path ? path.join(root, artifact.path) : null;
+    if (!file || !fs.existsSync(file)) continue;
+
+    for (const table of parseMarkdownTableRows(readText(file))) {
+      const normalizedHeader = table.header.map((cell) => cell.toLowerCase());
+      const severityIndex = normalizedHeader.indexOf("severity");
+      const findingIndex = normalizedHeader.indexOf("finding");
+      if (severityIndex === -1 || findingIndex === -1) continue;
+
+      const routeIndex = normalizedHeader.indexOf("route");
+      const ownerIndex = normalizedHeader.indexOf("owner");
+      for (const row of table.rows) {
+        if (!isBlockingFindingSeverity(row[severityIndex])) continue;
+        const finding = row[findingIndex] || "(unnamed finding)";
+        if (routeIndex === -1 || isPlaceholderValue(row[routeIndex])) {
+          addResult("error", "failure-routing", file, `${artifact.id} blocking finding "${finding}" is missing Route.`, "Route blockers with FDR-006: bug-fixer, code-runner, qa, or product-historian.");
+        }
+        if (ownerIndex === -1 || isPlaceholderValue(row[ownerIndex])) {
+          addResult("error", "failure-routing", file, `${artifact.id} blocking finding "${finding}" is missing Owner.`, "Assign the blocking finding to a skill or human owner.");
+        }
+      }
+    }
+  }
+}
+
 function validateExecutionGraphs() {
   const skills = knownSkillNames();
   for (const file of walk(path.join(root, "domains")).filter((item) =>
@@ -1948,6 +2011,7 @@ flowchart LR
 | Validation gates | ${results.some((item) => item.check === "validation-gates" && item.severity === "error") ? "\u{1F534} has errors" : results.some((item) => item.check === "validation-gates") ? "\u{1F7E1} findings" : "\u{2705} no findings"} |
 | Code evidence gates | ${results.some((item) => item.check === "code-evidence" && item.severity === "error") ? "\u{1F534} has errors" : results.some((item) => item.check === "code-evidence") ? "\u{1F7E1} findings" : "\u{2705} no findings"} |
 | QA evidence quality | ${results.some((item) => item.check === "qa-evidence" && item.severity === "error") ? "\u{1F534} has errors" : results.some((item) => item.check === "qa-evidence") ? "\u{1F7E1} findings" : "\u{2705} no findings"} |
+| Failure routing | ${results.some((item) => item.check === "failure-routing" && item.severity === "error") ? "\u{1F534} has errors" : results.some((item) => item.check === "failure-routing") ? "\u{1F7E1} findings" : "\u{2705} no findings"} |
 | Traceability | ${results.some((item) => item.check === "traceability" && item.severity === "error") ? "🔴 has errors" : results.some((item) => item.check === "traceability") ? "🟡 findings" : "✅ no findings"} |
 | Skill references | ${results.some((item) => item.check === "skill-reference" && item.severity === "error") ? "🔴 has errors" : results.some((item) => item.check === "skill-reference") ? "🟡 findings" : "✅ no findings"} |
 | Status policy | ${results.some((item) => item.check === "status-policy" && item.severity === "error") ? "🔴 has errors" : results.some((item) => item.check === "status-policy") ? "🟡 findings" : "✅ no findings"} |
@@ -1992,6 +2056,7 @@ validateStaleness();
 validateValidationGates();
 validateCodeEvidenceGates();
 validateQaEvidenceQuality();
+validateBlockingFindingRoutes();
 validateDeliveryMetadata();
 validateExecutionGraphs();
 validateContexts();

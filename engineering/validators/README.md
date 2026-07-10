@@ -46,6 +46,7 @@ The validator checks:
 - immutable `slug` metadata in `context.md`.
 - concrete QA evidence for approved or later `qa-evidence.md` artifacts.
 - task handoff fields that reference repository-local skills.
+- blocker/high findings in approved QA evidence, Security Review, and audit artifacts include route and owner.
 
 ## Output
 

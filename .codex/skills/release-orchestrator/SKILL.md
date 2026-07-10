@@ -27,6 +27,8 @@ Gap Finder -> Conflict Finder -> UX/UI audit when UI exists -> QA -> Code Review
 4. Preserve traceability from parent artifacts to child artifacts.
 5. Keep audit findings separate from product decisions until approved.
 6. Update context and indexes only after the source artifact is approved.
+7. Route red gates with FDR-006: defect to bug-fixer, missing test to QA/tests, incomplete implementation to code-runner, and missing decision to Product Historian plus human approval.
+8. Enforce QA re-entry after any code change. Never advance over a red QA or Security Review gate.
 
 ## Outputs
 release verdict; evidence; blockers; required fixes; release notes inputs.
@@ -39,6 +41,8 @@ release verdict; evidence; blockers; required fixes; release notes inputs.
 - [ ] Decisions are recorded or queued for approval.
 - [ ] Gaps, conflicts, dependencies, and risks are visible.
 - [ ] Handoff names the next skill and required reading.
+- [ ] Blocking findings have route and owner.
+- [ ] No red QA or Security Review gate is bypassed.
 - [ ] No downstream task starts from an unapproved Specification.
 
 ## Final handoff format

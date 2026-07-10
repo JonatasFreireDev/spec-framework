@@ -567,6 +567,10 @@ QA e verificador independente e read-only. QA re-executa os gates declarados em 
 
 Code Runner recebe uma task aprovada por vez. Se a task exigir mudanca fora de `writeScope`, decisao nao aprovada, comando de gate ausente ou lacuna de Specification, a implementacao para e reporta o blocker. Depois de qualquer mudanca de codigo, o fluxo retorna para QA independente.
 
+### Failure Routing
+
+Falhas seguem FDR-006. Defeito, regressao, vulnerabilidade com comportamento esperado claro ou erro de producao vao para Bug Fixer. Teste ausente, teste oco ou cobertura negativa/permissao ausente volta para QA ou dono de testes. Implementacao incompleta ou fora do contrato volta para Code Runner. Lacuna de decisao ou regra ambigua vai para Product Historian e humano. Apos qualquer mudanca de codigo, o fluxo reentra em QA; gate vermelho nao pode ser pulado. Cada gate ou finding tem teto de tres tentativas automatizadas antes de escalonar ao humano.
+
 ### Release Orchestrator
 
 Antes de release, verifica:
@@ -618,6 +622,7 @@ Transicoes obrigatorias:
 - `approved -> in_progress`: exige task aprovada ou excecao explicita de prototipo/draft.
 - `in_progress -> implemented`: exige evidencia estruturada no arquivo da task: branch, commits e code paths.
 - Code Runner pode produzir codigo e evidencia tecnica, mas nao faz commit, push, merge, approval record ou aprovacao de QA.
+- Bug Fixer reproduz o defeito com teste falhando antes de corrigir, corrige causa raiz com mudanca minima, deixa teste de regressao permanente e retorna para QA.
 - `implemented -> validated`: exige QA Evidence aprovada e sem blockers; exige Security Review aprovada quando houver codigo, dados, permissoes, tokens, API, pagamentos, uploads, mensagens, busca, admin, analytics sensivel ou qualquer risco de privacidade/abuso.
 - `implemented -> validated`: para task individual, tambem exige PR, test status aprovado e evidencia concreta como logs de gate, CI URL, screenshots ou QA evidence.
 - Portoes tecnicos do produto vivem em `knowledge/conventions/gates.md`. Skills que executam ou verificam codigo devem ler esse arquivo e registrar a saida real dos gates aplicaveis.
@@ -626,6 +631,7 @@ Transicoes obrigatorias:
 - `validated -> released`: exige Release Orchestrator, auditoria sem blockers, Security Review sem blockers, riscos residuais aceitos e rollback/monitoramento definidos.
 - QA pode bloquear validacao quando qualquer criterio de aceite, task, controle de seguranca, regressao critica ou evidencia obrigatoria estiver ausente.
 - Security Review pode bloquear validacao e release quando houver falha de autorizacao, vazamento de dados, decisao de permissao sem aprovacao, segredo exposto, abuso nao mitigado, logging inseguro ou risco residual alto sem decisao humana.
+- Findings bloqueantes em QA Evidence, Security Review ou audit precisam de route e owner antes de artefatos aprovados poderem orientar validacao ou release.
 
 Approval records usam hash SHA-256 do arquivo inteiro com conteudo normalizado para LF e sem trailing whitespace por linha. Eles fornecem auditabilidade e gate mecanico, nao prova criptografica de aprovacao humana.
 

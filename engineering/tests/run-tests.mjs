@@ -369,6 +369,52 @@ test("validator blocks approved QA evidence with placeholder gate output", () =>
   });
 });
 
+test("validator blocks approved findings without route and owner", () => {
+  withFixture("failure-routing", (root) => {
+    const audit = `# Audit
+
+| Field | Value |
+| --- | --- |
+| ID | AUD-ROUTE |
+| Status | approved |
+
+## Findings
+
+| Severity | Finding | Evidence | Required Fix |
+| --- | --- | --- | --- |
+| blocker | Escaped defect | test.log | Fix root cause |
+`;
+    write(root, "audit.md", audit);
+    write(root, ".product/artifacts.json", JSON.stringify({
+      artifacts: [
+        {
+          id: "AUD-ROUTE",
+          type: "audit",
+          status: "approved",
+          path: "audit.md",
+          documents: { canonical: "audit.md" },
+        },
+      ],
+    }, null, 2));
+    write(root, ".product/history/approval-AUD-ROUTE-approved.json", JSON.stringify({
+      artifact_id: "AUD-ROUTE",
+      path: "audit.md",
+      content_hash: normalizedHash(audit),
+      status_granted: "approved",
+      approved_by: "test-human",
+      approved_at: "2026-07-10T00:00:00.000Z",
+      notes: "test fixture",
+    }, null, 2));
+
+    const result = runValidator(root);
+
+    assert.notEqual(result.status, 0, output(result));
+    assert.match(output(result), /failure-routing/);
+    assert.match(output(result), /missing Route/);
+    assert.match(output(result), /missing Owner/);
+  });
+});
+
 test("move-artifact moves folders, rewrites Markdown links and JSON paths, and reports free-text mentions", () => {
   withFixture("move", (root) => {
     write(root, "domains/old/use-case/file.md", "# Target\n\nMoved content.\n");

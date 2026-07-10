@@ -54,9 +54,9 @@ flowchart LR
 
 ## 🔎 Findings
 
-| Severity | Finding | Evidence | Impact | Required Fix | Owner |
-| --- | --- | --- | --- | --- | --- |
-| `[🔴 blocker/🟡 warning/🔵 note]` | `[finding title]` | `[file/path/section]` | `[why it matters]` | `[fix]` | `[role]` |
+| Severity | Finding | Evidence | Impact | Required Fix | Route | Owner |
+| --- | --- | --- | --- | --- | --- | --- |
+| `[🔴 blocker/🟡 warning/🔵 note]` | `[finding title]` | `[file/path/section]` | `[why it matters]` | `[fix]` | `[bug-fixer/code-runner/qa/product-historian]` | `[role]` |
 
 ## 🧱 Gaps
 

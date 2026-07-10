@@ -45,6 +45,7 @@ flowchart LR
 | Validation gates | ✅ no findings |
 | Code evidence gates | ✅ no findings |
 | QA evidence quality | ✅ no findings |
+| Failure routing | ✅ no findings |
 | Traceability | ✅ no findings |
 | Skill references | ✅ no findings |
 | Status policy | ✅ no findings |

@@ -87,9 +87,9 @@ flowchart LR
 
 ## 🚦 Findings
 
-| Severity | Finding | Evidence | Required Fix | Owner |
-| --- | --- | --- | --- | --- |
-| `[blocker/high/medium/low/note]` | `[finding]` | `[path]` | `[fix]` | `[owner]` |
+| Severity | Finding | Evidence | Required Fix | Route | Owner |
+| --- | --- | --- | --- | --- | --- |
+| `[blocker/high/medium/low/note]` | `[finding]` | `[path]` | `[fix]` | `[bug-fixer/code-runner/qa/product-historian]` | `[owner]` |
 
 ## ⚠️ Residual Risks
 

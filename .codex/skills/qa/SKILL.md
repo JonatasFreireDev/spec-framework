@@ -42,7 +42,12 @@ QA verdict; test evidence; blocking findings; residual risks; required fixes.
 7. Separate verified facts from assumptions and recommendations.
 8. Report gaps, conflicts, dependencies, and risks with file-level evidence when possible.
 9. Stay read-only: do not fix code, do not edit application files, and do not create, edit, or repair approval records.
-10. Route blocking findings back to the appropriate owner. Until bug-fixer and code-runner routing is formalized, hand off to the Audit Orchestrator with exact blocker evidence.
+10. Route blocking findings using FDR-006:
+    - defect, regression, vulnerability with known expected behavior, or production error -> `bug-fixer`;
+    - missing test, hollow test, missing negative or permission coverage -> `qa` or test owner;
+    - incomplete implementation or code outside task contract -> `code-runner`;
+    - missing decision or ambiguous product/security rule -> `product-historian` plus human approval.
+11. After any code change, require re-entry into QA. Never advance over a red gate.
 
 ## Quality checklist
 - [ ] Preserves traceability to affected artifacts.
@@ -53,12 +58,14 @@ QA verdict; test evidence; blocking findings; residual risks; required fixes.
 - [ ] Checks task writeScope and flags out-of-scope changes.
 - [ ] Checks visual evidence and basic accessibility for UI deliveries.
 - [ ] Remains read-only and does not repair code or approval records.
+- [ ] Blocking findings include route and owner.
+- [ ] Defects that escaped into QA require permanent regression coverage before closure.
 - [ ] Distinguishes blockers from suggestions.
 - [ ] Detects gaps, conflicts, and dependencies.
 - [ ] Records or requests decisions for meaningful changes.
 - [ ] Leaves a clear handoff for the next skill or orchestrator.
 
 ## Handoff
-Next: 15-gap-finder.md
+Next: bug-fixer, code-runner, product-historian, Security Review AI, or Audit Orchestrator depending on FDR-006 routing.
 
 Pass forward approved artifacts, findings, open questions, decisions, dependencies, risks, and required follow-up work.

@@ -31,6 +31,7 @@ Security verdict; threat model summary; control checklist; blocking findings; re
 - `knowledge/templates/security-review-template.md`.
 - Approved decisions in `knowledge/decisions/` and `.product/decisions.json`.
 - Related `tests.md`, `qa-evidence.md`, and `audit.md` when present.
+- `engineering/decisions/FDR-006-failure-routing-and-regression.md`.
 
 ## Workflow
 1. Read the local context and identify artifact status, delivery level, priority, and release intent.
@@ -40,7 +41,8 @@ Security verdict; threat model summary; control checklist; blocking findings; re
 5. Confirm the Execution Graph and Tasks include explicit security work when the flow touches data, permissions, tokens, payments, uploads, messaging, search, public endpoints, or admin operations.
 6. Review QA evidence and verify that security controls have evidence, not only intention.
 7. Classify findings as blocker, required fix, note, or accepted residual risk.
-8. Do not mark the artifact secure when a blocker remains. Request a decision for any accepted high or hard-to-reverse residual risk.
+8. Route blockers using FDR-006: security bug with clear expected behavior -> `bug-fixer`; missing security test -> `qa`; incomplete implementation -> `code-runner`; missing permission/privacy decision -> `product-historian` plus human approval.
+9. Do not mark the artifact secure when a blocker remains. Request a decision for any accepted high or hard-to-reverse residual risk.
 
 ## Review Checklist
 - [ ] Authentication and authorization are server-authoritative.
@@ -53,6 +55,8 @@ Security verdict; threat model summary; control checklist; blocking findings; re
 - [ ] Dependencies, migrations, rollout, rollback, and monitoring have security-aware handling.
 - [ ] Security tests or manual security evidence exist for every security acceptance criterion.
 - [ ] Residual risks are documented with owner, severity, mitigation, and approval status.
+- [ ] Blocking findings include route and owner.
+- [ ] Security defects that escaped require permanent regression coverage before closure.
 
 ## Verdict Rules
 - `passed`: no blocking findings; required controls have evidence; residual risks are low or explicitly approved.
@@ -60,6 +64,6 @@ Security verdict; threat model summary; control checklist; blocking findings; re
 - `blocked`: any high-risk gap, missing evidence for a required control, unapproved permission/privacy decision, or release-impacting unknown remains.
 
 ## Handoff
-Next: QA AI, Audit Orchestrator, or Release Orchestrator.
+Next: bug-fixer, code-runner, QA AI, Product Historian, Audit Orchestrator, or Release Orchestrator depending on FDR-006 routing.
 
 Pass forward the verdict, evidence links, blockers, residual risks, required decisions, and whether release is blocked.
