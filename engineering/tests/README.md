@@ -8,7 +8,7 @@ This folder contains local fixture-based tests for framework engineering tools. 
 
 | Tool | Coverage |
 | --- | --- |
-| `engineering/validators/framework-validator.mjs` | Approval-record enforcement, derived staleness blocking, Phase A writeScope warnings, and concrete QA evidence enforcement. |
+| `engineering/validators/framework-validator.mjs` | Approval-record enforcement, derived staleness blocking, Phase A writeScope warnings, task handoff skill references, and concrete QA evidence enforcement. |
 | `engineering/move-artifact.mjs` | Folder move, Markdown link rewrite, JSON path rewrite, and free-text mention reporting. |
 
 ## Run

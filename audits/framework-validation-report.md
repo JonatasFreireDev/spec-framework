@@ -46,6 +46,7 @@ flowchart LR
 | Code evidence gates | ✅ no findings |
 | QA evidence quality | ✅ no findings |
 | Traceability | ✅ no findings |
+| Skill references | ✅ no findings |
 | Status policy | ✅ no findings |
 | Delivery metadata | ✅ no findings |
 | Execution graph JSON and dependencies | ✅ no errors |

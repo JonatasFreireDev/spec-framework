@@ -11,7 +11,7 @@ Use these skills when creating, updating, auditing, explaining, routing, or hand
 ## Expected Files
 
 - `<skill-name>/SKILL.md`: one skill per folder.
-- Specialist skills: problem, vision, strategy, domain, goal, journey, feature, use case, UX/UI, specification, implementation planning, graph, task, QA, security review, audit, documentation, and history.
+- Specialist skills: problem, vision, strategy, domain, goal, journey, feature, use case, UX/UI, specification, implementation planning, graph, task, code runner, QA, security review, audit, documentation, and history.
 - Orchestrator skills: product, new feature, audit, evolution, documentation, and release.
 
 ## Responsible Skill

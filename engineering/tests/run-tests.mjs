@@ -54,6 +54,8 @@ function scaffoldBase(root) {
   write(root, "knowledge/templates/minimal-template.md", "# Minimal Template\n\n## Snapshot\n\n| Field | Value |\n| --- | --- |\n| Purpose | Test fixture. |\n");
   mkdir(path.join(root, "audits", "readiness"));
   copy(root, moveScript, "engineering/move-artifact.mjs");
+  write(root, ".codex/skills/code-runner/SKILL.md", "---\nname: code-runner\n---\n\n# Code Runner\n");
+  write(root, ".codex/skills/task-generator/SKILL.md", "---\nname: task-generator\n---\n\n# Task Generator\n");
 }
 
 function runNode(script, cwd, args = []) {
@@ -281,6 +283,33 @@ test("validator reports writeScope overlap between parallel nodes as a phase A w
     assert.equal(result.status, 0, output(result));
     assert.match(output(result), /WARNING write-scope/);
     assert.match(output(result), /Parallel nodes TK-A and TK-B have overlapping writeScope/);
+  });
+});
+
+test("validator blocks task handoffs that reference missing skills", () => {
+  withFixture("skill-reference", (root) => {
+    scaffoldTierSUseCase(root, [
+      {
+        id: "TK-A",
+        path: "tasks/TK-A.md",
+        title: "Task A",
+        type: "backend",
+        dependsOn: [],
+        writeScope: ["src/task-a"],
+      },
+    ]);
+    const taskFile = path.join(root, "domains/test/goals/goal/features/feature/use-cases/use-case/tasks/TK-A.md");
+    fs.writeFileSync(
+      taskFile,
+      fs.readFileSync(taskFile, "utf8").replace("| Next skill | code-runner |", "| Next skill | missing-skill |"),
+      "utf8"
+    );
+
+    const result = runValidator(root, ["--write-registry"]);
+
+    assert.notEqual(result.status, 0, output(result));
+    assert.match(output(result), /skill-reference/);
+    assert.match(output(result), /Next skill references missing skill missing-skill/);
   });
 });
 

@@ -45,6 +45,7 @@ The validator checks:
 - identity policy metadata in `.product/ids.json`;
 - immutable `slug` metadata in `context.md`.
 - concrete QA evidence for approved or later `qa-evidence.md` artifacts.
+- task handoff fields that reference repository-local skills.
 
 ## Output
 

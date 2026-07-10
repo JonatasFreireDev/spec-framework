@@ -14,6 +14,7 @@ Product decisions do not live here. Product decisions continue to live in `knowl
 | [FDR-002](FDR-002-gate-commands.md) | Gate commands are product conventions | approved | EV-011 / gate governance |
 | [FDR-003](FDR-003-writescope-safe-parallelism.md) | WriteScope and safe parallelism | approved | EV-012 |
 | [FDR-004](FDR-004-qa-independence.md) | QA independence | approved | EV-011 |
+| [FDR-005](FDR-005-code-runner-contract.md) | Code Runner operational contract | approved | EV-007 |
 
 ## Rule
 

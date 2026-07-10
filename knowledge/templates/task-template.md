@@ -9,7 +9,7 @@
 | Source graph | `[GRAPH-XXX]` |
 | Source specification | `[SPEC-XXX]` |
 | Source node | `[TK-XXX-001]` |
-| Owner skill | `[task-runner | documentation-writer | qa | security-review]` |
+| Owner skill | `[code-runner | documentation-writer | qa | security-review]` |
 | Next skill | `[next skill]` |
 
 ## Navigation

@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-10T01:29:11.998Z",
+  "generatedAt": "2026-07-10T03:09:19.140Z",
   "generator": "engineering/validators/framework-validator.mjs",
   "artifacts": [
     {
@@ -874,7 +874,7 @@
       "type": "task",
       "name": "Add attendance check-in persistence",
       "status": "draft",
-      "ownerSkill": "task-runner",
+      "ownerSkill": "code-runner",
       "path": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/attendee-checks-in-with-qr-code/tasks/TK-001.md",
       "parentIds": [
         "GRAPH-001"
@@ -899,7 +899,7 @@
       "type": "task",
       "name": "Implement QR token generation",
       "status": "draft",
-      "ownerSkill": "task-runner",
+      "ownerSkill": "code-runner",
       "path": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/attendee-checks-in-with-qr-code/tasks/TK-002.md",
       "parentIds": [
         "GRAPH-001"
@@ -1123,7 +1123,7 @@
       "type": "task",
       "name": "Implement QR token validation",
       "status": "draft",
-      "ownerSkill": "task-runner",
+      "ownerSkill": "code-runner",
       "path": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/attendee-checks-in-with-qr-code/tasks/TK-003.md",
       "parentIds": [
         "GRAPH-001"
@@ -1152,7 +1152,7 @@
       "type": "task",
       "name": "Build attendee QR UI states",
       "status": "draft",
-      "ownerSkill": "task-runner",
+      "ownerSkill": "code-runner",
       "path": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/attendee-checks-in-with-qr-code/tasks/TK-004.md",
       "parentIds": [
         "GRAPH-001"
@@ -1179,7 +1179,7 @@
       "type": "task",
       "name": "Build organizer validation UI states",
       "status": "draft",
-      "ownerSkill": "task-runner",
+      "ownerSkill": "code-runner",
       "path": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/attendee-checks-in-with-qr-code/tasks/TK-005.md",
       "parentIds": [
         "GRAPH-001"

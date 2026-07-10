@@ -367,6 +367,39 @@ function normalizedStringArray(value) {
     : [];
 }
 
+function knownSkillNames() {
+  const skillsDir = path.join(root, ".codex", "skills");
+  if (!fs.existsSync(skillsDir)) return new Set();
+  return new Set(
+    fs.readdirSync(skillsDir, { withFileTypes: true })
+      .filter((entry) => entry.isDirectory() && fs.existsSync(path.join(skillsDir, entry.name, "SKILL.md")))
+      .map((entry) => entry.name)
+  );
+}
+
+function normalizeSkillReference(value) {
+  return String(value ?? "")
+    .trim()
+    .replace(/^`|`$/g, "")
+    .replace(/\s+AI$/i, "")
+    .toLowerCase()
+    .replace(/\s+/g, "-");
+}
+
+function validateSkillReference(file, field, value, skills) {
+  const skill = normalizeSkillReference(value);
+  if (!skill || isPlaceholderValue(skill) || /^n\/a$/i.test(skill) || skill === "none") return;
+  if (!skills.has(skill)) {
+    addResult(
+      "error",
+      "skill-reference",
+      file,
+      `${field} references missing skill ${value}.`,
+      `Create .codex/skills/${skill}/SKILL.md or update ${field} to an existing skill.`
+    );
+  }
+}
+
 function validateWriteScopeSafety(file, graph) {
   const nodes = Array.isArray(graph.nodes) ? graph.nodes : [];
   const dependencies = graphDependencyMap(nodes);
@@ -1290,6 +1323,7 @@ function validateQaEvidenceQuality() {
 }
 
 function validateExecutionGraphs() {
+  const skills = knownSkillNames();
   for (const file of walk(path.join(root, "domains")).filter((item) =>
     item.endsWith("execution-graph.json")
   )) {
@@ -1351,6 +1385,9 @@ function validateExecutionGraphs() {
           const taskSourceNode = parseMarkdownField(taskText, "Source node");
           const taskTitle = parseMarkdownField(taskText, "Title");
           const taskType = parseMarkdownField(taskText, "Type");
+          const taskOwnerSkill = parseMarkdownField(taskText, "Owner skill");
+          const taskNextSkill = parseMarkdownField(taskText, "Next skill");
+          const taskRequiredNextSkill = parseMarkdownField(taskText, "Required next skill");
 
           if (taskId !== node.id) {
             addResult("error", "task-file", taskFile, `Task file ID is ${taskId || "missing"}, expected ${node.id}.`, `Set ID to ${node.id}.`);
@@ -1370,6 +1407,9 @@ function validateExecutionGraphs() {
           if (node.type && taskType && node.type !== taskType) {
             addResult("error", "task-file", taskFile, `Task ${node.id} type snapshot differs from graph type.`, "Regenerate graph snapshot or update the task file from the approved source.");
           }
+          validateSkillReference(taskFile, "Owner skill", taskOwnerSkill || node.ownerSkill, skills);
+          validateSkillReference(taskFile, "Next skill", taskNextSkill, skills);
+          validateSkillReference(taskFile, "Required next skill", taskRequiredNextSkill, skills);
           if (tasksIndexText && !tasksIndexText.includes(node.path)) {
             addResult("error", "tasks-index", tasksIndexFile, `tasks.md does not link task file ${node.path}.`, "Regenerate tasks.md from the graph and task files.");
           }
@@ -1909,6 +1949,7 @@ flowchart LR
 | Code evidence gates | ${results.some((item) => item.check === "code-evidence" && item.severity === "error") ? "\u{1F534} has errors" : results.some((item) => item.check === "code-evidence") ? "\u{1F7E1} findings" : "\u{2705} no findings"} |
 | QA evidence quality | ${results.some((item) => item.check === "qa-evidence" && item.severity === "error") ? "\u{1F534} has errors" : results.some((item) => item.check === "qa-evidence") ? "\u{1F7E1} findings" : "\u{2705} no findings"} |
 | Traceability | ${results.some((item) => item.check === "traceability" && item.severity === "error") ? "🔴 has errors" : results.some((item) => item.check === "traceability") ? "🟡 findings" : "✅ no findings"} |
+| Skill references | ${results.some((item) => item.check === "skill-reference" && item.severity === "error") ? "🔴 has errors" : results.some((item) => item.check === "skill-reference") ? "🟡 findings" : "✅ no findings"} |
 | Status policy | ${results.some((item) => item.check === "status-policy" && item.severity === "error") ? "🔴 has errors" : results.some((item) => item.check === "status-policy") ? "🟡 findings" : "✅ no findings"} |
 | Delivery metadata | ${results.some((item) => item.check === "delivery" && item.severity === "error") ? "🔴 has errors" : results.some((item) => item.check === "delivery") ? "🟡 findings" : "✅ no findings"} |
 | Execution graph JSON and dependencies | ${results.some((item) => item.check === "execution-graph" && item.severity === "error") ? "🔴 has errors" : "✅ no errors"} |

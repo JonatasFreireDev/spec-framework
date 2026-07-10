@@ -508,7 +508,7 @@ As skills sao especialistas. Elas podem operar em modos como `create`, `update`,
 
 ### Engineering And Validation
 
-- Code Runner AI: implementa tasks.
+- Code Runner AI: implementa exatamente uma task aprovada por invocacao, em TDD, respeitando `writeScope`, lendo gates de `knowledge/conventions/gates.md`, parando no verde e sem commitar.
 - QA AI: valida comportamento, testes, bordas, performance e matriz de evidencias.
 - Code Review AI: revisa qualidade, manutencao e regressao.
 - Security Review AI: avalia autenticacao, autorizacao, privacidade, abuso, exposicao de dados, tokens, logs, dependencias, rollout e risco residual.
@@ -563,6 +563,10 @@ Mantem `context.md`, indices, templates, decisoes e artefatos derivados sincroni
 
 QA e verificador independente e read-only. QA re-executa os gates declarados em `knowledge/conventions/gates.md` quando possivel, registra saida real ou limitacao explicita, e devolve blockers para a rota apropriada em vez de corrigir codigo. Rotas especializadas como bug-fixer e code-runner serao formalizadas por evolucoes futuras.
 
+### Implementation Orchestration
+
+Code Runner recebe uma task aprovada por vez. Se a task exigir mudanca fora de `writeScope`, decisao nao aprovada, comando de gate ausente ou lacuna de Specification, a implementacao para e reporta o blocker. Depois de qualquer mudanca de codigo, o fluxo retorna para QA independente.
+
 ### Release Orchestrator
 
 Antes de release, verifica:
@@ -613,6 +617,7 @@ Transicoes obrigatorias:
 - `approved` e estados posteriores: exigem approval record correspondente em `.product/history/`, com `artifact_id`, `path`, `content_hash`, `status_granted`, `approved_by`, `approved_at` e `notes`.
 - `approved -> in_progress`: exige task aprovada ou excecao explicita de prototipo/draft.
 - `in_progress -> implemented`: exige evidencia estruturada no arquivo da task: branch, commits e code paths.
+- Code Runner pode produzir codigo e evidencia tecnica, mas nao faz commit, push, merge, approval record ou aprovacao de QA.
 - `implemented -> validated`: exige QA Evidence aprovada e sem blockers; exige Security Review aprovada quando houver codigo, dados, permissoes, tokens, API, pagamentos, uploads, mensagens, busca, admin, analytics sensivel ou qualquer risco de privacidade/abuso.
 - `implemented -> validated`: para task individual, tambem exige PR, test status aprovado e evidencia concreta como logs de gate, CI URL, screenshots ou QA evidence.
 - Portoes tecnicos do produto vivem em `knowledge/conventions/gates.md`. Skills que executam ou verificam codigo devem ler esse arquivo e registrar a saida real dos gates aplicaveis.
