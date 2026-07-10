@@ -29,20 +29,23 @@ Security verdict; threat model summary; control checklist; blocking findings; re
 - FRAMEWORK.md.
 - Relevant parent and local `context.md` files.
 - `knowledge/templates/security-review-template.md`.
+- `knowledge/conventions/security-baseline.md` and any linked domain baseline.
+- Existing `audits/security/threat-register.md` entries that affect the artifact.
 - Approved decisions in `knowledge/decisions/` and `.product/decisions.json`.
 - Related `tests.md`, `qa-evidence.md`, and `audit.md` when present.
 - `engineering/decisions/FDR-006-failure-routing-and-regression.md`.
 
 ## Workflow
 1. Read the local context and identify artifact status, delivery level, priority, and release intent.
-2. Confirm the Specification contains permissions, data classification, privacy, abuse, observability, error handling, rollout, and acceptance criteria.
-3. Confirm the Design avoids unsafe data exposure in UI states, errors, empty states, permission prompts, and accessibility flows.
-4. Confirm the Implementation Plan covers server-authoritative checks, secrets, dependency risk, migrations, rollback, observability, and security tests.
-5. Confirm the Execution Graph and Tasks include explicit security work when the flow touches data, permissions, tokens, payments, uploads, messaging, search, public endpoints, or admin operations.
-6. Review QA evidence and verify that security controls have evidence, not only intention.
-7. Classify findings as blocker, required fix, note, or accepted residual risk.
-8. Route blockers using FDR-006: security bug with clear expected behavior -> `bug-fixer`; missing security test -> `qa`; incomplete implementation -> `code-runner`; missing permission/privacy decision -> `product-historian` plus human approval.
-9. Do not mark the artifact secure when a blocker remains. Request a decision for any accepted high or hard-to-reverse residual risk.
+2. Read the product security baseline and active threat register entries that affect the artifact.
+3. Confirm the Specification contains permissions, data classification, privacy, abuse, observability, error handling, rollout, and acceptance criteria.
+4. Confirm the Design avoids unsafe data exposure in UI states, errors, empty states, permission prompts, and accessibility flows.
+5. Confirm the Implementation Plan covers server-authoritative checks, secrets, dependency risk, migrations, rollback, observability, and security tests.
+6. Confirm the Execution Graph and Tasks include explicit security work when the flow touches data, permissions, tokens, payments, uploads, messaging, search, public endpoints, or admin operations.
+7. Review QA evidence and verify that security controls have evidence, not only intention.
+8. Classify findings as blocker, required fix, note, or accepted residual risk.
+9. Route blockers using FDR-006: security bug with clear expected behavior -> `bug-fixer`; missing security test -> `qa`; incomplete implementation -> `code-runner`; missing permission/privacy decision -> `product-historian` plus human approval.
+10. Do not mark the artifact secure when a blocker remains. Request a decision for any accepted high or hard-to-reverse residual risk.
 
 ## Review Checklist
 - [ ] Authentication and authorization are server-authoritative.

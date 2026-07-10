@@ -12,13 +12,14 @@ Use audits before approval gates, before implementation planning, before task ge
 
 - `README.md`: audit purpose and operating rules.
 - `readiness/`: readiness reports for use cases or releases.
-- Future folders for `gaps/`, `conflicts/`, `dependencies/`, `impact/`, `security/`, or `ux/` when reports become numerous.
+- `security/`: proactive threat modeling output and living threat register.
+- Future folders for `gaps/`, `conflicts/`, `dependencies/`, `impact/`, or `ux/` when reports become numerous.
 
 ## Responsible Skill
 
 Primary owner: Audit Orchestrator.
 
-Specialist owners: Gap Finder AI, Conflict AI, Dependency AI, Impact Analysis AI, QA AI, Security Review AI, UX Review AI.
+Specialist owners: Gap Finder AI, Conflict AI, Dependency AI, Impact Analysis AI, QA AI, Security Review AI, Threat Modeler AI, UX Review AI.
 
 ## Report Shape
 

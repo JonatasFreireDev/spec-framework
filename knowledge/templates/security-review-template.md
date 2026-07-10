@@ -9,6 +9,8 @@
 | Source use case | `[UC-XXX]` |
 | Source specification | `[SPEC-XXX]` |
 | Source QA evidence | `[QA-XXX or N/A]` |
+| Security baseline | `[knowledge/conventions/security-baseline.md or domain baseline]` |
+| Threat register entries | `[THR-XXX or N/A]` |
 | Owner skill | Security Review AI |
 | Next skill | QA AI or Release Orchestrator |
 
@@ -24,6 +26,8 @@
 | Tasks | [tasks.md](tasks.md) |
 | Tests | [tests.md](tests.md) |
 | QA Evidence | [qa-evidence.md](qa-evidence.md) |
+| Security Baseline | [security-baseline.md](../../../../../../knowledge/conventions/security-baseline.md) |
+| Threat Register | [threat-register.md](../../../../../../audits/security/threat-register.md) |
 | Audit | [audit.md](audit.md) |
 
 ## 🚚 Delivery
@@ -71,6 +75,18 @@ flowchart LR
 | Threat | Actor | Impact | Required Control | Evidence |
 | --- | --- | --- | --- | --- |
 | `[threat]` | `[actor]` | `[impact]` | `[control]` | `[path/test/log]` |
+
+## Product Baseline Coverage
+
+| Baseline Rule | Applies | Evidence | Result |
+| --- | --- | --- | --- |
+| `[rule from security baseline]` | `[yes/no]` | `[artifact/test/log/decision]` | `[passed/missing/N/A]` |
+
+## Active Threat Register Entries
+
+| Threat ID | Scenario | Required Mitigation | Evidence | Status |
+| --- | --- | --- | --- | --- |
+| `[THR-XXX]` | `[scenario]` | `[mitigation]` | `[path/log/test/decision]` | `[mitigated/blocked/accepted]` |
 
 ## 🔐 Control Checklist
 

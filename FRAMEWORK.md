@@ -288,7 +288,7 @@ Feature -> Use Cases -> Specification -> Design -> Implementation Plan -> Execut
 
 O Design e obrigatorio para qualquer use case com interface. Para entregas sem UI, `design.md` deve existir como artefato curto com `Not applicable`, justificativa e impactos para acessibilidade, observabilidade ou operacao quando houver.
 
-QA Evidence e Security Review sao gates de validacao. QA Evidence comprova que os criterios de aceite, tasks, fluxos, bordas, regressao, acessibilidade, observabilidade e controles de seguranca foram verificados. Security Review avalia autenticacao, autorizacao, privacidade, abuso, dados sensiveis, tokens, logs, dependencias, rollout, rollback e risco residual. Um artefato nao deve chegar a `validated` ou `released` quando houver blocker de QA ou seguranca.
+QA Evidence e Security Review sao gates de validacao. QA Evidence comprova que os criterios de aceite, tasks, fluxos, bordas, regressao, acessibilidade, observabilidade e controles de seguranca foram verificados. Security Review avalia autenticacao, autorizacao, privacidade, abuso, dados sensiveis, tokens, logs, dependencias, rollout, rollback e risco residual. Security Review tambem deve ler o baseline de seguranca do produto em `knowledge/conventions/security-baseline.md` e ameacas ativas em `audits/security/threat-register.md`. Um artefato nao deve chegar a `validated` ou `released` quando houver blocker de QA ou seguranca.
 
 QA Evidence deve trazer a evidencia real de volta ao use case: branch, commits, PR, caminhos de codigo, comandos ou metodos de teste, logs de gate, URL de CI quando houver e screenshots quando a entrega tiver superficie visual.
 
@@ -512,6 +512,7 @@ As skills sao especialistas. Elas podem operar em modos como `create`, `update`,
 - QA AI: valida comportamento, testes, bordas, performance e matriz de evidencias.
 - Code Review AI: revisa implementacao de forma read-only nas lentes de completude, aderencia e qualidade; findings usam severidade e rota FDR-006.
 - Security Review AI: avalia autenticacao, autorizacao, privacidade, abuso, exposicao de dados, tokens, logs, dependencias, rollout e risco residual.
+- Threat Modeler AI: modela ameacas proativamente em nivel de produto, dominio ou familia de features; mantem baseline de seguranca e threat register para alimentar Security Review.
 - Commit Crafter AI: transforma mudancas verificadas em commits locais atomicos por concern, seguindo `knowledge/conventions/commits.md`, sem push.
 - PR Finalizer AI: prepara ou abre PR com evidencias e links obrigatorios, seguindo `knowledge/conventions/pull-requests.md`, sem merge.
 
@@ -576,6 +577,10 @@ Falhas seguem FDR-006. Defeito, regressao, vulnerabilidade com comportamento esp
 ### Review Orchestration
 
 Code Review e um gate read-only antes de validacao e release de trabalho executavel. O review avalia completude contra Specification/tasks, aderencia a contratos aprovados e qualidade de implementacao. Findings `blocker` ou `required_fix` precisam de route e owner via FDR-006; Code Review nao corrige codigo nem aprova QA.
+
+### Threat Modeling
+
+Threat Modeler atua antes e ao lado de Security Review. Ele modela ameacas em nivel de produto, dominio, goal ou feature family, registra regras recorrentes no baseline de seguranca e mantem `audits/security/threat-register.md` com cenarios, mitigacoes, owners, evidencias e riscos residuais. Ele nao valida release; Security Review consome esse contexto para avaliar uma entrega especifica.
 
 ### Delivery Orchestration
 
@@ -679,7 +684,7 @@ Tipos de auditoria:
 - Security: ha risco de acesso indevido, abuso ou vazamento?
 - UX: a experiencia fecha para a persona?
 
-QA e Security Review devem produzir ou referenciar evidencias. Auditorias podem verificar a coerencia dessas evidencias, mas nao devem declarar uma entrega como segura quando os gates especializados estao ausentes ou bloqueados.
+QA e Security Review devem produzir ou referenciar evidencias. Threat Modeler pode manter um threat register vivo para riscos que atravessam varias entregas. Auditorias podem verificar a coerencia dessas evidencias, mas nao devem declarar uma entrega como segura quando os gates especializados estao ausentes ou bloqueados.
 
 Saida esperada:
 

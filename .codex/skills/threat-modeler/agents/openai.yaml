@@ -1,0 +1,4 @@
+interface:
+  display_name: "Threat Modeler"
+  short_description: "Proactively model product and domain threats."
+  default_prompt: "Use this skill to assess product-wide or domain-level security threats and update the threat register."
