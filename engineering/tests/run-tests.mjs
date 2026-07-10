@@ -83,6 +83,19 @@ function normalizedHash(text) {
   return crypto.createHash("sha256").update(normalized, "utf8").digest("hex");
 }
 
+function writeApprovedArtifact(root, artifact) {
+  write(root, artifact.path, artifact.content);
+  write(root, `.product/history/approval-${artifact.id}-${artifact.status}.json`, JSON.stringify({
+    artifact_id: artifact.id,
+    path: artifact.path,
+    content_hash: normalizedHash(artifact.content),
+    status_granted: artifact.status,
+    approved_by: "test-human",
+    approved_at: "2026-07-10T00:00:00.000Z",
+    notes: "test fixture",
+  }, null, 2));
+}
+
 function scaffoldTierSUseCase(root, nodes) {
   const dir = "domains/test/goals/goal/features/feature/use-cases/use-case";
   write(root, `${dir}/context.md`, `# Context
@@ -412,6 +425,80 @@ test("validator blocks approved findings without route and owner", () => {
     assert.match(output(result), /failure-routing/);
     assert.match(output(result), /missing Route/);
     assert.match(output(result), /missing Owner/);
+  });
+});
+
+test("validator blocks validated use cases without approved Code Review", () => {
+  withFixture("code-review-gate", (root) => {
+    const artifacts = [
+      { id: "UC-VAL", type: "use-case", status: "validated", path: "uc.md", content: "# Use Case\n\n| Status | validated |\n" },
+      { id: "TEST-VAL", type: "tests", status: "approved", path: "tests.md", content: "# Tests\n\n| ID | TEST-VAL |\n| Status | approved |\n" },
+      { id: "QA-VAL", type: "qa-evidence", status: "approved", path: "qa.md", content: "# QA Evidence\n\n| ID | QA-VAL |\n| Status | approved |\n\n## Gate Evidence\n\n| Field | Value |\n| --- | --- |\n| Test command | npm test |\n| Gate logs | tests.log |\n| Environment | CI |\n| Limitations | N/A |\n\n## QA Verdict\n\n| Field | Value |\n| --- | --- |\n| Verdict | passed |\n" },
+      { id: "SEC-VAL", type: "security-review", status: "approved", path: "security.md", content: "# Security Review\n\n| ID | SEC-VAL |\n| Status | approved |\n" },
+      { id: "AUD-VAL", type: "audit", status: "approved", path: "audit.md", content: "# Audit\n\n| ID | AUD-VAL |\n| Status | approved |\n" },
+    ];
+    for (const artifact of artifacts) writeApprovedArtifact(root, artifact);
+    write(root, ".product/artifacts.json", JSON.stringify({
+      artifacts: artifacts.map((artifact) => ({
+        id: artifact.id,
+        type: artifact.type,
+        status: artifact.status,
+        path: artifact.path,
+        parentIds: artifact.id === "UC-VAL" ? [] : ["UC-VAL"],
+        documents: { canonical: artifact.path },
+      })),
+    }, null, 2));
+
+    const result = runValidator(root);
+
+    assert.notEqual(result.status, 0, output(result));
+    assert.match(output(result), /validation-gates/);
+    assert.match(output(result), /code-review\.md/);
+  });
+});
+
+test("validator blocks approved Code Review required fixes without route and owner", () => {
+  withFixture("code-review-quality", (root) => {
+    const review = `# Code Review
+
+| Field | Value |
+| --- | --- |
+| ID | CR-TEST |
+| Status | approved |
+
+## Findings
+
+| Severity | Finding | Evidence | Required Fix |
+| --- | --- | --- | --- |
+| required_fix | Missing edge handling | src/app.ts:10 | Handle empty state |
+
+## Review Verdict
+
+| Field | Value |
+| --- | --- |
+| Verdict | passed |
+| Completeness passed | yes |
+| Adherence passed | yes |
+| Quality passed | yes |
+`;
+    writeApprovedArtifact(root, { id: "CR-TEST", type: "code-review", status: "approved", path: "code-review.md", content: review });
+    write(root, ".product/artifacts.json", JSON.stringify({
+      artifacts: [
+        {
+          id: "CR-TEST",
+          type: "code-review",
+          status: "approved",
+          path: "code-review.md",
+          documents: { canonical: "code-review.md" },
+        },
+      ],
+    }, null, 2));
+
+    const result = runValidator(root);
+
+    assert.notEqual(result.status, 0, output(result));
+    assert.match(output(result), /failure-routing/);
+    assert.match(output(result), /Missing edge handling/);
   });
 });
 

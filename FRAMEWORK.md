@@ -510,7 +510,7 @@ As skills sao especialistas. Elas podem operar em modos como `create`, `update`,
 
 - Code Runner AI: implementa exatamente uma task aprovada por invocacao, em TDD, respeitando `writeScope`, lendo gates de `knowledge/conventions/gates.md`, parando no verde e sem commitar.
 - QA AI: valida comportamento, testes, bordas, performance e matriz de evidencias.
-- Code Review AI: revisa qualidade, manutencao e regressao.
+- Code Review AI: revisa implementacao de forma read-only nas lentes de completude, aderencia e qualidade; findings usam severidade e rota FDR-006.
 - Security Review AI: avalia autenticacao, autorizacao, privacidade, abuso, exposicao de dados, tokens, logs, dependencias, rollout e risco residual.
 
 ### Audit
@@ -571,6 +571,10 @@ Code Runner recebe uma task aprovada por vez. Se a task exigir mudanca fora de `
 
 Falhas seguem FDR-006. Defeito, regressao, vulnerabilidade com comportamento esperado claro ou erro de producao vao para Bug Fixer. Teste ausente, teste oco ou cobertura negativa/permissao ausente volta para QA ou dono de testes. Implementacao incompleta ou fora do contrato volta para Code Runner. Lacuna de decisao ou regra ambigua vai para Product Historian e humano. Apos qualquer mudanca de codigo, o fluxo reentra em QA; gate vermelho nao pode ser pulado. Cada gate ou finding tem teto de tres tentativas automatizadas antes de escalonar ao humano.
 
+### Review Orchestration
+
+Code Review e um gate read-only antes de validacao e release de trabalho executavel. O review avalia completude contra Specification/tasks, aderencia a contratos aprovados e qualidade de implementacao. Findings `blocker` ou `required_fix` precisam de route e owner via FDR-006; Code Review nao corrige codigo nem aprova QA.
+
 ### Release Orchestrator
 
 Antes de release, verifica:
@@ -624,6 +628,7 @@ Transicoes obrigatorias:
 - Code Runner pode produzir codigo e evidencia tecnica, mas nao faz commit, push, merge, approval record ou aprovacao de QA.
 - Bug Fixer reproduz o defeito com teste falhando antes de corrigir, corrige causa raiz com mudanca minima, deixa teste de regressao permanente e retorna para QA.
 - `implemented -> validated`: exige QA Evidence aprovada e sem blockers; exige Security Review aprovada quando houver codigo, dados, permissoes, tokens, API, pagamentos, uploads, mensagens, busca, admin, analytics sensivel ou qualquer risco de privacidade/abuso.
+- `implemented -> validated`: exige Code Review aprovado e sem findings `blocker` ou `required_fix` para entregas executaveis.
 - `implemented -> validated`: para task individual, tambem exige PR, test status aprovado e evidencia concreta como logs de gate, CI URL, screenshots ou QA evidence.
 - Portoes tecnicos do produto vivem em `knowledge/conventions/gates.md`. Skills que executam ou verificam codigo devem ler esse arquivo e registrar a saida real dos gates aplicaveis.
 - `validated` e estados posteriores exigem QA Evidence nao-placeholder para gates aplicaveis. Quando um gate nao puder ser executado por indisponibilidade de ambiente, QA deve registrar a limitacao explicitamente em vez de forjar evidencia.

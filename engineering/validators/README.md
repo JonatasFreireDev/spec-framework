@@ -29,6 +29,7 @@ The validator checks:
 - approval records in `.product/history/` for `approved` and later statuses;
 - derived staleness through `.product/derivations.json`;
 - validation gates for approved tests, QA evidence, Security Review, and audit before `validated` or `released`;
+- Code Review gate and review verdict quality before `validated` or `released`;
 - Delivery Level and Priority metadata for executable framework artifacts;
 - execution graph JSON shape and dependencies;
 - `writeScope` and `sharedResources` safety for parallel graph nodes, currently as Phase A warnings;
@@ -46,7 +47,7 @@ The validator checks:
 - immutable `slug` metadata in `context.md`.
 - concrete QA evidence for approved or later `qa-evidence.md` artifacts.
 - task handoff fields that reference repository-local skills.
-- blocker/high findings in approved QA evidence, Security Review, and audit artifacts include route and owner.
+- blocker/high/required_fix findings in approved QA evidence, Code Review, Security Review, and audit artifacts include route and owner.
 
 ## Output
 

@@ -120,7 +120,7 @@ flowchart TD
 | `node --check engineering\validators\framework-validator.mjs` | ✅ passed |
 | `node --check engineering\move-artifact.mjs` | ✅ passed |
 | `node --check engineering\tests\run-tests.mjs` | ✅ passed |
-| `node engineering\tests\run-tests.mjs` | ✅ `7/7 tests passed` |
+| `node engineering\tests\run-tests.mjs` | ✅ `9/9 tests passed` |
 | `node engineering\move-artifact.mjs --from ... --to ... --dry-run` | ✅ passed; reported rewrites and free-text review items |
 | `rg "ð\|âœ\|âž\|ï¸\|Ÿ" --glob "*.md"` | ✅ no matches |
 

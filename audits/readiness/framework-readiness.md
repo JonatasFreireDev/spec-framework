@@ -22,7 +22,8 @@ flowchart LR
   P --> G["Execution Graph"]
   G --> T["Tasks"]
   T --> Q["QA Evidence"]
-  Q --> SR["Security Review"]
+  Q --> CR["Code Review"]
+  CR --> SR["Security Review"]
   SR --> R["Ready For Validation"]
 
   classDef done fill:#dcfce7,stroke:#16a34a,color:#14532d;
@@ -32,15 +33,15 @@ flowchart LR
 
   class U done;
   class S current;
-  class D,P,G,T,Q,SR,R pending;
+  class D,P,G,T,Q,CR,SR,R pending;
 ```
 
 ## 🚦 Use Case Matrix
 
-| Use Case | Name | Verdict | Score | Spec | Design | Plan | Graph | Tasks | Tests | QA Evidence | Security Review | Can Generate Tasks | Validation Ready | Next Owner |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| [UC-001](../../domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/attendee-checks-in-with-qr-code/context.md) | Attendee checks in with QR code | 🟡 in_progress | 0% | ➖ draft | ➖ draft | ➖ draft | ➖ draft | ➖ draft | ➖ draft | ➖ draft | ➖ draft | no | no | Specification AI |
-| [UC-002](../../domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/organizer-validates-qr-code/context.md) | Organizer Validates QR Code | 🟡 in_progress | 0% | 🟡 proposed | ➖ draft | ➖ draft | ➖ draft | ➖ draft | ➖ draft | ➖ draft | ➖ draft | no | no | Specification AI |
+| Use Case | Name | Verdict | Score | Spec | Design | Plan | Graph | Tasks | Tests | QA Evidence | Code Review | Security Review | Can Generate Tasks | Validation Ready | Next Owner |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| [UC-001](../../domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/attendee-checks-in-with-qr-code/context.md) | Attendee checks in with QR code | 🟡 in_progress | 0% | ➖ draft | ➖ draft | ➖ draft | ➖ draft | ➖ draft | ➖ draft | ➖ draft | 🔴 missing | ➖ draft | no | no | Specification AI |
+| [UC-002](../../domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/organizer-validates-qr-code/context.md) | Organizer Validates QR Code | 🟡 in_progress | 0% | 🟡 proposed | ➖ draft | ➖ draft | ➖ draft | ➖ draft | ➖ draft | ➖ draft | 🔴 missing | ➖ draft | no | no | Specification AI |
 
 ## 🏁 Result
 

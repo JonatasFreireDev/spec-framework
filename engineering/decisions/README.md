@@ -16,6 +16,7 @@ Product decisions do not live here. Product decisions continue to live in `knowl
 | [FDR-004](FDR-004-qa-independence.md) | QA independence | approved | EV-011 |
 | [FDR-005](FDR-005-code-runner-contract.md) | Code Runner operational contract | approved | EV-007 |
 | [FDR-006](FDR-006-failure-routing-and-regression.md) | Failure routing and permanent regression fixes | approved | EV-008 |
+| [FDR-007](FDR-007-code-review-contract.md) | Code Review operational contract | approved | EV-009 |
 
 ## Rule
 

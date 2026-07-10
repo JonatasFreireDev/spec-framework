@@ -285,6 +285,7 @@ function inferArtifactDocuments(contextFile, meta) {
       tasks: "tasks.md",
       tests: "tests.md",
       qaEvidence: "qa-evidence.md",
+      codeReview: "code-review.md",
       securityReview: "security-review.md",
       analytics: "analytics.md",
       audit: "audit.md",
@@ -526,6 +527,7 @@ function artifactFromDocument(parentArtifact, documentKey, documentPath) {
     tasks: { type: "taskset", prefixes: ["TASKSET"], ownerSkill: "task-generator" },
     tests: { type: "tests", prefixes: ["TEST"], ownerSkill: "qa" },
     qaEvidence: { type: "qa-evidence", prefixes: ["QA"], ownerSkill: "qa" },
+    codeReview: { type: "code-review", prefixes: ["CR"], ownerSkill: "code-review" },
     securityReview: { type: "security-review", prefixes: ["SEC"], ownerSkill: "security-review" },
     analytics: { type: "analytics", prefixes: ["ANA"], ownerSkill: "documentation-writer" },
     audit: { type: "audit", prefixes: ["AUD"], ownerSkill: "audit-orchestrator" },
@@ -536,7 +538,7 @@ function artifactFromDocument(parentArtifact, documentKey, documentPath) {
   return {
     id: parseMarkdownField(text, "ID") || firstKnownId(text, config.prefixes) || `${parentArtifact.id}:${documentKey}`,
     type: config.type,
-    name: heading.replace(/^(Specification|Design|Implementation Plan|Tasks|Tests|QA Evidence|Security Review|Analytics|Audit):\s*/i, ""),
+    name: heading.replace(/^(Specification|Design|Implementation Plan|Tasks|Tests|QA Evidence|Code Review|Security Review|Analytics|Audit):\s*/i, ""),
     status: parseMarkdownField(text, "Status") || "unknown",
     ownerSkill: config.ownerSkill,
     path: documentPath,
@@ -622,7 +624,7 @@ function buildArtifactsRegistry() {
 
     if (type === "use-case") {
       const documentArtifacts = [];
-      for (const key of ["specification", "design", "implementationPlan", "executionGraph", "tasks", "tests", "qaEvidence", "securityReview", "analytics", "audit"]) {
+      for (const key of ["specification", "design", "implementationPlan", "executionGraph", "tasks", "tests", "qaEvidence", "codeReview", "securityReview", "analytics", "audit"]) {
         const documentPath = artifact.documents[key];
         const documentArtifact = documentPath ? artifactFromDocument(artifact, key, documentPath) : null;
         if (documentArtifact) documentArtifacts.push(documentArtifact);
@@ -1157,6 +1159,7 @@ function useCaseRequiresValidationEvidence(useCase, parts) {
     parts.tasks,
     parts.tests,
     parts.qaEvidence,
+    parts.codeReview,
     parts.securityReview,
     parts.audit,
   ].some((artifact) => statusRequiresValidationEvidence(artifact?.status));
@@ -1185,6 +1188,7 @@ function validateValidationGates() {
       tasks: artifactByType(artifacts, useCase.id, "taskset"),
       tests: artifactByType(artifacts, useCase.id, "tests"),
       qaEvidence: artifactByType(artifacts, useCase.id, "qa-evidence"),
+      codeReview: artifactByType(artifacts, useCase.id, "code-review"),
       securityReview: artifactByType(artifacts, useCase.id, "security-review"),
       audit: artifactByType(artifacts, useCase.id, "audit"),
     };
@@ -1212,6 +1216,16 @@ function validateValidationGates() {
         parts.qaEvidence ? `${parts.qaEvidence.id} (${parts.qaEvidence.status})` : "qa-evidence.md",
         "validation requires approved QA evidence covering acceptance criteria, tasks, security controls, and residual risks.",
         "Create and approve qa-evidence.md or keep the target artifact below validated."
+      );
+    }
+
+    if (!statusCanFeedDownstream(parts.codeReview?.status)) {
+      addValidationGateResult(
+        targetFile,
+        target,
+        parts.codeReview ? `${parts.codeReview.id} (${parts.codeReview.status})` : "code-review.md",
+        "validation requires approved Code Review covering completeness, adherence, and quality.",
+        "Create and approve code-review.md or keep the target artifact below validated."
       );
     }
 
@@ -1322,6 +1336,29 @@ function validateQaEvidenceQuality() {
   }
 }
 
+function validateCodeReviewQuality() {
+  for (const codeReview of currentArtifacts().filter((artifact) => artifact.type === "code-review")) {
+    if (!statusCanFeedDownstream(codeReview.status)) continue;
+
+    const file = codeReview.path ? path.join(root, codeReview.path) : null;
+    if (!file || !fs.existsSync(file)) continue;
+    const text = readText(file);
+    const verdictValue = parseMarkdownField(text, "Verdict");
+    const completeness = parseMarkdownField(text, "Completeness passed");
+    const adherence = parseMarkdownField(text, "Adherence passed");
+    const quality = parseMarkdownField(text, "Quality passed");
+
+    if (!/^(passed|passed_with_notes)$/i.test(String(verdictValue).trim())) {
+      addResult("error", "code-review", file, `${codeReview.id} is ${codeReview.status}, but Verdict is not passing.`, "Use passed or passed_with_notes only after blockers and required fixes are resolved.");
+    }
+    for (const [field, value] of [["Completeness passed", completeness], ["Adherence passed", adherence], ["Quality passed", quality]]) {
+      if (!/^yes$/i.test(String(value).trim())) {
+        addResult("error", "code-review", file, `${codeReview.id} is ${codeReview.status}, but ${field} is not yes.`, `Set ${field} to yes only after review evidence supports it.`);
+      }
+    }
+  }
+}
+
 function parseMarkdownTableRows(text) {
   const lines = text.split(/\r?\n/);
   const tables = [];
@@ -1357,7 +1394,7 @@ function isBlockingFindingSeverity(value) {
 }
 
 function validateBlockingFindingRoutes() {
-  const routedArtifactTypes = new Set(["qa-evidence", "security-review", "audit"]);
+  const routedArtifactTypes = new Set(["qa-evidence", "code-review", "security-review", "audit"]);
   for (const artifact of currentArtifacts().filter((item) => routedArtifactTypes.has(item.type))) {
     if (!statusCanFeedDownstream(artifact.status)) continue;
     const file = artifact.path ? path.join(root, artifact.path) : null;
@@ -1372,13 +1409,15 @@ function validateBlockingFindingRoutes() {
       const routeIndex = normalizedHeader.indexOf("route");
       const ownerIndex = normalizedHeader.indexOf("owner");
       for (const row of table.rows) {
-        if (!isBlockingFindingSeverity(row[severityIndex])) continue;
         const finding = row[findingIndex] || "(unnamed finding)";
+        const severity = String(row[severityIndex] ?? "").trim();
+        const requiresRoute = isBlockingFindingSeverity(severity) || /^required_fix$/i.test(severity);
+        if (!requiresRoute) continue;
         if (routeIndex === -1 || isPlaceholderValue(row[routeIndex])) {
-          addResult("error", "failure-routing", file, `${artifact.id} blocking finding "${finding}" is missing Route.`, "Route blockers with FDR-006: bug-fixer, code-runner, qa, or product-historian.");
+          addResult("error", "failure-routing", file, `${artifact.id} blocking or required finding "${finding}" is missing Route.`, "Route blockers and required fixes with FDR-006: bug-fixer, code-runner, qa, or product-historian.");
         }
         if (ownerIndex === -1 || isPlaceholderValue(row[ownerIndex])) {
-          addResult("error", "failure-routing", file, `${artifact.id} blocking finding "${finding}" is missing Owner.`, "Assign the blocking finding to a skill or human owner.");
+          addResult("error", "failure-routing", file, `${artifact.id} blocking or required finding "${finding}" is missing Owner.`, "Assign the finding to a skill or human owner.");
         }
       }
     }
@@ -1845,6 +1884,7 @@ function nextReadinessOwner(parts) {
   if (!statusCanFeedDownstream(parts.tasks?.status)) return "Task AI";
   if (!statusCanFeedDownstream(parts.tests?.status)) return "QA AI";
   if (!statusCanFeedDownstream(parts.qaEvidence?.status)) return "QA AI";
+  if (!statusCanFeedDownstream(parts.codeReview?.status)) return "Code Review AI";
   if (!statusCanFeedDownstream(parts.securityReview?.status)) return "Security Review AI";
   return "Audit Orchestrator";
 }
@@ -1859,12 +1899,13 @@ function useCaseReadiness(useCase) {
     tasks: artifactByType(artifacts, useCase.id, "taskset"),
     tests: artifactByType(artifacts, useCase.id, "tests"),
     qaEvidence: artifactByType(artifacts, useCase.id, "qa-evidence"),
+    codeReview: artifactByType(artifacts, useCase.id, "code-review"),
     securityReview: artifactByType(artifacts, useCase.id, "security-review"),
     analytics: artifactByType(artifacts, useCase.id, "analytics"),
     audit: artifactByType(artifacts, useCase.id, "audit"),
   };
   const required = [parts.spec, parts.design, parts.plan, parts.graph, parts.tasks];
-  const validationRequired = [parts.tests, parts.qaEvidence, parts.securityReview, parts.audit];
+  const validationRequired = [parts.tests, parts.qaEvidence, parts.codeReview, parts.securityReview, parts.audit];
   const missing = required.filter((item) => !item).length;
   const approved = required.filter((item) => statusCanFeedDownstream(item?.status)).length;
   const score = missing > 0 ? Math.round(((required.length - missing) / required.length) * 100) : Math.round((approved / required.length) * 100);
@@ -1895,10 +1936,10 @@ function generateReadinessReport() {
     ? useCases
         .map((item) => {
           const link = item.useCase.path ? `[${item.useCase.id}](../../${item.useCase.path})` : item.useCase.id;
-          return `| ${link} | ${markdownEscape(item.useCase.name)} | ${item.verdictLabel} | ${item.score}% | ${artifactStatusCell(item.parts.spec)} | ${artifactStatusCell(item.parts.design)} | ${artifactStatusCell(item.parts.plan)} | ${artifactStatusCell(item.parts.graph)} | ${artifactStatusCell(item.parts.tasks)} | ${artifactStatusCell(item.parts.tests)} | ${artifactStatusCell(item.parts.qaEvidence)} | ${artifactStatusCell(item.parts.securityReview)} | ${item.canGenerateTasks ? "yes" : "no"} | ${item.validationReady ? "yes" : "no"} | ${item.nextOwner} |`;
+          return `| ${link} | ${markdownEscape(item.useCase.name)} | ${item.verdictLabel} | ${item.score}% | ${artifactStatusCell(item.parts.spec)} | ${artifactStatusCell(item.parts.design)} | ${artifactStatusCell(item.parts.plan)} | ${artifactStatusCell(item.parts.graph)} | ${artifactStatusCell(item.parts.tasks)} | ${artifactStatusCell(item.parts.tests)} | ${artifactStatusCell(item.parts.qaEvidence)} | ${artifactStatusCell(item.parts.codeReview)} | ${artifactStatusCell(item.parts.securityReview)} | ${item.canGenerateTasks ? "yes" : "no"} | ${item.validationReady ? "yes" : "no"} | ${item.nextOwner} |`;
         })
         .join("\n")
-    : "| \u{2796} none | No use cases found. | \u{2796} | 0% | \u{2796} | \u{2796} | \u{2796} | \u{2796} | \u{2796} | \u{2796} | \u{2796} | \u{2796} | no | no | Product Orchestrator |";
+    : "| \u{2796} none | No use cases found. | \u{2796} | 0% | \u{2796} | \u{2796} | \u{2796} | \u{2796} | \u{2796} | \u{2796} | \u{2796} | \u{2796} | \u{2796} | no | no | Product Orchestrator |";
 
   return `# Framework Readiness Matrix
 
@@ -1924,7 +1965,8 @@ flowchart LR
   P --> G["Execution Graph"]
   G --> T["Tasks"]
   T --> Q["QA Evidence"]
-  Q --> SR["Security Review"]
+  Q --> CR["Code Review"]
+  CR --> SR["Security Review"]
   SR --> R["Ready For Validation"]
 
   classDef done fill:#dcfce7,stroke:#16a34a,color:#14532d;
@@ -1934,13 +1976,13 @@ flowchart LR
 
   class U done;
   class S current;
-  class D,P,G,T,Q,SR,R pending;
+  class D,P,G,T,Q,CR,SR,R pending;
 \`\`\`
 
 ## \u{1F6A6} Use Case Matrix
 
-| Use Case | Name | Verdict | Score | Spec | Design | Plan | Graph | Tasks | Tests | QA Evidence | Security Review | Can Generate Tasks | Validation Ready | Next Owner |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Use Case | Name | Verdict | Score | Spec | Design | Plan | Graph | Tasks | Tests | QA Evidence | Code Review | Security Review | Can Generate Tasks | Validation Ready | Next Owner |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 ${rows}
 
 ## \u{1F3C1} Result
@@ -2011,6 +2053,7 @@ flowchart LR
 | Validation gates | ${results.some((item) => item.check === "validation-gates" && item.severity === "error") ? "\u{1F534} has errors" : results.some((item) => item.check === "validation-gates") ? "\u{1F7E1} findings" : "\u{2705} no findings"} |
 | Code evidence gates | ${results.some((item) => item.check === "code-evidence" && item.severity === "error") ? "\u{1F534} has errors" : results.some((item) => item.check === "code-evidence") ? "\u{1F7E1} findings" : "\u{2705} no findings"} |
 | QA evidence quality | ${results.some((item) => item.check === "qa-evidence" && item.severity === "error") ? "\u{1F534} has errors" : results.some((item) => item.check === "qa-evidence") ? "\u{1F7E1} findings" : "\u{2705} no findings"} |
+| Code Review quality | ${results.some((item) => item.check === "code-review" && item.severity === "error") ? "\u{1F534} has errors" : results.some((item) => item.check === "code-review") ? "\u{1F7E1} findings" : "\u{2705} no findings"} |
 | Failure routing | ${results.some((item) => item.check === "failure-routing" && item.severity === "error") ? "\u{1F534} has errors" : results.some((item) => item.check === "failure-routing") ? "\u{1F7E1} findings" : "\u{2705} no findings"} |
 | Traceability | ${results.some((item) => item.check === "traceability" && item.severity === "error") ? "🔴 has errors" : results.some((item) => item.check === "traceability") ? "🟡 findings" : "✅ no findings"} |
 | Skill references | ${results.some((item) => item.check === "skill-reference" && item.severity === "error") ? "🔴 has errors" : results.some((item) => item.check === "skill-reference") ? "🟡 findings" : "✅ no findings"} |
@@ -2056,6 +2099,7 @@ validateStaleness();
 validateValidationGates();
 validateCodeEvidenceGates();
 validateQaEvidenceQuality();
+validateCodeReviewQuality();
 validateBlockingFindingRoutes();
 validateDeliveryMetadata();
 validateExecutionGraphs();
