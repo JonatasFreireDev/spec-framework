@@ -775,6 +775,38 @@ test("npm package includes framework assets required by bootstrap", () => {
   }
 });
 
+test("npm package installs and runs the CLI from a consumer project", () => {
+  const parent = fs.mkdtempSync(path.join(os.tmpdir(), "spec-framework-package-"));
+  const packDir = path.join(parent, "pack");
+  const consumer = path.join(parent, "consumer");
+  const target = path.join(consumer, "packaged-product");
+  try {
+    mkdir(packDir);
+    mkdir(consumer);
+
+    const pack = runNpm(repoRoot, ["pack", "--pack-destination", packDir, "--json"]);
+    assert.equal(pack.status, 0, output(pack));
+    const tarball = path.join(packDir, JSON.parse(pack.stdout)[0].filename);
+    assert.equal(fs.existsSync(tarball), true, `missing tarball ${tarball}`);
+
+    const install = runNpm(consumer, ["install", tarball, "--no-save"]);
+    assert.equal(install.status, 0, output(install));
+
+    const installedCli = path.join(consumer, "node_modules", "spec-framework", "scripts", "spec-framework.mjs");
+    assert.equal(fs.existsSync(installedCli), true, "installed CLI script is missing");
+
+    const init = runNode(installedCli, consumer, ["init", "--target", target]);
+    assert.equal(init.status, 0, output(init));
+    assert.equal(fs.existsSync(path.join(target, ".spec-framework", "validators", "framework-validator.mjs")), true);
+
+    const validate = runNode(installedCli, target, ["validate"]);
+    assert.equal(validate.status, 0, output(validate));
+    assert.match(output(validate), /ready/);
+  } finally {
+    fs.rmSync(parent, { recursive: true, force: true });
+  }
+});
+
 let passed = 0;
 for (const item of tests) {
   try {
