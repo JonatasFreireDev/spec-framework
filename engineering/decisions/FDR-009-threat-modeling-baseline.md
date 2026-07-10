@@ -49,8 +49,8 @@ Security Review remains the artifact-level validation gate. It must read the rel
 | --- | --- |
 | FRAMEWORK | [../../FRAMEWORK.md](../../FRAMEWORK.md) |
 | Threat Modeler skill | [../../.codex/skills/threat-modeler/SKILL.md](../../.codex/skills/threat-modeler/SKILL.md) |
-| Security baseline convention | [../../knowledge/conventions/security-baseline.md](../../knowledge/conventions/security-baseline.md) |
-| Threat register | [../../audits/security/threat-register.md](../../audits/security/threat-register.md) |
+| Security baseline convention | [../../knowledge/conventions/security-baseline.md](../../examples/events/knowledge/conventions/security-baseline.md) |
+| Threat register | [../../audits/security/threat-register.md](../../examples/events/audits/security/threat-register.md) |
 
 ## Supersedes
 

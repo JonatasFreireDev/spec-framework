@@ -10,7 +10,7 @@ Always read `FRAMEWORK.md` first.
 
 Use the repository root as the framework laboratory root. The reusable product skeleton for new repositories lives in `starter/`.
 
-During the current transition, root-level `foundation/`, `domains/`, `.product/`, `knowledge/`, `audits/`, and `engineering/` remain the executable lab state used by validators and tests. Do not treat those root-level product-shaped folders as the clean starter for new repos; use `starter/` for that.
+The repository root holds only framework core assets: `FRAMEWORK.md`, `AGENTS.md`, `.codex/skills/`, `knowledge/templates/`, `engineering/` (validators, move tool, FDRs), and `framework/`. The worked product instance (domains, foundation, `.product`, product-scoped `knowledge/` subfolders, design, releases, and product-scoped audits) lives in `examples/events/` per FDR-011, and is validated with `--product-root examples/events --framework-root .`. Do not treat `examples/events/` as the clean starter for new repos; use `starter/` for that.
 
 ## Project Skills
 
@@ -23,7 +23,7 @@ When a task maps to a skill:
 1. Read the matching `.codex/skills/<skill>/SKILL.md`.
 2. Read relevant parent and local `context.md` files.
 3. Read the matching template in `knowledge/templates/` when creating or normalizing an artifact.
-4. Read approved decisions in `knowledge/decisions/` and `.product/decisions.json` when relevant.
+4. Read approved decisions in `examples/events/knowledge/decisions/` and `examples/events/.product/decisions.json` when relevant.
 5. Create or update only the artifact owned by the skill unless the user asks for an orchestrated flow.
 
 ## Canonical Flow

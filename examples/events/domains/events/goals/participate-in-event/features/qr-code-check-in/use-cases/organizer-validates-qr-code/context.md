@@ -74,7 +74,7 @@ This context gives agents the local map for the organizer validation use case. I
 
 | Artifact | Link |
 | --- | --- |
-| Framework | [FRAMEWORK.md](../../../../../../../../FRAMEWORK.md) |
+| Framework | [FRAMEWORK.md](../../../../../../../../../../FRAMEWORK.md) |
 | Domain context | [domains/events/context.md](../../../../../../context.md) |
 | Goal context | [participate-in-event/context.md](../../../../context.md) |
 | Feature context | [qr-code-check-in/context.md](../../context.md) |

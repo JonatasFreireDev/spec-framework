@@ -12,8 +12,12 @@ permissions:
 
 jobs:
   validate:
-    name: Validate framework
-    runs-on: ubuntu-latest
+    name: Validate framework (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
 
     steps:
       - name: Checkout

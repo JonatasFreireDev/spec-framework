@@ -1,154 +1,154 @@
 # Product Engineering Framework
 
-Este documento consolida a arquitetura do framework de Product Engineering orientado por IA. Ele substitui o historico longo de conversa por uma fonte de verdade navegavel e executavel por agentes como Codex.
+This document consolidates the architecture of the AI-driven Product Engineering framework. It replaces the long conversational history with a navigable source of truth that agents such as Codex can execute against.
 
-O objetivo nao e apenas organizar documentos. O objetivo e criar uma esteira em que produto, especificacao, planejamento, execucao e auditoria formam um sistema unico.
+The goal is not just to organize documents. The goal is to create a pipeline where product, specification, planning, execution, and audit form a single system.
 
-## 1. Tese
+## 1. Thesis
 
-Este framework trata documentacao como infraestrutura de engenharia.
+This framework treats documentation as engineering infrastructure.
 
-Em vez de pedir para uma IA "criar arquivos" ou "implementar uma feature" a partir de contexto solto, o produto passa por uma cadeia explicita:
+Instead of asking an AI to "create files" or "implement a feature" from loose context, the product flows through an explicit chain:
 
 ```text
 Problem -> Vision -> Strategy -> Domain -> User Goal -> Feature -> Use Case -> Specification -> Design -> Implementation Plan -> Execution Graph -> Tasks -> Code -> Validation -> Audit
 ```
 
-A Specification e o contrato central. Ela une produto, UX, regras, arquitetura, dados, analytics, seguranca, testes e criterios de aceite. Tasks nao sao checklists soltos: sao unidades executaveis derivadas de uma Specification, ordenadas por um Execution Graph.
+The Specification is the central contract. It unites product, UX, rules, architecture, data, analytics, security, tests, and acceptance criteria. Tasks are not loose checklists: they are executable units derived from a Specification, ordered by an Execution Graph.
 
-Design e um artefato de planejamento quando a entrega tiver interface. Ele traduz a Specification em fluxo visual, estados, wireframes ou mockups revisaveis antes do Implementation Plan, para que a engenharia nao descubra a experiencia somente durante a implementacao.
+Design is a planning artifact when the delivery has an interface. It translates the Specification into visual flow, states, wireframes, or reviewable mockups before the Implementation Plan, so that engineering does not discover the experience only during implementation.
 
-## 2. Principios
+## 2. Principles
 
 ### Product first
 
-Toda decisao tecnica deve manter rastreabilidade com uma necessidade de produto. A arvore sempre nasce do problema, passa pela visao e chega ao codigo por meio de dominios, objetivos, features e casos de uso.
+Every technical decision must maintain traceability to a product need. The tree always originates from the problem, passes through the vision, and reaches the code through domains, goals, features, and use cases.
 
 ### Domain driven
 
-Dominios sao o centro da documentacao funcional. Nao existe uma pasta global de features como fonte principal. Uma feature pertence a um User Goal, e um User Goal pertence a um Domain.
+Domains are the center of functional documentation. There is no global features folder as the primary source. A feature belongs to a User Goal, and a User Goal belongs to a Domain.
 
 ### Specification driven
 
-Historias podem existir para backlog ou comunicacao, mas nao sao o contrato principal para IA. O contrato principal e a Specification, porque ela descreve o comportamento completo e reduz ambiguidades antes da implementacao.
+Stories may exist for backlog or communication purposes, but they are not the primary contract for AI. The primary contract is the Specification, because it describes the complete behavior and reduces ambiguity before implementation.
 
 ### Context driven
 
-Todo nivel importante deve ter um `context.md`. Esse arquivo resume o objeto, seus pais, filhos, dependencias, decisoes, riscos e proximos documentos relevantes.
+Every important level must have a `context.md`. This file summarizes the object, its parents, children, dependencies, decisions, risks, and next relevant documents.
 
 ### Knowledge graph, not just folders
 
-A arvore de pastas e apenas a interface humana. O modelo real deve funcionar como grafo: artefatos possuem ids, pais, filhos, dependencias, relacoes e consumidores.
+The folder tree is only the human-facing interface. The real model must function as a graph: artifacts have ids, parents, children, dependencies, relations, and consumers.
 
 ### Approval gates
 
-Agentes podem propor, mas mudancas relevantes devem passar por aprovacao explicita quando alteram escopo, arquitetura, regras de negocio, riscos, roadmap ou compromissos de entrega.
+Agents can propose, but relevant changes must go through explicit approval when they alter scope, architecture, business rules, risks, roadmap, or delivery commitments.
 
-## 3. Modelo Conceitual
+## 3. Conceptual Model
 
 ### Problem
 
-Define a dor, a oportunidade e o contexto de mercado. E a raiz de justificativa do produto.
+Defines the pain, the opportunity, and the market context. It is the justification root of the product.
 
 ### Vision
 
-Define o produto que queremos construir, para quem, por que agora e quais principios guiam as decisoes.
+Defines the product we want to build, for whom, why now, and which principles guide decisions.
 
 ### Strategy
 
-Define posicionamento, segmentos, metricas, trade-offs, roadmap e criterios para avancar ou pausar.
+Defines positioning, segments, metrics, trade-offs, roadmap, and criteria to advance or pause.
 
 ### Domain
 
-Agrupa uma area coerente do negocio ou produto, como `users`, `groups`, `events`, `friendship` ou `payments`.
+Groups a coherent area of the business or product, such as `users`, `groups`, `events`, `friendship`, or `payments`.
 
 ### User Goal
 
-Substitui a nocao generica de "capability". Representa o objetivo estavel do usuario dentro de um dominio, por exemplo: "participar de um evento", "encontrar pessoas" ou "gerenciar perfil".
+Replaces the generic notion of "capability". Represents the user's stable objective within a domain, for example: "join an event", "find people", or "manage profile".
 
 ### Feature
 
-E uma solucao concreta que ajuda um User Goal. Features podem entrar, sair, evoluir, ser fatiadas ou substituidas.
+Is a concrete solution that helps a User Goal. Features can enter, exit, evolve, be sliced, or be replaced.
 
 ### Use Case
 
-E uma interacao verificavel da feature. O Use Case e o ponto onde produto e engenharia se unem para gerar uma Specification implementavel.
+Is a verifiable interaction of the feature. The Use Case is the point where product and engineering meet to generate an implementable Specification.
 
 ### Delivery Level
 
-Define o nivel de entrega em que um artefato deve entrar. O nivel responde "quando isso precisa existir no produto", sem substituir a prioridade dentro do nivel.
+Defines the delivery level at which an artifact must enter. The level answers "when does this need to exist in the product", without replacing priority within the level.
 
-Niveis canonicos:
+Canonical levels:
 
-- `L0 Foundation`: base sem a qual o produto ou a esteira nao sustentam entregas seguras.
-- `L1 Walking Skeleton`: menor fluxo ponta a ponta que prova o valor central.
-- `L2 Core Loop`: ciclo principal que gera valor recorrente ao usuario.
-- `L3 Trust, Safety and Quality`: confianca, seguranca, privacidade, moderacao, acessibilidade e qualidade de experiencia.
-- `L4 Operations and Scale`: operacao, suporte, observabilidade, admin e escala.
-- `L5 Growth and Optimization`: crescimento, experimentos, personalizacao e otimizacoes.
+- `L0 Foundation`: baseline without which the product or the pipeline cannot sustain safe deliveries.
+- `L1 Walking Skeleton`: smallest end-to-end flow that proves the core value.
+- `L2 Core Loop`: main cycle that generates recurring value for the user.
+- `L3 Trust, Safety and Quality`: trust, security, privacy, moderation, accessibility, and experience quality.
+- `L4 Operations and Scale`: operations, support, observability, admin, and scale.
+- `L5 Growth and Optimization`: growth, experiments, personalization, and optimizations.
 
 ### Priority
 
-Define a urgencia relativa dentro de um Delivery Level:
+Defines relative urgency within a Delivery Level:
 
-- `P0`: bloqueia o nivel atual.
-- `P1`: necessario para considerar o nivel pronto.
-- `P2`: importante, mas nao bloqueia a entrega do nivel.
-- `P3`: melhoria, polish ou otimizacao.
+- `P0`: blocks the current level.
+- `P1`: required to consider the level ready.
+- `P2`: important, but does not block the level's delivery.
+- `P3`: improvement, polish, or optimization.
 
 ### Specification
 
-E a fonte de verdade para implementacao. Deve cobrir produto, fluxo, UI, APIs, dados, permissoes, analytics, seguranca, performance, acessibilidade, erros, edge cases, observabilidade e aceite.
+Is the source of truth for implementation. It must cover product, flow, UI, APIs, data, permissions, analytics, security, performance, accessibility, errors, edge cases, observability, and acceptance.
 
 ### Design
 
-Traduz a Specification em experiencia de usuario verificavel: fluxo visual, navegacao, wireframes, mockups, estados, acessibilidade e alinhamento com o design system. Quando a feature nao tiver interface, o artefato deve registrar explicitamente `Not applicable` e explicar por que.
+Translates the Specification into a verifiable user experience: visual flow, navigation, wireframes, mockups, states, accessibility, and alignment with the design system. When the feature has no interface, the artifact must explicitly record `Not applicable` and explain why.
 
 ### Implementation Plan
 
-Traduz a Specification em estrategia tecnica. Pensa como um Tech Lead: sequencia, fases, dependencias, riscos, fatias, migracoes, backend, frontend, testes e rollout.
+Translates the Specification into technical strategy. Thinks like a Tech Lead: sequencing, phases, dependencies, risks, slices, migrations, backend, frontend, tests, and rollout.
 
 ### Execution Graph
 
-Representa as tarefas como um DAG. Cada no e uma unidade executavel com dependencias explicitas e um `path` para seu arquivo canonico em `tasks/<task-id>.md`. Isso permite paralelismo seguro entre agentes e deixa claro quando algo esta bloqueado.
+Represents the tasks as a DAG. Each node is an executable unit with explicit dependencies and a `path` to its canonical file in `tasks/<task-id>.md`. This enables safe parallelism between agents and makes it clear when something is blocked.
 
 ### Task
 
-Unidade executavel derivada da Specification e do Execution Graph. Uma task deve ser pequena o suficiente para implementacao, teste, review e rollback. Cada task vive em um arquivo proprio em `tasks/<task-id>.md`; esse arquivo e a fonte canonica para status, contrato, Delivery Level/Priority, links com codigo e evidencias. `tasks.md` e apenas um indice gerado para navegacao humana.
+Executable unit derived from the Specification and the Execution Graph. A task must be small enough for implementation, testing, review, and rollback. Each task lives in its own file at `tasks/<task-id>.md`; this file is the canonical source for status, contract, Delivery Level/Priority, links to code, and evidence. `tasks.md` is only a generated index for human navigation.
 
 ### Code Link
 
-O framework usa modelo monorepo para entrega de produto: documentacao, codigo e evidencias vivem no mesmo repositorio do produto, e este repositorio `spec-framework` permanece como template/laboratorio. Links entre task e codigo devem usar caminhos relativos ao repositorio quando apontarem para arquivos internos; PRs podem usar URL ou identificador externo.
+The framework uses a monorepo model for product delivery: documentation, code, and evidence live in the same product repository, and this `spec-framework` repository remains as a template/laboratory. Links between task and code must use paths relative to the repository when pointing to internal files; PRs can use a URL or an external identifier.
 
-Uma task em `implemented` deve registrar `Branch`, `Commits` e `Code paths` em seu arquivo canonico. Uma task em `validated` ou `released` deve registrar tambem `PR`, `Test status` aprovado e pelo menos uma evidencia concreta, como `Gate logs`, `CI URL`, `Screenshots` ou `QA evidence`.
+A task in `implemented` must record `Branch`, `Commits`, and `Code paths` in its canonical file. A task in `validated` or `released` must also record `PR`, approved `Test status`, and at least one concrete piece of evidence, such as `Gate logs`, `CI URL`, `Screenshots`, or `QA evidence`.
 
 ### Rigor Tier
 
-Use cases declaram `rigor_tier` no `context.md` para ajustar o rigor documental ao risco:
+Use cases declare `rigor_tier` in `context.md` to adjust documentary rigor to risk:
 
-- `S`: pequeno e baixo risco; requer specification, tasks e tests.
-- `M`: fluxo normal de produto; requer tambem design, implementation plan e execution graph.
-- `L`: fluxo critico ou sensivel; requer tambem analytics, audit, QA evidence e Security Review.
-- `N/A`: exemplo estrutural ou placeholder sem escopo de produto.
+- `S`: small and low risk; requires specification, tasks, and tests.
+- `M`: normal product flow; also requires design, implementation plan, and execution graph.
+- `L`: critical or sensitive flow; also requires analytics, audit, QA evidence, and Security Review.
+- `N/A`: structural example or placeholder without product scope.
 
-Gatilhos automaticos de Tier L: auth, permissoes, roles, pagamento, PII, upload, UGC, superficie publica, ou migracao que toque RLS/policies. Mudanca de tier exige approval record do use case, mas nao uma nova DEC quando a politica permanece igual.
+Automatic Tier L triggers: auth, permissions, roles, payment, PII, upload, UGC, public surface, or migration that touches RLS/policies. A tier change requires an approval record for the use case, but not a new DEC when the policy remains the same.
 
 ### Identity And Moves
 
-Cada objeto de produto com pasta propria deve declarar `slug` no `context.md`. O slug nasce na criacao do artefato, corresponde ao nome da pasta e permanece imutavel mesmo que o titulo humano mude.
+Every product object with its own folder must declare `slug` in `context.md`. The slug is born at artifact creation, matches the folder name, and remains immutable even if the human title changes.
 
-IDs sao unicos dentro do escopo do pai. Quando houver risco de ambiguidade, referencias devem combinar ID e path. `.product/ids.json` registra a politica de identidade; ele nao deve ser usado como contador global para alocar novos artefatos.
+IDs are unique within the parent's scope. When there is risk of ambiguity, references must combine ID and path. `.product/ids.json` records the identity policy; it must not be used as a global counter to allocate new artifacts.
 
-Mover um artefato exige tooling:
+Moving an artifact requires tooling:
 
 ```bash
 node engineering/move-artifact.mjs --from <old-path> --to <new-path>
 ```
 
-O script de move reescreve links Markdown e paths em JSON que sejam mecanicamente resolviveis. Mencoes em texto livre sao reportadas para revisao humana, nao reescritas automaticamente.
-## 4. Estrutura De Pastas
+The move script rewrites Markdown links and paths in JSON that are mechanically resolvable. Mentions in free text are reported for human review, not rewritten automatically.
+## 4. Folder Structure
 
-Estrutura canonica:
+Canonical structure:
 
 ```text
 product/
@@ -227,7 +227,7 @@ product/
   skills/
 ```
 
-Em um repositorio de produto adotante, a estrutura acima deve viver sob `product/`. Os ativos que ensinam como executar o framework devem viver fora dela, em `.spec-framework/`:
+In an adopter product repository, the structure above must live under `product/`. The assets that teach how to run the framework must live outside it, in `.spec-framework/`:
 
 ```text
 repo/
@@ -250,18 +250,18 @@ repo/
     releases/
 ```
 
-Neste repositorio `spec-framework`, a estrutura existe em dois modos durante a transicao para adoção reutilizavel:
+In this `spec-framework` repository, the structure exists in two modes during the transition to reusable adoption:
 
-- `starter/` representa o esqueleto limpo que deve ser copiado para novos repositorios de produto, ja separado entre `.spec-framework/` e `product/`.
-- a raiz do repositorio permanece como laboratorio executavel do framework, contendo validator, skills, historico de evolucao, exemplos e artefatos de bootstrap.
+- `starter/` represents the clean skeleton that must be copied into new product repositories, already separated between `.spec-framework/` and `product/`.
+- the repository root remains the executable framework laboratory, containing the validator, skills, evolution history, examples, and bootstrap artifacts.
 
-Novos produtos nao devem copiar a raiz inteira do `spec-framework`; devem partir de `starter/` e instalar os ativos do framework em `.spec-framework/` conforme `framework/adoption.md`.
+New products must not copy the entire `spec-framework` root; they must start from `starter/` and install the framework assets into `.spec-framework/` per `framework/adoption.md`.
 
 ## 5. Context.md
 
-Todo `context.md` deve permitir que uma IA entenda onde esta, o que precisa ler e qual e o proximo passo seguro.
+Every `context.md` must let an AI understand where it is, what it needs to read, and what the safe next step is.
 
-Template minimo:
+Minimal template:
 
 ```yaml
 id: FT-023
@@ -299,10 +299,10 @@ documents:
 delivery:
   level: L1
   priority: P0
-  rationale: Sem check-in, o walking skeleton de evento nao fecha ponta a ponta.
+  rationale: Without check-in, the L1 event walking skeleton does not close end-to-end.
 
 open_questions:
-  - Como expirar QR codes sem prejudicar usuarios offline?
+  - How to expire QR codes without hurting offline users?
 
 decisions:
   - DEC-014
@@ -310,31 +310,31 @@ decisions:
 
 ## 6. Specification Driven Development
 
-O fluxo de uma nova feature deve ser:
+The flow for a new feature must be:
 
 ```text
 Feature -> Use Cases -> Specification -> Design -> Implementation Plan -> Execution Graph -> Tasks -> Implementation -> QA Evidence -> Security Review -> Review -> Audit -> Release
 ```
 
-O Design e obrigatorio para qualquer use case com interface. Para entregas sem UI, `design.md` deve existir como artefato curto com `Not applicable`, justificativa e impactos para acessibilidade, observabilidade ou operacao quando houver.
+Design is mandatory for any use case with an interface. For deliveries without UI, `design.md` must exist as a short artifact with `Not applicable`, justification, and impacts on accessibility, observability, or operations when relevant.
 
-QA Evidence e Security Review sao gates de validacao. QA Evidence comprova que os criterios de aceite, tasks, fluxos, bordas, regressao, acessibilidade, observabilidade e controles de seguranca foram verificados. Security Review avalia autenticacao, autorizacao, privacidade, abuso, dados sensiveis, tokens, logs, dependencias, rollout, rollback e risco residual. Security Review tambem deve ler o baseline de seguranca do produto em `knowledge/conventions/security-baseline.md` e ameacas ativas em `audits/security/threat-register.md`. Um artefato nao deve chegar a `validated` ou `released` quando houver blocker de QA ou seguranca.
+QA Evidence and Security Review are validation gates. QA Evidence proves that acceptance criteria, tasks, flows, edge cases, regression, accessibility, observability, and security controls were verified. Security Review evaluates authentication, authorization, privacy, abuse, sensitive data, tokens, logs, dependencies, rollout, rollback, and residual risk. Security Review must also read the product's security baseline in `knowledge/conventions/security-baseline.md` and active threats in `audits/security/threat-register.md`. An artifact must not reach `validated` or `released` when there is a QA or security blocker.
 
-QA Evidence deve trazer a evidencia real de volta ao use case: branch, commits, PR, caminhos de codigo, comandos ou metodos de teste, logs de gate, URL de CI quando houver e screenshots quando a entrega tiver superficie visual.
+QA Evidence must bring the real evidence back to the use case: branch, commits, PR, code paths, commands or test methods, gate logs, CI URL when available, and screenshots when the delivery has a visual surface.
 
-A Specification deve responder:
+The Specification must answer:
 
-- O que exatamente deve acontecer?
-- Qual problema do usuario isso resolve?
-- O que esta dentro e fora de escopo?
-- Quais fluxos, estados e erros existem?
-- Quais regras de negocio se aplicam?
-- Quais APIs, dados e permissoes sao necessarios?
-- Quais eventos de analytics e logs devem existir?
-- Quais riscos de seguranca, privacidade e abuso existem?
-- Como a entrega sera testada e aceita?
+- What exactly must happen?
+- What user problem does this solve?
+- What is in and out of scope?
+- What flows, states, and errors exist?
+- What business rules apply?
+- What APIs, data, and permissions are needed?
+- What analytics events and logs must exist?
+- What security, privacy, and abuse risks exist?
+- How will the delivery be tested and accepted?
 
-Secoes obrigatorias:
+Mandatory sections:
 
 ```text
 Product context
@@ -364,15 +364,15 @@ Acceptance criteria
 Open questions
 ```
 
-Security Review nao e uma promessa absoluta de ausencia de risco. O papel do gate e garantir que todos os controles definidos foram verificados com evidencia, que blockers estao resolvidos, e que riscos residuais estao documentados e aprovados por humanos quando forem relevantes.
+Security Review is not an absolute promise of risk absence. The gate's role is to ensure that all defined controls were verified with evidence, that blockers are resolved, and that residual risks are documented and approved by humans when relevant.
 
-Rigor documental e proporcional ao tier do use case. Tier S evita artefatos pesados quando design, analytics ou audit sao `Not applicable`; Tier L exige QA Evidence e Security Review por padrao.
+Documentary rigor is proportional to the use case's tier. Tier S avoids heavy artifacts when design, analytics, or audit are `Not applicable`; Tier L requires QA Evidence and Security Review by default.
 
-## 6.1. Priorizacao De Entrega
+## 6.1. Delivery Prioritization
 
-Todo artefato executavel deve declarar `Delivery Level` e `Priority`. O nivel organiza o roadmap por maturidade do produto; a prioridade ordena o trabalho dentro do nivel.
+Every executable artifact must declare `Delivery Level` and `Priority`. The level organizes the roadmap by product maturity; priority orders work within the level.
 
-Campos obrigatorios em Domain, User Goal, Feature, Use Case, Specification, Implementation Plan, Execution Graph e Task:
+Mandatory fields in Domain, User Goal, Feature, Use Case, Specification, Implementation Plan, Execution Graph, and Task:
 
 ```yaml
 delivery:
@@ -380,59 +380,59 @@ delivery:
   priority: P0
   depends_on:
     - FT-008
-  rationale: Explica por que esta entrega pertence a este nivel e por que esta prioridade foi atribuida.
+  rationale: Explains why this delivery belongs to this level and why this priority was assigned.
 ```
 
-Regras:
+Rules:
 
-- `Delivery Level` nao e uma promessa de data.
-- `Priority` so deve ser comparada dentro do mesmo nivel.
-- Uma entrega `L3/P0` pode ser critica para confianca, mas ainda nao furar uma entrega `L1` que fecha o walking skeleton.
-- Dependencias podem puxar uma entrega tecnica para um nivel anterior, desde que o `rationale` explique o motivo.
-- Mudanca de `level` ou `priority` altera compromisso de entrega e deve passar por approval gate.
+- `Delivery Level` is not a date promise.
+- `Priority` should only be compared within the same level.
+- An `L3/P0` delivery can be critical for trust, but it still must not jump ahead of an `L1` delivery that closes the walking skeleton.
+- Dependencies can pull a technical delivery to an earlier level, as long as the `rationale` explains why.
+- Changing `level` or `priority` alters delivery commitment and must go through an approval gate.
 
 ## 6.2. Design Driven Handoff
 
-O Design nasce depois da Specification aprovada e antes do Implementation Plan.
+Design is born after the Specification is approved and before the Implementation Plan.
 
-Entradas:
+Inputs:
 
-- Specification aprovada.
-- Design system, padroes de UX e telas vizinhas.
-- Delivery Level e Priority da entrega.
+- Approved Specification.
+- Design system, UX patterns, and neighboring screens.
+- Delivery Level and Priority of the delivery.
 
-Saidas:
+Outputs:
 
-- `design.md` no use case, com fluxo visual, estados, acessibilidade, componentes, dados exibidos e links para mockups quando existirem.
-- Mockups ou wireframes em `product/design/` ou no diretorio de design canonico do produto, quando a entrega precisar de referencia visual.
-- Revisao UX registrada antes do Implementation Plan quando a UI for relevante para o aceite.
+- `design.md` in the use case, with visual flow, states, accessibility, components, displayed data, and links to mockups when they exist.
+- Mockups or wireframes in `product/design/` or the product's canonical design directory, when the delivery needs visual reference.
+- UX review recorded before the Implementation Plan when UI is relevant to acceptance.
 
 Gates:
 
-- Sem Specification aprovada, nao gere design.
-- Sem Design aprovado ou marcado como `Not applicable`, nao gere Implementation Plan.
-- Achado bloqueante de UX volta para Specification ou Design antes de seguir.
+- Without an approved Specification, do not generate design.
+- Without an approved Design, or one marked `Not applicable`, do not generate the Implementation Plan.
+- Blocking UX findings go back to Specification or Design before proceeding.
 
 ## 7. Implementation Plan
 
-O Implementation Plan e criado depois da Specification e do Design e antes das tasks. Ele nao deve escrever codigo. Ele deve definir a estrategia de construcao.
+The Implementation Plan is created after the Specification and the Design, and before the tasks. It must not write code. It must define the build strategy.
 
-Secoes recomendadas:
+Recommended sections:
 
-- Objetivo tecnico
-- Escopo tecnico
-- Delivery Level e Priority herdados ou ajustados com justificativa
-- Dependencias
-- Fases
-- Sequencia de entrega
-- Riscos
-- Plano de testes
-- Plano de rollback
-- Arquivos ou modulos provaveis
-- Decisoes que precisam de ADR
-- Tasks candidatas
+- Technical objective
+- Technical scope
+- Delivery Level and Priority, inherited or adjusted with justification
+- Dependencies
+- Phases
+- Delivery sequence
+- Risks
+- Test plan
+- Rollback plan
+- Probable files or modules
+- Decisions that need an ADR
+- Candidate tasks
 
-Exemplo de fases:
+Example phases:
 
 ```text
 1. Data model and migration
@@ -446,9 +446,9 @@ Exemplo de fases:
 
 ## 8. Execution Graph
 
-O Execution Graph e um DAG. Ele define dependencia entre tasks e permite execucao paralela por agentes. Cada no referencia o arquivo canonico da task por `path`.
+The Execution Graph is a DAG. It defines dependencies between tasks and enables parallel execution by agents. Each node references the task's canonical file by `path`.
 
-Exemplo:
+Example:
 
 ```json
 {
@@ -495,74 +495,74 @@ Exemplo:
 }
 ```
 
-Regras:
+Rules:
 
-- Uma task so pode iniciar quando suas dependencias estao aprovadas.
-- Tasks paralelas devem ter escopo de escrita separado.
-- Todo no deve declarar `writeScope`: paths ou modulos que a task pode criar ou alterar.
-- `sharedResources` declara recursos gerados ou compartilhados, como indices, locales, schema local, banco local, contratos gerados ou catalogos. Dois nos paralelos que disputam o mesmo recurso devem virar dependencia ou ser unidos.
-- Dois nos sao paralelos quando nao ha caminho de dependencia entre eles no DAG. Nos paralelos nao devem ter `writeScope` sobreposto.
-- Overlap de path e prefix-based: `src/` cobre `src/foo.ts`.
-- O rollout do check de `writeScope` segue FDR-003: Fase A reporta warnings; Fase B, apos migracao aprovada dos grafos existentes, pode promover os mesmos achados a errors.
-- Toda task aponta para a Specification de origem.
-- Todo no deve apontar para o arquivo canonico em `tasks/<task-id>.md`.
-- Snapshots no grafo, como `title` e `type`, sao permitidos apenas quando batem com o arquivo de task referenciado.
-- Toda mudanca de dependencia atualiza o grafo.
-- Falhas de QA podem criar novos nos no grafo.
+- A task can only start when its dependencies are approved.
+- Parallel tasks must have separate write scopes.
+- Every node must declare `writeScope`: paths or modules the task may create or change.
+- `sharedResources` declares generated or shared resources, such as indexes, locales, local schema, local database, generated contracts, or catalogs. Two parallel nodes that contend for the same resource must become a dependency or be merged.
+- Two nodes are parallel when there is no dependency path between them in the DAG. Parallel nodes must not have overlapping `writeScope`.
+- Path overlap is prefix-based: `src/` covers `src/foo.ts`.
+- The rollout of the `writeScope` check follows FDR-003: Phase A reports warnings; Phase B, after approved migration of existing graphs, can promote the same findings to errors.
+- Every task points to its source Specification.
+- Every node must point to the canonical file at `tasks/<task-id>.md`.
+- Snapshots in the graph, such as `title` and `type`, are allowed only when they match the referenced task file.
+- Every dependency change updates the graph.
+- QA failures can create new nodes in the graph.
 ## 9. Skills
 
-As skills sao especialistas. Elas podem operar em modos como `create`, `update`, `audit`, `evolve`, `explain`, `compare` e `refactor`, mas cada uma deve ter responsabilidade clara.
+Skills are specialists. They can operate in modes such as `create`, `update`, `audit`, `evolve`, `explain`, `compare`, and `refactor`, but each must have a clear responsibility.
 
 ### Foundation
 
-- Problem Discovery AI: descobre dores, oportunidades e evidencias.
-- Vision AI: cria ou revisa visao, principios e north star.
-- Strategy AI: define estrategia, segmentos, metricas e roadmap.
-- Domain Architect AI: modela dominios e fronteiras.
-- User Goal AI: modela objetivos do usuario dentro de dominios.
+- Problem Discovery AI: discovers pains, opportunities, and evidence.
+- Vision AI: creates or revises vision, principles, and north star.
+- Strategy AI: defines strategy, segments, metrics, and roadmap.
+- Domain Architect AI: models domains and boundaries.
+- User Goal AI: models user goals within domains.
 
 ### Product Design
 
-- Journey AI: mapeia jornadas.
-- Feature AI: cria e evolui features.
-- Use Case AI: detalha interacoes verificaveis.
-- UX/UI AI: define fluxos, estados, wireframes, mockups, design system e acessibilidade.
-- UX Review AI: revisa o design contra design system, principios de UX, acessibilidade e cobertura dos estados.
+- Journey AI: maps journeys.
+- Feature AI: creates and evolves features.
+- Use Case AI: details verifiable interactions.
+- UX/UI AI: defines flows, states, wireframes, mockups, design system, and accessibility.
+- UX Review AI: reviews design against the design system, UX principles, accessibility, and state coverage.
 
 ### Specification And Planning
 
-- Specification AI: cria o contrato central de implementacao.
-- Implementation Planner AI: transforma Specification em plano tecnico.
-- Execution Graph AI: transforma plano em DAG de execucao.
-- Task AI: gera tasks executaveis pequenas, testaveis e rastreaveis.
+- Specification AI: creates the central implementation contract.
+- Implementation Planner AI: transforms Specification into a technical plan.
+- Execution Graph AI: transforms the plan into an execution DAG.
+- Task AI: generates small, testable, and traceable executable tasks.
 
 ### Engineering And Validation
 
-- Code Runner AI: implementa exatamente uma task aprovada por invocacao, em TDD, respeitando `writeScope`, lendo gates de `knowledge/conventions/gates.md`, parando no verde e sem commitar.
-- QA AI: valida comportamento, testes, bordas, performance e matriz de evidencias.
-- Code Review AI: revisa implementacao de forma read-only nas lentes de completude, aderencia e qualidade; findings usam severidade e rota FDR-006.
-- Security Review AI: avalia autenticacao, autorizacao, privacidade, abuso, exposicao de dados, tokens, logs, dependencias, rollout e risco residual.
-- Threat Modeler AI: modela ameacas proativamente em nivel de produto, dominio ou familia de features; mantem baseline de seguranca e threat register para alimentar Security Review.
-- Commit Crafter AI: transforma mudancas verificadas em commits locais atomicos por concern, seguindo `knowledge/conventions/commits.md`, sem push.
-- PR Finalizer AI: prepara ou abre PR com evidencias e links obrigatorios, seguindo `knowledge/conventions/pull-requests.md`, sem merge.
+- Code Runner AI: implements exactly one approved task per invocation, in TDD, respecting `writeScope`, reading gates from `knowledge/conventions/gates.md`, stopping when green, and without committing.
+- QA AI: validates behavior, tests, edge cases, performance, and evidence matrix.
+- Code Review AI: reviews implementation read-only through the lenses of completeness, adherence, and quality; findings use severity and follow FDR-006 routing.
+- Security Review AI: evaluates authentication, authorization, privacy, abuse, data exposure, tokens, logs, dependencies, rollout, and residual risk.
+- Threat Modeler AI: proactively models threats at the product, domain, or feature family level; maintains the security baseline and threat register to feed Security Review.
+- Commit Crafter AI: turns verified changes into atomic local commits by concern, following `knowledge/conventions/commits.md`, without push.
+- PR Finalizer AI: prepares or opens a PR with evidence and required links, following `knowledge/conventions/pull-requests.md`, without merge.
 
 ### Audit
 
-- Gap Finder AI: procura lacunas.
-- Conflict AI: procura contradicoes.
-- Dependency AI: encontra dependencias implicitas.
-- Impact Analysis AI: mede efeito de mudancas.
-- Evolution AI: sugere melhorias.
-- Documentation AI: atualiza docs.
-- Product Historian AI: registra decisoes.
+- Gap Finder AI: looks for gaps.
+- Conflict AI: looks for contradictions.
+- Dependency AI: finds implicit dependencies.
+- Impact Analysis AI: measures the effect of changes.
+- Evolution AI: suggests improvements.
+- Documentation AI: updates docs.
+- Product Historian AI: records decisions.
 
-## 10. Orquestradores
+## 10. Orchestrators
 
-Orquestradores nao criam artefatos primarios. Eles controlam fluxo, ordem, gates e handoffs.
+Orchestrators do not create primary artifacts. They control flow, order, gates, and handoffs.
 
 ### Product Orchestrator
 
-Cria um produto do zero:
+Creates a product from scratch:
 
 ```text
 Problem -> Vision -> Strategy -> Domains -> User Goals -> Roadmap
@@ -570,7 +570,7 @@ Problem -> Vision -> Strategy -> Domains -> User Goals -> Roadmap
 
 ### New Feature Orchestrator
 
-Recebe uma feature candidata e conduz:
+Receives a candidate feature and drives:
 
 ```text
 Impact -> Feature -> Use Cases -> Specification -> Design -> Plan -> Graph -> Tasks
@@ -578,7 +578,7 @@ Impact -> Feature -> Use Cases -> Specification -> Design -> Plan -> Graph -> Ta
 
 ### Audit Orchestrator
 
-Executa auditorias em lote:
+Runs batch audits:
 
 ```text
 Gap -> Conflict -> Dependency -> Impact -> Consistency
@@ -586,55 +586,55 @@ Gap -> Conflict -> Dependency -> Impact -> Consistency
 
 ### Evolution Orchestrator
 
-Agrupa melhorias candidatas, pergunta quais serao aprovadas e cria plano de evolucao.
+Groups candidate improvements, asks which will be approved, and creates an evolution plan.
 
 ### Documentation Orchestrator
 
-Mantem `context.md`, indices, templates, decisoes e artefatos derivados sincronizados.
+Keeps `context.md`, indexes, templates, decisions, and derived artifacts synchronized.
 
 ### QA Orchestration
 
-QA e verificador independente e read-only. QA re-executa os gates declarados em `knowledge/conventions/gates.md` quando possivel, registra saida real ou limitacao explicita, e devolve blockers para a rota apropriada em vez de corrigir codigo. Rotas especializadas como bug-fixer e code-runner serao formalizadas por evolucoes futuras.
+QA is an independent, read-only verifier. QA re-executes the gates declared in `knowledge/conventions/gates.md` whenever possible, records real output or an explicit limitation, and routes blockers to the appropriate path instead of fixing code. Specialized routes such as bug-fixer and code-runner will be formalized by future evolutions.
 
 ### Implementation Orchestration
 
-Code Runner recebe uma task aprovada por vez. Se a task exigir mudanca fora de `writeScope`, decisao nao aprovada, comando de gate ausente ou lacuna de Specification, a implementacao para e reporta o blocker. Depois de qualquer mudanca de codigo, o fluxo retorna para QA independente.
+Code Runner receives one approved task at a time. If the task requires a change outside `writeScope`, an unapproved decision, a missing gate command, or a Specification gap, implementation stops and reports the blocker. After any code change, the flow returns to independent QA.
 
 ### Failure Routing
 
-Falhas seguem FDR-006. Defeito, regressao, vulnerabilidade com comportamento esperado claro ou erro de producao vao para Bug Fixer. Teste ausente, teste oco ou cobertura negativa/permissao ausente volta para QA ou dono de testes. Implementacao incompleta ou fora do contrato volta para Code Runner. Lacuna de decisao ou regra ambigua vai para Product Historian e humano. Apos qualquer mudanca de codigo, o fluxo reentra em QA; gate vermelho nao pode ser pulado. Cada gate ou finding tem teto de tres tentativas automatizadas antes de escalonar ao humano.
+Failures follow FDR-006. A defect, regression, vulnerability with a clearly expected behavior, or production error goes to Bug Fixer. A missing test, hollow test, or missing negative/permission coverage goes back to QA or the test owner. Incomplete implementation or out-of-contract work goes back to Code Runner. A decision gap or ambiguous rule goes to Product Historian and a human. After any code change, the flow re-enters QA; a red gate cannot be skipped. Every gate or finding has a cap of three automated attempts before escalating to a human.
 
 ### Review Orchestration
 
-Code Review e um gate read-only antes de validacao e release de trabalho executavel. O review avalia completude contra Specification/tasks, aderencia a contratos aprovados e qualidade de implementacao. Findings `blocker` ou `required_fix` precisam de route e owner via FDR-006; Code Review nao corrige codigo nem aprova QA.
+Code Review is a read-only gate before validation and release of executable work. The review evaluates completeness against Specification/tasks, adherence to approved contracts, and implementation quality. `blocker` or `required_fix` findings need a route and owner via FDR-006; Code Review does not fix code or approve QA.
 
 ### Threat Modeling
 
-Threat Modeler atua antes e ao lado de Security Review. Ele modela ameacas em nivel de produto, dominio, goal ou feature family, registra regras recorrentes no baseline de seguranca e mantem `audits/security/threat-register.md` com cenarios, mitigacoes, owners, evidencias e riscos residuais. Ele nao valida release; Security Review consome esse contexto para avaliar uma entrega especifica.
+Threat Modeler acts before and alongside Security Review. It models threats at the product, domain, goal, or feature family level, records recurring rules in the security baseline, and maintains `audits/security/threat-register.md` with scenarios, mitigations, owners, evidence, and residual risks. It does not validate release; Security Review consumes that context to assess a specific delivery.
 
 ### Delivery Orchestration
 
-Commit Crafter cria commits locais atomicos apenas quando explicitamente invocado, separando concerns e seguindo `knowledge/conventions/commits.md`; ele nao faz push. PR Finalizer verifica gates, QA Evidence, Code Review e Security Review quando aplicavel, prepara ou abre PR com links de evidencia seguindo `knowledge/conventions/pull-requests.md`, registra o PR de volta nas tasks quando apropriado e nao faz merge.
+Commit Crafter creates atomic local commits only when explicitly invoked, separating concerns and following `knowledge/conventions/commits.md`; it does not push. PR Finalizer verifies gates, QA Evidence, Code Review, and Security Review when applicable, prepares or opens a PR with evidence links following `knowledge/conventions/pull-requests.md`, records the PR back onto the tasks when appropriate, and does not merge.
 
 ### Release Orchestrator
 
-Antes de release, verifica:
+Before release, checks:
 
-- lacunas
-- conflitos
+- gaps
+- conflicts
 - docs
 - specs
 - design
 - tasks
-- testes
+- tests
 - QA
 - QA evidence
 - review
-- security review para entregas executaveis, com profundidade proporcional ao risco
+- security review for executable deliveries, with depth proportional to risk
 
-## 11. Gates De Aprovacao
+## 11. Approval Gates
 
-Cada etapa deve terminar com um estado claro:
+Every step must end with a clear state:
 
 ```text
 draft
@@ -648,75 +648,75 @@ deprecated
 superseded
 ```
 
-Regras:
+Rules:
 
-- `draft`: artefato criado, ainda incompleto.
-- `proposed`: pronto para revisao humana ou de auditoria.
-- `approved`: pode alimentar a proxima etapa.
-- `in_progress`: esta sendo implementado.
-- `implemented`: codigo ou artefato foi produzido.
-- `validated`: passou por QA, review, Security Review quando aplicavel, e possui evidencias suficientes.
-- `released`: chegou ao usuario ou ambiente alvo.
-- `deprecated`: nao deve orientar novas implementacoes.
-- `superseded`: substituido por outro artefato.
+- `draft`: artifact created, still incomplete.
+- `proposed`: ready for human or audit review.
+- `approved`: can feed the next stage.
+- `in_progress`: being implemented.
+- `implemented`: code or artifact was produced.
+- `validated`: passed QA, review, Security Review when applicable, and has sufficient evidence.
+- `released`: reached the user or target environment.
+- `deprecated`: must not guide new implementations.
+- `superseded`: replaced by another artifact.
 
-Transicoes obrigatorias:
+Mandatory transitions:
 
-- `proposed`: nao exige approval record, mas nao deve avancar a partir de um parent gate incompleto.
-- `approved` e estados posteriores: exigem approval record correspondente em `.product/history/`, com `artifact_id`, `path`, `content_hash`, `status_granted`, `approved_by`, `approved_at` e `notes`.
-- `approved -> in_progress`: exige task aprovada ou excecao explicita de prototipo/draft.
-- `in_progress -> implemented`: exige evidencia estruturada no arquivo da task: branch, commits e code paths.
-- Code Runner pode produzir codigo e evidencia tecnica, mas nao faz commit, push, merge, approval record ou aprovacao de QA.
-- Commit Crafter pode criar commits locais quando explicitamente invocado, mas nao faz push, merge ou approval record.
-- Bug Fixer reproduz o defeito com teste falhando antes de corrigir, corrige causa raiz com mudanca minima, deixa teste de regressao permanente e retorna para QA.
-- `implemented -> validated`: exige QA Evidence aprovada e sem blockers; exige Security Review aprovada quando houver codigo, dados, permissoes, tokens, API, pagamentos, uploads, mensagens, busca, admin, analytics sensivel ou qualquer risco de privacidade/abuso.
-- `implemented -> validated`: exige Code Review aprovado e sem findings `blocker` ou `required_fix` para entregas executaveis.
-- `implemented -> validated`: para task individual, tambem exige PR, test status aprovado e evidencia concreta como logs de gate, CI URL, screenshots ou QA evidence.
-- PR Finalizer pode preparar ou abrir PR quando os gates duros estiverem verdes ou quando o usuario pedir um draft/prototype explicito; ele nao faz merge.
-- Portoes tecnicos do produto vivem em `knowledge/conventions/gates.md`. Skills que executam ou verificam codigo devem ler esse arquivo e registrar a saida real dos gates aplicaveis.
-- `validated` e estados posteriores exigem QA Evidence nao-placeholder para gates aplicaveis. Quando um gate nao puder ser executado por indisponibilidade de ambiente, QA deve registrar a limitacao explicitamente em vez de forjar evidencia.
-- Entregas com superficie visual exigem evidencia visual proporcional, como screenshot local ou artefato de CI, alem de verificacao basica de acessibilidade: role/label, foco, alvo de toque e contraste.
-- `validated -> released`: exige Release Orchestrator, auditoria sem blockers, Security Review sem blockers, riscos residuais aceitos e rollback/monitoramento definidos.
-- QA pode bloquear validacao quando qualquer criterio de aceite, task, controle de seguranca, regressao critica ou evidencia obrigatoria estiver ausente.
-- Security Review pode bloquear validacao e release quando houver falha de autorizacao, vazamento de dados, decisao de permissao sem aprovacao, segredo exposto, abuso nao mitigado, logging inseguro ou risco residual alto sem decisao humana.
-- Findings bloqueantes em QA Evidence, Security Review ou audit precisam de route e owner antes de artefatos aprovados poderem orientar validacao ou release.
+- `proposed`: does not require an approval record, but must not advance from an incomplete parent gate.
+- `approved` and later states: require a corresponding approval record in `.product/history/`, with `artifact_id`, `path`, `content_hash`, `status_granted`, `approved_by`, `approved_at`, and `notes`.
+- `approved -> in_progress`: requires an approved task or an explicit prototype/draft exception.
+- `in_progress -> implemented`: requires structured evidence in the task file: branch, commits, and code paths.
+- Code Runner can produce code and technical evidence, but does not commit, push, merge, create approval records, or approve QA.
+- Commit Crafter can create local commits when explicitly invoked, but does not push, merge, or create approval records.
+- Bug Fixer reproduces the defect with a failing test before fixing, fixes the root cause with a minimal change, leaves a permanent regression test, and returns to QA.
+- `implemented -> validated`: requires approved QA Evidence with no blockers; requires approved Security Review when there is code, data, permissions, tokens, API, payments, uploads, messaging, search, admin, sensitive analytics, or any privacy/abuse risk.
+- `implemented -> validated`: requires approved Code Review with no `blocker` or `required_fix` findings for executable deliveries.
+- `implemented -> validated`: for an individual task, also requires PR, approved test status, and concrete evidence such as gate logs, CI URL, screenshots, or QA evidence.
+- PR Finalizer can prepare or open a PR when the hard gates are green or when the user explicitly requests a draft/prototype; it does not merge.
+- Technical gates for the product live in `knowledge/conventions/gates.md`. Skills that execute or verify code must read that file and record the real output of applicable gates.
+- `validated` and later states require non-placeholder QA Evidence for applicable gates. When a gate cannot be executed due to environment unavailability, QA must explicitly record the limitation instead of forging evidence.
+- Deliveries with a visual surface require proportional visual evidence, such as a local screenshot or CI artifact, plus basic accessibility verification: role/label, focus, touch target, and contrast.
+- `validated -> released`: requires the Release Orchestrator, an audit with no blockers, Security Review with no blockers, accepted residual risks, and defined rollback/monitoring.
+- QA can block validation when any acceptance criterion, task, security control, critical regression, or mandatory evidence is missing.
+- Security Review can block validation and release when there is an authorization failure, data leak, unapproved permission decision, exposed secret, unmitigated abuse, insecure logging, or high residual risk without a human decision.
+- Blocking findings in QA Evidence, Security Review, or audit need a route and owner before approved artifacts can guide validation or release.
 
-Approval records usam hash SHA-256 do arquivo inteiro com conteudo normalizado para LF e sem trailing whitespace por linha. Eles fornecem auditabilidade e gate mecanico, nao prova criptografica de aprovacao humana.
+Approval records use a SHA-256 hash of the whole file with content normalized to LF and no trailing whitespace per line. They provide auditability and a mechanical gate, not cryptographic proof of human approval.
 
-Staleness e uma condicao derivada pelo validator, nao um status editavel. Artefatos downstream registram os hashes dos artefatos de origem em `.product/derivations.json`; se o conteudo de origem mudar, o downstream fica stale e nao deve avancar por gates ate ser regenerado ou re-aprovado.
+Staleness is a condition derived by the validator, not an editable status. Downstream artifacts record the hashes of source artifacts in `.product/derivations.json`; if the source content changes, the downstream becomes stale and must not advance through gates until it is regenerated or re-approved.
 
-## 12. Decisoes
+## 12. Decisions
 
-Decisoes de produto relevantes devem ser registradas em `knowledge/decisions/` e indexadas em `.product/decisions.json`.
+Relevant product decisions must be recorded in `knowledge/decisions/` and indexed in `.product/decisions.json`.
 
-Decisoes de framework ou metodo vivem em `engineering/decisions/FDR-*` ou como emendas explicitas a este documento. Contratos de skill, gates, writeScope, politicas de QA, roteamento de falhas, commit policy, validadores e regras de orquestracao nao devem ser registrados em `knowledge/decisions/`, porque essa pasta e reservada ao produto adotante.
+Framework or method decisions live in `engineering/decisions/FDR-*` or as explicit amendments to this document. Skill contracts, gates, writeScope, QA policies, failure routing, commit policy, validators, and orchestration rules must not be recorded in `knowledge/decisions/`, because that folder is reserved for the adopter product.
 
-Uma decisao deve ser criada quando:
+A decision must be created when it:
 
-- muda arquitetura estrutural;
-- muda regra de negocio importante;
-- altera seguranca, privacidade, pagamento ou permissao;
-- cria dependencia externa relevante;
-- escolhe uma estrategia dificil de reverter;
-- substitui uma decisao anterior.
+- changes structural architecture;
+- changes an important business rule;
+- alters security, privacy, payment, or permissions;
+- creates a relevant external dependency;
+- chooses a hard-to-reverse strategy;
+- replaces a previous decision.
 
-## 13. Auditoria
+## 13. Audit
 
-Auditorias nao devem criar produto novo como comportamento padrao. Elas analisam e reportam.
+Audits must not create new product content as default behavior. They analyze and report.
 
-Tipos de auditoria:
+Types of audit:
 
-- Gap: o que falta?
-- Conflict: o que contradiz outro artefato?
-- Dependency: o que depende de que?
-- Impact: o que muda se isso mudar?
-- Consistency: os nomes, estados, ids e links Markdown batem e resolvem para arquivos existentes?
-- Security: ha risco de acesso indevido, abuso ou vazamento?
-- UX: a experiencia fecha para a persona?
+- Gap: what is missing?
+- Conflict: what contradicts another artifact?
+- Dependency: what depends on what?
+- Impact: what changes if this changes?
+- Consistency: do names, states, ids, and Markdown links match and resolve to existing files?
+- Security: is there risk of improper access, abuse, or leakage?
+- UX: does the experience close for the persona?
 
-QA e Security Review devem produzir ou referenciar evidencias. Threat Modeler pode manter um threat register vivo para riscos que atravessam varias entregas. Auditorias podem verificar a coerencia dessas evidencias, mas nao devem declarar uma entrega como segura quando os gates especializados estao ausentes ou bloqueados.
+QA and Security Review must produce or reference evidence. Threat Modeler can maintain a living threat register for risks that span multiple deliveries. Audits can verify the coherence of that evidence, but must not declare a delivery safe when the specialized gates are missing or blocked.
 
-Saida esperada:
+Expected output:
 
 ```text
 Verdict: approved | approved_with_notes | blocked
@@ -729,88 +729,88 @@ Residual risk
 
 ## 14. Evolution Engine
 
-O framework deve permitir evolucao continua. Melhorias nao entram direto no produto; elas viram candidatas.
+The framework must allow continuous evolution. Improvements do not go directly into the product; they become candidates.
 
-Fluxo:
+Flow:
 
 ```text
 Observation -> Opportunity -> Proposal -> Impact Analysis -> Approval -> Updated Specification -> Updated Plan -> Updated Graph -> Tasks
 ```
 
-Isso evita que sugestoes de IA virem escopo silencioso.
+This prevents AI suggestions from turning into silent scope.
 
-## 15. Como Usar Com Codex
+## 15. How To Use With Codex
 
-Neste repositorio, Codex esta trabalhando no framework em si. Em repositorios de produto, Codex deve operar sobre uma instancia criada a partir de `starter/`, lendo o metodo em `.spec-framework/` e escrevendo artefatos de produto em `product/`.
+In this repository, Codex is working on the framework itself. In product repositories, Codex must operate on an instance created from `starter/`, reading the method in `.spec-framework/` and writing product artifacts in `product/`.
 
-Prompt recomendado para fase de arquitetura:
+Recommended prompt for the architecture phase:
 
 ```text
-Voce e um Software Architect colaborando no Product Engineering Framework.
-Leia product/FRAMEWORK.md e os context.md relevantes.
+You are a Software Architect collaborating on the Product Engineering Framework.
+Read product/FRAMEWORK.md and the relevant context.md files.
 
-Nesta etapa, nao crie arquivos e nao implemente.
-Sua missao e criticar a arquitetura, encontrar ambiguidades, propor alternativas,
-comparar trade-offs e perguntar o que precisa ser aprovado.
+At this stage, do not create files and do not implement.
+Your mission is to critique the architecture, find ambiguities, propose alternatives,
+compare trade-offs, and ask what needs to be approved.
 
-So implemente quando eu disser: CONGELAR ARQUITETURA.
+Only implement when I say: FREEZE ARCHITECTURE.
 ```
 
-Prompt recomendado para fase de geracao:
+Recommended prompt for the generation phase:
 
 ```text
-Leia product/FRAMEWORK.md.
-Use somente as decisoes aprovadas.
-Nao invente novas camadas, nomes ou fluxos.
-Converta a arquitetura aprovada em arquivos, templates e skills.
-Preserve rastreabilidade entre Problem, Vision, Strategy, Domain, Goal, Feature,
-Use Case, Specification, Implementation Plan, Execution Graph e Tasks.
+Read product/FRAMEWORK.md.
+Use only approved decisions.
+Do not invent new layers, names, or flows.
+Convert the approved architecture into files, templates, and skills.
+Preserve traceability between Problem, Vision, Strategy, Domain, Goal, Feature,
+Use Case, Specification, Implementation Plan, Execution Graph, and Tasks.
 ```
 
-Prompt recomendado para nova feature:
+Recommended prompt for a new feature:
 
 ```text
-Leia product/FRAMEWORK.md e o context.md do dominio.
-Conduza a feature pelo fluxo:
+Read product/FRAMEWORK.md and the domain's context.md.
+Drive the feature through the flow:
 Feature -> Use Cases -> Specification -> Design -> Implementation Plan -> Execution Graph -> Tasks.
 
-Antes de persistir cada etapa, liste as decisoes, lacunas, conflitos e perguntas de aprovacao.
+Before persisting each stage, list the decisions, gaps, conflicts, and approval questions.
 ```
 
-## 16. Roadmap Do Framework
+## 16. Framework Roadmap
 
 ### v0
 
-- Estrutura de pastas.
-- Templates basicos.
+- Folder structure.
+- Basic templates.
 - `FRAMEWORK.md`.
-- Lista de skills e orquestradores.
+- List of skills and orchestrators.
 
 ### v1
 
-- Contextos canonicos em todos os niveis.
-- IDs consistentes.
+- Canonical contexts at every level.
+- Consistent IDs.
 - Decision log.
-- Templates completos.
-- Auditorias basicas.
+- Complete templates.
+- Basic audits.
 
 ### v2
 
-- Skills operacionais.
-- Orquestradores com handoff.
-- Execution Graph real.
-- Geracao de tasks por DAG.
-- Gates de aprovacao.
+- Operational skills.
+- Orchestrators with handoff.
+- Real Execution Graph.
+- Task generation by DAG.
+- Approval gates.
 
 ### v3
 
-- Knowledge graph consultavel.
-- Analise automatica de impacto.
-- Execucao paralela de tasks por agentes.
-- Replanejamento automatico apos falhas.
+- Queryable knowledge graph.
+- Automatic impact analysis.
+- Parallel task execution by agents.
+- Automatic replanning after failures.
 
-## 17. Regra Final
+## 17. Final Rule
 
-O framework deve ajudar agentes a pensar antes de construir.
+The framework must help agents think before they build.
 
-Se uma IA nao consegue explicar de qual problema, dominio, objetivo, feature, caso de uso e Specification uma task nasceu, a task ainda nao esta pronta para implementacao.
+If an AI cannot explain which problem, domain, goal, feature, use case, and Specification a task was born from, the task is not yet ready for implementation.

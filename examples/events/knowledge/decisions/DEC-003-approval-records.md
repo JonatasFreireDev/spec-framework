@@ -12,7 +12,7 @@
 
 ## Decision
 
-Artifacts with status `approved`, `in_progress`, `implemented`, `validated`, or `released` require a matching approval record under [.product/history/](../../.product/history/).
+Artifacts with status `approved`, `in_progress`, `implemented`, `validated`, or `released` require a matching approval record under [.product/history/](../../.product/history).
 
 `proposed` does not require an approval record. It means the artifact is ready for review, not approved for downstream execution.
 
@@ -85,11 +85,11 @@ flowchart LR
 
 | Artifact | Required Update |
 | --- | --- |
-| [FRAMEWORK.md](../../FRAMEWORK.md) | Reference approval records in approval gates. |
-| [AGENTS.md](../../AGENTS.md) | Instruct agents not to create or edit approval records except explicit approved migrations. |
-| [framework-validator.mjs](../../engineering/validators/framework-validator.mjs) | Validate approval records and stricter gate transitions. |
-| [.product/history/](../../.product/history/) | Store approval records. |
-| [approval-record-template.json](../templates/approval-record-template.json) | Provide machine-readable template. |
+| [FRAMEWORK.md](../../../../FRAMEWORK.md) | Reference approval records in approval gates. |
+| [AGENTS.md](../../../../AGENTS.md) | Instruct agents not to create or edit approval records except explicit approved migrations. |
+| [framework-validator.mjs](../../../../engineering/validators/framework-validator.mjs) | Validate approval records and stricter gate transitions. |
+| [.product/history/](../../.product/history) | Store approval records. |
+| [approval-record-template.json](../../../../knowledge/templates/approval-record-template.json) | Provide machine-readable template. |
 
 ## Supersedes
 

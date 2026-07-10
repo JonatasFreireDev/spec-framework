@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-10T13:03:21.611Z",
+  "generatedAt": "2026-07-10T16:52:36.963Z",
   "generator": "engineering/validators/framework-validator.mjs",
   "artifacts": [
     {
@@ -108,10 +108,10 @@
         "canonical": "knowledge/decisions/DEC-003-approval-records.md"
       },
       "affectedArtifacts": [
-        "FRAMEWORK.md",
-        "AGENTS.md",
-        "engineering/validators/framework-validator.mjs",
-        "knowledge/templates/approval-record-template.json",
+        "../../FRAMEWORK.md",
+        "../../AGENTS.md",
+        "../../engineering/validators/framework-validator.mjs",
+        "../../knowledge/templates/approval-record-template.json",
         ".product/history/"
       ]
     },
@@ -131,10 +131,10 @@
         "canonical": "knowledge/decisions/DEC-004-code-link-convention.md"
       },
       "affectedArtifacts": [
-        "FRAMEWORK.md",
-        "knowledge/templates/tasks-template.md",
-        "knowledge/templates/qa-evidence-template.md",
-        "engineering/validators/framework-validator.mjs"
+        "../../FRAMEWORK.md",
+        "../../knowledge/templates/tasks-template.md",
+        "../../knowledge/templates/qa-evidence-template.md",
+        "../../engineering/validators/framework-validator.mjs"
       ]
     },
     {
@@ -153,11 +153,11 @@
         "canonical": "knowledge/decisions/DEC-005-derived-staleness.md"
       },
       "affectedArtifacts": [
-        "FRAMEWORK.md",
-        "AGENTS.md",
-        "engineering/validators/framework-validator.mjs",
+        "../../FRAMEWORK.md",
+        "../../AGENTS.md",
+        "../../engineering/validators/framework-validator.mjs",
         ".product/derivations.json",
-        "knowledge/templates/derivation-record-template.json"
+        "../../knowledge/templates/derivation-record-template.json"
       ]
     },
     {
@@ -176,12 +176,12 @@
         "canonical": "knowledge/decisions/DEC-006-task-files.md"
       },
       "affectedArtifacts": [
-        "FRAMEWORK.md",
-        "AGENTS.md",
-        "engineering/validators/framework-validator.mjs",
-        "knowledge/templates/task-template.md",
-        "knowledge/templates/tasks-template.md",
-        "knowledge/templates/execution-graph-template.json",
+        "../../FRAMEWORK.md",
+        "../../AGENTS.md",
+        "../../engineering/validators/framework-validator.mjs",
+        "../../knowledge/templates/task-template.md",
+        "../../knowledge/templates/tasks-template.md",
+        "../../knowledge/templates/execution-graph-template.json",
         "domains/_example-domain/goals/_example-goal/features/_example-feature/use-cases/_example-use-case/execution-graph.json",
         "domains/_example-domain/goals/_example-goal/features/_example-feature/use-cases/_example-use-case/tasks.md",
         "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/attendee-checks-in-with-qr-code/execution-graph.json",
@@ -206,11 +206,11 @@
         "canonical": "knowledge/decisions/DEC-007-code-evidence-gates.md"
       },
       "affectedArtifacts": [
-        "FRAMEWORK.md",
-        "AGENTS.md",
-        "engineering/validators/framework-validator.mjs",
-        "knowledge/templates/task-template.md",
-        "knowledge/templates/qa-evidence-template.md",
+        "../../FRAMEWORK.md",
+        "../../AGENTS.md",
+        "../../engineering/validators/framework-validator.mjs",
+        "../../knowledge/templates/task-template.md",
+        "../../knowledge/templates/qa-evidence-template.md",
         "domains/_example-domain/goals/_example-goal/features/_example-feature/use-cases/_example-use-case/tasks/",
         "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/attendee-checks-in-with-qr-code/tasks/",
         "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/organizer-validates-qr-code/tasks/"
@@ -232,11 +232,11 @@
         "canonical": "knowledge/decisions/DEC-008-rigor-tiers.md"
       },
       "affectedArtifacts": [
-        "FRAMEWORK.md",
-        "AGENTS.md",
-        "engineering/validators/framework-validator.mjs",
-        "knowledge/templates/context-template.md",
-        "knowledge/templates/use-case-template.md",
+        "../../FRAMEWORK.md",
+        "../../AGENTS.md",
+        "../../engineering/validators/framework-validator.mjs",
+        "../../knowledge/templates/context-template.md",
+        "../../knowledge/templates/use-case-template.md",
         "domains/_example-domain/goals/_example-goal/features/_example-feature/use-cases/_example-use-case/context.md",
         "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/attendee-checks-in-with-qr-code/context.md",
         "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/organizer-validates-qr-code/context.md"
@@ -258,12 +258,12 @@
         "canonical": "knowledge/decisions/DEC-009-identity-and-move-tooling.md"
       },
       "affectedArtifacts": [
-        "FRAMEWORK.md",
-        "AGENTS.md",
+        "../../FRAMEWORK.md",
+        "../../AGENTS.md",
         ".product/ids.json",
-        "engineering/move-artifact.mjs",
-        "engineering/validators/framework-validator.mjs",
-        "knowledge/templates/context-template.md",
+        "../../engineering/move-artifact.mjs",
+        "../../engineering/validators/framework-validator.mjs",
+        "../../knowledge/templates/context-template.md",
         "domains/"
       ]
     },

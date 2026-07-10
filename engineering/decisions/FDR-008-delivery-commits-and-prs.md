@@ -56,8 +56,8 @@ Commit and PR references in task evidence must be concrete and traceable.
 | --- | --- |
 | Commit Crafter skill | [../../.codex/skills/commit-crafter/SKILL.md](../../.codex/skills/commit-crafter/SKILL.md) |
 | PR Finalizer skill | [../../.codex/skills/pr-finalizer/SKILL.md](../../.codex/skills/pr-finalizer/SKILL.md) |
-| Commit convention | [../../knowledge/conventions/commits.md](../../knowledge/conventions/commits.md) |
-| Pull request convention | [../../knowledge/conventions/pull-requests.md](../../knowledge/conventions/pull-requests.md) |
+| Commit convention | [../../knowledge/conventions/commits.md](../../examples/events/knowledge/conventions/commits.md) |
+| Pull request convention | [../../knowledge/conventions/pull-requests.md](../../examples/events/knowledge/conventions/pull-requests.md) |
 | FRAMEWORK | [../../FRAMEWORK.md](../../FRAMEWORK.md) |
 
 ## Supersedes

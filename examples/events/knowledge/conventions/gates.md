@@ -5,7 +5,7 @@
 | Field | Value |
 | --- | --- |
 | Status | `placeholder` |
-| Governed by | [FDR-002](../../engineering/decisions/FDR-002-gate-commands.md) |
+| Governed by | [FDR-002](../../../../engineering/decisions/FDR-002-gate-commands.md) |
 | Owner | Product adopter |
 | Purpose | Declare product-specific technical gates for implementation and QA. |
 

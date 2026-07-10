@@ -1618,9 +1618,12 @@ function validateIdentityPolicy() {
     addResult("error", "identity", idsFile, `Central numeric counters remain: ${numericCounters.map(([key]) => key).join(", ")}.`, "Remove central counters and use parent-scoped IDs.");
   }
 
-  const moveTool = fs.existsSync(path.join(root, "engineering", "move-artifact.mjs"))
-    ? path.join(root, "engineering", "move-artifact.mjs")
-    : path.join(frameworkRoot, "tools", "move-artifact.mjs");
+  const moveToolCandidates = [
+    path.join(root, "engineering", "move-artifact.mjs"),
+    path.join(frameworkRoot, "engineering", "move-artifact.mjs"),
+    path.join(frameworkRoot, "tools", "move-artifact.mjs"),
+  ];
+  const moveTool = moveToolCandidates.find((candidate) => fs.existsSync(candidate)) ?? moveToolCandidates[0];
   if (!fs.existsSync(moveTool)) {
     addResult("error", "identity", moveTool, "Move tooling is missing.", "Create engineering/move-artifact.mjs or .spec-framework/tools/move-artifact.mjs.");
   }
