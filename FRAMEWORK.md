@@ -132,6 +132,20 @@ Use cases declaram `rigor_tier` no `context.md` para ajustar o rigor documental 
 - `N/A`: exemplo estrutural ou placeholder sem escopo de produto.
 
 Gatilhos automaticos de Tier L: auth, permissoes, roles, pagamento, PII, upload, UGC, superficie publica, ou migracao que toque RLS/policies. Mudanca de tier exige approval record do use case, mas nao uma nova DEC quando a politica permanece igual.
+
+### Identity And Moves
+
+Cada objeto de produto com pasta propria deve declarar `slug` no `context.md`. O slug nasce na criacao do artefato, corresponde ao nome da pasta e permanece imutavel mesmo que o titulo humano mude.
+
+IDs sao unicos dentro do escopo do pai. Quando houver risco de ambiguidade, referencias devem combinar ID e path. `.product/ids.json` registra a politica de identidade; ele nao deve ser usado como contador global para alocar novos artefatos.
+
+Mover um artefato exige tooling:
+
+```bash
+node engineering/move-artifact.mjs --from <old-path> --to <new-path>
+```
+
+O script de move reescreve links Markdown e paths em JSON que sejam mecanicamente resolviveis. Mencoes em texto livre sao reportadas para revisao humana, nao reescritas automaticamente.
 ## 4. Estrutura De Pastas
 
 Estrutura canonica:
@@ -225,6 +239,7 @@ type: feature
 name: QR Code Check-in
 status: draft
 owner_skill: feature-ai
+slug: qr-code-check-in
 rigor_tier: L
 
 parents:

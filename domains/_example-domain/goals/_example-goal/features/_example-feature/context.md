@@ -6,6 +6,7 @@ type: feature
 name: Example Feature
 status: draft
 owner_skill: feature
+slug: _example-feature
 last_updated: 2026-07-09
 delivery:
   level: N/A

@@ -137,6 +137,24 @@
       "path": "knowledge/decisions/DEC-008-rigor-tiers.md",
       "date": "2026-07-09",
       "supersedes": []
+    },
+    {
+      "id": "DEC-009",
+      "title": "Scoped IDs, Immutable Slugs, And Move Tooling",
+      "affectedArtifacts": [
+        "FRAMEWORK.md",
+        "AGENTS.md",
+        ".product/ids.json",
+        "engineering/move-artifact.mjs",
+        "engineering/validators/framework-validator.mjs",
+        "knowledge/templates/context-template.md",
+        "domains/"
+      ],
+      "status": "approved",
+      "scope": "governance/identity/links/tooling",
+      "path": "knowledge/decisions/DEC-009-identity-and-move-tooling.md",
+      "date": "2026-07-10",
+      "supersedes": []
     }
   ]
 }

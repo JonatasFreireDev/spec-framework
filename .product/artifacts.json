@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-10T00:43:36.889Z",
+  "generatedAt": "2026-07-10T00:54:27.655Z",
   "generator": "engineering/validators/framework-validator.mjs",
   "artifacts": [
     {
@@ -240,6 +240,31 @@
         "domains/_example-domain/goals/_example-goal/features/_example-feature/use-cases/_example-use-case/context.md",
         "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/attendee-checks-in-with-qr-code/context.md",
         "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/organizer-validates-qr-code/context.md"
+      ]
+    },
+    {
+      "id": "DEC-009",
+      "type": "decision",
+      "name": "Scoped IDs, Immutable Slugs, And Move Tooling",
+      "status": "approved",
+      "ownerSkill": "product-historian",
+      "path": "knowledge/decisions/DEC-009-identity-and-move-tooling.md",
+      "parentIds": [],
+      "childIds": [],
+      "dependsOn": [],
+      "decisions": [],
+      "delivery": {},
+      "documents": {
+        "canonical": "knowledge/decisions/DEC-009-identity-and-move-tooling.md"
+      },
+      "affectedArtifacts": [
+        "FRAMEWORK.md",
+        "AGENTS.md",
+        ".product/ids.json",
+        "engineering/move-artifact.mjs",
+        "engineering/validators/framework-validator.mjs",
+        "knowledge/templates/context-template.md",
+        "domains/"
       ]
     },
     {

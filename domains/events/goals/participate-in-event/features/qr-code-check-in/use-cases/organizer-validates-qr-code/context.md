@@ -6,6 +6,7 @@ type: use_case
 name: Organizer Validates QR Code
 status: proposed
 owner_skill: use-case
+slug: organizer-validates-qr-code
 rigor_tier: L
 parents:
   - FT-001

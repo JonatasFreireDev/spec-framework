@@ -6,6 +6,7 @@ type: use-case
 name: Example Use Case
 status: draft
 owner_skill: use-case
+slug: _example-use-case
 rigor_tier: N/A
 last_updated: 2026-07-09
 delivery:

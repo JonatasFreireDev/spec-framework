@@ -6,6 +6,7 @@ type: goal
 name: Example Goal
 status: draft
 owner_skill: user-goal
+slug: _example-goal
 last_updated: 2026-07-09
 delivery:
   level: N/A

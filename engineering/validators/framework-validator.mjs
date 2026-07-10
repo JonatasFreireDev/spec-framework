@@ -1271,12 +1271,48 @@ function validateContexts() {
     for (const field of ["id", "type", "name", "status", "owner_skill"]) {
       if (!meta[field]) addResult("error", "context", file, `Missing context field: ${field}.`, `Add ${field}.`);
     }
+    if (!meta.slug) {
+      addResult("error", "identity", file, "Missing immutable slug in context metadata.", "Add slug matching the artifact folder name.");
+    } else if (meta.slug !== path.basename(path.dirname(file))) {
+      addResult("error", "identity", file, `Context slug ${meta.slug} does not match folder ${path.basename(path.dirname(file))}.`, "Keep slug equal to the immutable folder name or move the folder with engineering/move-artifact.mjs.");
+    }
     if (meta.status && !allowedStatuses.has(meta.status)) {
       addResult("error", "context", file, `Invalid status: ${meta.status}.`, "Use a framework-approved status.");
     }
     if (!readText(file).includes("## Handoff")) {
       addResult("warning", "context", file, "Missing Handoff section.", "Add next skill and required reading.");
     }
+  }
+}
+
+function validateIdentityPolicy() {
+  const idsFile = path.join(root, ".product", "ids.json");
+  if (!fs.existsSync(idsFile)) {
+    addResult("error", "identity", idsFile, ".product/ids.json is missing.", "Add identity policy metadata.");
+    return;
+  }
+
+  const parsed = parseJsonFile(idsFile);
+  if (!parsed.ok) {
+    addResult("error", "identity", idsFile, `Invalid ids.json: ${parsed.error.message}`, "Fix JSON syntax.");
+    return;
+  }
+
+  const ids = parsed.value;
+  if (ids.policy !== "slug-scoped") {
+    addResult("error", "identity", idsFile, `.product/ids.json policy is ${ids.policy ?? "missing"}, expected slug-scoped.`, "Use the DEC-009 identity policy.");
+  }
+  if (ids.deprecated_counters !== true) {
+    addResult("error", "identity", idsFile, ".product/ids.json must mark central counters as deprecated.", "Set deprecated_counters to true.");
+  }
+  const numericCounters = Object.entries(ids).filter(([, value]) => typeof value === "number");
+  if (numericCounters.length > 0) {
+    addResult("error", "identity", idsFile, `Central numeric counters remain: ${numericCounters.map(([key]) => key).join(", ")}.`, "Remove central counters and use parent-scoped IDs.");
+  }
+
+  const moveTool = path.join(root, "engineering", "move-artifact.mjs");
+  if (!fs.existsSync(moveTool)) {
+    addResult("error", "identity", moveTool, "Move tooling is missing.", "Create engineering/move-artifact.mjs.");
   }
 }
 
@@ -1729,6 +1765,7 @@ flowchart LR
 | Check | Status |
 | --- | --- |
 | Context metadata | ${results.some((item) => item.check === "context" && item.severity === "error") ? "🔴 has errors" : "✅ no errors"} |
+| Identity policy | ${results.some((item) => item.check === "identity" && item.severity === "error") ? "\u{1F534} has errors" : results.some((item) => item.check === "identity") ? "\u{1F7E1} findings" : "\u{2705} no findings"} |
 | Use-case bundles | ${results.some((item) => item.check === "use-case-bundle" && item.severity === "error") ? "🔴 has errors" : "✅ no errors"} |
 | Rigor tiers | ${results.some((item) => item.check === "rigor-tier" && item.severity === "error") ? "\u{1F534} has errors" : results.some((item) => item.check === "rigor-tier") ? "\u{1F7E1} findings" : "\u{2705} no findings"} |
 | Approval gates | ${results.some((item) => item.check === "approval-gates" && item.severity === "error") ? "🔴 has errors" : results.some((item) => item.check === "approval-gates") ? "🟡 findings" : "✅ no findings"} |
@@ -1780,6 +1817,7 @@ validateCodeEvidenceGates();
 validateDeliveryMetadata();
 validateExecutionGraphs();
 validateContexts();
+validateIdentityPolicy();
 validateProductPrefixLinks(allFiles);
 validateDecisionsIndex();
 validateDecisionReferences();

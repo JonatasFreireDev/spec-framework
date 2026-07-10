@@ -6,6 +6,7 @@ type: use-case
 name: Attendee checks in with QR code
 status: draft
 owner_skill: 08-use-case.md
+slug: attendee-checks-in-with-qr-code
 rigor_tier: L
 last_updated: 2026-07-09
 delivery:

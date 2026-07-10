@@ -8,6 +8,7 @@ type: [domain | goal | feature | use-case | specification | implementation-plan 
 name: [human readable name]
 status: [draft | proposed | approved | in_progress | implemented | validated | released | deprecated | superseded]
 owner_skill: [skill name]
+slug: [immutable-folder-slug]
 rigor_tier: [S | M | L | N/A]
 last_updated: [YYYY-MM-DD]
 delivery:

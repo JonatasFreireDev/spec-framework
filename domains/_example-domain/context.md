@@ -6,6 +6,7 @@ type: domain
 name: Example Domain
 status: draft
 owner_skill: domain-architect
+slug: _example-domain
 last_updated: 2026-07-09
 delivery:
   level: N/A

@@ -6,6 +6,7 @@ type: goal
 name: Participate in event
 status: draft
 owner_skill: user-goal
+slug: participate-in-event
 last_updated: 2026-07-09
 delivery:
   level: L1

@@ -36,6 +36,7 @@ flowchart LR
 | Check | Status |
 | --- | --- |
 | Context metadata | ✅ no errors |
+| Identity policy | ✅ no findings |
 | Use-case bundles | ✅ no errors |
 | Rigor tiers | ✅ no findings |
 | Approval gates | ✅ no findings |

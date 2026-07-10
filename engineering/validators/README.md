@@ -33,6 +33,8 @@ The validator checks:
 - Mermaid semantic state bindings against `.product/artifacts.json`;
 - local Markdown links;
 - template snapshots.
+- identity policy metadata in `.product/ids.json`;
+- immutable `slug` metadata in `context.md`.
 
 ## Output
 

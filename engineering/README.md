@@ -12,6 +12,7 @@ Use this folder for engineering conventions, environment notes, testing strategy
 
 - `README.md`: engineering purpose and operating rules.
 - `validators/`: local framework validation scripts.
+- `move-artifact.mjs`: safe artifact move tool that rewrites Markdown links and JSON paths.
 - Future convention files when approved, such as `testing.md`, `architecture-notes.md`, `observability.md`, or `release-checklist.md`.
 
 ## Responsible Skill
@@ -40,3 +41,12 @@ node engineering/validators/framework-validator.mjs --write-registry --write-rep
 ```
 
 The registry is written to `.product/artifacts.json` and the report is written to `audits/framework-validation-report.md`.
+
+Move an artifact with:
+
+```bash
+node engineering/move-artifact.mjs --from domains/old/path --to domains/new/path --dry-run
+node engineering/move-artifact.mjs --from domains/old/path --to domains/new/path
+```
+
+The move tool rewrites Markdown links and JSON paths it can resolve mechanically, then reports free-text mentions for human review.

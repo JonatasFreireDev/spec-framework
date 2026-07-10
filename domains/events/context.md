@@ -6,6 +6,7 @@ type: domain
 name: Events
 status: draft
 owner_skill: domain-architect
+slug: events
 last_updated: 2026-07-09
 delivery:
   level: L1

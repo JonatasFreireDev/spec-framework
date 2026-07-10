@@ -6,6 +6,7 @@ type: feature
 name: QR Code Check-in
 status: draft
 owner_skill: feature
+slug: qr-code-check-in
 last_updated: 2026-07-09
 delivery:
   level: L1
