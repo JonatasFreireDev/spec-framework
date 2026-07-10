@@ -5,7 +5,7 @@
 | Field | Value |
 | --- | --- |
 | Status | `template baseline` |
-| Governed by | [FDR-009](../../engineering/decisions/FDR-009-threat-modeling-baseline.md) |
+| Governed by | [FDR-009](../../../../engineering/decisions/FDR-009-threat-modeling-baseline.md) |
 | Owner | Threat Modeler AI |
 | Consumers | Security Review AI, QA AI, Code Runner AI, Audit Orchestrator |
 | Purpose | Declare product-specific security rules that must be reused across domains and delivery artifacts. |

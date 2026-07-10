@@ -39,7 +39,7 @@ Skills that execute or verify implementation work must read this file instead of
 
 | Artifact | Link |
 | --- | --- |
-| Gates convention | [../../knowledge/conventions/gates.md](../../knowledge/conventions/gates.md) |
+| Gates convention | [../../knowledge/conventions/gates.md](../../examples/events/knowledge/conventions/gates.md) |
 | FRAMEWORK | [../../FRAMEWORK.md](../../FRAMEWORK.md) |
 
 ## Supersedes

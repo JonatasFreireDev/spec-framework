@@ -73,11 +73,11 @@ flowchart LR
 
 | Artifact | Required Update |
 | --- | --- |
-| [FRAMEWORK.md](../../FRAMEWORK.md) | Reference derived staleness as a gate blocker. |
-| [AGENTS.md](../../AGENTS.md) | Instruct agents to report stale artifacts instead of flipping status. |
-| [framework-validator.mjs](../../engineering/validators/framework-validator.mjs) | Validate derivation hashes. |
+| [FRAMEWORK.md](../../../../FRAMEWORK.md) | Reference derived staleness as a gate blocker. |
+| [AGENTS.md](../../../../AGENTS.md) | Instruct agents to report stale artifacts instead of flipping status. |
+| [framework-validator.mjs](../../../../engineering/validators/framework-validator.mjs) | Validate derivation hashes. |
 | [.product/derivations.json](../../.product/derivations.json) | Store baseline derivation metadata. |
-| [derivation-record-template.json](../templates/derivation-record-template.json) | Provide machine-readable template. |
+| [derivation-record-template.json](../../../../knowledge/templates/derivation-record-template.json) | Provide machine-readable template. |
 
 ## Supersedes
 
@@ -89,5 +89,5 @@ flowchart LR
 | --- | --- |
 | Approved by | JonatasFreireDev |
 | Date | 2026-07-09 |
-| Approval record | [.product/history/approval-DEC-005-approved-pending.json](../../.product/history/) |
+| Approval record | [.product/history/approval-DEC-005-approved-pending.json](../../.product/history) |
 | Notes | Approved by user instruction: `APROVAR EVOLUÇÃO EV-004`. |

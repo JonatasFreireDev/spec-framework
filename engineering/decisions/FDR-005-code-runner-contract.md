@@ -45,7 +45,7 @@ Code Runner works on exactly one task per invocation, uses TDD, respects `writeS
 | Artifact | Link |
 | --- | --- |
 | Code Runner skill | [../../.codex/skills/code-runner/SKILL.md](../../.codex/skills/code-runner/SKILL.md) |
-| Gates convention | [../../knowledge/conventions/gates.md](../../knowledge/conventions/gates.md) |
+| Gates convention | [../../knowledge/conventions/gates.md](../../examples/events/knowledge/conventions/gates.md) |
 | FRAMEWORK | [../../FRAMEWORK.md](../../FRAMEWORK.md) |
 
 ## Supersedes

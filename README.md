@@ -86,5 +86,5 @@ npm run check
 npm test
 npm run pack:dry
 npm run validate
-node engineering/validators/framework-validator.mjs --write-registry --write-report
+node engineering/validators/framework-validator.mjs --product-root examples/events --framework-root . --write-registry --write-report
 ```
