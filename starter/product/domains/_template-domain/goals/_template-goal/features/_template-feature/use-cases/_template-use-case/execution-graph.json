@@ -1,0 +1,27 @@
+{
+  "id": "GRAPH-TEMPLATE",
+  "status": "draft",
+  "sourceSpecification": "SPEC-TEMPLATE",
+  "delivery": {
+    "level": "L1",
+    "priority": "P0",
+    "depends_on": [
+      "SPEC-TEMPLATE",
+      "PLAN-TEMPLATE"
+    ],
+    "rationale": "Replace with the delivery rationale inherited from the use case."
+  },
+  "nodes": [
+    {
+      "id": "TASK-TEMPLATE-001",
+      "path": "tasks/TASK-TEMPLATE-001.md",
+      "title": "Implement first vertical slice",
+      "type": "implementation",
+      "dependsOn": [],
+      "writeScope": [
+        "src/template-use-case"
+      ],
+      "sharedResources": []
+    }
+  ]
+}

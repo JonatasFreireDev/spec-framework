@@ -1,3 +1,59 @@
 {
-  "artifacts": []
+  "artifacts": [
+    {
+      "id": "DOMAIN-TEMPLATE",
+      "type": "domain",
+      "status": "draft",
+      "path": "domains/_template-domain/context.md",
+      "documents": {
+        "canonical": "domains/_template-domain/domain.md",
+        "context": "domains/_template-domain/context.md"
+      }
+    },
+    {
+      "id": "GOAL-TEMPLATE",
+      "type": "user-goal",
+      "status": "draft",
+      "path": "domains/_template-domain/goals/_template-goal/context.md",
+      "parentIds": [
+        "DOMAIN-TEMPLATE"
+      ],
+      "documents": {
+        "canonical": "domains/_template-domain/goals/_template-goal/goal.md",
+        "context": "domains/_template-domain/goals/_template-goal/context.md"
+      }
+    },
+    {
+      "id": "FT-TEMPLATE",
+      "type": "feature",
+      "status": "draft",
+      "path": "domains/_template-domain/goals/_template-goal/features/_template-feature/context.md",
+      "parentIds": [
+        "GOAL-TEMPLATE"
+      ],
+      "documents": {
+        "canonical": "domains/_template-domain/goals/_template-goal/features/_template-feature/feature.md",
+        "context": "domains/_template-domain/goals/_template-goal/features/_template-feature/context.md"
+      }
+    },
+    {
+      "id": "UC-TEMPLATE",
+      "type": "use-case",
+      "status": "draft",
+      "path": "domains/_template-domain/goals/_template-goal/features/_template-feature/use-cases/_template-use-case/context.md",
+      "parentIds": [
+        "FT-TEMPLATE"
+      ],
+      "documents": {
+        "canonical": "domains/_template-domain/goals/_template-goal/features/_template-feature/use-cases/_template-use-case/use-case.md",
+        "context": "domains/_template-domain/goals/_template-goal/features/_template-feature/use-cases/_template-use-case/context.md",
+        "specification": "domains/_template-domain/goals/_template-goal/features/_template-feature/use-cases/_template-use-case/specification.md",
+        "design": "domains/_template-domain/goals/_template-goal/features/_template-feature/use-cases/_template-use-case/design.md",
+        "implementation_plan": "domains/_template-domain/goals/_template-goal/features/_template-feature/use-cases/_template-use-case/implementation-plan.md",
+        "execution_graph": "domains/_template-domain/goals/_template-goal/features/_template-feature/use-cases/_template-use-case/execution-graph.json",
+        "tasks": "domains/_template-domain/goals/_template-goal/features/_template-feature/use-cases/_template-use-case/tasks.md",
+        "tests": "domains/_template-domain/goals/_template-goal/features/_template-feature/use-cases/_template-use-case/tests.md"
+      }
+    }
+  ]
 }

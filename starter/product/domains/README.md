@@ -16,4 +16,10 @@ domains/
 
 ## Next Step
 
-Create the first domain only after problem, vision, and strategy are coherent enough to guide scope.
+Copy [_template-domain](_template-domain/README.md) to the first product domain slug after problem, vision, and strategy are coherent enough to guide scope.
+
+## Template Chain
+
+```text
+_template-domain -> _template-goal -> _template-feature -> _template-use-case
+```

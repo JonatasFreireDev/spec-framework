@@ -29,4 +29,13 @@ Do not edit framework-owned assets to encode product scope. Put product-specific
 
 ## First Handoff
 
-Start with Problem Discovery AI, Vision AI, and Strategy AI before creating domains or features.
+Start with Product Orchestrator, Problem Discovery AI, Vision AI, and Strategy AI before creating domains or features.
+
+## Bootstrap Path
+
+1. Read `product/context.md`.
+2. Complete the foundation contexts and documents under `product/foundation/`.
+3. Replace `TBD` commands in `product/knowledge/conventions/gates.md` before implementation work.
+4. Copy `product/domains/_template-domain/` when creating the first real domain.
+5. Rename template folders to stable slugs and update every `slug` field in `context.md`.
+6. Keep product scope inside `product/`; do not encode product-specific rules inside `.spec-framework/`.
