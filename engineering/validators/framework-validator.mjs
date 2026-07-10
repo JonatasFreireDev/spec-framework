@@ -1827,6 +1827,7 @@ function validateMermaidAndTemplates(files) {
 function normalizeMarkdownLinkTarget(target) {
   let clean = target.trim();
   if (!clean || clean.startsWith("#")) return null;
+  if (/^\[.+\]$/.test(clean) || /^(TBD|N\/A)$/i.test(clean)) return null;
   if (/^(https?:|mailto:|tel:|javascript:)/i.test(clean)) return null;
   if (clean.startsWith("<") && clean.endsWith(">")) clean = clean.slice(1, -1);
   clean = clean.split(/\s+/)[0];
@@ -1840,17 +1841,46 @@ function normalizeMarkdownLinkTarget(target) {
   return clean;
 }
 
+function stripFencedCodeBlocks(text) {
+  return text.replace(/```[\s\S]*?```/g, (block) => "\n".repeat(block.split(/\r?\n/).length - 1));
+}
+
+function isTemplateGeneratedArtifactLink(file, target) {
+  const fileRel = rel(file);
+  if (!fileRel.startsWith("knowledge/templates/")) return false;
+  const normalized = normalizeWriteScopePath(target);
+  const templateGeneratedTargets = new Set([
+    "context.md",
+    "use-case.md",
+    "specification.md",
+    "design.md",
+    "implementation-plan.md",
+    "execution-graph.json",
+    "tasks.md",
+    "tests.md",
+    "qa-evidence.md",
+    "code-review.md",
+    "security-review.md",
+    "analytics.md",
+    "audit.md",
+    "../context.md",
+    "../specification.md",
+    "../implementation-plan.md",
+    "../execution-graph.json",
+    "../tasks.md",
+    "../tests.md",
+  ]);
+  return templateGeneratedTargets.has(normalized) || /^tasks\/TK-XXX-[0-9]+\.md$/i.test(normalized);
+}
+
 function validateMarkdownLinks(files) {
-  const templateDir = rel(path.join(root, "knowledge", "templates"));
   const linkPattern = /(?<!!)\[[^\]\n]+\]\(([^)\n]+)\)/g;
   for (const file of files.filter((item) => item.endsWith(".md"))) {
-    const fileRel = rel(file);
-    if (fileRel.startsWith(`${templateDir}/`)) continue;
-
-    const text = readText(file);
+    const text = stripFencedCodeBlocks(readText(file));
     for (const match of text.matchAll(linkPattern)) {
       const target = normalizeMarkdownLinkTarget(match[1]);
       if (!target) continue;
+      if (isTemplateGeneratedArtifactLink(file, target)) continue;
 
       const resolved = path.resolve(path.dirname(file), target);
       if (!resolved.startsWith(root)) {

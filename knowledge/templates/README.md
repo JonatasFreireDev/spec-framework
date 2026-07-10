@@ -62,7 +62,7 @@ When a template contains placeholders, keep the placeholder in the label and use
 [`[SPEC-XXX] Specification`](specification.md)
 ```
 
-Do not link to a file that does not exist yet unless the document clearly marks it as a planned output.
+Do not link to a file that does not exist yet unless the link target is an explicit placeholder such as `[planned-output.md]`, `TBD`, or `N/A`. Real relative Markdown links in templates are validated by `engineering/validators/framework-validator.mjs`.
 
 ## Mermaid Progress Classes
 

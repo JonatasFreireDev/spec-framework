@@ -680,7 +680,7 @@ Tipos de auditoria:
 - Conflict: o que contradiz outro artefato?
 - Dependency: o que depende de que?
 - Impact: o que muda se isso mudar?
-- Consistency: os nomes, estados, ids e links batem?
+- Consistency: os nomes, estados, ids e links Markdown batem e resolvem para arquivos existentes?
 - Security: ha risco de acesso indevido, abuso ou vazamento?
 - UX: a experiencia fecha para a persona?
 

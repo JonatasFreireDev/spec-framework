@@ -26,8 +26,8 @@
 | Tasks | [tasks.md](tasks.md) |
 | Tests | [tests.md](tests.md) |
 | QA Evidence | [qa-evidence.md](qa-evidence.md) |
-| Security Baseline | [security-baseline.md](../../../../../../knowledge/conventions/security-baseline.md) |
-| Threat Register | [threat-register.md](../../../../../../audits/security/threat-register.md) |
+| Security Baseline | [security-baseline.md]([knowledge/conventions/security-baseline.md]) |
+| Threat Register | [threat-register.md]([audits/security/threat-register.md]) |
 | Audit | [audit.md](audit.md) |
 
 ## 🚚 Delivery

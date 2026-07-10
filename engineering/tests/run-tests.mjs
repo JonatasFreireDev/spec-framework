@@ -592,6 +592,30 @@ test("validator blocks validated tasks without traceable PR references", () => {
   });
 });
 
+test("validator blocks broken relative Markdown links", () => {
+  withFixture("markdown-link", (root) => {
+    write(root, "docs/index.md", "# Docs\n\n[Missing](missing.md)\n");
+
+    const result = runValidator(root);
+
+    assert.notEqual(result.status, 0, output(result));
+    assert.match(output(result), /links/);
+    assert.match(output(result), /Broken Markdown link: missing\.md/);
+  });
+});
+
+test("validator checks real Markdown links inside templates", () => {
+  withFixture("template-link", (root) => {
+    write(root, "knowledge/templates/template-with-link.md", "# Template\n\n## Snapshot\n\n[Broken](missing-template-target.md)\n");
+
+    const result = runValidator(root);
+
+    assert.notEqual(result.status, 0, output(result));
+    assert.match(output(result), /knowledge\/templates\/template-with-link\.md/);
+    assert.match(output(result), /Broken Markdown link: missing-template-target\.md/);
+  });
+});
+
 test("move-artifact moves folders, rewrites Markdown links and JSON paths, and reports free-text mentions", () => {
   withFixture("move", (root) => {
     write(root, "domains/old/use-case/file.md", "# Target\n\nMoved content.\n");
