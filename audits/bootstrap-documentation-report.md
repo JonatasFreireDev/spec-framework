@@ -58,8 +58,8 @@ flowchart LR
 | --- | --- |
 | `.codex/README.md` | Defines project-local Codex configuration purpose. |
 | `.codex/skills/README.md` | Explains repository-local skill usage. |
-| `skills/v2/README.md` | Human-facing compatibility index for framework skills. |
-| `skills/v2/orchestrators/README.md` | Human-facing orchestrator index. |
+| `.codex/skills/README.md` | Human-facing and executable index for framework skills. |
+| `.codex/skills/*/SKILL.md` | Executable specialist and orchestrator skill contracts. |
 
 ### 🧭 Foundation
 
@@ -143,7 +143,7 @@ flowchart TD
 | Audits | `audits/README.md`, `audits/readiness/README.md`, `audits/readiness/UC-001-readiness.md` |
 | Example domain | `domains/_example-domain/decisions.md`, `domains/_example-domain/.../_example-feature/decisions.md` |
 | Events | `domains/events/context.md`, `participate-in-event/context.md`, `qr-code-check-in/context.md`, `qr-code-check-in/feature.md` |
-| Engineering and releases | `engineering/README.md`, `releases/README.md` |
+| Engineering and releases | `engineering/README.md`, starter release README |
 | Knowledge | `knowledge/business-rules/README.md`, `knowledge/conventions/README.md`, `knowledge/decisions/README.md`, `knowledge/examples/README.md`, `knowledge/glossary/README.md`, `knowledge/patterns/README.md`, `knowledge/prompts/README.md` |
 | Decisions | `DEC-001-qr-expiration-duration.md`, `DEC-002-qr-token-strategy.md` |
 
