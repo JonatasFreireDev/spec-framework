@@ -37,6 +37,12 @@ Preferred validation wrapper after bootstrap:
 node .spec-framework/tools/validate-product.mjs
 ```
 
+Upgrade an initialized product from the framework repository:
+
+```bash
+node scripts/upgrade-product.mjs --target ../my-product
+```
+
 ## What Belongs To The Product
 
 | Product-Owned Area | Purpose |
@@ -75,7 +81,7 @@ Future framework versions should support:
 ```bash
 node scripts/init-product.mjs --target ../my-product
 node .spec-framework/tools/validate-product.mjs
-npx spec-framework upgrade
+node scripts/upgrade-product.mjs --target ../my-product
 ```
 
 Until then, adoption is a documented copy process backed by the validator and the `.spec-framework/` / `product/` boundary.

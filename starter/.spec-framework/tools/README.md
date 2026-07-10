@@ -10,3 +10,5 @@ Expected installed files include:
 move-artifact.mjs
 validate-product.mjs
 ```
+
+`upgrade-product.mjs` lives in the source framework repository and refreshes this folder when run against an initialized product.

@@ -11,6 +11,7 @@ const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), ".."
 const validatorScript = path.join(repoRoot, "engineering", "validators", "framework-validator.mjs");
 const moveScript = path.join(repoRoot, "engineering", "move-artifact.mjs");
 const initProductScript = path.join(repoRoot, "scripts", "init-product.mjs");
+const upgradeProductScript = path.join(repoRoot, "scripts", "upgrade-product.mjs");
 
 const tests = [];
 
@@ -678,6 +679,34 @@ test("init-product creates a product repo with installed framework assets", () =
     const wrappedValidation = runNode(validateProduct, target);
     assert.equal(wrappedValidation.status, 0, output(wrappedValidation));
     assert.match(output(wrappedValidation), /ready/);
+  } finally {
+    fs.rmSync(parent, { recursive: true, force: true });
+  }
+});
+
+test("upgrade-product refreshes framework assets without touching product content", () => {
+  const parent = fs.mkdtempSync(path.join(os.tmpdir(), "spec-framework-upgrade-"));
+  const target = path.join(parent, "product-repo");
+  try {
+    const init = runNode(initProductScript, repoRoot, ["--target", target]);
+    assert.equal(init.status, 0, output(init));
+
+    const productProblem = path.join(target, "product", "foundation", "problem", "problem.md");
+    const productContent = `${fs.readFileSync(productProblem, "utf8")}\nProduct-specific content must survive upgrade.\n`;
+    fs.writeFileSync(productProblem, productContent, "utf8");
+
+    const validator = path.join(target, ".spec-framework", "validators", "framework-validator.mjs");
+    fs.writeFileSync(validator, "// stale validator\n", "utf8");
+
+    const upgrade = runNode(upgradeProductScript, repoRoot, ["--target", target]);
+    assert.equal(upgrade.status, 0, output(upgrade));
+    assert.equal(fs.readFileSync(productProblem, "utf8"), productContent);
+    assert.match(fs.readFileSync(validator, "utf8"), /framework-validator/);
+
+    const validateProduct = path.join(target, ".spec-framework", "tools", "validate-product.mjs");
+    const validation = runNode(validateProduct, target);
+    assert.equal(validation.status, 0, output(validation));
+    assert.match(output(validation), /ready/);
   } finally {
     fs.rmSync(parent, { recursive: true, force: true });
   }
