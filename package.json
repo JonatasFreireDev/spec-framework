@@ -1,6 +1,16 @@
 {
   "name": "spec-framework",
   "version": "0.1.0",
+  "description": "Specification Driven Development framework: templates, skills, validators, and CLI for AI-agent-executable product engineering.",
+  "license": "MIT",
+  "author": "Jonatas Freire",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/JonatasFreireDev/spec-framework.git"
+  },
+  "engines": {
+    "node": ">=22"
+  },
   "private": true,
   "type": "module",
   "files": [
