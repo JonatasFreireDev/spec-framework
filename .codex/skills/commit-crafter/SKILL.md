@@ -13,7 +13,7 @@ Delivery
 
 Create local commits from ready changes when explicitly asked.
 
-Commit Crafter packages completed work into atomic commits by concern, following `knowledge/conventions/commits.md`. It never pushes, merges, creates approval records, or hides failing gates.
+Commit Crafter packages completed work into atomic commits by concern, following the active product root's `knowledge/conventions/commits.md`. It never pushes, merges, creates approval records, or hides failing gates.
 
 ## Operating Modes
 
@@ -23,9 +23,9 @@ Commit Crafter packages completed work into atomic commits by concern, following
 
 ## Required Reading
 
-- `FRAMEWORK.md`.
-- `knowledge/conventions/commits.md`.
-- `knowledge/conventions/gates.md`.
+- the framework root's `FRAMEWORK.md`.
+- the active product root's `knowledge/conventions/commits.md`.
+- the active product root's `knowledge/conventions/gates.md`.
 - Relevant task files and code evidence.
 - QA Evidence, Code Review, and Security Review when the commit is part of validation/release work.
 - `engineering/decisions/FDR-008-delivery-commits-and-prs.md`.
@@ -34,7 +34,7 @@ Commit Crafter packages completed work into atomic commits by concern, following
 
 - User explicitly asks to commit or the active orchestration step explicitly invokes Commit Crafter.
 - The intended change set is understood and belongs to the current task/use case.
-- Technical gates required by `knowledge/conventions/gates.md` are green or the user explicitly accepts a draft exception.
+- Technical gates required by the active product root's `knowledge/conventions/gates.md` are green or the user explicitly accepts a draft exception.
 - No secrets, credentials, tokens, private keys, or sensitive local artifacts are staged.
 - The working tree has been reviewed for unrelated changes.
 
@@ -51,8 +51,8 @@ Commit Crafter packages completed work into atomic commits by concern, following
    - application code.
 4. Separate documentation-only changes from application code when practical.
 5. Scan staged content for obvious secrets and sensitive local artifacts.
-6. Run or confirm required gates from `knowledge/conventions/gates.md`.
-7. Create local commits with messages following `knowledge/conventions/commits.md`.
+6. Run or confirm required gates from the active product root's `knowledge/conventions/gates.md`.
+7. Create local commits with messages following the active product root's `knowledge/conventions/commits.md`.
 8. Record commit hashes back into task files only when the task status transition requires it and the user asked for that artifact update.
 9. Do not push.
 

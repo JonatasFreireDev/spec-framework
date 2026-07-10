@@ -1,6 +1,6 @@
-﻿---
+---
 name: vision
-description: "Vision Skill. Use when Codex needs to Turn an approved problem into a product vision, principles, north star, and strategic boundaries in this repository's Spec Framework workflow, including creating, updating, auditing, explaining, routing, or handing off related product artifacts."
+description: "Vision Skill. Use when Codex needs to Turn an approved problem into a product vision, principles, north star, and strategic boundaries in the Spec Framework workflow, including creating, updating, auditing, explaining, routing, or handing off related product artifacts."
 ---
 
 # Vision Skill
@@ -24,10 +24,10 @@ Approved problem; target audience; evidence; constraints; anti-goals; founder in
 vision.md; principles.md; north-star.md; context.md updates; decision candidates.
 
 ## Required reading
-- FRAMEWORK.md
+- the framework root's `FRAMEWORK.md`
 - Relevant parent context.md files.
 - Relevant templates in knowledge/templates/.
-- Approved decisions in knowledge/decisions/ and .product/decisions.json.
+- Approved product decisions in the active product root's `knowledge/decisions/` and `.product/decisions.json`.
 
 ## Workflow
 1. Read the parent context and confirm the artifact status.

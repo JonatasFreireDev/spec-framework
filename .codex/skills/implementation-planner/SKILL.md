@@ -1,6 +1,6 @@
-﻿---
+---
 name: implementation-planner
-description: "Implementation Planner Skill. Use when Codex needs to Think like a tech lead and translate an approved specification plus approved design into a build strategy without writing code in this repository's Spec Framework workflow, including creating, updating, auditing, explaining, routing, or handing off related product artifacts."
+description: "Implementation Planner Skill. Use when Codex needs to Think like a tech lead and translate an approved specification plus approved design into a build strategy without writing code in the Spec Framework workflow, including creating, updating, auditing, explaining, routing, or handing off related product artifacts."
 ---
 
 # Implementation Planner Skill
@@ -24,10 +24,10 @@ Approved specification; approved design or `Not applicable` design artifact; Del
 implementation-plan.md; inherited Delivery Level and Priority; phases; dependency notes; rollback plan; candidate task slices.
 
 ## Required reading
-- FRAMEWORK.md
+- the framework root's `FRAMEWORK.md`
 - Relevant parent context.md files.
 - Relevant templates in knowledge/templates/.
-- Approved decisions in knowledge/decisions/ and .product/decisions.json.
+- Approved product decisions in the active product root's `knowledge/decisions/` and `.product/decisions.json`.
 
 ## Workflow
 1. Read the parent context and confirm the artifact status.

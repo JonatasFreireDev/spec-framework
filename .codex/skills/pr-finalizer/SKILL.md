@@ -23,9 +23,9 @@ PR Finalizer verifies hard preconditions, links evidence, writes PR metadata bac
 
 ## Required Reading
 
-- `FRAMEWORK.md`.
-- `knowledge/conventions/pull-requests.md`.
-- `knowledge/conventions/gates.md`.
+- the framework root's `FRAMEWORK.md`.
+- the active product root's `knowledge/conventions/pull-requests.md`.
+- the active product root's `knowledge/conventions/gates.md`.
 - Relevant task files with branch, commits, and code paths.
 - QA Evidence.
 - Code Review.
@@ -48,9 +48,9 @@ If any hard precondition fails, stop and report the blocker.
 ## Workflow
 
 1. Inspect branch, commits, diff, and task evidence.
-2. Re-run or confirm gates required by `knowledge/conventions/gates.md`.
+2. Re-run or confirm gates required by the active product root's `knowledge/conventions/gates.md`.
 3. Verify QA Evidence, Code Review, and Security Review readiness.
-4. Build a PR title and body from `knowledge/conventions/pull-requests.md`.
+4. Build a PR title and body from the active product root's `knowledge/conventions/pull-requests.md`.
 5. Open the PR only when the user asked for it and the provider tool is available.
 6. Record the PR URL/id back into relevant task files when required by status transition.
 7. Do not merge.

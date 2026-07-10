@@ -1,6 +1,6 @@
-﻿---
+---
 name: qa
-description: "QA Skill. Use when Codex needs to Validate whether an implemented or planned artifact satisfies the specification, acceptance criteria, and edge cases in this repository's Spec Framework workflow, including creating, updating, auditing, explaining, routing, or handing off related product artifacts."
+description: "QA Skill. Use when Codex needs to Validate whether an implemented or planned artifact satisfies the specification, acceptance criteria, and edge cases in the Spec Framework workflow, including creating, updating, auditing, explaining, routing, or handing off related product artifacts."
 ---
 
 # QA Skill
@@ -20,21 +20,21 @@ QA is an independent read-only verifier. QA does not repair code, does not edit 
 - explain: summarize the artifact, finding, or decision in plain language.
 
 ## Inputs
-Specification; implementation plan; execution graph; tasks; code evidence; gate commands from `knowledge/conventions/gates.md`; test results; implementation notes; known risks.
+Specification; implementation plan; execution graph; tasks; code evidence; gate commands from the active product root's `knowledge/conventions/gates.md`; test results; implementation notes; known risks.
 
 ## Outputs
 QA verdict; test evidence; blocking findings; residual risks; required fixes.
 
 ## Required reading
-- FRAMEWORK.md
+- the framework root's `FRAMEWORK.md`
 - Relevant parent context.md files.
-- `knowledge/conventions/gates.md`.
+- the active product root's `knowledge/conventions/gates.md`.
 - Relevant templates in knowledge/templates/.
-- Approved decisions in knowledge/decisions/ and .product/decisions.json.
+- Approved product decisions in the active product root's `knowledge/decisions/` and `.product/decisions.json`.
 
 ## Workflow
 1. Read the relevant context and identify artifact status.
-2. Read `knowledge/conventions/gates.md` and identify applicable gates for the delivery.
+2. Read the active product root's `knowledge/conventions/gates.md` and identify applicable gates for the delivery.
 3. Re-run applicable gates independently when the environment is available. Do not rely on task checkboxes, handoff notes, or claimed pass/fail status.
 4. Record real gate output in `qa-evidence.md`: command, environment, log path or captured output, CI URL when available, and limitation notes when a gate cannot run.
 5. Hunt for hollow tests, missing assertions, missing negative cases, missing permission cases, scope drift outside the task writeScope, and divergence from the Specification.
@@ -52,7 +52,7 @@ QA verdict; test evidence; blocking findings; residual risks; required fixes.
 ## Quality checklist
 - [ ] Preserves traceability to affected artifacts.
 - [ ] Uses the correct template and naming conventions.
-- [ ] Re-runs applicable gates from `knowledge/conventions/gates.md` or records why they could not run.
+- [ ] Re-runs applicable gates from the active product root's `knowledge/conventions/gates.md` or records why they could not run.
 - [ ] Includes real logs, output, CI URL, screenshot, or explicit limitation notes.
 - [ ] Checks for hollow tests and missing negative or permission coverage.
 - [ ] Checks task writeScope and flags out-of-scope changes.

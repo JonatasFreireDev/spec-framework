@@ -1,6 +1,6 @@
-﻿---
+---
 name: strategy
-description: "Strategy Skill. Use when Codex needs to Translate vision into positioning, segments, metrics, roadmap logic, phase gates, Delivery Levels, and prioritization rules in this repository's Spec Framework workflow, including creating, updating, auditing, explaining, routing, or handing off related product artifacts."
+description: "Strategy Skill. Use when Codex needs to Translate vision into positioning, segments, metrics, roadmap logic, phase gates, Delivery Levels, and prioritization rules in the Spec Framework workflow, including creating, updating, auditing, explaining, routing, or handing off related product artifacts."
 ---
 
 # Strategy Skill
@@ -24,10 +24,10 @@ Approved vision; personas or segment hypotheses; competitors; constraints; metri
 strategy.md; personas.md; competitors.md; metrics.md; roadmap.md with Delivery Levels and Priorities; context.md updates.
 
 ## Required reading
-- FRAMEWORK.md
+- the framework root's `FRAMEWORK.md`
 - Relevant parent context.md files.
 - Relevant templates in knowledge/templates/.
-- Approved decisions in knowledge/decisions/ and .product/decisions.json.
+- Approved product decisions in the active product root's `knowledge/decisions/` and `.product/decisions.json`.
 
 ## Workflow
 1. Read the parent context and confirm the artifact status.

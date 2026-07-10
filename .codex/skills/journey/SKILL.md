@@ -1,6 +1,6 @@
-﻿---
+---
 name: journey
-description: "Journey Skill. Use when Codex needs to Map the end-to-end journey for a user goal and expose moments, states, gaps, and decisions in this repository's Spec Framework workflow, including creating, updating, auditing, explaining, routing, or handing off related product artifacts."
+description: "Journey Skill. Use when Codex needs to Map the end-to-end journey for a user goal and expose moments, states, gaps, and decisions in the Spec Framework workflow, including creating, updating, auditing, explaining, routing, or handing off related product artifacts."
 ---
 
 # Journey Skill
@@ -24,10 +24,10 @@ Approved goal; personas; existing UX references; business rules; analytics goals
 journeys.md; journey map; states; failure paths; opportunity notes.
 
 ## Required reading
-- FRAMEWORK.md
+- the framework root's `FRAMEWORK.md`
 - Relevant parent context.md files.
 - Relevant templates in knowledge/templates/.
-- Approved decisions in knowledge/decisions/ and .product/decisions.json.
+- Approved product decisions in the active product root's `knowledge/decisions/` and `.product/decisions.json`.
 
 ## Workflow
 1. Read the parent context and confirm the artifact status.

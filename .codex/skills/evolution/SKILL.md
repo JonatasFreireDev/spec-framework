@@ -1,6 +1,6 @@
-﻿---
+---
 name: evolution
-description: "Evolution Skill. Use when Codex needs to Turn observations, metrics, feedback, and audit findings into explicit improvement candidates for approval in this repository's Spec Framework workflow, including creating, updating, auditing, explaining, routing, or handing off related product artifacts."
+description: "Evolution Skill. Use when Codex needs to Turn observations, metrics, feedback, and audit findings into explicit improvement candidates for approval in the Spec Framework workflow, including creating, updating, auditing, explaining, routing, or handing off related product artifacts."
 ---
 
 # Evolution Skill
@@ -24,10 +24,10 @@ Feedback; metrics; QA findings; audit reports; roadmap; product principles.
 Evolution proposals; opportunity notes; expected impact; required approvals.
 
 ## Required reading
-- FRAMEWORK.md
+- the framework root's `FRAMEWORK.md`
 - Relevant parent context.md files.
 - Relevant templates in knowledge/templates/.
-- Approved decisions in knowledge/decisions/ and .product/decisions.json.
+- Approved product decisions in the active product root's `knowledge/decisions/` and `.product/decisions.json`.
 
 ## Workflow
 1. Read the relevant context and identify artifact status.

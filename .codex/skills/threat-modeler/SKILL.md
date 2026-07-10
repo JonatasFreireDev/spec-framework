@@ -20,20 +20,20 @@ Threat Modeler does not approve releases and does not replace Security Review. I
 - explain: summarize current threat posture, blockers, residual risks, and next owners.
 
 ## Inputs
-FRAMEWORK.md; relevant `context.md` files; domain, goal, feature, use case, specification, design, implementation plan, execution graph, tasks, QA evidence, Security Review, audit reports, approved decisions, stack conventions, and known incidents.
+the framework root's FRAMEWORK.md; relevant `context.md` files; domain, goal, feature, use case, specification, design, implementation plan, execution graph, tasks, QA evidence, Security Review, audit reports, approved decisions, stack conventions, and known incidents.
 
 ## Outputs
 Security baseline updates; threat register entries; threat scenarios; impacted artifacts; mitigations; residual risks; required decisions; routing recommendations.
 
 ## Required Reading
-- FRAMEWORK.md.
+- the framework root's `FRAMEWORK.md`.
 - Relevant parent and local `context.md` files.
-- `knowledge/conventions/security-baseline.md`.
+- the active product root's `knowledge/conventions/security-baseline.md`.
 - `knowledge/templates/security-baseline-template.md` when creating or normalizing a baseline.
 - `knowledge/templates/threat-register-template.md` when creating or normalizing a threat register.
-- Approved product decisions in `knowledge/decisions/` and `.product/decisions.json`.
+- Approved product decisions in the active product root's `knowledge/decisions/` and `.product/decisions.json`.
 - Framework security decisions in `engineering/decisions/`, especially FDR-006 and FDR-009.
-- Existing `audits/security/threat-register.md` when present.
+- Existing active product root `audits/security/threat-register.md` when present.
 - Related Security Review, QA Evidence, and audit artifacts when present.
 
 ## Workflow

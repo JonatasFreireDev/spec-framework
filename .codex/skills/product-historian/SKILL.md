@@ -1,6 +1,6 @@
-﻿---
+---
 name: product-historian
-description: "Product Historian Skill. Use when Codex needs to Record important product and architecture decisions, their context, consequences, and supersession links in this repository's Spec Framework workflow, including creating, updating, auditing, explaining, routing, or handing off related product artifacts."
+description: "Product Historian Skill. Use when Codex needs to Record important product and architecture decisions, their context, consequences, and supersession links in the Spec Framework workflow, including creating, updating, auditing, explaining, routing, or handing off related product artifacts."
 ---
 
 # Product Historian Skill
@@ -24,10 +24,10 @@ Decision proposal; affected artifacts; prior decisions; trade-off analysis; appr
 Decision records; updated decisions index; supersede notes; historical rationale.
 
 ## Required reading
-- FRAMEWORK.md
+- the framework root's `FRAMEWORK.md`
 - Relevant parent context.md files.
 - Relevant templates in knowledge/templates/.
-- Approved decisions in knowledge/decisions/ and .product/decisions.json.
+- Approved product decisions in the active product root's `knowledge/decisions/` and `.product/decisions.json`.
 
 ## Workflow
 1. Read the relevant context and identify artifact status.

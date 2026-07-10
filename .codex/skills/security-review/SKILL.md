@@ -1,6 +1,6 @@
 ---
 name: security-review
-description: "Security Review Skill. Use when Codex needs to evaluate authentication, authorization, privacy, abuse, secrets, data exposure, logging, dependency, rollout, and residual-risk controls before an executable artifact can be validated or released in this repository's Spec Framework workflow."
+description: "Security Review Skill. Use when Codex needs to evaluate authentication, authorization, privacy, abuse, secrets, data exposure, logging, dependency, rollout, and residual-risk controls before an executable artifact can be validated or released in the Spec Framework workflow."
 ---
 
 # Security Review Skill
@@ -26,12 +26,12 @@ Specification; design; implementation plan; execution graph; tasks; tests; QA ev
 Security verdict; threat model summary; control checklist; blocking findings; residual risks; required fixes; approval or release-blocking recommendation.
 
 ## Required Reading
-- FRAMEWORK.md.
+- the framework root's `FRAMEWORK.md`.
 - Relevant parent and local `context.md` files.
 - `knowledge/templates/security-review-template.md`.
-- `knowledge/conventions/security-baseline.md` and any linked domain baseline.
-- Existing `audits/security/threat-register.md` entries that affect the artifact.
-- Approved decisions in `knowledge/decisions/` and `.product/decisions.json`.
+- the active product root's `knowledge/conventions/security-baseline.md` and any linked domain baseline.
+- Existing active product root `audits/security/threat-register.md` entries that affect the artifact.
+- Approved product decisions in the active product root's `knowledge/decisions/` and `.product/decisions.json`.
 - Related `tests.md`, `qa-evidence.md`, and `audit.md` when present.
 - `engineering/decisions/FDR-006-failure-routing-and-regression.md`.
 

@@ -1,6 +1,6 @@
-﻿---
+---
 name: new-feature-orchestrator
-description: "New Feature Orchestrator. Use when Codex needs to Move a proposed feature from idea to executable task graph in this repository's Spec Framework workflow, including creating, updating, auditing, explaining, routing, or handing off related product artifacts."
+description: "New Feature Orchestrator. Use when Codex needs to Move a proposed feature from idea to executable task graph in the Spec Framework workflow, including creating, updating, auditing, explaining, routing, or handing off related product artifacts."
 ---
 
 # New Feature Orchestrator
@@ -12,10 +12,10 @@ Move a proposed feature from idea to executable task graph.
 Orchestrator. Controls workflow, gates, handoffs, and approval checkpoints. It should not invent canonical product content when a specialist skill owns that content.
 
 ## Required reading
-- FRAMEWORK.md
+- the framework root's `FRAMEWORK.md`
 - Relevant context.md files for the requested scope.
-- .product/state.json, .product/roadmap.json, and .product/decisions.json when present.
-- Approved decisions in knowledge/decisions/.
+- the active product root's `.product/state.json`, `.product/roadmap.json`, and `.product/decisions.json` when present.
+- Approved product decisions in the active product root's `knowledge/decisions/`.
 
 ## Default sequence
 Impact Analyzer -> Feature -> Use Case -> Specification -> UX/UI -> Implementation Planner -> Execution Graph -> Task Generator

@@ -1,6 +1,6 @@
-﻿---
+---
 name: gap-finder
-description: "Gap Finder Skill. Use when Codex needs to Find missing artifacts, missing sections, missing states, incomplete traceability, and unfinished decisions in this repository's Spec Framework workflow, including creating, updating, auditing, explaining, routing, or handing off related product artifacts."
+description: "Gap Finder Skill. Use when Codex needs to Find missing artifacts, missing sections, missing states, incomplete traceability, and unfinished decisions in the Spec Framework workflow, including creating, updating, auditing, explaining, routing, or handing off related product artifacts."
 ---
 
 # Gap Finder Skill
@@ -18,16 +18,16 @@ Find missing artifacts, missing sections, missing states, incomplete traceabilit
 - explain: summarize the artifact, finding, or decision in plain language.
 
 ## Inputs
-Any artifact subtree; FRAMEWORK.md; templates; context files; decisions; roadmap.
+Any artifact subtree; the framework root's `FRAMEWORK.md`; templates; context files; decisions; roadmap.
 
 ## Outputs
 Gap report; severity; evidence; required additions; recommended next skill.
 
 ## Required reading
-- FRAMEWORK.md
+- the framework root's `FRAMEWORK.md`
 - Relevant parent context.md files.
 - Relevant templates in knowledge/templates/.
-- Approved decisions in knowledge/decisions/ and .product/decisions.json.
+- Approved product decisions in the active product root's `knowledge/decisions/` and `.product/decisions.json`.
 
 ## Workflow
 1. Read the relevant context and identify artifact status.

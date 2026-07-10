@@ -36,6 +36,14 @@ function copy(root, source, relativePath) {
   fs.copyFileSync(source, target);
 }
 
+function walk(dir) {
+  if (!fs.existsSync(dir)) return [];
+  return fs.readdirSync(dir, { withFileTypes: true }).flatMap((entry) => {
+    const fullPath = path.join(dir, entry.name);
+    return entry.isDirectory() ? walk(fullPath) : [fullPath];
+  });
+}
+
 function withFixture(name, fn) {
   const root = fs.mkdtempSync(path.join(os.tmpdir(), `spec-framework-${name}-`));
   try {
@@ -775,6 +783,38 @@ test("npm package includes framework assets required by bootstrap", () => {
     "AGENTS.md",
   ]) {
     assert.equal(files.has(required), true, `package missing ${required}`);
+  }
+});
+
+test("project skills resolve framework and product paths through explicit roots", () => {
+  const skillFiles = walk(path.join(repoRoot, ".codex", "skills"))
+    .filter((file) => path.basename(file) === "SKILL.md");
+
+  assert.ok(skillFiles.length > 0, "expected project skills");
+
+  for (const file of skillFiles) {
+    const relative = path.relative(repoRoot, file).replaceAll(path.sep, "/");
+    const lines = fs.readFileSync(file, "utf8").split(/\r?\n/);
+
+    lines.forEach((line, index) => {
+      const location = `${relative}:${index + 1}`;
+      assert.doesNotMatch(line, /this repository's Spec Framework workflow/, `${location} must not describe reusable skills as repository-local workflow only`);
+
+      if (line.includes("FRAMEWORK.md")) {
+        assert.match(line, /framework root/, `${location} must resolve FRAMEWORK.md through the framework root`);
+      }
+
+      for (const productPath of [
+        "knowledge/conventions/",
+        "knowledge/decisions/",
+        ".product/",
+        "audits/security/",
+      ]) {
+        if (line.includes(productPath)) {
+          assert.match(line, /active product root/, `${location} must resolve ${productPath} through the active product root`);
+        }
+      }
+    });
   }
 });
 

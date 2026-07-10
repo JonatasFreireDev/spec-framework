@@ -1,6 +1,6 @@
-﻿---
+---
 name: task-generator
-description: "Task Generator Skill. Use when Codex needs to Generate small, executable, testable tasks from the execution graph and source specification in this repository's Spec Framework workflow, including creating, updating, auditing, explaining, routing, or handing off related product artifacts."
+description: "Task Generator Skill. Use when Codex needs to Generate small, executable, testable tasks from the execution graph and source specification in the Spec Framework workflow, including creating, updating, auditing, explaining, routing, or handing off related product artifacts."
 ---
 
 # Task Generator Skill
@@ -24,10 +24,10 @@ Approved execution graph; implementation plan; specification; design artifact wh
 tasks.md; task files or task records with Delivery Level/Priority; acceptance checks; handoff notes for implementers.
 
 ## Required reading
-- FRAMEWORK.md
+- the framework root's `FRAMEWORK.md`
 - Relevant parent context.md files.
 - Relevant templates in knowledge/templates/.
-- Approved decisions in knowledge/decisions/ and .product/decisions.json.
+- Approved product decisions in the active product root's `knowledge/decisions/` and `.product/decisions.json`.
 
 ## Workflow
 1. Read the parent context and confirm the artifact status.

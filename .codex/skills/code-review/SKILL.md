@@ -23,11 +23,11 @@ Code Review verifies that implementation matches the Specification, tasks, archi
 
 ## Required Reading
 
-- `FRAMEWORK.md`.
+- the framework root's `FRAMEWORK.md`.
 - Relevant `context.md`.
 - Specification, Design, Implementation Plan, Execution Graph, Tasks, Tests, QA Evidence, and Security Review when present.
-- `knowledge/conventions/gates.md`.
-- Product decisions in `knowledge/decisions/` and `.product/decisions.json`.
+- the active product root's `knowledge/conventions/gates.md`.
+- Product decisions in the active product root's `knowledge/decisions/` and `.product/decisions.json`.
 - Framework routing in `engineering/decisions/FDR-006-failure-routing-and-regression.md`.
 - The diff, branch, commits, PR, or code paths referenced by the task files.
 

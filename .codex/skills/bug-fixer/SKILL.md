@@ -23,8 +23,8 @@ Bug Fixer handles defects. It does not implement new scope, decide product behav
 
 ## Required Reading
 
-- `FRAMEWORK.md`.
-- `knowledge/conventions/gates.md`.
+- the framework root's `FRAMEWORK.md`.
+- the active product root's `knowledge/conventions/gates.md`.
 - The finding source: `qa-evidence.md`, `security-review.md`, `audit.md`, incident report, or production error.
 - The related task file and `execution-graph.json`.
 - The related Specification acceptance criteria and source sections.
@@ -48,7 +48,7 @@ Bug Fixer handles defects. It does not implement new scope, decide product behav
 3. Reproduce the defect with a failing test before changing production code. If reproduction is impossible, stop and report why.
 4. Fix the root cause with the smallest safe change.
 5. Keep the regression test permanent.
-6. Run the narrowest relevant test, then applicable gates from `knowledge/conventions/gates.md`.
+6. Run the narrowest relevant test, then applicable gates from the active product root's `knowledge/conventions/gates.md`.
 7. Record fix evidence where requested by the source artifact, without marking QA or Security Review as passed.
 8. Route back to QA after any code change. Never advance over a red gate.
 

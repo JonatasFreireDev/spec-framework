@@ -1,6 +1,6 @@
-﻿---
+---
 name: dependency-analyzer
-description: "Dependency Analyzer Skill. Use when Codex needs to Expose explicit and implicit dependencies across domains, features, use cases, specs, tasks, releases, and decisions in this repository's Spec Framework workflow, including creating, updating, auditing, explaining, routing, or handing off related product artifacts."
+description: "Dependency Analyzer Skill. Use when Codex needs to Expose explicit and implicit dependencies across domains, features, use cases, specs, tasks, releases, and decisions in the Spec Framework workflow, including creating, updating, auditing, explaining, routing, or handing off related product artifacts."
 ---
 
 # Dependency Analyzer Skill
@@ -24,10 +24,10 @@ Artifact subtree; context files; execution graphs; implementation plans; release
 Dependency report; blocked items; dependency graph notes; parallelization opportunities.
 
 ## Required reading
-- FRAMEWORK.md
+- the framework root's `FRAMEWORK.md`
 - Relevant parent context.md files.
 - Relevant templates in knowledge/templates/.
-- Approved decisions in knowledge/decisions/ and .product/decisions.json.
+- Approved product decisions in the active product root's `knowledge/decisions/` and `.product/decisions.json`.
 
 ## Workflow
 1. Read the relevant context and identify artifact status.

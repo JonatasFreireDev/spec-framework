@@ -23,14 +23,14 @@ Code Runner turns a task contract into code and executable evidence. It does not
 
 ## Required Reading
 
-- `FRAMEWORK.md`.
-- `knowledge/conventions/gates.md`.
+- the framework root's `FRAMEWORK.md`.
+- the active product root's `knowledge/conventions/gates.md`.
 - The task file in `tasks/<task-id>.md`.
 - The parent `execution-graph.json`.
 - The parent `context.md`.
 - The Specification sections named by the task.
 - The relevant Design and Implementation Plan sections when the task touches UI, architecture, data, integrations, or rollout.
-- Approved product decisions in `knowledge/decisions/` and `.product/decisions.json` when referenced by the task.
+- Approved product decisions in the active product root's `knowledge/decisions/` and `.product/decisions.json` when referenced by the task.
 - Framework decisions in `engineering/decisions/` when they govern implementation behavior.
 
 ## Preconditions
@@ -49,7 +49,7 @@ If a precondition is missing, stop and report the blocker. Do not invent missing
 1. Read the task contract and source sections.
 2. Confirm the task is the only implementation target for this invocation.
 3. Confirm planned edits stay inside `writeScope`; if a required edit falls outside scope, stop and request graph/task update.
-4. Read `knowledge/conventions/gates.md` and identify applicable gates.
+4. Read the active product root's `knowledge/conventions/gates.md` and identify applicable gates.
 5. Implement in TDD:
    - write or update a test that fails for the intended behavior;
    - run the narrowest relevant test and confirm failure;
@@ -73,7 +73,7 @@ If a precondition is missing, stop and report the blocker. Do not invent missing
 - [ ] Exactly one task was implemented.
 - [ ] A failing test existed before the implementation change, or the limitation is explicitly reported.
 - [ ] Implementation stayed inside `writeScope`.
-- [ ] Applicable gates from `knowledge/conventions/gates.md` were run or limitations were recorded.
+- [ ] Applicable gates from the active product root's `knowledge/conventions/gates.md` were run or limitations were recorded.
 - [ ] No architecture, data, security, privacy, or product-scope decision was invented.
 - [ ] No commit, push, merge, or approval record was created.
 - [ ] Handoff names QA as the next independent verifier when code changed.

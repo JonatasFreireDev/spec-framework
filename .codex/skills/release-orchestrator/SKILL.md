@@ -1,6 +1,6 @@
-﻿---
+---
 name: release-orchestrator
-description: "Release Orchestrator. Use when Codex needs to Verify readiness before a release or merge milestone in this repository's Spec Framework workflow, including creating, updating, auditing, explaining, routing, or handing off related product artifacts."
+description: "Release Orchestrator. Use when Codex needs to Verify readiness before a release or merge milestone in the Spec Framework workflow, including creating, updating, auditing, explaining, routing, or handing off related product artifacts."
 ---
 
 # Release Orchestrator
@@ -12,10 +12,10 @@ Verify readiness before a release or merge milestone.
 Orchestrator. Controls workflow, gates, handoffs, and approval checkpoints. It should not invent canonical product content when a specialist skill owns that content.
 
 ## Required reading
-- FRAMEWORK.md
+- the framework root's `FRAMEWORK.md`
 - Relevant context.md files for the requested scope.
-- .product/state.json, .product/roadmap.json, and .product/decisions.json when present.
-- Approved decisions in knowledge/decisions/.
+- the active product root's `.product/state.json`, `.product/roadmap.json`, and `.product/decisions.json` when present.
+- Approved product decisions in the active product root's `knowledge/decisions/`.
 
 ## Default sequence
 Gap Finder -> Conflict Finder -> UX/UI audit when UI exists -> QA -> Code Review -> Security Review when sensitive -> Documentation Writer

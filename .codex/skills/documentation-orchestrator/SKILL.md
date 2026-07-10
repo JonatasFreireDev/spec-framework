@@ -1,6 +1,6 @@
-﻿---
+---
 name: documentation-orchestrator
-description: "Documentation Orchestrator. Use when Codex needs to Synchronize context, indexes, templates, and derived docs after approved changes in this repository's Spec Framework workflow, including creating, updating, auditing, explaining, routing, or handing off related product artifacts."
+description: "Documentation Orchestrator. Use when Codex needs to Synchronize context, indexes, templates, and derived docs after approved changes in the Spec Framework workflow, including creating, updating, auditing, explaining, routing, or handing off related product artifacts."
 ---
 
 # Documentation Orchestrator
@@ -12,10 +12,10 @@ Synchronize context, indexes, templates, and derived docs after approved changes
 Orchestrator. Controls workflow, gates, handoffs, and approval checkpoints. It should not invent canonical product content when a specialist skill owns that content.
 
 ## Required reading
-- FRAMEWORK.md
+- the framework root's `FRAMEWORK.md`
 - Relevant context.md files for the requested scope.
-- .product/state.json, .product/roadmap.json, and .product/decisions.json when present.
-- Approved decisions in knowledge/decisions/.
+- the active product root's `.product/state.json`, `.product/roadmap.json`, and `.product/decisions.json` when present.
+- Approved product decisions in the active product root's `knowledge/decisions/`.
 
 ## Default sequence
 Documentation Writer -> Product Historian -> targeted audit skills
