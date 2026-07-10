@@ -25,18 +25,13 @@ jobs:
           node-version: "22"
 
       - name: Syntax check
-        run: |
-          node --check engineering/validators/framework-validator.mjs
-          node --check engineering/move-artifact.mjs
-          node --check engineering/tests/run-tests.mjs
-          node --check scripts/framework-assets.mjs
-          node --check scripts/spec-framework.mjs
-          node --check scripts/init-product.mjs
-          node --check scripts/upgrade-product.mjs
-          node --check scripts/validate-product.mjs
+        run: npm run check
 
       - name: Engineering tool tests
-        run: node engineering/tests/run-tests.mjs
+        run: npm test
+
+      - name: Package contents
+        run: npm run pack:dry
 
       - name: Framework validator
-        run: node engineering/validators/framework-validator.mjs
+        run: npm run validate
