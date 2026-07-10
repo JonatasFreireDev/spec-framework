@@ -4,18 +4,19 @@
 
 This folder describes the reusable Spec Framework core: method, operational contracts, validators, skills, templates, and adoption rules.
 
-The repository root hosts the executable framework core. New product repositories should not copy the whole repository root; they should start from `starter/` and consume the framework core through the documented adoption path.
+The `framework/` directory hosts the executable framework core. New product repositories should not copy the whole repository root; they should start from `starter/` and consume the framework core through the documented adoption path.
 
 ## Ownership Boundary
 
 | Area | Owner | Product Repo Copies It? | Notes |
 | --- | --- | --- | --- |
 | `FRAMEWORK.md` | Framework core | Yes, into `.spec-framework/FRAMEWORK.md` | Canonical method contract. |
-| `.codex/skills/` | Framework core | Yes, into `.spec-framework/skills/` and optionally `.codex/skills/` | Operational agent contracts. |
-| `knowledge/templates/` | Framework core | Yes, into `.spec-framework/templates/` | Reusable artifact templates. |
-| `engineering/validators/` | Framework core | Yes, into `.spec-framework/validators/` | Mechanical gates. |
-| `engineering/tests/` | Framework core | Optional | Required when developing the framework itself. |
-| `engineering/decisions/FDR-*` | Framework core | Yes, into `.spec-framework/decisions/` | Framework method history, not product history. |
+| `framework/skills/` | Framework core | Yes, into `.spec-framework/skills/` and optionally `.codex/skills/` | Operational agent contracts. |
+| `framework/template/` | Framework core | Yes, into `.spec-framework/templates/` | Reusable artifact templates. |
+| `framework/validators/` | Framework core | Yes, into `.spec-framework/validators/` | Mechanical gates. |
+| `framework/tools/` | Framework core | Yes, into `.spec-framework/tools/` | Runtime migration tools; the validation wrapper also comes from `scripts/`. |
+| `framework/tests/` | Framework core | No | Tests the framework laboratory and distribution flow. |
+| `framework/decisions/FDR-*` | Framework core | Yes, into `.spec-framework/decisions/` | Framework method history, not product history. |
 | `starter/` | Product starter | Yes | Clean product-owned skeleton with `.spec-framework/` and `product/`. |
 | `examples/` | Examples | Optional | Learning material, not production source of truth. |
 

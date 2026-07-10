@@ -59,7 +59,7 @@ A use case can generate executable tasks only when all of these are true:
 
 ## Output
 
-Use `knowledge/templates/readiness-report-template.md`.
+Use `framework/template/readiness-report-template.md`.
 
 Save reports under:
 

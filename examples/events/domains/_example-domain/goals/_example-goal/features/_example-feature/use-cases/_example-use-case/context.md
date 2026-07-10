@@ -51,8 +51,8 @@ This context demonstrates the executable artifact bundle expected for a use case
 
 ## Related Artifacts
 
-- knowledge/templates/use-case-template.md - use-case structure.
-- knowledge/templates/context-template.md - context structure.
+- framework/template/use-case-template.md - use-case structure.
+- framework/template/context-template.md - context structure.
 
 ## Canonical Documents
 

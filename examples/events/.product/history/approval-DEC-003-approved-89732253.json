@@ -1,9 +1,0 @@
-{
-  "artifact_id": "DEC-003",
-  "path": "knowledge/decisions/DEC-003-approval-records.md",
-  "content_hash": "89732253c7245777b78ba234904156e9762125ad36aca9af12dd5d1c823382e3",
-  "status_granted": "approved",
-  "approved_by": "JonatasFreireDev <JonatasFreireDev@users.noreply.github.com>",
-  "approved_at": "2026-07-09T19:26:08.895Z",
-  "notes": "approved by user instruction: APROVAR EV-001"
-}

@@ -1,9 +1,0 @@
-{
-  "artifact_id": "DEC-005",
-  "path": "knowledge/decisions/DEC-005-derived-staleness.md",
-  "content_hash": "c78930cb6528a692d343359adab9bd4d851eda13ec7c43087cad29f08d2604e8",
-  "status_granted": "approved",
-  "approved_by": "JonatasFreireDev <JonatasFreireDev@users.noreply.github.com>",
-  "approved_at": "2026-07-09T19:36:37.418Z",
-  "notes": "approved by user instruction: APROVAR EV-004"
-}

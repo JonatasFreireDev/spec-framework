@@ -142,7 +142,7 @@ IDs are unique within the parent's scope. When there is risk of ambiguity, refer
 Moving an artifact requires tooling:
 
 ```bash
-node engineering/move-artifact.mjs --from <old-path> --to <new-path>
+node framework/tools/move-artifact.mjs --from <old-path> --to <new-path>
 ```
 
 The move script rewrites Markdown links and paths in JSON that are mechanically resolvable. Mentions in free text are reported for human review, not rewritten automatically.
@@ -253,7 +253,7 @@ In this `spec-framework` repository, the structure exists in three explicit area
 
 - `starter/` represents the clean skeleton that must be copied into new product repositories, already separated between `.spec-framework/` and `product/`.
 - `examples/events/` contains the worked product instance used as learning material and validation fixture.
-- the repository root remains the executable framework core, containing the validator, skills, templates, framework decisions, CLI, packaging metadata, and bootstrap tooling.
+- `framework/` contains the executable framework core: audits, decisions, skills, templates, validators, distributable tools, framework-only tests, and adoption guidance. The repository root retains only entry points, packaging metadata, scripts, examples, and starter infrastructure.
 
 New products must not copy the entire `spec-framework` root; they must start from `starter/` and install the framework assets into `.spec-framework/` per `framework/adoption.md`.
 
@@ -689,7 +689,7 @@ Staleness is a condition derived by the validator, not an editable status. Downs
 
 Relevant product decisions must be recorded in `knowledge/decisions/` and indexed in `.product/decisions.json`.
 
-Framework or method decisions live in `engineering/decisions/FDR-*` or as explicit amendments to this document. Skill contracts, gates, writeScope, QA policies, failure routing, commit policy, validators, and orchestration rules must not be recorded in `knowledge/decisions/`, because that folder is reserved for the adopter product.
+Framework or method decisions live in `framework/decisions/FDR-*` or as explicit amendments to this document. Skill contracts, gates, writeScope, QA policies, failure routing, commit policy, validators, and orchestration rules must not be recorded in `knowledge/decisions/`, because that folder is reserved for the adopter product.
 
 A decision must be created when it:
 

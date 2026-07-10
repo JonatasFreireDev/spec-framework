@@ -22,7 +22,7 @@ Artifact identity uses immutable slugs plus scoped IDs.
 Moving an artifact must use the repository move tool:
 
 ```bash
-node engineering/move-artifact.mjs --from <old-path> --to <new-path>
+node framework/tools/move-artifact.mjs --from <old-path> --to <new-path>
 ```
 
 The move tool rewrites Markdown links and JSON path strings that can be resolved mechanically. Mentions in free text are reported, not rewritten.
@@ -66,7 +66,7 @@ flowchart LR
 | --- | --- | --- |
 | Positive | Agents can create sibling artifacts without touching a shared counter. | Templates and contexts include `slug`. |
 | Positive | Title changes do not force path changes. | Slug changes require an explicit move. |
-| Positive | Moves become auditable and repeatable. | Use `engineering/move-artifact.mjs`. |
+| Positive | Moves become auditable and repeatable. | Use `framework/tools/move-artifact.mjs`. |
 | Negative | Some prose mentions remain manual. | Move report lists unresolved mentions. |
 | Negative | Existing globally unique IDs remain valid during migration. | Validator starts by enforcing slugs and policy metadata. |
 
@@ -77,9 +77,9 @@ flowchart LR
 | `FRAMEWORK.md` | Define slug, scoped ID, and move policy. |
 | `AGENTS.md` | Instruct agents to use the move tool and preserve slugs. |
 | `.product/ids.json` | Replace counter semantics with identity policy metadata. |
-| `knowledge/templates/context-template.md` | Add `slug`. |
-| `engineering/move-artifact.mjs` | Add move tooling. |
-| `engineering/validators/framework-validator.mjs` | Validate slugs and identity policy metadata. |
+| `framework/template/context-template.md` | Add `slug`. |
+| `framework/tools/move-artifact.mjs` | Add move tooling. |
+| `framework/validators/framework-validator.mjs` | Validate slugs and identity policy metadata. |
 | Existing `context.md` files | Add slugs matching current folders. |
 
 ## Supersedes

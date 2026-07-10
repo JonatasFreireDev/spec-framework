@@ -1,9 +1,0 @@
-{
-  "artifact_id": "DEC-007",
-  "path": "knowledge/decisions/DEC-007-code-evidence-gates.md",
-  "content_hash": "9ccb94ff26a4dfcf6d57b3a5a5674df7db6b7af7d06b2951000da89f7e30e4a8",
-  "status_granted": "approved",
-  "approved_by": "JonatasFreireDev <JonatasFreireDev@users.noreply.github.com>",
-  "approved_at": "2026-07-09T22:17:45.169Z",
-  "notes": "Approved by user instruction: APROVAR EVOLUCAO EV-005."
-}

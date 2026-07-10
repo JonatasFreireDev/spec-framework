@@ -34,8 +34,8 @@ This context demonstrates how a user goal links to a parent domain and child fea
 
 ## Related Artifacts
 
-- knowledge/templates/goal-template.md - goal structure.
-- knowledge/templates/context-template.md - context structure.
+- framework/template/goal-template.md - goal structure.
+- framework/template/context-template.md - context structure.
 
 ## Canonical Documents
 

@@ -99,16 +99,16 @@ export function installFrameworkAssets(target, options = {}) {
   const specRoot = path.join(target, ".spec-framework");
 
   copyFile(path.join(frameworkRepo, "FRAMEWORK.md"), path.join(specRoot, "FRAMEWORK.md"));
-  copyDir(path.join(frameworkRepo, "engineering", "decisions"), path.join(specRoot, "decisions"));
-  copyDir(path.join(frameworkRepo, ".codex", "skills"), path.join(specRoot, "skills"));
-  copyDir(path.join(frameworkRepo, "knowledge", "templates"), path.join(specRoot, "templates"));
-  copyDir(path.join(frameworkRepo, "engineering", "validators"), path.join(specRoot, "validators"));
-  copyFile(path.join(frameworkRepo, "engineering", "move-artifact.mjs"), path.join(specRoot, "tools", "move-artifact.mjs"));
+  copyDir(path.join(frameworkRepo, "framework", "decisions"), path.join(specRoot, "decisions"));
+  copyDir(path.join(frameworkRepo, "framework", "skills"), path.join(specRoot, "skills"));
+  copyDir(path.join(frameworkRepo, "framework", "template"), path.join(specRoot, "templates"));
+  copyDir(path.join(frameworkRepo, "framework", "validators"), path.join(specRoot, "validators"));
+  copyFile(path.join(frameworkRepo, "framework", "tools", "move-artifact.mjs"), path.join(specRoot, "tools", "move-artifact.mjs"));
   copyFile(path.join(frameworkRepo, "scripts", "validate-product.mjs"), path.join(specRoot, "tools", "validate-product.mjs"));
   copyFile(path.join(frameworkRepo, "framework", "AGENTS.framework.md"), path.join(specRoot, "AGENTS.framework.md"));
 
   if (mirrorCodexSkills) {
-    copyDir(path.join(frameworkRepo, ".codex", "skills"), path.join(target, ".codex", "skills"));
+    copyDir(path.join(frameworkRepo, "framework", "skills"), path.join(target, ".codex", "skills"));
   }
 
   fs.mkdirSync(path.join(target, ".github", "workflows"), { recursive: true });

@@ -1,0 +1,9 @@
+{
+  "artifact_id": "DEC-006",
+  "path": "knowledge/decisions/DEC-006-task-files.md",
+  "content_hash": "d6c81f734c22b6c396ece96798b54de777bbf5bf7a81061f75b1485d621b37bb",
+  "status_granted": "approved",
+  "approved_by": "JonatasFreireDev <JonatasFreireDev@users.noreply.github.com>",
+  "approved_at": "2026-07-10T18:31:10.580Z",
+  "notes": "Approved migration: align framework source paths with installed decisions, validators, tools, and framework-only tests."
+}

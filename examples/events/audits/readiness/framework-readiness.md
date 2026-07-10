@@ -5,7 +5,7 @@
 | Field | Value |
 | --- | --- |
 | Date | 2026-07-10 |
-| Auditor | `engineering/validators/framework-validator.mjs` |
+| Auditor | `framework/validators/framework-validator.mjs` |
 | Scope | Use cases with real delivery level |
 | Use cases checked | 2 |
 | Ready for task generation | 0 |

@@ -34,7 +34,7 @@ This context demonstrates the minimum structure expected from a domain context w
 ## Related Artifacts
 
 - FRAMEWORK.md - canonical framework.
-- knowledge/templates/context-template.md - context structure.
+- framework/template/context-template.md - context structure.
 
 ## Canonical Documents
 

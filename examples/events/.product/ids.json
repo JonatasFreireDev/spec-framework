@@ -6,7 +6,7 @@
     "slug": "Immutable folder slug declared in context.md at artifact creation.",
     "id_scope": "IDs are unique within the parent scope; include path when ambiguity is possible.",
     "allocation": "Do not allocate IDs by incrementing this file.",
-    "move_tool": "node engineering/move-artifact.mjs --from <old-path> --to <new-path>"
+    "move_tool": "node framework/tools/move-artifact.mjs --from <old-path> --to <new-path>"
   },
   "deprecated_counters": true
 }

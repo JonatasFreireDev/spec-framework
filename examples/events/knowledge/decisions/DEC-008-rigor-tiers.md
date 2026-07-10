@@ -88,9 +88,9 @@ flowchart LR
 | --- | --- |
 | `FRAMEWORK.md` | Define S/M/L tier policy and trigger rules. |
 | `AGENTS.md` | Instruct agents to respect tier requirements. |
-| `knowledge/templates/context-template.md` | Add `rigor_tier`. |
-| `knowledge/templates/use-case-template.md` | Add tier checklist. |
-| `engineering/validators/framework-validator.mjs` | Validate tier metadata and tier-specific required artifacts. |
+| `framework/template/context-template.md` | Add `rigor_tier`. |
+| `framework/template/use-case-template.md` | Add tier checklist. |
+| `framework/validators/framework-validator.mjs` | Validate tier metadata and tier-specific required artifacts. |
 | Existing use case contexts | Add `rigor_tier`. |
 | Tier L use cases missing evidence | Add missing QA/Security draft artifacts. |
 

@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-07-10T17:23:49.343Z",
-  "generator": "engineering/validators/framework-validator.mjs",
+  "generatedAt": "2026-07-10T18:36:13.025Z",
+  "generator": "framework/validators/framework-validator.mjs",
   "artifacts": [
     {
       "id": "ANA-002",
@@ -110,8 +110,8 @@
       "affectedArtifacts": [
         "../../FRAMEWORK.md",
         "../../AGENTS.md",
-        "../../engineering/validators/framework-validator.mjs",
-        "../../knowledge/templates/approval-record-template.json",
+        "../../framework/validators/framework-validator.mjs",
+        "../../framework/template/approval-record-template.json",
         ".product/history/"
       ]
     },
@@ -132,9 +132,9 @@
       },
       "affectedArtifacts": [
         "../../FRAMEWORK.md",
-        "../../knowledge/templates/tasks-template.md",
-        "../../knowledge/templates/qa-evidence-template.md",
-        "../../engineering/validators/framework-validator.mjs"
+        "../../framework/template/tasks-template.md",
+        "../../framework/template/qa-evidence-template.md",
+        "../../framework/validators/framework-validator.mjs"
       ]
     },
     {
@@ -155,9 +155,9 @@
       "affectedArtifacts": [
         "../../FRAMEWORK.md",
         "../../AGENTS.md",
-        "../../engineering/validators/framework-validator.mjs",
+        "../../framework/validators/framework-validator.mjs",
         ".product/derivations.json",
-        "../../knowledge/templates/derivation-record-template.json"
+        "../../framework/template/derivation-record-template.json"
       ]
     },
     {
@@ -178,10 +178,10 @@
       "affectedArtifacts": [
         "../../FRAMEWORK.md",
         "../../AGENTS.md",
-        "../../engineering/validators/framework-validator.mjs",
-        "../../knowledge/templates/task-template.md",
-        "../../knowledge/templates/tasks-template.md",
-        "../../knowledge/templates/execution-graph-template.json",
+        "../../framework/validators/framework-validator.mjs",
+        "../../framework/template/task-template.md",
+        "../../framework/template/tasks-template.md",
+        "../../framework/template/execution-graph-template.json",
         "domains/_example-domain/goals/_example-goal/features/_example-feature/use-cases/_example-use-case/execution-graph.json",
         "domains/_example-domain/goals/_example-goal/features/_example-feature/use-cases/_example-use-case/tasks.md",
         "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/attendee-checks-in-with-qr-code/execution-graph.json",
@@ -208,9 +208,9 @@
       "affectedArtifacts": [
         "../../FRAMEWORK.md",
         "../../AGENTS.md",
-        "../../engineering/validators/framework-validator.mjs",
-        "../../knowledge/templates/task-template.md",
-        "../../knowledge/templates/qa-evidence-template.md",
+        "../../framework/validators/framework-validator.mjs",
+        "../../framework/template/task-template.md",
+        "../../framework/template/qa-evidence-template.md",
         "domains/_example-domain/goals/_example-goal/features/_example-feature/use-cases/_example-use-case/tasks/",
         "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/attendee-checks-in-with-qr-code/tasks/",
         "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/organizer-validates-qr-code/tasks/"
@@ -234,9 +234,9 @@
       "affectedArtifacts": [
         "../../FRAMEWORK.md",
         "../../AGENTS.md",
-        "../../engineering/validators/framework-validator.mjs",
-        "../../knowledge/templates/context-template.md",
-        "../../knowledge/templates/use-case-template.md",
+        "../../framework/validators/framework-validator.mjs",
+        "../../framework/template/context-template.md",
+        "../../framework/template/use-case-template.md",
         "domains/_example-domain/goals/_example-goal/features/_example-feature/use-cases/_example-use-case/context.md",
         "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/attendee-checks-in-with-qr-code/context.md",
         "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/organizer-validates-qr-code/context.md"
@@ -261,9 +261,9 @@
         "../../FRAMEWORK.md",
         "../../AGENTS.md",
         ".product/ids.json",
-        "../../engineering/move-artifact.mjs",
-        "../../engineering/validators/framework-validator.mjs",
-        "../../knowledge/templates/context-template.md",
+        "../../framework/tools/move-artifact.mjs",
+        "../../framework/validators/framework-validator.mjs",
+        "../../framework/template/context-template.md",
         "domains/"
       ]
     },

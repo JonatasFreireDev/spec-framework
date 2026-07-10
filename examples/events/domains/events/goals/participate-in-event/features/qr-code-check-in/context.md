@@ -37,7 +37,7 @@ Provides a concrete way for attendees and organizers to confirm event attendance
 
 ## Related Artifacts
 
-- knowledge/templates/specification-template.md - expected specification shape
+- framework/template/specification-template.md - expected specification shape
 
 ## Canonical Documents
 

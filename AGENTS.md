@@ -10,19 +10,19 @@ Always read `FRAMEWORK.md` first.
 
 Use the repository root as the framework laboratory root. The reusable product skeleton for new repositories lives in `starter/`.
 
-The repository root holds only framework core assets: `FRAMEWORK.md`, `AGENTS.md`, `.codex/skills/`, `knowledge/templates/`, `engineering/` (validators, move tool, FDRs), and `framework/`. The worked product instance (domains, foundation, `.product`, product-scoped `knowledge/` subfolders, design, releases, and product-scoped audits) lives in `examples/events/` per FDR-011, and is validated with `--product-root examples/events --framework-root .`. Do not treat `examples/events/` as the clean starter for new repos; use `starter/` for that.
+The repository root holds entry points and repository infrastructure. Framework-owned audits, engineering tools, templates, and skills live under `framework/`. The worked product instance (domains, foundation, `.product`, product-scoped `knowledge/` subfolders, design, releases, and product-scoped audits) lives in `examples/events/` per FDR-011, and is validated with `--product-root examples/events --framework-root .`. Do not treat `examples/events/` as the clean starter for new repos; use `starter/` for that.
 
 ## Project Skills
 
-Use project-local skills from `.codex/skills/`.
+Use project-local skills from `framework/skills/`.
 
 Each skill owns one step of the framework. Specialist skills create or update canonical artifact content. Orchestrator skills control sequencing, gates, handoffs, and readiness.
 
 When a task maps to a skill:
 
-1. Read the matching `.codex/skills/<skill>/SKILL.md`.
+1. Read the matching `framework/skills/<skill>/SKILL.md`.
 2. Read relevant parent and local `context.md` files.
-3. Read the matching template in `knowledge/templates/` when creating or normalizing an artifact.
+3. Read the matching template in `framework/template/` when creating or normalizing an artifact.
 4. Read approved decisions in `examples/events/knowledge/decisions/` and `examples/events/.product/decisions.json` when relevant.
 5. Create or update only the artifact owned by the skill unless the user asks for an orchestrated flow.
 
@@ -73,7 +73,7 @@ Changing Delivery Level or Priority is an approval-gated decision.
 
 ## Decisions
 
-Record meaningful product decisions in the active product root, such as `examples/events/knowledge/decisions/` for the worked example, using `knowledge/templates/decision-template.md`.
+Record meaningful product decisions in the active product root, such as `examples/events/knowledge/decisions/` for the worked example, using `framework/template/decision-template.md`.
 
 A decision is required when work changes:
 
@@ -87,7 +87,7 @@ A decision is required when work changes:
 
 Approved product decisions should also be indexed in the active product root's `.product/decisions.json`.
 
-Framework method decisions belong in `engineering/decisions/FDR-*`, not in product decision logs.
+Framework method decisions belong in `framework/decisions/FDR-*`, not in product decision logs.
 
 ## Context Files
 
@@ -106,7 +106,7 @@ Use context files to preserve:
 
 ## Templates
 
-Use `knowledge/templates/` as the starting structure for new artifacts. Replace placeholders with useful content. Do not create title-only documents.
+Use `framework/template/` as the starting structure for new artifacts. Replace placeholders with useful content. Do not create title-only documents.
 
 ## Tasks
 
@@ -133,7 +133,7 @@ Every important folder-backed artifact must declare `slug` in `context.md`.
 
 - The slug must match the folder name and remain stable when the human-readable title changes.
 - Do not allocate new IDs by incrementing `.product/ids.json`; IDs are scoped by parent and references should include paths when ambiguity is possible.
-- Use `node engineering/move-artifact.mjs --from <old-path> --to <new-path>` when moving an artifact folder or file.
+- Use `node framework/tools/move-artifact.mjs --from <old-path> --to <new-path>` when moving an artifact folder or file.
 - The move tool rewrites Markdown links and JSON paths; review its reported free-text mentions manually.
 
 ## Code Links And Evidence
@@ -156,11 +156,11 @@ After a generation or orchestration task, report:
 - recommended next steps;
 - validation performed.
 
-For larger documentation bootstraps or audits, save framework reports under root `audits/`; save product reports under the active product root's `audits/`.
+For larger documentation bootstraps or audits, save framework reports under `framework/audits/`; save product reports under the active product root's `audits/`.
 
 Reports should be visual and scannable:
 
-- use status icons such as `✅`, `🟡`, `🔴`, and `➖`;
+- use status icons such as `âœ…`, `ðŸŸ¡`, `ðŸ”´`, and `âž–`;
 - use summary tables for status, files, findings, decisions, and next steps;
 - use Mermaid diagrams for flows, gates, dependencies, and artifact chains;
 - keep prose concise and use tables for comparison or review surfaces;

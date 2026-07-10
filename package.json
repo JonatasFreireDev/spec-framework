@@ -14,15 +14,15 @@
   "private": true,
   "type": "module",
   "files": [
-    ".codex/skills/",
+    "framework/skills/",
     "AGENTS.md",
     "FRAMEWORK.md",
     "README.md",
-    "engineering/decisions/",
-    "engineering/move-artifact.mjs",
-    "engineering/validators/",
+    "framework/decisions/",
+    "framework/tools/move-artifact.mjs",
+    "framework/validators/",
     "framework/",
-    "knowledge/templates/",
+    "framework/template/",
     "scripts/",
     "starter/"
   ],
@@ -30,10 +30,10 @@
     "spec-framework": "scripts/spec-framework.mjs"
   },
   "scripts": {
-    "check": "node --check scripts/spec-framework.mjs && node --check scripts/init-product.mjs && node --check scripts/upgrade-product.mjs && node --check scripts/validate-product.mjs && node --check engineering/validators/framework-validator.mjs && node --check engineering/tests/run-tests.mjs",
+    "check": "node --check scripts/spec-framework.mjs && node --check scripts/init-product.mjs && node --check scripts/upgrade-product.mjs && node --check scripts/validate-product.mjs && node --check framework/validators/framework-validator.mjs && node --check framework/tests/run-tests.mjs",
     "cli:help": "node scripts/spec-framework.mjs help",
     "pack:dry": "npm pack --dry-run",
-    "test": "node engineering/tests/run-tests.mjs",
-    "validate": "node engineering/validators/framework-validator.mjs --product-root examples/events --framework-root ."
+    "test": "node framework/tests/run-tests.mjs",
+    "validate": "node framework/validators/framework-validator.mjs --product-root examples/events --framework-root ."
   }
 }

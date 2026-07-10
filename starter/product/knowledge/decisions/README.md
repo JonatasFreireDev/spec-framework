@@ -9,7 +9,7 @@ Record decisions that change product scope, business rules, data, permissions, p
 Use the framework decision template after framework assets are installed:
 
 ```text
-knowledge/templates/decision-template.md
+framework/template/decision-template.md
 ```
 
 ## Index

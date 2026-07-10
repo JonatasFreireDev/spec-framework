@@ -17,12 +17,12 @@ This folder is a self-contained product root, mirroring the canonical structure 
 | Product decisions | [knowledge/decisions/](knowledge/decisions/) |
 | Approval history | [.product/history/](.product/history/) |
 
-Framework core assets (`FRAMEWORK.md`, `AGENTS.md`, `.codex/skills/`, `knowledge/templates/`, `engineering/validators/`, `engineering/decisions/FDR-*`) live outside this folder, at the repository root. Documents in this example that reference them use relative links that cross that boundary; the validator reports those as warnings (points outside `--product-root`), not errors, per FDR-010.
+Framework core assets (`FRAMEWORK.md`, `AGENTS.md`, `framework/skills/`, `framework/template/`, `framework/validators/`, `framework/decisions/FDR-*`) live outside this folder, primarily under `framework/`. Documents in this example that reference them use relative links that cross that boundary; the validator reports those as warnings (points outside `--product-root`), not errors, per FDR-010.
 
 ## Validation
 
 ```bash
-node engineering/validators/framework-validator.mjs --product-root examples/events --framework-root .
+node framework/validators/framework-validator.mjs --product-root examples/events --framework-root .
 ```
 
 `npm run validate` runs this by default.

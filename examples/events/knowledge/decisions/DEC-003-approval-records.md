@@ -87,9 +87,9 @@ flowchart LR
 | --- | --- |
 | [FRAMEWORK.md](../../../../FRAMEWORK.md) | Reference approval records in approval gates. |
 | [AGENTS.md](../../../../AGENTS.md) | Instruct agents not to create or edit approval records except explicit approved migrations. |
-| [framework-validator.mjs](../../../../engineering/validators/framework-validator.mjs) | Validate approval records and stricter gate transitions. |
+| [framework-validator.mjs](../../../../framework/validators/framework-validator.mjs) | Validate approval records and stricter gate transitions. |
 | [.product/history/](../../.product/history) | Store approval records. |
-| [approval-record-template.json](../../../../knowledge/templates/approval-record-template.json) | Provide machine-readable template. |
+| [approval-record-template.json](../../../../framework/template/approval-record-template.json) | Provide machine-readable template. |
 
 ## Supersedes
 
@@ -101,4 +101,4 @@ flowchart LR
 | --- | --- |
 | Approved by | JonatasFreireDev |
 | Date | 2026-07-09 |
-| Notes | Approved by user instruction: `APROVAR EVOLUÇÃO EV-001`. |
+| Notes | Approved by user instruction: `APROVAR EVOLU��O EV-001`. |

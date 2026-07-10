@@ -34,8 +34,8 @@ This context demonstrates how a feature links to a parent user goal and child us
 
 ## Related Artifacts
 
-- knowledge/templates/feature-template.md - feature structure.
-- knowledge/templates/context-template.md - context structure.
+- framework/template/feature-template.md - feature structure.
+- framework/template/context-template.md - context structure.
 
 ## Canonical Documents
 

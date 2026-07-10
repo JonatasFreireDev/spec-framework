@@ -10,9 +10,9 @@ This repository is the framework laboratory and reusable base for Specification 
 | [framework/](framework/) | Framework core boundary and adoption guide. |
 | [starter/](starter/) | Clean product skeleton for new repositories. |
 | [examples/](examples/) | Worked examples and learning material. |
-| [.codex/skills/](.codex/skills/) | Operational Codex skills. |
-| [knowledge/templates/](knowledge/templates/) | Reusable artifact templates. |
-| [engineering/validators/](engineering/validators/) | Mechanical validation gates. |
+| [framework/skills/](framework/skills/) | Operational Codex skills. |
+| [framework/template/](framework/template/) | Reusable artifact templates. |
+| [framework/validators/](./framework/validators) | Mechanical validation gates. |
 
 ## Adoption
 
@@ -86,5 +86,5 @@ npm run check
 npm test
 npm run pack:dry
 npm run validate
-node engineering/validators/framework-validator.mjs --product-root examples/events --framework-root . --write-registry --write-report
+node framework/validators/framework-validator.mjs --product-root examples/events --framework-root . --write-registry --write-report
 ```

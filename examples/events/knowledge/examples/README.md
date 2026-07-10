@@ -19,4 +19,4 @@ Primary owner: Documentation Writer AI.
 
 ## Next Step
 
-When an example becomes a reusable standard, extract the pattern into `knowledge/patterns/` or a template in `knowledge/templates/`.
+When an example becomes a reusable standard, extract the pattern into `knowledge/patterns/` or a template in `framework/template/`.
