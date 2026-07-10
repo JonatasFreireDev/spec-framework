@@ -79,6 +79,11 @@ function rel(filePath) {
   return path.relative(root, filePath).replaceAll(path.sep, "/");
 }
 
+function isInsidePath(childPath, parentPath) {
+  const relative = path.relative(parentPath, childPath);
+  return relative === "" || (!!relative && !relative.startsWith("..") && !path.isAbsolute(relative));
+}
+
 function addResult(severity, check, file, message, fix = "") {
   results.push({
     severity,
@@ -1306,7 +1311,7 @@ function validateCodeEvidenceGates() {
     for (const codePath of parseDelimitedValueList(codePaths)) {
       if (isPlaceholderValue(codePath) || /^https?:\/\//i.test(codePath)) continue;
       const resolved = path.resolve(root, codePath);
-      if (!resolved.startsWith(root)) {
+      if (!isInsidePath(resolved, root)) {
         addResult("error", "code-evidence", file, `${task.id} code path points outside repository: ${codePath}`, "Use repository-relative code paths inside the monorepo.");
       } else if (!fs.existsSync(resolved)) {
         addResult("warning", "code-evidence", file, `${task.id} code path does not exist yet: ${codePath}`, "Confirm the path or keep the task below implemented until code exists.");
@@ -1914,8 +1919,8 @@ function validateMarkdownLinks(files) {
       if (isTemplateGeneratedArtifactLink(file, target)) continue;
 
       const resolved = path.resolve(path.dirname(file), target);
-      if (!resolved.startsWith(root)) {
-        addResult("warning", "links", file, `Markdown link points outside repository: ${target}`, "Keep local documentation links inside the repository.");
+      if (!isInsidePath(resolved, root) && !isInsidePath(resolved, frameworkRoot)) {
+        addResult("warning", "links", file, `Markdown link points outside product and framework roots: ${target}`, "Keep local documentation links inside the product root or configured framework root.");
         continue;
       }
       if (!fs.existsSync(resolved)) {

@@ -4,7 +4,7 @@
 
 This folder describes the reusable Spec Framework core: method, operational contracts, validators, skills, templates, and adoption rules.
 
-The repository root still hosts the executable framework while the project transitions to a package/CLI-ready layout. New product repositories should not copy the whole repository root blindly; they should start from `starter/` and consume the framework core through the documented adoption path.
+The repository root hosts the executable framework core. New product repositories should not copy the whole repository root; they should start from `starter/` and consume the framework core through the documented adoption path.
 
 ## Ownership Boundary
 
@@ -28,11 +28,11 @@ The repository root still hosts the executable framework while the project trans
 | Package tarball | Smoke-tested locally. | Controlled installs before a public package contract exists. |
 | Submodule | Future option. | Larger teams that need strict framework versioning. |
 
-## Current Transition Rule
+## Current Boundary Rule
 
 Treat the root repository as the framework laboratory and treat `starter/` as the copyable product skeleton.
 
-Do not use root-level `domains/`, `foundation/`, `.product/history/`, or `audits/` as the canonical starter. They contain framework development history and examples. New products should contain product artifacts under `product/` and method assets under `.spec-framework/`.
+Do not use `examples/events/` as the canonical starter. It contains worked product history and example artifacts. New products should contain product artifacts under `product/` and method assets under `.spec-framework/`.
 
 ## Next Step
 

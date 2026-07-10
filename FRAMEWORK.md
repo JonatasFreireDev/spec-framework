@@ -250,10 +250,11 @@ repo/
     releases/
 ```
 
-In this `spec-framework` repository, the structure exists in two modes during the transition to reusable adoption:
+In this `spec-framework` repository, the structure exists in three explicit areas:
 
 - `starter/` represents the clean skeleton that must be copied into new product repositories, already separated between `.spec-framework/` and `product/`.
-- the repository root remains the executable framework laboratory, containing the validator, skills, evolution history, examples, and bootstrap artifacts.
+- `examples/events/` contains the worked product instance used as learning material and validation fixture.
+- the repository root remains the executable framework core, containing the validator, skills, templates, framework decisions, CLI, packaging metadata, and bootstrap tooling.
 
 New products must not copy the entire `spec-framework` root; they must start from `starter/` and install the framework assets into `.spec-framework/` per `framework/adoption.md`.
 

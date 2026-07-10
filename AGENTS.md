@@ -73,7 +73,7 @@ Changing Delivery Level or Priority is an approval-gated decision.
 
 ## Decisions
 
-Record meaningful decisions in `knowledge/decisions/` using `knowledge/templates/decision-template.md`.
+Record meaningful product decisions in the active product root, such as `examples/events/knowledge/decisions/` for the worked example, using `knowledge/templates/decision-template.md`.
 
 A decision is required when work changes:
 
@@ -85,7 +85,7 @@ A decision is required when work changes:
 - delivery commitments;
 - hard-to-reverse strategy.
 
-Approved decisions should also be indexed in `.product/decisions.json`.
+Approved product decisions should also be indexed in the active product root's `.product/decisions.json`.
 
 Framework method decisions belong in `engineering/decisions/FDR-*`, not in product decision logs.
 
@@ -156,7 +156,7 @@ After a generation or orchestration task, report:
 - recommended next steps;
 - validation performed.
 
-For larger documentation bootstraps or audits, save the report under `audits/`.
+For larger documentation bootstraps or audits, save framework reports under root `audits/`; save product reports under the active product root's `audits/`.
 
 Reports should be visual and scannable:
 

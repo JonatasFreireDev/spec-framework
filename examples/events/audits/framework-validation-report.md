@@ -6,9 +6,9 @@
 | --- | --- |
 | Date | 2026-07-10 |
 | Validator | `engineering/validators/framework-validator.mjs` |
-| Verdict | 🟡 ready_with_notes |
+| Verdict | ✅ ready |
 | Errors | 0 |
-| Warnings | 14 |
+| Warnings | 0 |
 | Notes | 0 |
 
 ## 🗺️ Validation Flow
@@ -59,31 +59,18 @@ flowchart LR
 | Mermaid visual standard | ✅ no findings |
 | Mermaid progress state | ✅ no findings |
 | Mermaid semantic state | ✅ no findings |
-| Markdown links | 🟡 findings |
+| Markdown links | ✅ no findings |
 | Template snapshots | ✅ no findings |
 
 ## 🔎 Findings
 
 | Severity | Check | File | Finding | Suggested Fix |
 | --- | --- | --- | --- | --- |
-| 🟡 warning | links | audits/security/threat-register.md | Markdown link points outside repository: ../../../../engineering/decisions/FDR-009-threat-modeling-baseline.md | Keep local documentation links inside the repository. |
-| 🟡 warning | links | domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/organizer-validates-qr-code/context.md | Markdown link points outside repository: ../../../../../../../../../../FRAMEWORK.md | Keep local documentation links inside the repository. |
-| 🟡 warning | links | knowledge/conventions/commits.md | Markdown link points outside repository: ../../../../engineering/decisions/FDR-008-delivery-commits-and-prs.md | Keep local documentation links inside the repository. |
-| 🟡 warning | links | knowledge/conventions/gates.md | Markdown link points outside repository: ../../../../engineering/decisions/FDR-002-gate-commands.md | Keep local documentation links inside the repository. |
-| 🟡 warning | links | knowledge/conventions/pull-requests.md | Markdown link points outside repository: ../../../../engineering/decisions/FDR-008-delivery-commits-and-prs.md | Keep local documentation links inside the repository. |
-| 🟡 warning | links | knowledge/conventions/security-baseline.md | Markdown link points outside repository: ../../../../engineering/decisions/FDR-009-threat-modeling-baseline.md | Keep local documentation links inside the repository. |
-| 🟡 warning | links | knowledge/decisions/DEC-003-approval-records.md | Markdown link points outside repository: ../../../../FRAMEWORK.md | Keep local documentation links inside the repository. |
-| 🟡 warning | links | knowledge/decisions/DEC-003-approval-records.md | Markdown link points outside repository: ../../../../AGENTS.md | Keep local documentation links inside the repository. |
-| 🟡 warning | links | knowledge/decisions/DEC-003-approval-records.md | Markdown link points outside repository: ../../../../engineering/validators/framework-validator.mjs | Keep local documentation links inside the repository. |
-| 🟡 warning | links | knowledge/decisions/DEC-003-approval-records.md | Markdown link points outside repository: ../../../../knowledge/templates/approval-record-template.json | Keep local documentation links inside the repository. |
-| 🟡 warning | links | knowledge/decisions/DEC-005-derived-staleness.md | Markdown link points outside repository: ../../../../FRAMEWORK.md | Keep local documentation links inside the repository. |
-| 🟡 warning | links | knowledge/decisions/DEC-005-derived-staleness.md | Markdown link points outside repository: ../../../../AGENTS.md | Keep local documentation links inside the repository. |
-| 🟡 warning | links | knowledge/decisions/DEC-005-derived-staleness.md | Markdown link points outside repository: ../../../../engineering/validators/framework-validator.mjs | Keep local documentation links inside the repository. |
-| 🟡 warning | links | knowledge/decisions/DEC-005-derived-staleness.md | Markdown link points outside repository: ../../../../knowledge/templates/derivation-record-template.json | Keep local documentation links inside the repository. |
+| ✅ ready | framework | repository | No findings. | None |
 
 ## 🏁 Result
 
 | Field | Value |
 | --- | --- |
-| Verdict | 🟡 ready_with_notes |
-| Required next step | Review warnings, fix stale metadata, and re-run validator. |
+| Verdict | ✅ ready |
+| Required next step | Proceed to next framework step. |
