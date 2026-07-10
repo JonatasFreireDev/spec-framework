@@ -69,6 +69,23 @@ function runNode(script, cwd, args = []) {
   });
 }
 
+function runNpm(cwd, args = []) {
+  const npmCli = path.join(path.dirname(process.execPath), "node_modules", "npm", "bin", "npm-cli.js");
+  if (fs.existsSync(npmCli)) {
+    return spawnSync(process.execPath, [npmCli, ...args], {
+      cwd,
+      encoding: "utf8",
+      windowsHide: true,
+    });
+  }
+
+  return spawnSync("npm", args, {
+    cwd,
+    encoding: "utf8",
+    windowsHide: true,
+  });
+}
+
 function runValidator(cwd, args = []) {
   return runNode(validatorScript, cwd, args);
 }
@@ -730,6 +747,31 @@ test("spec-framework CLI dispatches init, validate, and upgrade", () => {
     assert.match(output(upgrade), /Upgraded Spec Framework assets/);
   } finally {
     fs.rmSync(parent, { recursive: true, force: true });
+  }
+});
+
+test("npm package includes framework assets required by bootstrap", () => {
+  const result = runNpm(repoRoot, ["pack", "--dry-run", "--json"]);
+
+  assert.equal(result.status, 0, output(result));
+  const packs = JSON.parse(result.stdout);
+  const files = new Set(packs[0].files.map((file) => file.path.replaceAll("\\", "/")));
+
+  for (const required of [
+    "scripts/spec-framework.mjs",
+    "scripts/init-product.mjs",
+    "scripts/framework-assets.mjs",
+    "scripts/validate-product.mjs",
+    "scripts/upgrade-product.mjs",
+    "starter/README.md",
+    ".codex/skills/code-runner/SKILL.md",
+    "knowledge/templates/specification-template.md",
+    "engineering/validators/framework-validator.mjs",
+    "engineering/move-artifact.mjs",
+    "FRAMEWORK.md",
+    "AGENTS.md",
+  ]) {
+    assert.equal(files.has(required), true, `package missing ${required}`);
   }
 });
 
