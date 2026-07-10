@@ -30,6 +30,7 @@ jobs:
           node --check engineering/move-artifact.mjs
           node --check engineering/tests/run-tests.mjs
           node --check scripts/init-product.mjs
+          node --check scripts/validate-product.mjs
 
       - name: Engineering tool tests
         run: node engineering/tests/run-tests.mjs

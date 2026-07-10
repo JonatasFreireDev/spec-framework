@@ -31,6 +31,12 @@ Manual bootstrap:
 node .spec-framework/validators/framework-validator.mjs --product-root product --write-registry --write-report
 ```
 
+Preferred validation wrapper after bootstrap:
+
+```bash
+node .spec-framework/tools/validate-product.mjs
+```
+
 ## What Belongs To The Product
 
 | Product-Owned Area | Purpose |
@@ -68,7 +74,7 @@ Future framework versions should support:
 
 ```bash
 node scripts/init-product.mjs --target ../my-product
-npx spec-framework validate
+node .spec-framework/tools/validate-product.mjs
 npx spec-framework upgrade
 ```
 

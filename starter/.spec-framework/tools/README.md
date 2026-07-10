@@ -8,4 +8,5 @@ Expected installed files include:
 
 ```text
 move-artifact.mjs
+validate-product.mjs
 ```

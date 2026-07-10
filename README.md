@@ -28,7 +28,7 @@ product/          # the product being built
 Current recommended flow:
 
 ```text
-node scripts/init-product.mjs --target ../my-product -> fill product/foundation -> create product/domains -> run validator
+node scripts/init-product.mjs --target ../my-product -> fill product/foundation -> create product/domains -> node .spec-framework/tools/validate-product.mjs
 ```
 
 See [framework/adoption.md](framework/adoption.md).

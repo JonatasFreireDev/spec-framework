@@ -82,6 +82,7 @@ copyDir(path.join(frameworkRepo, ".codex", "skills"), path.join(specRoot, "skill
 copyDir(path.join(frameworkRepo, "knowledge", "templates"), path.join(specRoot, "templates"));
 copyDir(path.join(frameworkRepo, "engineering", "validators"), path.join(specRoot, "validators"));
 copyFile(path.join(frameworkRepo, "engineering", "move-artifact.mjs"), path.join(specRoot, "tools", "move-artifact.mjs"));
+copyFile(path.join(frameworkRepo, "scripts", "validate-product.mjs"), path.join(specRoot, "tools", "validate-product.mjs"));
 
 if (mirrorCodexSkills) {
   copyDir(path.join(frameworkRepo, ".codex", "skills"), path.join(target, ".codex", "skills"));
@@ -114,10 +115,12 @@ jobs:
           node-version: "22"
 
       - name: Syntax check
-        run: node --check .spec-framework/validators/framework-validator.mjs
+        run: |
+          node --check .spec-framework/validators/framework-validator.mjs
+          node --check .spec-framework/tools/validate-product.mjs
 
       - name: Framework validator
-        run: node .spec-framework/validators/framework-validator.mjs --product-root product --framework-root .spec-framework
+        run: node .spec-framework/tools/validate-product.mjs
 `;
 copyFile(path.join(frameworkRepo, "AGENTS.md"), path.join(specRoot, "AGENTS.framework.md"));
 fs.mkdirSync(path.join(target, ".github", "workflows"), { recursive: true });
@@ -158,4 +161,4 @@ console.log(`- Product root: ${rel(path.join(target, "product"), target)}`);
 console.log(`- Framework assets: ${rel(specRoot, target)}`);
 console.log(`- Codex skills mirror: ${mirrorCodexSkills ? ".codex/skills" : "disabled"}`);
 console.log("Next: fill product/foundation and run:");
-console.log("node .spec-framework/validators/framework-validator.mjs --product-root product --framework-root .spec-framework");
+console.log("node .spec-framework/tools/validate-product.mjs");

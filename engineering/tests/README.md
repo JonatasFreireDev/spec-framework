@@ -10,7 +10,7 @@ This folder contains local fixture-based tests for framework engineering tools. 
 | --- | --- |
 | `engineering/validators/framework-validator.mjs` | Approval-record enforcement, derived staleness blocking, Phase A writeScope warnings, task handoff skill references, concrete QA evidence enforcement, Code Review gate enforcement, Code Review quality enforcement, traceable commit/PR references, Markdown link validation, and blocker route/owner enforcement. |
 | `engineering/move-artifact.mjs` | Folder move, Markdown link rewrite, JSON path rewrite, and free-text mention reporting. |
-| `scripts/init-product.mjs` | Starter copy, `.spec-framework/` asset installation, `.codex/skills` mirroring, manifest update, and installed validator execution. |
+| `scripts/init-product.mjs` | Starter copy, `.spec-framework/` asset installation, `.codex/skills` mirroring, manifest update, installed validator execution, and friendly validation wrapper installation. |
 
 ## Run
 

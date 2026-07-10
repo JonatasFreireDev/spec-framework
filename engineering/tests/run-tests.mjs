@@ -661,6 +661,7 @@ test("init-product creates a product repo with installed framework assets", () =
     assert.equal(fs.existsSync(path.join(target, ".spec-framework", "FRAMEWORK.md")), true);
     assert.equal(fs.existsSync(path.join(target, ".spec-framework", "validators", "framework-validator.mjs")), true);
     assert.equal(fs.existsSync(path.join(target, ".spec-framework", "tools", "move-artifact.mjs")), true);
+    assert.equal(fs.existsSync(path.join(target, ".spec-framework", "tools", "validate-product.mjs")), true);
     assert.equal(fs.existsSync(path.join(target, ".spec-framework", "skills", "code-runner", "SKILL.md")), true);
     assert.equal(fs.existsSync(path.join(target, ".codex", "skills", "code-runner", "SKILL.md")), true);
 
@@ -672,6 +673,11 @@ test("init-product creates a product repo with installed framework assets", () =
     const validation = runNode(installedValidator, target, ["--product-root", "product", "--framework-root", ".spec-framework"]);
     assert.equal(validation.status, 0, output(validation));
     assert.match(output(validation), /ready/);
+
+    const validateProduct = path.join(target, ".spec-framework", "tools", "validate-product.mjs");
+    const wrappedValidation = runNode(validateProduct, target);
+    assert.equal(wrappedValidation.status, 0, output(wrappedValidation));
+    assert.match(output(wrappedValidation), /ready/);
   } finally {
     fs.rmSync(parent, { recursive: true, force: true });
   }
