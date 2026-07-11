@@ -48,6 +48,6 @@ Updated workspace state; structured handoff; checkpoint request; routed next orc
 - [ ] Leaves a clear handoff for the next skill or orchestrator.
 
 ## Handoff
-Next: the canonical orchestrator or specialist reported by resume/status.
+Next: delivery-orchestrator.
 
-Pass forward workspace, task, hashes, evidence, decisions, dependencies, risks, attempts, blockers, and required reading.
+Use the persisted runtime state to route the concrete next specialist or orchestrator. Pass forward workspace, task, hashes, evidence, decisions, dependencies, risks, attempts, blockers, and required reading.
