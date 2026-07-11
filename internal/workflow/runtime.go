@@ -17,16 +17,24 @@ import (
 const RuntimeVersion = 2
 
 type RuntimeState struct {
-	Version                               int `json:"version"`
-	WorkspaceID, Phase, Status, UpdatedAt string
-	Attempts                              int      `json:"attempts"`
-	Blockers                              []string `json:"blockers,omitempty"`
+	Version     int      `json:"version"`
+	WorkspaceID string   `json:"workspace_id"`
+	Phase       string   `json:"phase"`
+	Status      string   `json:"status"`
+	UpdatedAt   string   `json:"updated_at"`
+	Attempts    int      `json:"attempts"`
+	Blockers    []string `json:"blockers,omitempty"`
 }
 type Handoff struct {
-	Version                                       int `json:"version"`
-	ID, WorkspaceID, From, To, Summary, CreatedAt string
-	RequiredReading                               []string `json:"required_reading,omitempty"`
-	Blockers                                      []string `json:"blockers,omitempty"`
+	Version         int      `json:"version"`
+	ID              string   `json:"id"`
+	WorkspaceID     string   `json:"workspace_id"`
+	From            string   `json:"from"`
+	To              string   `json:"to"`
+	Summary         string   `json:"summary"`
+	CreatedAt       string   `json:"created_at"`
+	RequiredReading []string `json:"required_reading,omitempty"`
+	Blockers        []string `json:"blockers,omitempty"`
 }
 type Checkpoint struct {
 	Version                                                             int `json:"version"`
@@ -43,7 +51,8 @@ type CommandPlan struct {
 	ID, WorkspaceID, TaskID, Cwd, Source, Risk, BaseCommit, InputHash, CreatedAt string
 	Argv                                                                         []string `json:"argv"`
 	TimeoutSeconds                                                               int      `json:"timeout_seconds"`
-	AllowedWrites, EnvAllowlist                                                  []string
+	AllowedWrites                                                                []string `json:"allowed_writes"`
+	EnvAllowlist                                                                 []string `json:"env_allowlist"`
 }
 type CommandEvidence struct {
 	Version                                   int `json:"version"`

@@ -54,6 +54,12 @@ spec-framework gates
 
 # Operate an approved execution graph without automatically running agents
 spec-framework graph ready --graph domains/events/goals/manage/features/invites/use-cases/send/execution-graph.json
+
+# Resume, lease, schedule, and execute governed local commands
+spec-framework resume --work WORK-001
+spec-framework lease claim --work WORK-001 --graph domains/events/goals/manage/features/invites/use-cases/send/execution-graph.json --task TK-001 --agent codex --isolate
+spec-framework schedule --work WORK-001 --graph domains/events/goals/manage/features/invites/use-cases/send/execution-graph.json --max-parallel 4
+spec-framework commands plan --work WORK-001 --task TK-001 --risk R0 -- go test ./...
 spec-framework validate
 spec-framework upgrade --target ../my-product --agents codex,cursor,claude --yes
 ```

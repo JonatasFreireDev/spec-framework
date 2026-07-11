@@ -1,0 +1,5 @@
+.worktrees/
+product/.product/*.lock
+product/.product/**/*.lock
+product/.product/**/raw-logs/
+product/.product/**/secrets/

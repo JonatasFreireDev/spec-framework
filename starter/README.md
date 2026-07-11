@@ -38,6 +38,7 @@ Then install or copy the framework assets described in [../framework/adoption.md
 5. Copy `product/domains/_template-domain/` to the first real domain slug and update every `context.md`.
 6. Continue through Goal -> Feature -> Use Case -> Specification -> Design -> Implementation Plan -> Execution Graph -> Tasks.
 7. Replace product gate placeholders in `product/knowledge/conventions/gates.md` before marking executable work as implemented or validated.
+8. Use `spec-framework work`, then `resume`, leases, checkpoints, and handoffs so execution can be continued without conversation history.
 
 ## Boundary Rule
 
