@@ -9,35 +9,16 @@ Create a new Specification Driven Development product repository without mixing 
 Automated bootstrap:
 
 ```bash
-node scripts/init-product.mjs --target ../my-product
+spec-framework init --target ../my-product
 ```
 
 CLI-style bootstrap from the framework repository:
 
 ```bash
-node scripts/spec-framework.mjs init --target ../my-product
+spec-framework init --target ../my-product --agents codex,cursor,claude --yes
 ```
 
-Local linked CLI:
-
-```bash
-npm link
-spec-framework init --target ../my-product
-```
-
-Packaged CLI from a local tarball:
-
-```bash
-npm pack
-mkdir ../my-consumer
-cd ../my-consumer
-npm install ../spec-framework/spec-framework-0.1.0.tgz --no-save
-npx spec-framework init --target ../my-product
-cd ../my-product
-npx spec-framework validate
-```
-
-The package path is currently a controlled local/Git-based adoption path, not a public npm release contract. Keep using `starter/`, `.spec-framework/`, and `product/` as the canonical boundary inside generated repositories.
+Install a versioned release binary as described in [install.md](install.md). Go and Node.js are not runtime requirements for adopters.
 
 Manual bootstrap:
 
@@ -49,26 +30,24 @@ Manual bootstrap:
    - `.spec-framework/decisions/FDR-*`
    - `.spec-framework/skills/`
    - `.spec-framework/templates/`
-   - `.spec-framework/validators/`
-   - `.spec-framework/tools/`
-4. Optionally copy skills into `.codex/skills/` for Codex auto-discovery.
+4. Generate one or more agent skill trees: `.agents/skills/`, `.cursor/skills/`, and `.claude/skills/`.
 5. Replace `product/` starter placeholders with product-specific content.
 6. Run the validation wrapper against the product root.
 
 ```bash
-node .spec-framework/tools/validate-product.mjs
+spec-framework validate
 ```
 
 Direct validator form when debugging:
 
 ```bash
-node .spec-framework/validators/framework-validator.mjs --product-root product --framework-root .spec-framework --write-registry --write-report
+spec-framework validate --product-root product --framework-root .spec-framework --write-registry --write-report
 ```
 
 Upgrade an initialized product from the framework repository:
 
 ```bash
-node scripts/upgrade-product.mjs --target ../my-product
+spec-framework upgrade --target ../my-product --agents codex --yes
 ```
 
 ## What Belongs To The Product
@@ -91,10 +70,9 @@ node scripts/upgrade-product.mjs --target ../my-product
 | `.spec-framework/FRAMEWORK.md` | Method contract. |
 | `.spec-framework/AGENTS.framework.md` | Agent instructions for resolving framework and product roots. |
 | `.spec-framework/decisions/FDR-*` | Framework method decisions. |
-| `.spec-framework/validators/` | Mechanical validation gates. |
 | `.spec-framework/skills/` | Operational skills. |
 | `.spec-framework/templates/` | Reusable artifact templates. |
-| `.spec-framework/tools/` | Bootstrap, upgrade, and migration tooling. |
+| Installed `spec-framework` binary | Validation, bootstrap, upgrade, and migration tooling. |
 
 ## Non-Goals For Starter Repositories
 
@@ -105,7 +83,7 @@ node scripts/upgrade-product.mjs --target ../my-product
 
 ## Upgrade Direction
 
-Future framework versions should support:
+Stable commands:
 
 ```bash
 spec-framework init --target ../my-product

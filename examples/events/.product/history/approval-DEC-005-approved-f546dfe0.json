@@ -1,0 +1,9 @@
+{
+  "artifact_id": "DEC-005",
+  "path": "knowledge/decisions/DEC-005-derived-staleness.md",
+  "content_hash": "f546dfe0adf7af017c83185f782b2aecf5e047ec2376a0c076c22a785c8322d9",
+  "status_granted": "approved",
+  "approved_by": "JonatasFreireDev <JonatasFreireDev@users.noreply.github.com>",
+  "approved_at": "2026-07-10T18:31:10.580Z",
+  "notes": "Approved migration: replace the retired Node validator with the Go spec-framework validate command. Regeneration explicitly approved by the framework owner on 2026-07-10."
+}

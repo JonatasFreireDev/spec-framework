@@ -22,6 +22,7 @@ Product decisions do not live here. Product decisions continue to live in `knowl
 | [FDR-010](FDR-010-markdown-link-validation.md) | Markdown link validation | approved | EV-013 |
 | [FDR-011](FDR-011-core-starter-example-boundary.md) | Framework core, product starter, and examples boundary | approved | EV-015 |
 | [FDR-012](FDR-012-framework-md-english-translation.md) | FRAMEWORK.md English translation | approved | Governance baseline |
+| [FDR-013](FDR-013-go-cli-and-agent-skill-installation.md) | Go CLI and multi-agent skill installation | approved | CLI portability migration |
 
 ## Rule
 

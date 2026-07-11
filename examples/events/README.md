@@ -22,7 +22,7 @@ Framework core assets (`FRAMEWORK.md`, `AGENTS.md`, `framework/skills/`, `framew
 ## Validation
 
 ```bash
-node framework/validators/framework-validator.mjs --product-root examples/events --framework-root .
+spec-framework validate --product-root examples/events --framework-root .
 ```
 
-`npm run validate` runs this by default.
+The Go validation workflow runs this on every pull request.

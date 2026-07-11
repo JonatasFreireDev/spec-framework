@@ -14,7 +14,7 @@ Use these roots:
 | --- | --- |
 | `.spec-framework/` | Installed framework method, skills, templates, validators, tools, and framework decisions. |
 | `product/` | Product-owned state, foundation, domains, decisions, audits, releases, and evidence. |
-| `.codex/skills/` | Optional mirrored skills for Codex discovery. Treat these as copies of `.spec-framework/skills/`. |
+| `.agents/skills/`, `.cursor/skills/`, `.claude/skills/` | Generated agent-specific skill trees. Treat these as derived copies of `.spec-framework/skills/`. |
 
 Do not write product scope, product decisions, approval records, or delivery evidence into `.spec-framework/`.
 
@@ -36,14 +36,14 @@ The active product root is `product/`.
 
 When a skill mentions product-relative paths such as `knowledge/conventions/gates.md`, `.product/decisions.json`, `domains/`, `audits/`, or `releases/`, resolve them under `product/`.
 
-When a skill mentions framework-relative paths such as `FRAMEWORK.md`, `templates/`, `validators/`, `tools/`, `skills/`, or framework decisions, resolve them under `.spec-framework/`.
+When a skill mentions framework-relative paths such as `FRAMEWORK.md`, `templates/`, `skills/`, or framework decisions, resolve them under `.spec-framework/`. Run executable operations through the installed `spec-framework` CLI.
 
 ## Gates
 
 Run the product validator from the repository root:
 
 ```bash
-node .spec-framework/tools/validate-product.mjs
+spec-framework validate
 ```
 
 If a product artifact is `approved` or later and its approval record is missing or inconsistent, report the blocker and stop. Agents must not create, edit, or repair approval records unless a human explicitly approves that migration.

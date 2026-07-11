@@ -43,9 +43,9 @@ Relative Markdown links must resolve to an existing file or directory inside the
 | Artifact | Link |
 | --- | --- |
 | FRAMEWORK | [../../FRAMEWORK.md](../../FRAMEWORK.md) |
-| Validator | [../validators/framework-validator.mjs](../validators/framework-validator.mjs) |
-| Move tool | [../tools/move-artifact.mjs](../tools/move-artifact.mjs) |
-| Engineering tests | [../tests/run-tests.mjs](../tests/run-tests.mjs) |
+| Validator | [../../internal/validator/](../../internal/validator/) |
+| Move tool | [../../internal/moveartifact/](../../internal/moveartifact/) |
+| Engineering tests | [../../internal/](../../internal/) |
 
 ## Supersedes
 

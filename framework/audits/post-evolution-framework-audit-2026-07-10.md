@@ -5,7 +5,7 @@
 | Item | Status | Evidence |
 | --- | --- | --- |
 | Framework validator | ✅ ready | `node framework\validators\framework-validator.mjs --write-registry --write-report` returned `Verdict: ✅ ready (0 errors, 0 warnings, 0 notes)`. |
-| Syntax checks | ✅ passed | `node --check` passed for [framework-validator.mjs](../validators/framework-validator.mjs) and [move-artifact.mjs](../tools/move-artifact.mjs). |
+| Syntax checks | ✅ passed | Historical Node syntax checks passed before the Go cutover; current gates use `go vet ./...`. |
 | Decisions indexed | ✅ complete | [.product/decisions.json](../../examples/events/.product/decisions.json) lists `DEC-001` through `DEC-009` as approved. |
 | Artifact registry | ✅ generated | [.product/artifacts.json](../../examples/events/.product/artifacts.json) contains 60 artifacts after registry refresh. |
 | Framework scope | 🟡 ready with notes | Framework mechanics and the reorganized source boundary are green; product examples still include draft/blocked QA and security evidence by design. |
@@ -48,7 +48,7 @@ flowchart LR
 | Severity | Finding | Evidence | Recommendation |
 | --- | --- | --- | --- |
 | 🟢 Info | The framework validates cleanly after all approved evolutions. | Validator output: `0 errors, 0 warnings, 0 notes`. | Keep validator as required CI/local gate before commits. |
-| 🟢 Resolved | Engineering scripts now have initial fixture tests. | [framework/tests/run-tests.mjs](../tests/run-tests.mjs) covers approval-record blocking, derived staleness blocking, Phase A writeScope warnings, concrete QA evidence enforcement, Markdown link rewrite, JSON path rewrite, and free-text mention reporting. | Expand coverage for task-file validation, code-evidence gates, rigor-tier gates, Mermaid semantic bindings, and future Phase B writeScope errors. |
+| 🟢 Resolved | Engineering tools have fixture tests. | [Go package tests](../../internal/) cover approval records, staleness, writeScope, QA evidence, moves, installation, and CLI integration. | Expand future Phase B writeScope coverage. |
 | 🟢 Resolved | Framework source paths now mirror installed asset boundaries. | `framework/decisions`, `framework/validators`, and `framework/tools` map directly to `.spec-framework/`; `framework/tests` remains laboratory-only. | Keep distribution tests green when adding framework assets. |
 | 🟢 Resolved | Decision and audit links were normalized after removing the `engineering/` level. | Repository-wide link inspection found and corrected eight audit links and thirteen framework-decision links; the final focused scan reports `BROKEN 0`. | Keep link validation in the structural-move review checklist. |
 | 🟡 Medium | Move tooling intentionally reports free-text mentions instead of rewriting them, which creates a manual review step after moves. | `move-artifact --dry-run` reported 5 rewritten files and 90 free-text mentions requiring review for the organizer use case path. | Keep this behavior, but require the move report to be attached to the audit or PR when a move is executed. |

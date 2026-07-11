@@ -1,9 +1,0 @@
-{
-  "artifact_id": "DEC-005",
-  "path": "knowledge/decisions/DEC-005-derived-staleness.md",
-  "content_hash": "4a9db8b652fe63137d6fcedf24c703edcbbbf57aae282ad587e31751f7eb26e8",
-  "status_granted": "approved",
-  "approved_by": "JonatasFreireDev <JonatasFreireDev@users.noreply.github.com>",
-  "approved_at": "2026-07-10T18:31:10.580Z",
-  "notes": "Approved migration: align framework source paths with installed decisions, validators, tools, and framework-only tests."
-}

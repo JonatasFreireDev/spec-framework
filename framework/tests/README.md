@@ -2,22 +2,22 @@
 
 ## Purpose
 
-This folder contains local fixture-based tests for framework engineering tools. The tests create temporary repositories, run the real scripts, and remove the fixtures afterward.
+Go package tests create temporary repositories, execute real framework components, and remove fixtures afterward.
 
 ## Current Coverage
 
 | Tool | Coverage |
 | --- | --- |
-| `framework/validators/framework-validator.mjs` | Approval-record enforcement, derived staleness blocking, Phase A writeScope warnings, task handoff skill references, concrete QA evidence enforcement, Code Review gate enforcement, Code Review quality enforcement, traceable commit/PR references, Markdown link validation, and blocker route/owner enforcement. |
-| `framework/tools/move-artifact.mjs` | Folder move, Markdown link rewrite, JSON path rewrite, and free-text mention reporting. |
-| `scripts/init-product.mjs` | Starter copy, `.spec-framework/` asset installation, `.codex/skills` mirroring, manifest update, installed validator execution, and friendly validation wrapper installation. |
-| `scripts/upgrade-product.mjs` | Framework asset refresh while preserving product-owned files. |
-| `scripts/spec-framework.mjs` | CLI dispatch for init, validate, and upgrade commands. |
+| `internal/validator` | Gates, deterministic diagnostics, reports, registry, and Node parity fixtures. |
+| `internal/moveartifact` | Planning, rollback, link/JSON rewrites, and mention reports. |
+| `internal/install` | Init, upgrade, embedded assets, manifests, and multi-agent skills. |
+| `internal/cli` | Command dispatch and end-to-end CLI flow. |
+| `internal/wizard` | Bubble Tea state transitions and confirmation. |
 
 ## Run
 
 ```bash
-node framework/tests/run-tests.mjs
+go test ./...
 ```
 
 Run these tests before changing validator gates, identity policy, staleness behavior, approval-record behavior, or artifact movement behavior.

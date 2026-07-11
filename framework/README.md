@@ -11,10 +11,9 @@ The `framework/` directory hosts the executable framework core. New product repo
 | Area | Owner | Product Repo Copies It? | Notes |
 | --- | --- | --- | --- |
 | `FRAMEWORK.md` | Framework core | Yes, into `.spec-framework/FRAMEWORK.md` | Canonical method contract. |
-| `framework/skills/` | Framework core | Yes, into `.spec-framework/skills/` and optionally `.codex/skills/` | Operational agent contracts. |
+| `framework/skills/` | Framework core | Yes, into `.spec-framework/skills/` and selected agent skill trees | Operational agent contracts. |
 | `framework/template/` | Framework core | Yes, into `.spec-framework/templates/` | Reusable artifact templates. |
-| `framework/validators/` | Framework core | Yes, into `.spec-framework/validators/` | Mechanical gates. |
-| `framework/tools/` | Framework core | Yes, into `.spec-framework/tools/` | Runtime migration tools; the validation wrapper also comes from `scripts/`. |
+| Go CLI | Framework core | Installed as a release binary | Mechanical gates and migration tools. |
 | `framework/tests/` | Framework core | No | Tests the framework laboratory and distribution flow. |
 | `framework/decisions/FDR-*` | Framework core | Yes, into `.spec-framework/decisions/` | Framework method history, not product history. |
 | `starter/` | Product starter | Yes | Clean product-owned skeleton with `.spec-framework/` and `product/`. |
@@ -25,8 +24,7 @@ The `framework/` directory hosts the executable framework core. New product repo
 | Model | Status | Best Use |
 | --- | --- | --- |
 | Template copy | Supported manually through `starter/`. | First real adopters and fast experiments. |
-| CLI bootstrap | Supported through `scripts/spec-framework.mjs` and local links. | Repeatable product creation with versioned framework assets. |
-| Package tarball | Smoke-tested locally. | Controlled installs before a public package contract exists. |
+| CLI bootstrap | Supported through versioned Go release binaries. | Repeatable product creation with versioned framework assets. |
 | Submodule | Future option. | Larger teams that need strict framework versioning. |
 
 ## Current Boundary Rule
@@ -37,10 +35,8 @@ Do not use `examples/events/` as the canonical starter. It contains worked produ
 
 ## Next Step
 
-Use `scripts/init-product.mjs` to copy `starter/`, install framework assets into `.spec-framework/`, mirror skills for Codex discovery, and record the adopted framework version in `product/.product/framework.json`.
+Use `spec-framework init` to copy `starter/`, install framework assets, generate selected agent skill formats, and record the adopted version.
 
-Use `scripts/upgrade-product.mjs` to refresh `.spec-framework/` assets in an existing product without touching `product/`.
+Use `spec-framework upgrade` to refresh `.spec-framework/` assets without touching `product/`.
 
-For local CLI testing, run `npm link` from this repository and then use `spec-framework init`, `spec-framework validate`, and `spec-framework upgrade`.
-
-For package smoke testing, run `npm pack`, install the generated `.tgz` in a consumer repository, and use `npx spec-framework init` followed by `npx spec-framework validate`.
+For framework development, use `go run ./cmd/spec-framework`; adopters use the precompiled release binary.

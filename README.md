@@ -28,36 +28,21 @@ product/          # the product being built
 Current recommended flow:
 
 ```text
-node scripts/init-product.mjs --target ../my-product -> fill product/foundation -> create product/domains -> node .spec-framework/tools/validate-product.mjs
+spec-framework init --target ../my-product --agents codex --yes -> fill product/foundation -> create product/domains -> spec-framework validate
 ```
 
 Local CLI form:
 
 ```bash
-node scripts/spec-framework.mjs init --target ../my-product
-node scripts/spec-framework.mjs validate
-node scripts/spec-framework.mjs upgrade --target ../my-product
-```
-
-Local linked CLI:
-
-```bash
-npm link
-spec-framework init --target ../my-product
+go run ./cmd/spec-framework init --target ../my-product --agents codex,cursor,claude --yes
 spec-framework validate
-spec-framework upgrade --target ../my-product
+spec-framework upgrade --target ../my-product --agents codex,cursor,claude --yes
 ```
 
-Packaged CLI smoke path:
+Release CLI installation:
 
 ```bash
-npm pack
-mkdir ../my-consumer
-cd ../my-consumer
-npm install ../spec-framework/spec-framework-0.1.0.tgz --no-save
-npx spec-framework init --target ../my-product
-cd ../my-product
-npx spec-framework validate
+Download the archive for Windows, Linux, or macOS from GitHub Releases, verify `checksums.txt`, and place `spec-framework` on `PATH`.
 ```
 
 See [framework/adoption.md](framework/adoption.md).
@@ -82,9 +67,8 @@ Problem -> Vision -> Strategy -> Domain -> User Goal -> Feature -> Use Case -> S
 Run:
 
 ```bash
-npm run check
-npm test
-npm run pack:dry
-npm run validate
-node framework/validators/framework-validator.mjs --product-root examples/events --framework-root . --write-registry --write-report
+go test ./...
+go vet ./...
+go test -race ./...
+go run ./cmd/spec-framework validate --product-root examples/events --framework-root . --write-registry --write-report
 ```

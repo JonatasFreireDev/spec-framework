@@ -84,7 +84,7 @@ flowchart LR
 | `AGENTS.md` | Instruct agents not to advance task status without structured evidence. |
 | `framework/template/task-template.md` | Add structured implementation and validation evidence fields. |
 | `framework/template/qa-evidence-template.md` | Add code traceability and gate log fields. |
-| `framework/validators/framework-validator.mjs` | Add machine checks for implemented and validated task files. |
+| `spec-framework validate` | Check implemented and validated task evidence. |
 | Existing task files | Normalize evidence placeholders to the new structure without changing task status. |
 
 ## Supersedes

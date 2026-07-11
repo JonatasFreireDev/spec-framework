@@ -142,7 +142,7 @@ IDs are unique within the parent's scope. When there is risk of ambiguity, refer
 Moving an artifact requires tooling:
 
 ```bash
-node framework/tools/move-artifact.mjs --from <old-path> --to <new-path>
+spec-framework move --from <old-path> --to <new-path>
 ```
 
 The move script rewrites Markdown links and paths in JSON that are mechanically resolvable. Mentions in free text are reported for human review, not rewritten automatically.
@@ -235,8 +235,7 @@ repo/
     decisions/
     skills/
     templates/
-    validators/
-    tools/
+    manifest.json
 
   product/
     .product/

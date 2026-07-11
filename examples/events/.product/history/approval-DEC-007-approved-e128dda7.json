@@ -1,0 +1,9 @@
+{
+  "artifact_id": "DEC-007",
+  "path": "knowledge/decisions/DEC-007-code-evidence-gates.md",
+  "content_hash": "e128dda7edc583a4a7f4f49ad8aaae6ded33e40832b80d9fad6401dd08adb981",
+  "status_granted": "approved",
+  "approved_by": "JonatasFreireDev <JonatasFreireDev@users.noreply.github.com>",
+  "approved_at": "2026-07-10T18:31:10.580Z",
+  "notes": "Approved migration: replace the retired Node validator with the Go spec-framework validate command. Regeneration explicitly approved by the framework owner on 2026-07-10."
+}

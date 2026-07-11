@@ -60,7 +60,7 @@ flowchart LR
   D["DEC-003 Approval Records"] --> F["FRAMEWORK.md gates"]
   D --> A["AGENTS.md instructions"]
   D --> H[".product/history records"]
-  D --> V["framework-validator.mjs"]
+  D --> V["spec-framework validate"]
   D --> T["approval record template"]
 
   classDef done fill:#dcfce7,stroke:#16a34a,color:#14532d;
@@ -87,7 +87,7 @@ flowchart LR
 | --- | --- |
 | [FRAMEWORK.md](../../../../FRAMEWORK.md) | Reference approval records in approval gates. |
 | [AGENTS.md](../../../../AGENTS.md) | Instruct agents not to create or edit approval records except explicit approved migrations. |
-| [framework-validator.mjs](../../../../framework/validators/framework-validator.mjs) | Validate approval records and stricter gate transitions. |
+| `spec-framework validate` | Validate approval records and stricter gate transitions. |
 | [.product/history/](../../.product/history) | Store approval records. |
 | [approval-record-template.json](../../../../framework/template/approval-record-template.json) | Provide machine-readable template. |
 

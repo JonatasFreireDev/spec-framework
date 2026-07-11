@@ -46,7 +46,7 @@ Derived staleness closes that gap while preserving the existing status model.
 ```mermaid
 flowchart LR
   D["DEC-005 Derived Staleness"] --> I[".product/derivations.json"]
-  D --> V["framework-validator.mjs"]
+  D --> V["spec-framework validate"]
   D --> F["FRAMEWORK.md gates"]
   D --> A["AGENTS.md instructions"]
   D --> T["derivation template"]
@@ -75,7 +75,7 @@ flowchart LR
 | --- | --- |
 | [FRAMEWORK.md](../../../../FRAMEWORK.md) | Reference derived staleness as a gate blocker. |
 | [AGENTS.md](../../../../AGENTS.md) | Instruct agents to report stale artifacts instead of flipping status. |
-| [framework-validator.mjs](../../../../framework/validators/framework-validator.mjs) | Validate derivation hashes. |
+| `spec-framework validate` | Validate derivation hashes. |
 | [.product/derivations.json](../../.product/derivations.json) | Store baseline derivation metadata. |
 | [derivation-record-template.json](../../../../framework/template/derivation-record-template.json) | Provide machine-readable template. |
 

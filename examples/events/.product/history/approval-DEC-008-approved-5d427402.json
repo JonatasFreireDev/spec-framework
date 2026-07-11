@@ -1,0 +1,9 @@
+{
+  "artifact_id": "DEC-008",
+  "path": "knowledge/decisions/DEC-008-rigor-tiers.md",
+  "content_hash": "5d427402348671bac7c8d2e7ebead54c1c10e4c9ac9cd3bd9309e7560c756006",
+  "status_granted": "approved",
+  "approved_by": "JonatasFreireDev <JonatasFreireDev@users.noreply.github.com>",
+  "approved_at": "2026-07-10T18:31:10.580Z",
+  "notes": "Approved migration: replace the retired Node validator with the Go spec-framework validate command. Regeneration explicitly approved by the framework owner on 2026-07-10."
+}

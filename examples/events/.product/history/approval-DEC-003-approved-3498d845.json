@@ -1,9 +1,0 @@
-{
-  "artifact_id": "DEC-003",
-  "path": "knowledge/decisions/DEC-003-approval-records.md",
-  "content_hash": "3498d845e010f232f504dcc1172fed5203c929fd3fe7473ea01ef672c7b59212",
-  "status_granted": "approved",
-  "approved_by": "JonatasFreireDev <JonatasFreireDev@users.noreply.github.com>",
-  "approved_at": "2026-07-10T18:31:10.580Z",
-  "notes": "Approved migration: align framework source paths with installed decisions, validators, tools, and framework-only tests."
-}

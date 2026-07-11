@@ -54,7 +54,7 @@ Rollout has two phases:
 | Artifact | Link |
 | --- | --- |
 | Execution graph template | [execution graph template](../template/execution-graph-template.json) |
-| Validator | [../validators/framework-validator.mjs](../validators/framework-validator.mjs) |
+| Validator | [../../internal/validator/](../../internal/validator/) |
 | FRAMEWORK | [../../FRAMEWORK.md](../../FRAMEWORK.md) |
 
 ## Supersedes

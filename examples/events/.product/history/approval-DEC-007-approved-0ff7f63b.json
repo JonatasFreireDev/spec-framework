@@ -1,9 +1,0 @@
-{
-  "artifact_id": "DEC-007",
-  "path": "knowledge/decisions/DEC-007-code-evidence-gates.md",
-  "content_hash": "0ff7f63bc10c403473ce14a40416b49ec3f9c9129fbcfa01a331a74d38996fb0",
-  "status_granted": "approved",
-  "approved_by": "JonatasFreireDev <JonatasFreireDev@users.noreply.github.com>",
-  "approved_at": "2026-07-10T18:31:10.580Z",
-  "notes": "Approved migration: align framework source paths with installed decisions, validators, tools, and framework-only tests."
-}

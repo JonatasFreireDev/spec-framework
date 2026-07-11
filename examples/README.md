@@ -17,7 +17,7 @@ Examples are learning material. They are not copied into new product repositorie
 The `events/` example is a self-contained product root. Validate it with:
 
 ```bash
-node framework/validators/framework-validator.mjs --product-root examples/events --framework-root .
+spec-framework validate --product-root examples/events --framework-root .
 ```
 
-`npm run validate` runs this by default.
+The Go validation workflow runs this on every pull request.

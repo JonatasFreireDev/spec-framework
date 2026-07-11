@@ -1,0 +1,50 @@
+{
+  "schema_version": 1,
+  "runtime": "node",
+  "cases": [
+    {
+      "id": "cli-help",
+      "exit_code": 0,
+      "stdout": "Usage: spec-framework <command> [options]\n\nCommands:\n  init --target <path>       Create a new product repo from starter/.\n  validate [options]         Validate an initialized product repo.\n  upgrade [--target <path>]  Refresh framework assets in a product repo.\n  help                       Show this help.\n\nExamples:\n  spec-framework init --target ../my-product\n  spec-framework validate\n  spec-framework upgrade --target ../my-product",
+      "stderr": ""
+    },
+    {
+      "id": "init",
+      "exit_code": 0,
+      "stdout": "Initialized Spec Framework product at <TEMP>/product-repo\n- Product root: product\n- Framework assets: .spec-framework\n- Codex skills mirror: .codex/skills\nNext: fill product/foundation and run:\nnode .spec-framework/tools/validate-product.mjs",
+      "stderr": "",
+      "artifacts": {
+        "product_root_exists": true,
+        "framework_root_exists": true,
+        "skill_count": 34,
+        "codex_skill_count": 34
+      }
+    },
+    {
+      "id": "validate",
+      "exit_code": 0,
+      "stdout": "Verdict: 🟡 ready_with_notes (0 errors, 12 warnings, 0 notes)\nWARNING traceability domains/_template-domain/goals/_template-goal/context.md: GOAL-TEMPLATE points to parent DOMAIN-TEMPLATE, but the parent does not list it as a child.\nWARNING traceability domains/_template-domain/goals/_template-goal/features/_template-feature/context.md: FT-TEMPLATE points to parent GOAL-TEMPLATE, but the parent does not list it as a child.\nWARNING traceability domains/_template-domain/goals/_template-goal/features/_template-feature/use-cases/_template-use-case/context.md: UC-TEMPLATE points to parent FT-TEMPLATE, but the parent does not list it as a child.\nWARNING delivery domains/_template-domain/context.md: DOMAIN-TEMPLATE is missing delivery.level.\nWARNING delivery domains/_template-domain/context.md: DOMAIN-TEMPLATE is missing delivery.priority.\nWARNING delivery domains/_template-domain/context.md: DOMAIN-TEMPLATE is missing delivery.rationale.\nWARNING delivery domains/_template-domain/goals/_template-goal/features/_template-feature/context.md: FT-TEMPLATE is missing delivery.level.\nWARNING delivery domains/_template-domain/goals/_template-goal/features/_template-feature/context.md: FT-TEMPLATE is missing delivery.priority.\nWARNING delivery domains/_template-domain/goals/_template-goal/features/_template-feature/context.md: FT-TEMPLATE is missing delivery.rationale.\nWARNING delivery domains/_template-domain/goals/_template-goal/features/_template-feature/use-cases/_template-use-case/context.md: UC-TEMPLATE is missing delivery.level.\nWARNING delivery domains/_template-domain/goals/_template-goal/features/_template-feature/use-cases/_template-use-case/context.md: UC-TEMPLATE is missing delivery.priority.\nWARNING delivery domains/_template-domain/goals/_template-goal/features/_template-feature/use-cases/_template-use-case/context.md: UC-TEMPLATE is missing delivery.rationale.",
+      "stderr": ""
+    },
+    {
+      "id": "move-dry-run",
+      "exit_code": 0,
+      "stdout": "Dry run: source -> target\nRewritten files: 0\nFree-text mentions requiring review: 0",
+      "stderr": "",
+      "artifacts": {
+        "source_exists": true,
+        "target_exists": false
+      }
+    },
+    {
+      "id": "upgrade",
+      "exit_code": 0,
+      "stdout": "Upgraded Spec Framework assets at <TEMP>/product-repo\n- Product root preserved: product\n- Framework assets updated: .spec-framework\n- Version: 5cb3526\n- Codex skills mirror: .codex/skills\nNext: run:\nnode .spec-framework/tools/validate-product.mjs",
+      "stderr": "",
+      "artifacts": {
+        "product_preserved": true,
+        "validator_refreshed": true
+      }
+    }
+  ]
+}

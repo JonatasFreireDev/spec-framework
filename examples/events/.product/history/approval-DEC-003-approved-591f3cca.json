@@ -1,0 +1,9 @@
+{
+  "artifact_id": "DEC-003",
+  "path": "knowledge/decisions/DEC-003-approval-records.md",
+  "content_hash": "591f3cca4ba3c2b9dd06c96b20f202b640370ea0db763b475f222a94d33c9d85",
+  "status_granted": "approved",
+  "approved_by": "JonatasFreireDev <JonatasFreireDev@users.noreply.github.com>",
+  "approved_at": "2026-07-10T18:31:10.580Z",
+  "notes": "Approved migration: align framework source paths and replace the retired Node validator with the Go spec-framework validate command. Regeneration explicitly approved by the framework owner on 2026-07-10."
+}

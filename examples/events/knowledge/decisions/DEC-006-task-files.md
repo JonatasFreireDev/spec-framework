@@ -77,7 +77,7 @@ flowchart LR
 | --- | --- |
 | `FRAMEWORK.md` | Document task files and generated `tasks.md` index. |
 | `AGENTS.md` | Instruct agents to edit task files, not generated `tasks.md`. |
-| `framework/validators/framework-validator.mjs` | Validate task paths, task file metadata, generated index, and graph snapshots. |
+| `spec-framework validate` | Validate task paths, task file metadata, generated index, and graph snapshots. |
 | `framework/template/task-template.md` | Add canonical one-task file template. |
 | `framework/template/tasks-template.md` | Mark as generated index template. |
 | `framework/template/execution-graph-template.json` | Add `path` to every graph node. |

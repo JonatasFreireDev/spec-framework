@@ -1,9 +1,0 @@
-{
-  "artifact_id": "DEC-009",
-  "path": "knowledge/decisions/DEC-009-identity-and-move-tooling.md",
-  "content_hash": "5afe30c4df32a8193cef8382ef1e7f03db7b22992613cff0273c302896cdb930",
-  "status_granted": "approved",
-  "approved_by": "JonatasFreireDev <JonatasFreireDev@users.noreply.github.com>",
-  "approved_at": "2026-07-10T18:31:10.580Z",
-  "notes": "Approved migration: align framework source paths with installed decisions, validators, tools, and framework-only tests."
-}

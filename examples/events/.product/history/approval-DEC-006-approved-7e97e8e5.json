@@ -1,0 +1,9 @@
+{
+  "artifact_id": "DEC-006",
+  "path": "knowledge/decisions/DEC-006-task-files.md",
+  "content_hash": "7e97e8e5d6b137a12a551ab808eadd7c9f010b7a2c8d00a1fd13b4bc5725342a",
+  "status_granted": "approved",
+  "approved_by": "JonatasFreireDev <JonatasFreireDev@users.noreply.github.com>",
+  "approved_at": "2026-07-10T18:31:10.580Z",
+  "notes": "Approved migration: replace the retired Node validator with the Go spec-framework validate command. Regeneration explicitly approved by the framework owner on 2026-07-10."
+}

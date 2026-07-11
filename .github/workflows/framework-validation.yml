@@ -23,19 +23,21 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - name: Setup Go
+        uses: actions/setup-go@v5
         with:
-          node-version: "22"
+          go-version-file: go.mod
+          cache: true
 
-      - name: Syntax check
-        run: npm run check
+      - name: Engineering tests
+        run: go test ./...
 
-      - name: Engineering tool tests
-        run: npm test
+      - name: Static analysis
+        run: go vet ./...
 
-      - name: Package contents
-        run: npm run pack:dry
+      - name: Race detector
+        if: runner.os == 'Linux'
+        run: go test -race ./...
 
       - name: Framework validator
-        run: npm run validate
+        run: go run ./cmd/spec-framework validate --product-root examples/events --framework-root .

@@ -133,7 +133,7 @@ Every important folder-backed artifact must declare `slug` in `context.md`.
 
 - The slug must match the folder name and remain stable when the human-readable title changes.
 - Do not allocate new IDs by incrementing `.product/ids.json`; IDs are scoped by parent and references should include paths when ambiguity is possible.
-- Use `node framework/tools/move-artifact.mjs --from <old-path> --to <new-path>` when moving an artifact folder or file.
+- Use `spec-framework move --from <old-path> --to <new-path>` when moving an artifact folder or file.
 - The move tool rewrites Markdown links and JSON paths; review its reported free-text mentions manually.
 
 ## Code Links And Evidence

@@ -9,13 +9,13 @@ This folder stores local validation tools for the Product Engineering Framework.
 Run the framework validator from the repository root:
 
 ```bash
-node framework/validators/framework-validator.mjs --write-registry --write-report
+spec-framework validate --write-registry --write-report
 ```
 
 Run validator and move-tool fixture tests with:
 
 ```bash
-node framework/tests/run-tests.mjs
+go test ./...
 ```
 
 The GitHub Actions workflow `.github/workflows/framework-validation.yml` runs syntax checks, engineering tests, and the validator without write flags so CI verifies the committed framework state without mutating generated reports.

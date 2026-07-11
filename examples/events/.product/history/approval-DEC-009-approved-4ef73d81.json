@@ -1,0 +1,9 @@
+{
+  "artifact_id": "DEC-009",
+  "path": "knowledge/decisions/DEC-009-identity-and-move-tooling.md",
+  "content_hash": "4ef73d818056d1b0401f48ecbceb133e26584a39440f47aed2764706ce38c135",
+  "status_granted": "approved",
+  "approved_by": "JonatasFreireDev <JonatasFreireDev@users.noreply.github.com>",
+  "approved_at": "2026-07-10T18:31:10.580Z",
+  "notes": "Approved migration: replace retired Node move and validation tooling with Go spec-framework commands. Regeneration explicitly approved by the framework owner on 2026-07-10."
+}
