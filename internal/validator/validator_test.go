@@ -29,6 +29,9 @@ func TestImportValidationDetectsChangedSourceAndDuplicateTargets(t *testing.T) {
 	}
 	write := func(name string, value any) {
 		data, _ := json.Marshal(value)
+		if name == "mapping.json" {
+			data = append([]byte{0xef, 0xbb, 0xbf}, data...)
+		}
 		if err := os.WriteFile(filepath.Join(run, name), data, 0644); err != nil {
 			t.Fatal(err)
 		}

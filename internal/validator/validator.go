@@ -1,6 +1,7 @@
 package validator
 
 import (
+	"bytes"
 	"context"
 	"crypto/sha256"
 	"encoding/hex"
@@ -100,7 +101,7 @@ func Scan(ctx context.Context, root, frameworkRoot string, workers int) (Snapsho
 				data, err := os.ReadFile(files[index])
 				it := item{index: index, err: err, text: strings.TrimPrefix(string(data), "\ufeff")}
 				if err == nil && strings.HasSuffix(files[index], ".json") {
-					_ = json.Unmarshal(data, &it.json)
+					_ = json.Unmarshal(bytes.TrimPrefix(data, []byte{0xef, 0xbb, 0xbf}), &it.json)
 				}
 				results <- it
 			}

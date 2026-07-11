@@ -1,6 +1,7 @@
 package sourceimport
 
 import (
+	"bytes"
 	"crypto/sha256"
 	"encoding/hex"
 	"encoding/json"
@@ -121,7 +122,7 @@ func Materialize(productRoot, runID, approvedBy string) ([]string, error) {
 		return nil, err
 	}
 	var file MappingFile
-	if err := json.Unmarshal(data, &file); err != nil {
+	if err := json.Unmarshal(trimBOM(data), &file); err != nil {
 		return nil, fmt.Errorf("parse mapping: %w", err)
 	}
 	if file.ImportID != runID {
@@ -132,7 +133,7 @@ func Materialize(productRoot, runID, approvedBy string) ([]string, error) {
 		return nil, err
 	}
 	var inventory Inventory
-	if err := json.Unmarshal(invData, &inventory); err != nil {
+	if err := json.Unmarshal(trimBOM(invData), &inventory); err != nil {
 		return nil, fmt.Errorf("parse inventory: %w", err)
 	}
 	knownSources := map[string]bool{}
@@ -198,7 +199,7 @@ func Materialize(productRoot, runID, approvedBy string) ([]string, error) {
 		return nil, err
 	}
 	var plan map[string]any
-	if err := json.Unmarshal(planData, &plan); err != nil {
+	if err := json.Unmarshal(trimBOM(planData), &plan); err != nil {
 		rollback()
 		return nil, err
 	}
@@ -334,4 +335,8 @@ func writeJSON(path string, value any) error {
 		return err
 	}
 	return os.WriteFile(path, append(data, '\n'), 0644)
+}
+
+func trimBOM(data []byte) []byte {
+	return bytes.TrimPrefix(data, []byte{0xef, 0xbb, 0xbf})
 }

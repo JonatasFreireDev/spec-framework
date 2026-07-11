@@ -82,6 +82,31 @@ func TestMaterializeRequiresExplicitApprovalAndCreatesDraft(t *testing.T) {
 	}
 }
 
+func TestMaterializeAcceptsUTF8BOMJSON(t *testing.T) {
+	root := t.TempDir()
+	source := filepath.Join(t.TempDir(), "epic.md")
+	if err := os.WriteFile(source, []byte("# Epic"), 0644); err != nil {
+		t.Fatal(err)
+	}
+	runID, err := CreateRun(root, []string{source})
+	if err != nil {
+		t.Fatal(err)
+	}
+	runRoot := filepath.Join(root, "knowledge", "imports", "runs", runID)
+	invData, _ := os.ReadFile(filepath.Join(runRoot, "inventory.json"))
+	var inv Inventory
+	_ = json.Unmarshal(invData, &inv)
+	mapping := MappingFile{SchemaVersion: 1, ImportID: runID, Mappings: []Mapping{{ID: "MAP-001", Target: "domains/bom/domain.md", Selected: true, SourceDocuments: []string{inv.Sources[0].Path}, DraftContent: "status: draft\nsource_documents:\n  - " + inv.Sources[0].Path + "\n"}}}
+	data, _ := json.Marshal(mapping)
+	data = append([]byte{0xef, 0xbb, 0xbf}, data...)
+	if err := os.WriteFile(filepath.Join(runRoot, "mapping.json"), data, 0644); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := Materialize(root, runID, "Windows User"); err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestMaterializeRejectsEscapingAndDuplicateTargets(t *testing.T) {
 	for name, mappings := range map[string][]Mapping{
 		"escape":    {{ID: "MAP-001", Target: "../outside.md", Selected: true, SourceDocuments: []string{"knowledge/imports/sources/a.md"}, DraftContent: "status: draft\nsource_documents: []"}},
