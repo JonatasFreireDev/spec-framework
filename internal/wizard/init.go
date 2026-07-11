@@ -1,161 +1,197 @@
 package wizard
 
 import (
+	"errors"
 	"fmt"
 	"io"
 	"strings"
 
 	tea "charm.land/bubbletea/v2"
+	huh "charm.land/huh/v2"
+	"charm.land/lipgloss/v2"
 	"github.com/JonatasFreireDev/spec-framework/internal/install"
 )
 
-type Stage uint8
+// choice pairs a human-facing label with the agent it installs.
+type choice struct {
+	Name  string
+	Agent install.Agent
+}
 
-const (
-	SelectAgents Stage = iota
-	EnterTarget
-	Review
-	Finished
-)
+// choices are the agent skill formats offered by the installer, in order.
+var choices = []choice{
+	{"Codex", install.Codex},
+	{"Cursor", install.Cursor},
+	{"Claude Code", install.Claude},
+}
 
-type InitModel struct {
-	Stage     Stage
-	Cursor    int
-	Selected  map[int]bool
+// Result captures the outcome of the interactive init wizard.
+type Result struct {
 	Target    string
+	Agents    []install.Agent
 	Confirmed bool
 	Cancelled bool
 }
 
-var choices = []struct {
-	Name  string
-	Agent install.Agent
-}{{"Codex", install.Codex}, {"Cursor", install.Cursor}, {"Claude Code", install.Claude}}
-
-func NewInitModel() InitModel     { return InitModel{Stage: SelectAgents, Selected: map[int]bool{0: true}} }
-func (m InitModel) Init() tea.Cmd { return nil }
-func (m InitModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
-	key, ok := msg.(tea.KeyPressMsg)
-	if !ok {
-		return m, nil
+// AgentNames returns the selected agent identifiers as strings.
+func (r Result) AgentNames() []string {
+	out := make([]string, 0, len(r.Agents))
+	for _, a := range r.Agents {
+		out = append(out, string(a))
 	}
-	switch key.String() {
-	case "ctrl+c", "esc":
-		m.Cancelled = true
-		m.Stage = Finished
-		return m, tea.Quit
-	}
-	if key.String() == "q" && m.Stage != EnterTarget {
-		m.Cancelled = true
-		m.Stage = Finished
-		return m, tea.Quit
-	}
-	switch m.Stage {
-	case SelectAgents:
-		switch key.Code {
-		case tea.KeyUp:
-			if m.Cursor > 0 {
-				m.Cursor--
-			}
-		case tea.KeyDown:
-			if m.Cursor < len(choices)-1 {
-				m.Cursor++
-			}
-		case tea.KeySpace:
-			m.Selected[m.Cursor] = !m.Selected[m.Cursor]
-		case tea.KeyEnter:
-			if len(m.Agents()) > 0 {
-				m.Stage = EnterTarget
-			}
-		}
-	case EnterTarget:
-		switch key.Code {
-		case tea.KeyEnter:
-			if strings.TrimSpace(m.Target) != "" {
-				m.Target = strings.TrimSpace(m.Target)
-				m.Stage = Review
-			}
-		case tea.KeyBackspace:
-			if len(m.Target) > 0 {
-				r := []rune(m.Target)
-				m.Target = string(r[:len(r)-1])
-			}
-		default:
-			if key.Text != "" {
-				m.Target += key.Text
-			}
-		}
-	case Review:
-		switch strings.ToLower(key.String()) {
-		case "y", "enter":
-			m.Confirmed = true
-			m.Stage = Finished
-			return m, tea.Quit
-		case "n":
-			m.Cancelled = true
-			m.Stage = Finished
-			return m, tea.Quit
-		case "b":
-			m.Stage = SelectAgents
-		}
-	}
-	return m, nil
+	return out
 }
-func (m InitModel) View() tea.View {
+
+// agentOptions builds the multi-select options. None are preselected.
+func agentOptions() []huh.Option[install.Agent] {
+	opts := make([]huh.Option[install.Agent], 0, len(choices))
+	for _, c := range choices {
+		opts = append(opts, huh.NewOption(c.Name, c.Agent))
+	}
+	return opts
+}
+
+// summaryReserve is the horizontal space kept for the choices panel so the
+// huh form on the left never grows into it.
+const summaryReserve = 40
+
+// minFormWidth keeps the question column usable on narrow terminals.
+const minFormWidth = 32
+
+// initModel wraps a huh form and, while the form is active, renders a live
+// summary of the choices made so far in a panel to the right of the current
+// question. Splitting the form into one group per field makes huh advance
+// one question at a time.
+type initModel struct {
+	form      *huh.Form
+	selected  *[]install.Agent
+	target    *string
+	confirmed *bool
+	width     int
+}
+
+func (m initModel) Init() tea.Cmd { return m.form.Init() }
+
+func (m initModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+	if ws, ok := msg.(tea.WindowSizeMsg); ok {
+		m.width = ws.Width
+		formWidth := ws.Width - summaryReserve
+		if formWidth < minFormWidth {
+			formWidth = minFormWidth
+		}
+		ws.Width = formWidth
+		msg = ws
+	}
+	model, cmd := m.form.Update(msg)
+	if f, ok := model.(*huh.Form); ok {
+		m.form = f
+	}
+	if m.form.State == huh.StateCompleted || m.form.State == huh.StateAborted {
+		return m, tea.Quit
+	}
+	return m, cmd
+}
+
+func (m initModel) View() tea.View {
+	if m.form.State != huh.StateNormal {
+		return tea.NewView("")
+	}
+	form := lipgloss.NewStyle().MarginRight(4).Render(m.form.View())
+	joined := lipgloss.JoinHorizontal(lipgloss.Top, form, m.summaryView())
+	return tea.NewView(joined)
+}
+
+// summaryView renders the choices-so-far panel shown beside the question.
+func (m initModel) summaryView() string {
+	title := lipgloss.NewStyle().Bold(true).Foreground(lipgloss.Color("6"))
+	label := lipgloss.NewStyle().Bold(true)
+	filled := lipgloss.NewStyle().Foreground(lipgloss.Color("2"))
+	empty := lipgloss.NewStyle().Foreground(lipgloss.Color("8"))
+
+	value := func(s string) string {
+		if strings.TrimSpace(s) == "" {
+			return empty.Render("—")
+		}
+		return filled.Render(s)
+	}
+
+	agents := strings.Join(Result{Agents: *m.selected}.AgentNames(), ", ")
+
 	var b strings.Builder
-	switch m.Stage {
-	case SelectAgents:
-		b.WriteString("Which agent skill formats should be installed?\n\n")
-		for i, c := range choices {
-			cursor := " "
-			if i == m.Cursor {
-				cursor = ">"
-			}
-			check := " "
-			if m.Selected[i] {
-				check = "x"
-			}
-			fmt.Fprintf(&b, "%s [%s] %s\n", cursor, check, c.Name)
-		}
-		b.WriteString("\nSpace selects, Enter continues, Esc cancels.\n")
-	case EnterTarget:
-		b.WriteString("Target directory:\n> " + m.Target + "\n\nEnter continues, Esc cancels.\n")
-	case Review:
-		fmt.Fprintf(&b, "Installation plan\n\nTarget: %s\nAgents: %s\n\nApply this plan? [Y/n/b]\n", m.Target, strings.Join(m.AgentNames(), ", "))
-	case Finished:
-		if m.Cancelled {
-			b.WriteString("Installation cancelled; no files were written.\n")
-		}
-	}
-	return tea.NewView(b.String())
-}
-func (m InitModel) Agents() []install.Agent {
-	var out []install.Agent
-	for i, c := range choices {
-		if m.Selected[i] {
-			out = append(out, c.Agent)
-		}
-	}
-	return out
-}
-func (m InitModel) AgentNames() []string {
-	var out []string
-	for i, c := range choices {
-		if m.Selected[i] {
-			out = append(out, string(c.Agent))
-		}
-	}
-	return out
+	b.WriteString(title.Render("Your choices") + "\n\n")
+	b.WriteString(label.Render("Agents") + "\n  " + value(agents) + "\n\n")
+	b.WriteString(label.Render("Target") + "\n  " + value(*m.target))
+
+	box := lipgloss.NewStyle().
+		Border(lipgloss.RoundedBorder()).
+		BorderForeground(lipgloss.Color("8")).
+		Padding(0, 2).
+		Width(30)
+	return box.Render(b.String())
 }
 
-func RunInit(input io.Reader, output io.Writer) (InitModel, error) {
-	model, err := tea.NewProgram(NewInitModel(), tea.WithInput(input), tea.WithOutput(output)).Run()
+// RunInit drives the interactive installer wizard and returns the plan.
+func RunInit(input io.Reader, output io.Writer) (Result, error) {
+	var selected []install.Agent
+	var target string
+	confirmed := true
+
+	form := huh.NewForm(
+		huh.NewGroup(
+			huh.NewMultiSelect[install.Agent]().
+				Title("Which agent formats to install?").
+				Options(agentOptions()...).
+				// Height must cover every option plus the title line; huh
+				// subtracts the title height from the viewport, so without
+				// this the last option is pushed out of view and scrolls.
+				Height(len(choices)+2).
+				Filterable(false).
+				Value(&selected).
+				Validate(func(v []install.Agent) error {
+					if len(v) == 0 {
+						return errors.New("select at least one agent")
+					}
+					return nil
+				}),
+		),
+		huh.NewGroup(
+			huh.NewInput().
+				Title("Target directory").
+				Placeholder("../product").
+				Value(&target).
+				Validate(func(s string) error {
+					if strings.TrimSpace(s) == "" {
+						return errors.New("target directory is required")
+					}
+					return nil
+				}),
+		),
+		huh.NewGroup(
+			huh.NewConfirm().
+				Title("Apply this installation plan?").
+				Affirmative("Yes").
+				Negative("No").
+				Value(&confirmed),
+		),
+	)
+
+	model := initModel{form: form, selected: &selected, target: &target, confirmed: &confirmed}
+	final, err := tea.NewProgram(model, tea.WithInput(input), tea.WithOutput(output)).Run()
 	if err != nil {
-		return InitModel{}, err
+		return Result{}, fmt.Errorf("init wizard: %w", err)
 	}
-	result, ok := model.(InitModel)
+	fm, ok := final.(initModel)
 	if !ok {
-		return InitModel{}, fmt.Errorf("unexpected wizard model %T", model)
+		return Result{}, fmt.Errorf("unexpected wizard model %T", final)
 	}
-	return result, nil
+	if fm.form.State == huh.StateAborted {
+		return Result{Cancelled: true}, nil
+	}
+
+	return Result{
+		Target:    strings.TrimSpace(target),
+		Agents:    selected,
+		Confirmed: confirmed,
+		Cancelled: !confirmed,
+	}, nil
 }
