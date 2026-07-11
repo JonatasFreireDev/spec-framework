@@ -21,7 +21,7 @@ Do not write product scope, product decisions, approval records, or delivery evi
 
 Do not write framework-method decisions into `product/knowledge/decisions/`.
 
-Use `.product/workspaces/WORK-NNN.json` for concurrent feature focus; never invent a global active feature. Before implementation, require modular specification contracts by rigor, approved Design, Technical Discovery, a resolved Architecture Gate, configured gates, graph/tasks, and an exclusive claim when graph runtime is used. `implemented` uses working-tree evidence and diff hash; commit only after Code Review and QA approve that same hash.
+Use `.product/workspaces/WORK-NNN/` for concurrent feature focus and resume from `state.json`, the latest checkpoint, and the latest handoff; never invent a global active feature. A legacy `WORK-NNN.json` is read-only compatible until explicit runtime migration. Before implementation, require modular specification contracts by rigor, approved Design, Technical Discovery, a resolved Architecture Gate, configured gates, graph/tasks, and an active lease when graph runtime is used. `implemented` uses working-tree evidence and diff hash; commit only after Code Review and task QA approve that same hash, then require Integrated QA after combining task commits.
 
 ## Required Reading
 

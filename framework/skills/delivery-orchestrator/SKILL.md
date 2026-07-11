@@ -51,4 +51,3 @@ Updated workspace state; structured handoff; checkpoint request; routed next orc
 Next: the canonical orchestrator or specialist reported by resume/status.
 
 Pass forward workspace, task, hashes, evidence, decisions, dependencies, risks, attempts, blockers, and required reading.
-

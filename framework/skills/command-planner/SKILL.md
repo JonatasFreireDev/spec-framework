@@ -51,4 +51,3 @@ CMDPLAN-NNN.json with argv, cwd, source, risk, timeout, expected exit code, hash
 Next: command-executor after plan validation and required approval.
 
 Pass forward workspace, task, hashes, evidence, decisions, dependencies, risks, attempts, blockers, and required reading.
-

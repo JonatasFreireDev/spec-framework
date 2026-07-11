@@ -51,4 +51,3 @@ Versioned wave plan; ready/serialized tasks; conflict rationale; capability gaps
 Next: delivery-orchestrator or task agents for the ready wave.
 
 Pass forward workspace, task, hashes, evidence, decisions, dependencies, risks, attempts, blockers, and required reading.
-

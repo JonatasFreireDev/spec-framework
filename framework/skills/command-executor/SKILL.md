@@ -51,4 +51,3 @@ Command evidence JSON; stdout/stderr digest or safe log reference; result; route
 Next: code-runner, code-review, qa, or delivery-orchestrator according to the plan.
 
 Pass forward workspace, task, hashes, evidence, decisions, dependencies, risks, attempts, blockers, and required reading.
-

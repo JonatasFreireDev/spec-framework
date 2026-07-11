@@ -51,4 +51,3 @@ INTEGRATION-NNN.json; ordered cherry-pick plan; integrated diff hash; conflict r
 Next: qa in integrated-qa mode, then pr-finalizer or release-orchestrator.
 
 Pass forward workspace, task, hashes, evidence, decisions, dependencies, risks, attempts, blockers, and required reading.
-

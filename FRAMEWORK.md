@@ -542,7 +542,7 @@ spec-framework graph release --task TK-001 --agent codex
 spec-framework graph complete --graph <path> --task TK-001 --agent codex
 ```
 
-Claims live in `.product/claims.json`. They provide exclusive operational ownership; they do not grant artifact approval or permission to exceed `writeScope`.
+Runtime v2 leases live in `.product/claims/<task-id>.json`; `.product/claims.json` remains a v1 compatibility index during migration. Leases provide expiring operational ownership with heartbeat and recovery; they do not grant artifact approval or permission to exceed `writeScope`.
 ## 9. Skills
 
 Runtime v2 makes execution resumable and safely parallel. Each `WORK-NNN` is a directory containing identity, state, structured handoffs, checkpoints, command plans, and evidence. Task ownership is a renewable lease with heartbeat and expiry; isolated tasks use one Git worktree under `.worktrees/WORK-NNN/TK-NNN`. The scheduler computes deterministic conflict-free waves from DAG dependencies, `writeScope`, and `sharedResources` but does not spawn agents. Command plans store argv rather than shell strings and initially permit only R0 read-only and R1 local-temporary operations. Validated task commits are integrated locally in DAG order; conflicts stop for human resolution and Integrated QA is mandatory.
