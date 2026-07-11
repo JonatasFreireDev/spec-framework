@@ -103,9 +103,19 @@ func CreateWorkspace(root, selector, domain, goal, useCase, createdBy string) (W
 	}
 	next, blockers := nextFor(root, a, scope["use_case"])
 	w := Workspace{ID: id, Scope: scope, CurrentStep: next, RecommendedSkill: next, BlockedBy: blockers, CreatedBy: createdBy, CreatedAt: time.Now().UTC().Format(time.RFC3339)}
-	if err := writeJSON(filepath.Join(dir, id+".json"), w); err != nil {
+	wd := filepath.Join(dir, id)
+	if err := os.MkdirAll(wd, 0755); err != nil {
 		return Workspace{}, err
 	}
+	for _, child := range []string{"handoffs", "checkpoints", "command-plans", "evidence", "tasks"} {
+		if err := os.MkdirAll(filepath.Join(wd, child), 0755); err != nil {
+			return Workspace{}, err
+		}
+	}
+	if err := writeJSON(filepath.Join(wd, "workspace.json"), w); err != nil {
+		return Workspace{}, err
+	}
+	_ = writeJSON(filepath.Join(wd, "state.json"), RuntimeState{Version: RuntimeVersion, WorkspaceID: id, Phase: next, Status: "active", UpdatedAt: time.Now().UTC().Format(time.RFC3339), Blockers: blockers})
 	return w, nil
 }
 func Features(root string) ([]Artifact, error) {
@@ -167,8 +177,10 @@ func PreviewApproval(root, artifactPath, grant string) (ApprovalPreview, error) 
 
 func WorkspaceStatus(root, id string) (Status, error) {
 	var w Workspace
-	if err := readJSON(filepath.Join(root, ".product", "workspaces", id+".json"), &w); err != nil {
+	if loaded, err := LoadWorkspace(root, id); err != nil {
 		return Status{}, err
+	} else {
+		w = loaded
 	}
 	r, err := LoadRegistry(root)
 	if err != nil {
@@ -189,7 +201,7 @@ func WorkspaceStatus(root, id string) (Status, error) {
 	w.CurrentStep = next
 	w.RecommendedSkill = next
 	w.BlockedBy = blockers
-	if err := writeJSON(filepath.Join(root, ".product", "workspaces", id+".json"), w); err != nil {
+	if err := writeJSON(filepath.Join(workspaceDir(root, id), "workspace.json"), w); err != nil {
 		return Status{}, err
 	}
 	return Status{Workspace: w, Artifact: a, Next: next, Blockers: blockers}, nil

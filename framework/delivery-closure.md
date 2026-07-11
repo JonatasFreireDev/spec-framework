@@ -19,7 +19,7 @@ spec-framework status --work WORK-001
 spec-framework next --work WORK-001
 ```
 
-Calling `work` without a selector lists registered features. Workspaces are independent files under `.product/workspaces/`; multiple humans or agents do not share mutable global focus.
+Calling `work` without a selector lists registered features. Runtime v2 workspaces are independent directories under `.product/workspaces/`, with state, handoffs, checkpoints, command plans, and evidence; multiple humans or agents do not share mutable global focus.
 
 ## Approve
 

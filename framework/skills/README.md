@@ -25,7 +25,9 @@ When a skill mentions a product-relative path such as `knowledge/conventions/gat
 
 - `<skill-name>/SKILL.md`: one skill per folder.
 - Specialist skills: problem, vision, strategy, domain, goal, journey, feature, use case, UX/UI, specification, technical discovery, implementation planning, graph, task, code runner, bug fixer, QA, code review, security review, threat modeler, commit crafter, PR finalizer, audit, documentation, history, and artifact import.
-- Orchestrator skills: product, domain evolution, existing product import, new feature, audit, evolution, documentation, and release.
+- Orchestrator skills: product, domain evolution, existing product import, new feature, audit, evolution, documentation, release, delivery, execution scheduling, and integration.
+
+Runtime v2 also includes the `command-planner` and `command-executor` operational skills. The planner owns immutable argv-based plans; the executor is restricted to local R0/R1 plans.
 
 ## Responsible Skill
 

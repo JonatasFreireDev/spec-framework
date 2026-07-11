@@ -1,0 +1,11 @@
+{
+  "version": 2,
+  "id": "HANDOFF-NNN",
+  "workspace_id": "WORK-NNN",
+  "from": "skill-or-agent",
+  "to": "skill-or-agent",
+  "summary": "Outcome and next action",
+  "required_reading": [],
+  "blockers": [],
+  "created_at": "RFC3339"
+}

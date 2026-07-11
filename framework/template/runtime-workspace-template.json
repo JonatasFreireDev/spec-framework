@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "id": "WORK-NNN",
+  "scope": {},
+  "current_step": "delivery-orchestrator",
+  "recommended_skill": "delivery-orchestrator",
+  "blocked_by": [],
+  "created_by": "human",
+  "created_at": "RFC3339"
+}

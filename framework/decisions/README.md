@@ -26,6 +26,7 @@ Product decisions do not live here. Product decisions continue to live in `knowl
 | [FDR-014](FDR-014-generated-adopter-bootstrap.md) | Generated adopter bootstrap | approved | Adopter first-run feedback |
 | [FDR-015](FDR-015-starting-points-and-source-import.md) | Starting points and source import | approved | Governance baseline |
 | [FDR-016](FDR-016-delivery-closure-and-operational-workspaces.md) | Delivery closure and operational workspaces | approved | Governance baseline |
+| [FDR-017](FDR-017-resumable-parallel-runtime.md) | Resumable parallel runtime | approved | Governance baseline |
 
 ## Rule
 

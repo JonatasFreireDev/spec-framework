@@ -58,6 +58,8 @@ func (app App) Run(args []string, stdout, stderr io.Writer) int {
 		return runGates(args[1:], stdout, stderr)
 	case "graph":
 		return runGraph(args[1:], stdout, stderr)
+	case "resume", "handoff", "checkpoint", "lease", "commands", "schedule", "integrate", "runtime":
+		return runRuntime(args[0], args[1:], stdout, stderr)
 	default:
 		fmt.Fprintf(stderr, "unknown command %q\n\n", args[0])
 		writeHelp(stderr)
@@ -553,6 +555,14 @@ Commands:
   approve    Review and record an explicit artifact approval.
   gates      Check whether implementation gates are configured.
   graph      Inspect and operate execution graph claims.
+  resume     Resume a persisted runtime workspace.
+  handoff    Persist an agent/orchestrator handoff.
+  checkpoint Persist a resumable checkpoint.
+  lease      Claim, heartbeat, or recover task leases.
+  commands   Plan or execute shell-free R0/R1 commands.
+  schedule   Build deterministic parallel execution waves.
+  integrate  Plan or apply local commit integration.
+  runtime    Migrate a v1 workspace to runtime v2.
   validate   Validate a product repository.
   move       Move an artifact and update references.
   upgrade    Refresh installed framework assets.

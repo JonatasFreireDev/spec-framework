@@ -1,0 +1,9 @@
+{
+  "version": 2,
+  "id": "INTEGRATION-NNN",
+  "workspace_id": "WORK-NNN",
+  "base_commit": "sha",
+  "commits": [],
+  "status": "planned",
+  "requires_integrated_qa": true
+}

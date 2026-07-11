@@ -1,0 +1,15 @@
+{
+  "version": 2,
+  "id": "CMDPLAN-NNN",
+  "workspace_id": "WORK-NNN",
+  "task_id": "TK-NNN",
+  "argv": ["program", "argument"],
+  "cwd": ".",
+  "source": "approved gate, runbook, task, repository script, or human",
+  "risk": "R0",
+  "timeout_seconds": 300,
+  "allowed_writes": [],
+  "env_allowlist": [],
+  "base_commit": "sha",
+  "input_hash": "sha256"
+}
