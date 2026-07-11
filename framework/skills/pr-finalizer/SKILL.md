@@ -31,6 +31,7 @@ PR Finalizer verifies hard preconditions, links evidence, writes PR metadata bac
 - Code Review.
 - Security Review when applicable.
 - Audit/release readiness reports when present.
+- The integration record and Integrated QA evidence when multiple task branches were combined.
 - `framework/decisions/FDR-008-delivery-commits-and-prs.md`.
 
 ## Hard Preconditions
@@ -40,6 +41,7 @@ PR Finalizer verifies hard preconditions, links evidence, writes PR metadata bac
 - QA Evidence is approved or the PR is explicitly draft/prototype.
 - Code Review is approved or the PR is explicitly draft/prototype.
 - Security Review has no blocker when applicable.
+- Integrated QA passed over the current integrated diff hash when integration was required.
 - Blocking findings have route and owner.
 - PR body links evidence: tasks, QA Evidence, Code Review, Security Review when applicable, gate logs, screenshots, and CI URL when available.
 

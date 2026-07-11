@@ -41,6 +41,7 @@ Code Runner turns a task contract into code and executable evidence. It does not
 - Task has concrete `writeScope`.
 - Task lists source sections and acceptance checks.
 - Required decisions are approved.
+- The task has an active lease owned by this agent and runs in its isolated worktree when the scheduler marks it parallel.
 
 If a precondition is missing, stop and report the blocker. Do not invent missing product behavior.
 
@@ -48,6 +49,7 @@ If a precondition is missing, stop and report the blocker. Do not invent missing
 
 1. Read the task contract and source sections.
 2. Confirm the task is the only implementation target for this invocation.
+3. Read the runtime checkpoint and handoff, heartbeat the lease during long work, and stop if ownership expired or inputs became stale.
 3. Confirm planned edits stay inside `writeScope`; if a required edit falls outside scope, stop and request graph/task update.
 4. Read the active product root's `knowledge/conventions/gates.md` and identify applicable gates.
 5. Implement in TDD:
@@ -58,7 +60,7 @@ If a precondition is missing, stop and report the blocker. Do not invent missing
    - run the applicable gates from `gates.md`.
 6. Record working-tree evidence in the task file: branch, base commit, changed paths, normalized diff hash, narrow test, and applicable gate results. `implemented` does not require a commit.
 7. Stop when any applicable gate command is `TBD`; only an explicit `N/A` with rationale is non-blocking.
-8. Hand the immutable diff hash to Code Review and QA. Any later diff change stales both verdicts.
+8. Hand the immutable diff hash to Code Review and QA in `task-qa` mode. Any later diff change stales both verdicts.
 9. Stop at green. Do not commit, push, merge, or create approval records.
 
 ## Boundaries

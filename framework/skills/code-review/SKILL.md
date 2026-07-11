@@ -52,6 +52,7 @@ Code Review verifies that implementation matches the Specification, tasks, archi
 1. Confirm the review target and status.
 2. Read the source artifacts and code evidence.
 3. Record the base commit and normalized diff hash; review exactly that immutable working-tree snapshot and mark prior review stale when it changes.
+4. For an isolated task, verify the lease owner, worktree branch, checkpoint input hash, and declared `writeScope` before reviewing its diff.
 4. Inspect the diff/code paths against the three lenses.
 5. Classify findings as `blocker`, `required_fix`, or `note`.
 5. Cite file and line when possible.

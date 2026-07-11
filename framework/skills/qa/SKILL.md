@@ -14,6 +14,8 @@ Validate whether an implemented or planned artifact satisfies the specification,
 QA is an independent read-only verifier. QA does not repair code, does not edit approval records, and does not treat task checkboxes as evidence.
 
 ## Operating modes
+- task-qa: independently validate one isolated task diff before its local commit is eligible for integration.
+- integrated-qa: validate the combined integration diff and cross-task behavior before PR finalization; task-level passes do not substitute for this mode.
 - create: produce the first version of the artifact when this skill is generative.
 - update: revise an existing artifact while preserving approved decisions.
 - audit: find gaps, conflicts, dependencies, and missing approvals.
@@ -36,6 +38,7 @@ QA verdict; test evidence; blocking findings; residual risks; required fixes.
 1. Read the relevant context and identify artifact status.
 2. Read the active product root's `knowledge/conventions/gates.md` and identify applicable gates for the delivery.
 3. Confirm the current base commit and diff hash match the snapshot approved by Code Review; otherwise report stale evidence and stop.
+4. In `integrated-qa`, confirm every integrated commit passed task QA and Code Review, then test the combined diff, dependency boundaries, migrations, shared resources, and cross-task regressions.
 4. Re-run applicable gates independently when the environment is available. Do not rely on task checkboxes, handoff notes, or claimed pass/fail status.
 5. Record real gate output in `qa-evidence.md`: command, environment, log path or captured output, CI URL when available, and limitation notes when a gate cannot run.
 5. Hunt for hollow tests, missing assertions, missing negative cases, missing permission cases, scope drift outside the task writeScope, and divergence from the Specification.
