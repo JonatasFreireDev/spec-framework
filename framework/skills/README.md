@@ -24,8 +24,8 @@ When a skill mentions a product-relative path such as `knowledge/conventions/gat
 ## Expected Files
 
 - `<skill-name>/SKILL.md`: one skill per folder.
-- Specialist skills: problem, vision, strategy, domain, goal, journey, feature, use case, UX/UI, specification, implementation planning, graph, task, code runner, bug fixer, QA, code review, security review, threat modeler, commit crafter, PR finalizer, audit, documentation, and history.
-- Orchestrator skills: product, new feature, audit, evolution, documentation, and release.
+- Specialist skills: problem, vision, strategy, domain, goal, journey, feature, use case, UX/UI, specification, implementation planning, graph, task, code runner, bug fixer, QA, code review, security review, threat modeler, commit crafter, PR finalizer, audit, documentation, history, and artifact import.
+- Orchestrator skills: product, existing product import, new feature, audit, evolution, documentation, and release.
 
 ## Responsible Skill
 

@@ -1,0 +1,12 @@
+{
+  "schema_version": 1,
+  "import_id": "IMPORT-001",
+  "status": "draft",
+  "sources": [],
+  "candidates": [],
+  "open_questions": [],
+  "materialization_approved": false,
+  "materialization_approved_by": "",
+  "materialization_approved_at": "",
+  "materialized_paths": []
+}

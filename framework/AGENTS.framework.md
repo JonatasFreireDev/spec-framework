@@ -15,6 +15,7 @@ Use these roots:
 | `.spec-framework/` | Installed framework method, skills, templates, validators, tools, and framework decisions. |
 | `product/` | Product-owned state, foundation, domains, decisions, audits, releases, and evidence. |
 | `.agents/skills/`, `.cursor/skills/`, `.claude/skills/` | Generated agent-specific skill trees. Treat these as derived copies of `.spec-framework/skills/`. |
+| `product/knowledge/imports/` | Source evidence, immutable inventories, proposed mappings, conflicts, and import reports. |
 
 Do not write product scope, product decisions, approval records, or delivery evidence into `.spec-framework/`.
 

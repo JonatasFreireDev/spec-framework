@@ -2,11 +2,62 @@ package validator
 
 import (
 	"context"
+	"crypto/sha256"
 	"encoding/json"
+	"fmt"
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 )
+
+func TestImportValidationDetectsChangedSourceAndDuplicateTargets(t *testing.T) {
+	root := t.TempDir()
+	run := filepath.Join(root, "knowledge", "imports", "runs", "IMPORT-001")
+	sourceRel := "knowledge/imports/sources/epic.md"
+	source := filepath.Join(root, filepath.FromSlash(sourceRel))
+	if err := os.MkdirAll(filepath.Dir(source), 0755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.MkdirAll(run, 0755); err != nil {
+		t.Fatal(err)
+	}
+	original := []byte("original")
+	sum := sha256.Sum256(original)
+	if err := os.WriteFile(source, []byte("changed"), 0644); err != nil {
+		t.Fatal(err)
+	}
+	write := func(name string, value any) {
+		data, _ := json.Marshal(value)
+		if err := os.WriteFile(filepath.Join(run, name), data, 0644); err != nil {
+			t.Fatal(err)
+		}
+	}
+	write("inventory.json", map[string]any{"schema_version": 1, "import_id": "IMPORT-001", "sources": []any{map[string]any{"path": sourceRel, "sha256": fmt.Sprintf("%x", sum[:])}}})
+	write("import-plan.json", map[string]any{"materialization_approved": false})
+	write("mapping.json", map[string]any{"mappings": []any{map[string]any{"id": "MAP-1", "selected": true, "target": "domains/a/domain.md", "source_documents": []any{sourceRel}}, map[string]any{"id": "MAP-2", "selected": true, "target": "domains/a/domain.md", "source_documents": []any{sourceRel}}}})
+	for _, name := range []string{"conflicts.md", "import-report.md"} {
+		if err := os.WriteFile(filepath.Join(run, name), []byte("# Report"), 0644); err != nil {
+			t.Fatal(err)
+		}
+	}
+	result, err := Validate(context.Background(), root, root)
+	if err != nil {
+		t.Fatal(err)
+	}
+	changed, duplicate := false, false
+	for _, d := range result.Diagnostics {
+		if d.Check == "imports" && strings.Contains(d.Message, "Source changed") {
+			changed = true
+		}
+		if d.Check == "imports" && strings.Contains(d.Message, "Multiple selected mappings") {
+			duplicate = true
+		}
+	}
+	if !changed || !duplicate {
+		t.Fatalf("changed=%v duplicate=%v diagnostics=%+v", changed, duplicate, result.Diagnostics)
+	}
+}
 
 func TestDiagnosticsAreDeterministic(t *testing.T) {
 	root := t.TempDir()

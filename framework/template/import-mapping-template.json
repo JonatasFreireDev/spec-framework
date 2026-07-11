@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "import_id": "IMPORT-001",
+  "mappings": [
+    {
+      "id": "MAP-001",
+      "target": "domains/example/context.md",
+      "artifact_type": "domain-context",
+      "selected": false,
+      "source_documents": [
+        "knowledge/imports/sources/example.md"
+      ],
+      "draft_content": "status: draft\nsource_documents:\n  - knowledge/imports/sources/example.md\n"
+    }
+  ]
+}

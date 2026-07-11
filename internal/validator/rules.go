@@ -1,6 +1,8 @@
 package validator
 
 import (
+	"crypto/sha256"
+	"encoding/hex"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -8,6 +10,113 @@ import (
 	"sort"
 	"strings"
 )
+
+func validateImportRuns(s Snapshot) []Diagnostic {
+	var out []Diagnostic
+	for rel := range s.Text {
+		if !strings.HasPrefix(rel, "knowledge/imports/runs/IMPORT-") || !strings.HasSuffix(rel, "/inventory.json") {
+			continue
+		}
+		value, parsed := s.JSON[rel]
+		if !parsed {
+			out = append(out, Diagnostic{Error, "imports", rel, "Inventory is not valid JSON.", "Regenerate the import inventory."})
+			continue
+		}
+		obj, ok := value.(map[string]any)
+		if !ok {
+			out = append(out, Diagnostic{Error, "imports", rel, "Inventory is not a JSON object.", "Regenerate the import inventory."})
+			continue
+		}
+		runDir := filepath.ToSlash(filepath.Dir(rel))
+		for _, required := range []string{"inventory.json", "import-plan.json", "mapping.json", "conflicts.md", "import-report.md"} {
+			path := runDir + "/" + required
+			if _, exists := s.Text[path]; !exists {
+				out = append(out, Diagnostic{Error, "imports", path, "Import run file is missing.", "Regenerate or repair the import run before materialization."})
+			}
+		}
+		sources, _ := obj["sources"].([]any)
+		knownSources := map[string]bool{}
+		for _, raw := range sources {
+			source, _ := raw.(map[string]any)
+			path, _ := source["path"].(string)
+			expected, _ := source["sha256"].(string)
+			if path == "" || expected == "" {
+				out = append(out, Diagnostic{Error, "imports", rel, "Source entry lacks path or sha256.", "Regenerate the inventory."})
+				continue
+			}
+			knownSources[path] = true
+			data, err := os.ReadFile(filepath.Join(s.Root, filepath.FromSlash(path)))
+			if err != nil {
+				out = append(out, Diagnostic{Error, "imports", path, "Imported source is missing.", "Restore the source or create a new import run."})
+				continue
+			}
+			sum := sha256.Sum256(data)
+			if hex.EncodeToString(sum[:]) != expected {
+				out = append(out, Diagnostic{Warning, "imports", path, "Source changed after this import inventory was created.", "Create a new import run and review affected mappings."})
+			}
+		}
+		plan, _ := s.JSON[runDir+"/import-plan.json"].(map[string]any)
+		if plan == nil {
+			out = append(out, Diagnostic{Error, "imports", runDir + "/import-plan.json", "Import plan is not valid JSON.", "Repair the plan before materialization."})
+		}
+		if approved, _ := plan["materialization_approved"].(bool); approved {
+			approvedBy, _ := plan["materialization_approved_by"].(string)
+			approvedAt, _ := plan["materialization_approved_at"].(string)
+			if strings.TrimSpace(approvedBy) == "" || strings.TrimSpace(approvedAt) == "" {
+				out = append(out, Diagnostic{Error, "imports", runDir + "/import-plan.json", "Materialization approval lacks approver or timestamp.", "Record explicit human approval evidence."})
+			}
+		}
+		mapping, mappingOK := s.JSON[runDir+"/mapping.json"].(map[string]any)
+		if !mappingOK {
+			out = append(out, Diagnostic{Error, "imports", runDir + "/mapping.json", "Import mapping is not valid JSON.", "Repair the mapping before materialization."})
+			continue
+		}
+		if importID, _ := mapping["import_id"].(string); importID != filepath.Base(filepath.FromSlash(runDir)) {
+			out = append(out, Diagnostic{Error, "imports", runDir + "/mapping.json", "Mapping import_id does not match its run directory.", "Use the enclosing IMPORT-NNN id."})
+		}
+		mappings, _ := mapping["mappings"].([]any)
+		targets := map[string]bool{}
+		for _, raw := range mappings {
+			m, _ := raw.(map[string]any)
+			selected, _ := m["selected"].(bool)
+			if !selected {
+				continue
+			}
+			target, _ := m["target"].(string)
+			id := fmt.Sprint(m["id"])
+			if target == "" {
+				out = append(out, Diagnostic{Error, "imports", runDir + "/mapping.json", "Selected mapping " + id + " has no target.", "Add a product-relative target."})
+				continue
+			}
+			clean := filepath.ToSlash(filepath.Clean(filepath.FromSlash(target)))
+			if clean == ".." || strings.HasPrefix(clean, "../") || filepath.IsAbs(filepath.FromSlash(target)) {
+				out = append(out, Diagnostic{Error, "imports", runDir + "/mapping.json", "Selected mapping " + id + " escapes the product root.", "Use a safe product-relative target."})
+				continue
+			}
+			key := strings.ToLower(clean)
+			if targets[key] {
+				out = append(out, Diagnostic{Error, "imports", runDir + "/mapping.json", "Multiple selected mappings target " + clean + ".", "Reconcile duplicate targets before materialization."})
+			}
+			targets[key] = true
+			refs, _ := m["source_documents"].([]any)
+			if len(refs) == 0 {
+				out = append(out, Diagnostic{Error, "imports", runDir + "/mapping.json", "Selected mapping " + id + " has no source_documents.", "Add source-level traceability."})
+			}
+			for _, ref := range refs {
+				source := fmt.Sprint(ref)
+				if !knownSources[source] {
+					out = append(out, Diagnostic{Error, "imports", runDir + "/mapping.json", "Selected mapping " + id + " references an uninventoried source: " + source + ".", "Use a source path from inventory.json."})
+				}
+			}
+			if approved, _ := plan["materialization_approved"].(bool); approved {
+				if _, exists := s.Text[clean]; !exists {
+					out = append(out, Diagnostic{Error, "imports", clean, "Approved selected mapping was not materialized.", "Materialize the approved run or correct the mapping."})
+				}
+			}
+		}
+	}
+	return out
+}
 
 var allowedStatuses = map[string]bool{"draft": true, "proposed": true, "approved": true, "in_progress": true, "implemented": true, "validated": true, "released": true, "deprecated": true, "superseded": true, "rejected": true, "not_applicable": true}
 var contextFieldPattern = regexp.MustCompile(`(?m)^\s*([a-zA-Z_]+):\s*(.*?)\s*$`)

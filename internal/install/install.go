@@ -11,6 +11,7 @@ import (
 	"strings"
 
 	framework "github.com/JonatasFreireDev/spec-framework"
+	"github.com/JonatasFreireDev/spec-framework/internal/sourceimport"
 )
 
 type Agent string
@@ -26,11 +27,30 @@ var agentRoots = map[Agent]string{Codex: ".agents/skills", Cursor: ".cursor/skil
 type Options struct {
 	Target, Version string
 	Agents          []Agent
+	StartingPoint   string
+	Sources         []string
 	Force           bool
 }
 type Result struct {
 	Target, SpecRoot string
 	SkillCount       int
+	StartingPoint    string
+	ImportID         string
+}
+
+var StartingPoints = []string{"new-product", "existing-product", "existing-documents", "existing-feature", "existing-implementation", "audit-only"}
+
+func ParseStartingPoint(value string) (string, error) {
+	value = strings.ToLower(strings.TrimSpace(value))
+	if value == "" {
+		return "new-product", nil
+	}
+	for _, candidate := range StartingPoints {
+		if value == candidate {
+			return value, nil
+		}
+	}
+	return "", fmt.Errorf("unsupported starting point %q", value)
 }
 
 func ParseAgents(value string) ([]Agent, error) {
@@ -56,6 +76,25 @@ func ParseAgents(value string) ([]Agent, error) {
 	return out, nil
 }
 
+func InstalledAgents(target string) ([]Agent, error) {
+	data, err := os.ReadFile(filepath.Join(target, ".spec-framework", "manifest.json"))
+	if err != nil {
+		return nil, fmt.Errorf("read installed agents: %w", err)
+	}
+	var value map[string]any
+	if err := json.Unmarshal(data, &value); err != nil {
+		return nil, fmt.Errorf("parse installed manifest: %w", err)
+	}
+	raw, _ := value["agents"].([]any)
+	var names []string
+	for _, item := range raw {
+		if name, ok := item.(string); ok {
+			names = append(names, name)
+		}
+	}
+	return ParseAgents(strings.Join(names, ","))
+}
+
 func Init(opts Options) (Result, error) {
 	target, err := filepath.Abs(opts.Target)
 	if err != nil {
@@ -67,7 +106,11 @@ func Init(opts Options) (Result, error) {
 	if err := copyTree("starter", target); err != nil {
 		return Result{}, err
 	}
-	result, err := Upgrade(Options{Target: target, Version: opts.Version, Agents: opts.Agents, Force: true})
+	point, err := ParseStartingPoint(opts.StartingPoint)
+	if err != nil {
+		return Result{}, err
+	}
+	result, err := Upgrade(Options{Target: target, Version: opts.Version, Agents: opts.Agents, StartingPoint: point, Force: true})
 	if err != nil {
 		return Result{}, err
 	}
@@ -75,8 +118,19 @@ func Init(opts Options) (Result, error) {
 	if version == "" {
 		version = "dev"
 	}
-	if err := writeStarterGuides(target, version, opts.Agents); err != nil {
+	if err := writeStarterGuides(target, version, opts.Agents, point); err != nil {
 		return Result{}, err
+	}
+	result.StartingPoint = point
+	if point == "existing-documents" {
+		runID, err := sourceimport.CreateRun(filepath.Join(target, "product"), opts.Sources)
+		if err != nil {
+			return Result{}, err
+		}
+		result.ImportID = runID
+		if err := updateImportManifest(target, runID); err != nil {
+			return Result{}, err
+		}
 	}
 	return result, nil
 }
@@ -90,6 +144,9 @@ func Upgrade(opts Options) (Result, error) {
 		return Result{}, fmt.Errorf("target does not contain product/: %s", target)
 	}
 	spec := filepath.Join(target, ".spec-framework")
+	if strings.TrimSpace(opts.StartingPoint) == "" {
+		opts.StartingPoint = installedStartingPoint(filepath.Join(spec, "manifest.json"))
+	}
 	for source, dest := range map[string]string{
 		"FRAMEWORK.md": "FRAMEWORK.md", "framework/AGENTS.framework.md": "AGENTS.framework.md",
 		"framework/decisions": "decisions", "framework/skills": "skills", "framework/template": "templates",
@@ -123,7 +180,11 @@ func Upgrade(opts Options) (Result, error) {
 	for i, a := range opts.Agents {
 		agents[i] = string(a)
 	}
-	manifest := map[string]any{"schema_version": 1, "version": version, "product_root": "product", "agents": agents, "installed_assets": map[string]bool{"framework_document": true, "framework_agent": true, "decisions": true, "skills": true, "templates": true}}
+	point, err := ParseStartingPoint(opts.StartingPoint)
+	if err != nil {
+		return Result{}, err
+	}
+	manifest := map[string]any{"schema_version": 2, "version": version, "product_root": "product", "agents": agents, "starting_point": point, "installed_assets": map[string]bool{"framework_document": true, "framework_agent": true, "decisions": true, "skills": true, "templates": true}}
 	if err := writeJSON(filepath.Join(spec, "manifest.json"), manifest); err != nil {
 		return Result{}, err
 	}
@@ -135,6 +196,7 @@ func Upgrade(opts Options) (Result, error) {
 			value["framework_assets_path"] = "../.spec-framework"
 			value["product_root"] = "."
 			value["agents"] = agents
+			value["starting_point"] = point
 			value["installed_assets"] = manifest["installed_assets"]
 			_ = writeJSON(productManifest, value)
 		}
@@ -143,7 +205,41 @@ func Upgrade(opts Options) (Result, error) {
 	if err := writeFile(filepath.Join(target, ".github", "workflows", "framework-validation.yml"), []byte(workflow), 0644); err != nil {
 		return Result{}, err
 	}
-	return Result{Target: target, SpecRoot: spec, SkillCount: count}, nil
+	return Result{Target: target, SpecRoot: spec, SkillCount: count, StartingPoint: point}, nil
+}
+
+func installedStartingPoint(path string) string {
+	data, err := os.ReadFile(path)
+	if err != nil {
+		return "new-product"
+	}
+	var value map[string]any
+	if json.Unmarshal(data, &value) != nil {
+		return "new-product"
+	}
+	point, _ := value["starting_point"].(string)
+	if point == "" {
+		return "new-product"
+	}
+	return point
+}
+
+func updateImportManifest(target, runID string) error {
+	for _, path := range []string{filepath.Join(target, ".spec-framework", "manifest.json"), filepath.Join(target, "product", ".product", "framework.json")} {
+		data, err := os.ReadFile(path)
+		if err != nil {
+			return err
+		}
+		var value map[string]any
+		if err := json.Unmarshal(data, &value); err != nil {
+			return err
+		}
+		value["import"] = map[string]any{"latest_run": runID, "sources_path": "knowledge/imports/sources"}
+		if err := writeJSON(path, value); err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 func copyTree(source, target string) error {

@@ -11,6 +11,7 @@ import (
 
 	"github.com/JonatasFreireDev/spec-framework/internal/install"
 	"github.com/JonatasFreireDev/spec-framework/internal/moveartifact"
+	"github.com/JonatasFreireDev/spec-framework/internal/sourceimport"
 	"github.com/JonatasFreireDev/spec-framework/internal/validator"
 	"github.com/JonatasFreireDev/spec-framework/internal/wizard"
 )
@@ -44,11 +45,52 @@ func (app App) Run(args []string, stdout, stderr io.Writer) int {
 		return app.runUpgrade(args[1:], stdout, stderr)
 	case "validate":
 		return runValidate(args[1:], stdout, stderr)
+	case "import":
+		return runImport(args[1:], stdout, stderr)
 	default:
 		fmt.Fprintf(stderr, "unknown command %q\n\n", args[0])
 		writeHelp(stderr)
 		return 2
 	}
+}
+
+func runImport(args []string, stdout, stderr io.Writer) int {
+	if len(args) == 0 || args[0] != "materialize" {
+		fmt.Fprintln(stderr, "usage: spec-framework import materialize --run IMPORT-NNN --approved-by <name> --yes")
+		return 2
+	}
+	flags := flag.NewFlagSet("import materialize", flag.ContinueOnError)
+	flags.SetOutput(stderr)
+	productRoot := flags.String("product-root", "product", "product root")
+	runID := flags.String("run", "", "import run id")
+	approvedBy := flags.String("approved-by", "", "human approving the selected mappings")
+	yes := flags.Bool("yes", false, "confirm materialization")
+	if err := flags.Parse(args[1:]); err != nil {
+		return 2
+	}
+	if !*yes || strings.TrimSpace(*runID) == "" || strings.TrimSpace(*approvedBy) == "" {
+		fmt.Fprintln(stderr, "materialization requires --run, --approved-by, and --yes")
+		return 2
+	}
+	cwd, err := os.Getwd()
+	if err != nil {
+		fmt.Fprintln(stderr, err)
+		return 1
+	}
+	root := *productRoot
+	if !filepath.IsAbs(root) {
+		root = filepath.Join(cwd, root)
+	}
+	created, err := sourceimport.Materialize(root, *runID, *approvedBy)
+	if err != nil {
+		fmt.Fprintln(stderr, err)
+		return 1
+	}
+	fmt.Fprintf(stdout, "Materialized %s as draft (%d files)\n", *runID, len(created))
+	for _, path := range created {
+		fmt.Fprintf(stdout, "- product/%s\n", path)
+	}
+	return 0
 }
 
 func runValidate(args []string, stdout, stderr io.Writer) int {
@@ -66,8 +108,14 @@ func runValidate(args []string, stdout, stderr io.Writer) int {
 		fmt.Fprintln(stderr, err)
 		return 1
 	}
-	productPath := filepath.Join(cwd, *productRoot)
-	frameworkPath := filepath.Join(cwd, *frameworkRoot)
+	productPath := *productRoot
+	if !filepath.IsAbs(productPath) {
+		productPath = filepath.Join(cwd, productPath)
+	}
+	frameworkPath := *frameworkRoot
+	if !filepath.IsAbs(frameworkPath) {
+		frameworkPath = filepath.Join(cwd, frameworkPath)
+	}
 	if *writeRegistry {
 		path, err := validator.WriteRegistry(productPath)
 		if err != nil {
@@ -114,6 +162,9 @@ func (app App) runInit(args []string, stdout, stderr io.Writer) int {
 	flags.SetOutput(stderr)
 	target := flags.String("target", "", "target directory")
 	agentsValue := flags.String("agents", "", "comma-separated agents")
+	startingPoint := flags.String("starting-point", "new-product", "new-product, existing-product, existing-documents, existing-feature, existing-implementation, or audit-only")
+	sourcesValue := flags.String("sources", "", "comma-separated source files or directories for existing-documents")
+	sourceDir := flags.String("source-dir", "", "source directory for existing-documents")
 	force := flags.Bool("force", false, "allow non-empty target")
 	yes := flags.Bool("yes", false, "run headlessly")
 	if err := flags.Parse(args); err != nil {
@@ -131,6 +182,8 @@ func (app App) runInit(args []string, stdout, stderr io.Writer) int {
 		*target = result.Target
 		selected := result.AgentNames()
 		*agentsValue = strings.Join(selected, ",")
+		*startingPoint = result.StartingPoint
+		*sourcesValue = strings.Join(result.Sources, ",")
 	}
 	if *target == "" {
 		fmt.Fprintln(stderr, "init requires --target")
@@ -141,20 +194,42 @@ func (app App) runInit(args []string, stdout, stderr io.Writer) int {
 		fmt.Fprintln(stderr, err)
 		return 2
 	}
-	result, err := install.Init(install.Options{Target: *target, Version: app.version, Agents: agents, Force: *force})
+	point, err := install.ParseStartingPoint(*startingPoint)
+	if err != nil {
+		fmt.Fprintln(stderr, err)
+		return 2
+	}
+	sources := splitCSV(*sourcesValue)
+	if strings.TrimSpace(*sourceDir) != "" {
+		sources = append(sources, *sourceDir)
+	}
+	result, err := install.Init(install.Options{Target: *target, Version: app.version, Agents: agents, StartingPoint: point, Sources: sources, Force: *force})
 	if err != nil {
 		fmt.Fprintln(stderr, err)
 		return 1
 	}
-	fmt.Fprintf(stdout, "Initialized Spec Framework product at %s\n- Product root: product\n- Framework assets: .spec-framework\n- Agent integrations: %s\n", result.Target, *agentsValue)
+	fmt.Fprintf(stdout, "Initialized Spec Framework product at %s\n- Product root: product\n- Framework assets: .spec-framework\n- Agent integrations: %s\n- Starting point: %s\n", result.Target, *agentsValue, result.StartingPoint)
+	if result.ImportID != "" {
+		fmt.Fprintf(stdout, "- Import inventory: product/knowledge/imports/runs/%s\n", result.ImportID)
+	}
 	return 0
+}
+
+func splitCSV(value string) []string {
+	var out []string
+	for _, part := range strings.Split(value, ",") {
+		if part = strings.TrimSpace(part); part != "" {
+			out = append(out, part)
+		}
+	}
+	return out
 }
 
 func (app App) runUpgrade(args []string, stdout, stderr io.Writer) int {
 	flags := flag.NewFlagSet("upgrade", flag.ContinueOnError)
 	flags.SetOutput(stderr)
 	target := flags.String("target", ".", "target directory")
-	agentsValue := flags.String("agents", "codex", "comma-separated agents")
+	agentsValue := flags.String("agents", "", "comma-separated agents; defaults to the installed manifest")
 	yes := flags.Bool("yes", false, "confirm upgrade")
 	if err := flags.Parse(args); err != nil {
 		return 2
@@ -163,7 +238,13 @@ func (app App) runUpgrade(args []string, stdout, stderr io.Writer) int {
 		fmt.Fprintln(stderr, "upgrade requires --yes in headless mode")
 		return 2
 	}
-	agents, err := install.ParseAgents(*agentsValue)
+	var agents []install.Agent
+	var err error
+	if strings.TrimSpace(*agentsValue) == "" {
+		agents, err = install.InstalledAgents(*target)
+	} else {
+		agents, err = install.ParseAgents(*agentsValue)
+	}
 	if err != nil {
 		fmt.Fprintln(stderr, err)
 		return 2
@@ -228,6 +309,7 @@ func writeHelp(output io.Writer) {
 
 Commands:
   init       Initialize a product repository.
+  import     Materialize approved source mappings as drafts.
   validate   Validate a product repository.
   move       Move an artifact and update references.
   upgrade    Refresh installed framework assets.

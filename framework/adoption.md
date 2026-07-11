@@ -18,6 +18,16 @@ CLI-style bootstrap from the framework repository:
 spec-framework init --target ../my-product --agents codex,cursor,claude --yes
 ```
 
+The wizard also asks for the starting point. All skills remain installed; the choice changes the generated bootstrap. For existing documents, use `--starting-point existing-documents` with `--source-dir` or `--sources`. The command inventories sources under `product/knowledge/imports/` but does not create Domains, User Goals, or Features without explicit approval.
+
+After the Artifact Importer fills `mapping.json`, review the selected mappings and materialize them explicitly:
+
+```bash
+spec-framework import materialize --run IMPORT-001 --approved-by "Product Owner" --yes
+```
+
+The command rejects missing evidence, paths outside `product/`, duplicate targets, non-draft content, and existing destination files.
+
 Install a versioned release binary as described in [install.md](install.md). Go and Node.js are not runtime requirements for adopters.
 
 Manual bootstrap:

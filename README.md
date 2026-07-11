@@ -35,6 +35,12 @@ Local CLI form:
 
 ```bash
 go run ./cmd/spec-framework init --target ../my-product --agents codex,cursor,claude --yes
+
+# Bootstrap from existing epics, PRDs, or document directories
+go run ./cmd/spec-framework init --target ../my-product --agents codex --starting-point existing-documents --source-dir ../product-docs --yes
+
+# After Artifact Importer proposes mappings and a human approves them
+spec-framework import materialize --run IMPORT-001 --approved-by "Product Owner" --yes
 spec-framework validate
 spec-framework upgrade --target ../my-product --agents codex,cursor,claude --yes
 ```

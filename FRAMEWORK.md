@@ -180,6 +180,15 @@ product/
       context.md
 
   knowledge/
+    imports/
+      sources/
+      runs/
+        IMPORT-NNN/
+          inventory.json
+          import-plan.json
+          mapping.json
+          conflicts.md
+          import-report.md
     glossary/
     business-rules/
     conventions/
@@ -561,6 +570,14 @@ Skills are specialists. They can operate in modes such as `create`, `update`, `a
 
 Orchestrators do not create primary artifacts. They control flow, order, gates, and handoffs.
 
+### Existing Product Import Orchestrator
+
+Coordinates existing epics, PRDs, and other source documents through inventory, classification, reconciliation, approval, and draft materialization. Sources remain evidence, conflicts are never resolved silently, and canonical artifacts are not created before explicit human approval.
+
+```text
+Sources -> Inventory -> Candidates -> Conflicts -> Mapping -> Approval -> Draft artifacts
+```
+
 ### Product Orchestrator
 
 Creates a product from scratch:
@@ -745,6 +762,8 @@ This prevents AI suggestions from turning into silent scope.
 In this repository, Codex is working on the framework itself. In product repositories, Codex must operate on an instance created from `starter/`, reading the method in `.spec-framework/` and writing product artifacts in `product/`.
 
 In a newly initialized product repository, read `BOOTSTRAP.md` first. It explains the ordered foundation gates and distinguishes a structurally valid starter from a product that is ready for implementation.
+
+During `init`, choose the repository's starting point. This choice customizes `BOOTSTRAP.md`; it does not remove skills, orchestrators, artifacts, rigor requirements, or approval gates. When starting from existing documents, the CLI creates a source inventory and an analysis-only import run under `product/knowledge/imports/`. Review and explicitly approve mappings before materializing draft product artifacts.
 
 Recommended prompt for the architecture phase:
 

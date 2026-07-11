@@ -27,10 +27,12 @@ var choices = []choice{
 
 // Result captures the outcome of the interactive init wizard.
 type Result struct {
-	Target    string
-	Agents    []install.Agent
-	Confirmed bool
-	Cancelled bool
+	Target        string
+	Agents        []install.Agent
+	StartingPoint string
+	Sources       []string
+	Confirmed     bool
+	Cancelled     bool
 }
 
 // AgentNames returns the selected agent identifiers as strings.
@@ -63,11 +65,13 @@ const minFormWidth = 32
 // question. Splitting the form into one group per field makes huh advance
 // one question at a time.
 type initModel struct {
-	form      *huh.Form
-	selected  *[]install.Agent
-	target    *string
-	confirmed *bool
-	width     int
+	form          *huh.Form
+	selected      *[]install.Agent
+	target        *string
+	startingPoint *string
+	sources       *string
+	confirmed     *bool
+	width         int
 }
 
 func (m initModel) Init() tea.Cmd { return m.form.Init() }
@@ -121,6 +125,7 @@ func (m initModel) summaryView() string {
 	b.WriteString(title.Render("Your choices") + "\n\n")
 	b.WriteString(label.Render("Agents") + "\n  " + value(agents) + "\n\n")
 	b.WriteString(label.Render("Target") + "\n  " + value(*m.target))
+	b.WriteString("\n\n" + label.Render("Starting point") + "\n  " + value(*m.startingPoint))
 
 	box := lipgloss.NewStyle().
 		Border(lipgloss.RoundedBorder()).
@@ -132,8 +137,10 @@ func (m initModel) summaryView() string {
 
 // RunInit drives the interactive installer wizard and returns the plan.
 func RunInit(input io.Reader, output io.Writer) (Result, error) {
-	var selected []install.Agent
+	selected := []install.Agent{install.Codex, install.Cursor, install.Claude}
 	var target string
+	startingPoint := "new-product"
+	var sources string
 	confirmed := true
 
 	form := huh.NewForm(
@@ -150,6 +157,28 @@ func RunInit(input io.Reader, output io.Writer) (Result, error) {
 				Validate(func(v []install.Agent) error {
 					if len(v) == 0 {
 						return errors.New("select at least one agent")
+					}
+					return nil
+				}),
+		),
+		huh.NewGroup(
+			huh.NewSelect[string]().
+				Title("Where is this project starting?").
+				Options(
+					huh.NewOption("New product", "new-product"),
+					huh.NewOption("Existing product", "existing-product"),
+					huh.NewOption("Existing documents / epics / PRDs", "existing-documents"),
+					huh.NewOption("Existing feature", "existing-feature"),
+					huh.NewOption("Existing implementation", "existing-implementation"),
+					huh.NewOption("Audit only", "audit-only"),
+				).
+				Value(&startingPoint),
+		),
+		huh.NewGroup(
+			huh.NewInput().Title("Source paths (comma-separated; required for existing documents)").Value(&sources).
+				Validate(func(s string) error {
+					if startingPoint == "existing-documents" && strings.TrimSpace(s) == "" {
+						return errors.New("at least one source path is required")
 					}
 					return nil
 				}),
@@ -175,7 +204,7 @@ func RunInit(input io.Reader, output io.Writer) (Result, error) {
 		),
 	)
 
-	model := initModel{form: form, selected: &selected, target: &target, confirmed: &confirmed}
+	model := initModel{form: form, selected: &selected, target: &target, startingPoint: &startingPoint, sources: &sources, confirmed: &confirmed}
 	final, err := tea.NewProgram(model, tea.WithInput(input), tea.WithOutput(output)).Run()
 	if err != nil {
 		return Result{}, fmt.Errorf("init wizard: %w", err)
@@ -189,9 +218,21 @@ func RunInit(input io.Reader, output io.Writer) (Result, error) {
 	}
 
 	return Result{
-		Target:    strings.TrimSpace(target),
-		Agents:    selected,
-		Confirmed: confirmed,
-		Cancelled: !confirmed,
+		Target:        strings.TrimSpace(target),
+		Agents:        selected,
+		StartingPoint: startingPoint,
+		Sources:       splitValues(sources),
+		Confirmed:     confirmed,
+		Cancelled:     !confirmed,
 	}, nil
+}
+
+func splitValues(value string) []string {
+	var out []string
+	for _, part := range strings.Split(value, ",") {
+		if part = strings.TrimSpace(part); part != "" {
+			out = append(out, part)
+		}
+	}
+	return out
 }

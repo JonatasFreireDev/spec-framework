@@ -6,7 +6,7 @@ import (
 	"strings"
 )
 
-func writeStarterGuides(target, version string, agents []Agent) error {
+func writeStarterGuides(target, version string, agents []Agent, startingPoint string) error {
 	names := make([]string, len(agents))
 	for i, agent := range agents {
 		names[i] = string(agent)
@@ -41,7 +41,35 @@ spec-framework move --from <old-path> --to <new-path> --dry-run
 
 A successful validation means the repository is structurally coherent. It does not mean remaining TBD product decisions are complete.
 `, version, selected, flags)
-	bootstrap := `# Product Bootstrap
+	bootstrap := bootstrapFor(startingPoint)
+	if err := writeFile(filepath.Join(target, "README.md"), []byte(readme), 0644); err != nil {
+		return err
+	}
+	return writeFile(filepath.Join(target, "BOOTSTRAP.md"), []byte(bootstrap), 0644)
+}
+
+func bootstrapFor(startingPoint string) string {
+	intro := "Begin with the product foundation and follow the canonical gates in order."
+	if startingPoint == "existing-documents" {
+		intro = "Begin by reviewing the generated import inventory and plan. Source documents are evidence, not approved product artifacts."
+	}
+	if startingPoint == "existing-product" {
+		intro = "Begin by mapping existing product context and decisions into the canonical structure before creating downstream artifacts."
+	}
+	if startingPoint == "existing-feature" {
+		intro = "Begin by validating the feature's Domain, User Goal, scope, and parent approvals before generating Use Cases."
+	}
+	if startingPoint == "existing-implementation" {
+		intro = "Begin with a reverse audit of code, tests, decisions, and documentary gaps. Do not infer approval from implementation."
+	}
+	if startingPoint == "audit-only" {
+		intro = "Begin with read-only gap, conflict, dependency, impact, and consistency audits."
+	}
+	return fmt.Sprintf(`# Product Bootstrap
+
+Starting point: **%s**
+
+%s
 
 Use this checklist in order. Do not generate downstream artifacts from incomplete or unapproved parents.
 
@@ -91,11 +119,7 @@ spec-framework validate --write-registry --write-report
 ~~~
 
 Structural ready means paths and contracts are valid. Product readiness additionally requires relevant content, approvals, decisions, gates, and evidence.
-`
-	if err := writeFile(filepath.Join(target, "README.md"), []byte(readme), 0644); err != nil {
-		return err
-	}
-	return writeFile(filepath.Join(target, "BOOTSTRAP.md"), []byte(bootstrap), 0644)
+`, startingPoint, intro)
 }
 
 func productWorkflow(version string) string {

@@ -42,6 +42,49 @@ func TestInitGeneratesSelectedAgentSkillTrees(t *testing.T) {
 	}
 }
 
+func TestInitFromExistingDocumentsCreatesImportRun(t *testing.T) {
+	target := filepath.Join(t.TempDir(), "product-repo")
+	source := filepath.Join(t.TempDir(), "epic.md")
+	if err := os.WriteFile(source, []byte("# Epic\n\nPayment and event features."), 0644); err != nil {
+		t.Fatal(err)
+	}
+	result, err := Init(Options{Target: target, Version: "v0.3.0", Agents: []Agent{Codex}, StartingPoint: "existing-documents", Sources: []string{source}})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if result.ImportID != "IMPORT-001" {
+		t.Fatalf("import=%q", result.ImportID)
+	}
+	for _, name := range []string{"inventory.json", "import-plan.json", "mapping.json", "conflicts.md", "import-report.md"} {
+		if _, err := os.Stat(filepath.Join(target, "product", "knowledge", "imports", "runs", result.ImportID, name)); err != nil {
+			t.Fatal(err)
+		}
+	}
+}
+
+func TestParseStartingPoint(t *testing.T) {
+	if got, err := ParseStartingPoint(""); err != nil || got != "new-product" {
+		t.Fatalf("got=%q err=%v", got, err)
+	}
+	if _, err := ParseStartingPoint("unknown"); err == nil {
+		t.Fatal("expected unsupported starting point")
+	}
+}
+
+func TestInstalledAgentsReadsManifestSelection(t *testing.T) {
+	target := filepath.Join(t.TempDir(), "product")
+	if _, err := Init(Options{Target: target, Agents: []Agent{Codex, Cursor, Claude}}); err != nil {
+		t.Fatal(err)
+	}
+	agents, err := InstalledAgents(target)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(agents) != 3 {
+		t.Fatalf("agents=%v", agents)
+	}
+}
+
 func TestUpgradePreservesProductContent(t *testing.T) {
 	target := filepath.Join(t.TempDir(), "product")
 	_, err := Init(Options{Target: target, Agents: []Agent{Codex}})
