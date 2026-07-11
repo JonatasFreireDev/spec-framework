@@ -98,3 +98,53 @@ func TestCLIExistingDocumentsMaterialization(t *testing.T) {
 		t.Fatal(err)
 	}
 }
+
+func TestCLIWorkspaceApprovalGatesAndGraph(t *testing.T) {
+	root := t.TempDir()
+	target := filepath.Join(root, "repo")
+	var stdout, stderr bytes.Buffer
+	app := cli.New("integration")
+	if code := app.Run([]string{"init", "--target", target, "--agents", "codex", "--yes"}, &stdout, &stderr); code != 0 {
+		t.Fatalf("init=%d %s", code, stderr.String())
+	}
+	product := filepath.Join(target, "product")
+	approve := func(path string) {
+		stdout.Reset()
+		stderr.Reset()
+		if code := app.Run([]string{"approve", "--product-root", product, "--artifact", path, "--grant", "approved", "--approved-by", "Test Owner", "--yes"}, &stdout, &stderr); code != 0 {
+			t.Fatalf("approve %s=%d %s", path, code, stderr.String())
+		}
+	}
+	approve("domains/_template-domain/context.md")
+	approve("domains/_template-domain/goals/_template-goal/context.md")
+	approve("domains/_template-domain/goals/_template-goal/features/_template-feature/context.md")
+	stdout.Reset()
+	stderr.Reset()
+	if code := app.Run([]string{"work", "--product-root", product, "--feature", "FT-TEMPLATE", "--created-by", "Test Owner"}, &stdout, &stderr); code != 0 {
+		t.Fatalf("work=%d %s", code, stderr.String())
+	}
+	stdout.Reset()
+	stderr.Reset()
+	if code := app.Run([]string{"status", "--product-root", product, "--work", "WORK-001"}, &stdout, &stderr); code != 0 {
+		t.Fatalf("status=%d %s %s", code, stdout.String(), stderr.String())
+	}
+	stdout.Reset()
+	stderr.Reset()
+	if code := app.Run([]string{"validate", "--product-root", product, "--framework-root", filepath.Join(target, ".spec-framework")}, &stdout, &stderr); code != 0 {
+		t.Fatalf("validate after approvals=%d %s %s", code, stdout.String(), stderr.String())
+	}
+	stdout.Reset()
+	stderr.Reset()
+	if code := app.Run([]string{"gates", "--product-root", product}, &stdout, &stderr); code == 0 {
+		t.Fatal("placeholder gates should block")
+	}
+	graph := "domains/_template-domain/goals/_template-goal/features/_template-feature/use-cases/_template-use-case/execution-graph.json"
+	stdout.Reset()
+	stderr.Reset()
+	if code := app.Run([]string{"graph", "ready", "--product-root", product, "--graph", graph}, &stdout, &stderr); code != 0 {
+		t.Fatalf("ready=%d %s", code, stderr.String())
+	}
+	if code := app.Run([]string{"graph", "claim", "--product-root", product, "--graph", graph, "--task", "TASK-TEMPLATE-001", "--agent", "codex"}, &stdout, &stderr); code != 0 {
+		t.Fatalf("claim=%d %s", code, stderr.String())
+	}
+}

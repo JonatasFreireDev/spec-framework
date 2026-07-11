@@ -16,7 +16,7 @@ func TestInitGeneratesSelectedAgentSkillTrees(t *testing.T) {
 	if result.SkillCount != 3 {
 		t.Fatalf("skill target count=%d", result.SkillCount)
 	}
-	for _, file := range []string{".agents/skills/code-runner/SKILL.md", ".cursor/skills/code-runner/SKILL.md", ".claude/skills/code-runner/SKILL.md", ".spec-framework/manifest.json", "product/.product/framework.json"} {
+	for _, file := range []string{".agents/skills/code-runner/SKILL.md", ".cursor/skills/code-runner/SKILL.md", ".claude/skills/code-runner/SKILL.md", ".spec-framework/manifest.json", ".spec-framework/delivery-closure.md", "product/.product/framework.json"} {
 		if _, err := os.Stat(filepath.Join(target, filepath.FromSlash(file))); err != nil {
 			t.Errorf("missing %s: %v", file, err)
 		}

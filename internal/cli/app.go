@@ -14,6 +14,7 @@ import (
 	"github.com/JonatasFreireDev/spec-framework/internal/sourceimport"
 	"github.com/JonatasFreireDev/spec-framework/internal/validator"
 	"github.com/JonatasFreireDev/spec-framework/internal/wizard"
+	"github.com/JonatasFreireDev/spec-framework/internal/workflow"
 )
 
 type App struct {
@@ -47,9 +48,245 @@ func (app App) Run(args []string, stdout, stderr io.Writer) int {
 		return runValidate(args[1:], stdout, stderr)
 	case "import":
 		return runImport(args[1:], stdout, stderr)
+	case "work":
+		return runWork(args[1:], stdout, stderr)
+	case "status", "next":
+		return runWorkStatus(args[0], args[1:], stdout, stderr)
+	case "approve":
+		return runApprove(args[1:], stdout, stderr)
+	case "gates":
+		return runGates(args[1:], stdout, stderr)
+	case "graph":
+		return runGraph(args[1:], stdout, stderr)
 	default:
 		fmt.Fprintf(stderr, "unknown command %q\n\n", args[0])
 		writeHelp(stderr)
+		return 2
+	}
+}
+
+func runWork(args []string, stdout, stderr io.Writer) int {
+	flags := flag.NewFlagSet("work", flag.ContinueOnError)
+	flags.SetOutput(stderr)
+	root := flags.String("product-root", "product", "product root")
+	feature := flags.String("feature", "", "feature path or id")
+	domain := flags.String("domain", "", "domain scope")
+	goal := flags.String("goal", "", "goal scope")
+	useCase := flags.String("use-case", "", "optional use-case slug or product-relative path")
+	createdBy := flags.String("created-by", "human", "workspace creator")
+	if err := flags.Parse(args); err != nil {
+		return 2
+	}
+	cwd, _ := os.Getwd()
+	p := *root
+	if !filepath.IsAbs(p) {
+		p = filepath.Join(cwd, p)
+	}
+	if strings.TrimSpace(*feature) == "" {
+		items, err := workflow.Features(p)
+		if err != nil {
+			fmt.Fprintln(stderr, err)
+			return 1
+		}
+		fmt.Fprintln(stdout, "Available features:")
+		for _, a := range items {
+			fmt.Fprintf(stdout, "- %s  %s  [%s]\n", a.ID, a.Path, a.Status)
+		}
+		fmt.Fprintln(stdout, "Select with: spec-framework work --feature <id-or-path>")
+		return 0
+	}
+	w, err := workflow.CreateWorkspace(p, *feature, *domain, *goal, *useCase, *createdBy)
+	if err != nil {
+		fmt.Fprintln(stderr, err)
+		return 1
+	}
+	fmt.Fprintf(stdout, "Created %s\n- Feature: %s\n- Next skill: %s\n", w.ID, w.Scope["feature"], w.RecommendedSkill)
+	return 0
+}
+func runWorkStatus(command string, args []string, stdout, stderr io.Writer) int {
+	flags := flag.NewFlagSet(command, flag.ContinueOnError)
+	flags.SetOutput(stderr)
+	root := flags.String("product-root", "product", "product root")
+	id := flags.String("work", "", "workspace id")
+	if err := flags.Parse(args); err != nil {
+		return 2
+	}
+	if *id == "" {
+		fmt.Fprintln(stderr, command+" requires --work WORK-NNN")
+		return 2
+	}
+	cwd, _ := os.Getwd()
+	p := *root
+	if !filepath.IsAbs(p) {
+		p = filepath.Join(cwd, p)
+	}
+	s, err := workflow.WorkspaceStatus(p, *id)
+	if err != nil {
+		fmt.Fprintln(stderr, err)
+		return 1
+	}
+	fmt.Fprintf(stdout, "Workspace: %s\nArtifact: %s (%s)\nStatus: %s\nNext skill: %s\n", s.Workspace.ID, s.Artifact.ID, s.Artifact.Path, s.Artifact.Status, s.Next)
+	for _, b := range s.Blockers {
+		fmt.Fprintf(stdout, "BLOCKED: %s\n", b)
+	}
+	if len(s.Blockers) > 0 {
+		return 1
+	}
+	return 0
+}
+func runApprove(args []string, stdout, stderr io.Writer) int {
+	flags := flag.NewFlagSet("approve", flag.ContinueOnError)
+	flags.SetOutput(stderr)
+	root := flags.String("product-root", "product", "product root")
+	artifact := flags.String("artifact", "", "artifact path")
+	grant := flags.String("grant", "approved", "status to grant")
+	by := flags.String("approved-by", "", "approving human")
+	notes := flags.String("notes", "", "approval notes")
+	yes := flags.Bool("yes", false, "confirm approval")
+	if err := flags.Parse(args); err != nil {
+		return 2
+	}
+	if *artifact == "" || *by == "" {
+		fmt.Fprintln(stderr, "approve requires --artifact and --approved-by")
+		return 2
+	}
+	cwd, _ := os.Getwd()
+	p := *root
+	if !filepath.IsAbs(p) {
+		p = filepath.Join(cwd, p)
+	}
+	a := *artifact
+	if !filepath.IsAbs(a) {
+		a = filepath.Join(p, filepath.FromSlash(a))
+	}
+	if !*yes {
+		preview, err := workflow.PreviewApproval(p, a, *grant)
+		if err != nil {
+			fmt.Fprintln(stderr, err)
+			return 1
+		}
+		fmt.Fprintf(stdout, "Approval preview\n- Artifact: %s (%s)\n- Current status: %s\n- Grant: %s\n- Result hash: %s\n", preview.Artifact.ID, preview.Artifact.Path, preview.Artifact.Status, preview.Grant, preview.CurrentHash)
+		for _, b := range preview.ParentBlockers {
+			fmt.Fprintf(stdout, "BLOCKED: %s\n", b)
+		}
+		fmt.Fprintln(stdout, "Re-run with --yes to apply.")
+		if len(preview.ParentBlockers) > 0 {
+			return 1
+		}
+		return 0
+	}
+	rec, err := workflow.Approve(p, a, *grant, *by, *notes)
+	if err != nil {
+		fmt.Fprintln(stderr, err)
+		return 1
+	}
+	fmt.Fprintf(stdout, "Approved %s as %s\n- Path: %s\n- Hash: %s\n", rec.ArtifactID, rec.StatusGranted, rec.Path, rec.ContentHash)
+	return 0
+}
+func runGates(args []string, stdout, stderr io.Writer) int {
+	flags := flag.NewFlagSet("gates", flag.ContinueOnError)
+	flags.SetOutput(stderr)
+	root := flags.String("product-root", "product", "product root")
+	if err := flags.Parse(args); err != nil {
+		return 2
+	}
+	cwd, _ := os.Getwd()
+	p := *root
+	if !filepath.IsAbs(p) {
+		p = filepath.Join(cwd, p)
+	}
+	missing, err := workflow.GateReadiness(p)
+	if err != nil {
+		fmt.Fprintln(stderr, err)
+		return 1
+	}
+	if len(missing) == 0 {
+		fmt.Fprintln(stdout, "Gates: ready")
+		return 0
+	}
+	for _, id := range missing {
+		fmt.Fprintf(stdout, "MISSING %s: TBD blocks implementation\n", id)
+	}
+	return 1
+}
+func runGraph(args []string, stdout, stderr io.Writer) int {
+	if len(args) == 0 {
+		fmt.Fprintln(stderr, "graph requires ready, claim, release, or complete")
+		return 2
+	}
+	command := args[0]
+	flags := flag.NewFlagSet("graph "+command, flag.ContinueOnError)
+	flags.SetOutput(stderr)
+	root := flags.String("product-root", "product", "product root")
+	graph := flags.String("graph", "", "execution graph path")
+	task := flags.String("task", "", "task id")
+	agent := flags.String("agent", "", "agent id")
+	if err := flags.Parse(args[1:]); err != nil {
+		return 2
+	}
+	cwd, _ := os.Getwd()
+	p := *root
+	if !filepath.IsAbs(p) {
+		p = filepath.Join(cwd, p)
+	}
+	g := *graph
+	if g != "" && !filepath.IsAbs(g) {
+		g = filepath.Join(p, filepath.FromSlash(g))
+	}
+	if g != "" {
+		rel, err := filepath.Rel(p, g)
+		if err != nil || rel == ".." || strings.HasPrefix(rel, ".."+string(filepath.Separator)) {
+			fmt.Fprintln(stderr, "graph path escapes product root")
+			return 2
+		}
+	}
+	switch command {
+	case "ready":
+		nodes, err := workflow.ReadyUnclaimed(p, g)
+		if err != nil {
+			fmt.Fprintln(stderr, err)
+			return 1
+		}
+		for _, n := range nodes {
+			fmt.Fprintf(stdout, "READY %s %s\n", n.ID, n.Path)
+		}
+		return 0
+	case "claim":
+		if *task == "" || *agent == "" || g == "" {
+			fmt.Fprintln(stderr, "graph claim requires --graph, --task, and --agent")
+			return 2
+		}
+		c, err := workflow.ClaimTask(p, g, *task, *agent)
+		if err != nil {
+			fmt.Fprintln(stderr, err)
+			return 1
+		}
+		fmt.Fprintf(stdout, "CLAIMED %s by %s\n", c.TaskID, c.Agent)
+		return 0
+	case "release":
+		if *task == "" || *agent == "" {
+			fmt.Fprintln(stderr, "graph release requires --task and --agent")
+			return 2
+		}
+		if err := workflow.ReleaseClaim(p, *task, *agent); err != nil {
+			fmt.Fprintln(stderr, err)
+			return 1
+		}
+		fmt.Fprintf(stdout, "RELEASED %s\n", *task)
+		return 0
+	case "complete":
+		if *task == "" || *agent == "" || g == "" {
+			fmt.Fprintln(stderr, "graph complete requires --graph, --task, and --agent")
+			return 2
+		}
+		if err := workflow.Complete(p, g, *task, *agent); err != nil {
+			fmt.Fprintln(stderr, err)
+			return 1
+		}
+		fmt.Fprintf(stdout, "COMPLETED %s\n", *task)
+		return 0
+	default:
+		fmt.Fprintln(stderr, "unknown graph command", command)
 		return 2
 	}
 }
@@ -310,6 +547,12 @@ func writeHelp(output io.Writer) {
 Commands:
   init       Initialize a product repository.
   import     Materialize approved source mappings as drafts.
+  work       Select a feature and create a concurrent workspace.
+  status     Show workspace readiness and blockers.
+  next       Show the next skill for a workspace.
+  approve    Review and record an explicit artifact approval.
+  gates      Check whether implementation gates are configured.
+  graph      Inspect and operate execution graph claims.
   validate   Validate a product repository.
   move       Move an artifact and update references.
   upgrade    Refresh installed framework assets.

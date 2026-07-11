@@ -118,6 +118,161 @@ func validateImportRuns(s Snapshot) []Diagnostic {
 	return out
 }
 
+func validateDeliveryClosure(s Snapshot) []Diagnostic {
+	var out []Diagnostic
+	known := map[string]bool{"END": true}
+	frameworkSkillTexts := map[string]string{}
+	for _, root := range []string{filepath.Join(s.FrameworkRoot, "skills"), filepath.Join(s.FrameworkRoot, "framework", "skills")} {
+		entries, _ := os.ReadDir(root)
+		for _, e := range entries {
+			if e.IsDir() {
+				known[e.Name()] = true
+				path := filepath.Join(root, e.Name(), "SKILL.md")
+				if data, err := os.ReadFile(path); err == nil {
+					rel, _ := filepath.Rel(s.FrameworkRoot, path)
+					frameworkSkillTexts[filepath.ToSlash(rel)] = string(data)
+				}
+			}
+		}
+	}
+	nextPattern := regexp.MustCompile(`(?mi)^Next:\s*([^\r\n]+)`)
+	canonicalPattern := regexp.MustCompile(`^[a-z][a-z0-9-]*$`)
+	allSkillTexts := map[string]string{}
+	for rel, text := range frameworkSkillTexts {
+		allSkillTexts[rel] = text
+	}
+	for rel, text := range s.Text {
+		if strings.HasSuffix(rel, "SKILL.md") {
+			allSkillTexts[rel] = text
+		}
+	}
+	for rel, text := range allSkillTexts {
+		if !strings.HasSuffix(rel, "SKILL.md") {
+			continue
+		}
+		for _, match := range nextPattern.FindAllStringSubmatch(text, -1) {
+			raw := strings.TrimSpace(strings.TrimSuffix(match[1], "."))
+			first := strings.FieldsFunc(raw, func(r rune) bool { return r == ' ' || r == ',' })[0]
+			if regexp.MustCompile(`^\d+-`).MatchString(first) || strings.HasSuffix(first, ".md") {
+				out = append(out, Diagnostic{Error, "skill-handoff", rel, "Legacy numbered handoff: " + first + ".", "Use the canonical skill folder name."})
+				continue
+			}
+			if canonicalPattern.MatchString(first) && !known[first] && first != "human" {
+				out = append(out, Diagnostic{Error, "skill-handoff", rel, "Unknown next skill: " + first + ".", "Reference an installed canonical skill name."})
+			}
+		}
+	}
+	for rel, text := range s.Text {
+		if !strings.HasSuffix(rel, "/context.md") || !strings.Contains(rel, "/use-cases/") {
+			continue
+		}
+		tier := strings.ToUpper(metadata(text)["rigor_tier"])
+		if tier == "" {
+			tier = strings.ToUpper(strings.Trim(tableFields(text)["tier"], "` []"))
+		}
+		if tier == "N/A" {
+			continue
+		}
+		base := filepath.ToSlash(filepath.Dir(rel))
+		required := []string{"contracts/behavior.md", "contracts/quality.md"}
+		if tier == "M" || tier == "L" {
+			required = append(required, "contracts/product.md", "contracts/ux.md", "contracts/api.md", "contracts/data.md", "contracts/rollout.md", "technical-discovery.md")
+		}
+		if tier == "L" {
+			required = append(required, "contracts/security.md", "contracts/observability.md")
+		}
+		for _, name := range required {
+			path := base + "/" + name
+			if _, ok := s.Text[path]; !ok {
+				out = append(out, Diagnostic{Warning, "delivery-closure", path, "Rigor " + tier + " contract is missing.", "Create it or mark the contract Not applicable with rationale during migration."})
+			}
+		}
+		reqPattern := regexp.MustCompile(`\bREQ-\d+\b`)
+		acPattern := regexp.MustCompile(`\bAC-\d+\b`)
+		testPattern := regexp.MustCompile(`\bTEST-\d+\b`)
+		contracts := ""
+		for path, body := range s.Text {
+			if strings.HasPrefix(path, base+"/contracts/") {
+				contracts += "\n" + body
+			}
+		}
+		tasks := ""
+		for path, body := range s.Text {
+			if strings.HasPrefix(path, base+"/tasks/") {
+				tasks += "\n" + body
+			}
+		}
+		quality := s.Text[base+"/contracts/quality.md"]
+		for _, id := range uniqueStrings(reqPattern.FindAllString(contracts, -1)) {
+			if !strings.Contains(tasks, id) {
+				out = append(out, Diagnostic{Warning, "traceability", base, "Requirement " + id + " has no task mapping.", "Reference it from at least one task."})
+			}
+		}
+		for _, id := range uniqueStrings(acPattern.FindAllString(contracts, -1)) {
+			if !strings.Contains(tasks, id) {
+				out = append(out, Diagnostic{Warning, "traceability", base, "Acceptance criterion " + id + " has no task mapping.", "Reference it from a task."})
+			}
+			if !strings.Contains(quality, id) {
+				out = append(out, Diagnostic{Warning, "traceability", base + "/contracts/quality.md", "Acceptance criterion " + id + " has no quality mapping.", "Map it to a TEST-* or evidence method."})
+			}
+		}
+		if len(acPattern.FindAllString(contracts, -1)) > 0 && len(testPattern.FindAllString(quality, -1)) == 0 {
+			out = append(out, Diagnostic{Warning, "traceability", base + "/contracts/quality.md", "Acceptance criteria have no TEST-* identifiers.", "Add stable test ids or explicit non-test evidence."})
+		}
+	}
+	gatesText := s.Text["knowledge/conventions/gates.md"]
+	tbdGates := strings.Contains(strings.ToUpper(gatesText), "TBD")
+	for rel, text := range s.Text {
+		if !strings.Contains(rel, "/tasks/") || !strings.HasSuffix(rel, ".md") {
+			continue
+		}
+		fields := tableFields(text)
+		status := strings.Trim(fields["status"], "` []")
+		if status == "" {
+			status = metadata(text)["status"]
+		}
+		if status == "implemented" || status == "validated" || status == "released" {
+			for _, field := range []string{"branch", "base commit", "diff hash", "changed paths", "test status"} {
+				v := strings.ToLower(fields[field])
+				if v == "" || strings.Contains(v, "n/a until") || strings.Contains(v, "pending") {
+					out = append(out, Diagnostic{Error, "working-tree-evidence", rel, "Task " + status + " lacks " + field + ".", "Record immutable working-tree evidence before implementation status."})
+				}
+			}
+		}
+		if tbdGates && (status == "in_progress" || status == "implemented" || status == "validated" || status == "released") {
+			out = append(out, Diagnostic{Error, "gate-readiness", rel, "Task advanced while applicable gate commands remain TBD.", "Configure gates or mark them N/A with rationale before Code Runner."})
+		}
+		if status == "validated" || status == "released" {
+			for _, field := range []string{"commits", "code paths", "code review diff hash", "qa diff hash"} {
+				v := strings.ToLower(fields[field])
+				if v == "" || strings.Contains(v, "pending") || strings.Contains(v, "n/a") {
+					out = append(out, Diagnostic{Error, "validation-evidence", rel, "Task " + status + " lacks " + field + ".", "Commit only after Code Review and QA approve the same diff hash."})
+				}
+			}
+			diff := strings.Trim(fields["diff hash"], "` ")
+			review := strings.Trim(fields["code review diff hash"], "` ")
+			qa := strings.Trim(fields["qa diff hash"], "` ")
+			if diff != "" && (review != diff || qa != diff) {
+				out = append(out, Diagnostic{Error, "diff-staleness", rel, "Code Review and QA did not approve the current diff hash.", "Re-run both independent gates on the current working-tree snapshot before commit."})
+			}
+		}
+	}
+	return out
+}
+
+func uniqueStrings(items []string) []string {
+	seen := map[string]bool{}
+	var out []string
+	for _, item := range items {
+		if !seen[item] {
+			seen[item] = true
+			out = append(out, item)
+		}
+	}
+	sort.Strings(out)
+	return out
+}
+
 var allowedStatuses = map[string]bool{"draft": true, "proposed": true, "approved": true, "in_progress": true, "implemented": true, "validated": true, "released": true, "deprecated": true, "superseded": true, "rejected": true, "not_applicable": true}
 var contextFieldPattern = regexp.MustCompile(`(?m)^\s*([a-zA-Z_]+):\s*(.*?)\s*$`)
 var tableRowPattern = regexp.MustCompile(`(?m)^\|\s*([^|]+?)\s*\|\s*([^|]+?)\s*\|\s*$`)
@@ -255,22 +410,22 @@ func validateEvidence(s Snapshot) []Diagnostic {
 		text := s.Text[filepath.ToSlash(path)]
 		fields := tableFields(text)
 		if kind == "task" && (status == "implemented" || status == "validated" || status == "released") {
-			for _, field := range []string{"branch", "commits", "code paths"} {
+			for _, field := range []string{"branch", "base commit", "diff hash", "changed paths", "test status"} {
 				if placeholder(fields[field]) {
-					out = append(out, Diagnostic{Error, "code-evidence", path, "Task is " + status + " but has no concrete " + field + ".", "Record structured implementation evidence."})
+					out = append(out, Diagnostic{Error, "code-evidence", path, "Task is " + status + " but has no concrete " + field + ".", "Record immutable working-tree evidence."})
+				}
+			}
+		}
+		if kind == "task" && (status == "validated" || status == "released") {
+			for _, field := range []string{"commits", "code paths", "test status", "gate logs", "qa evidence", "code review diff hash", "qa diff hash"} {
+				if placeholder(fields[field]) {
+					out = append(out, Diagnostic{Error, "code-evidence", path, "Validated task has no concrete " + field + ".", "Record passing validation evidence."})
 				}
 			}
 			if commit := fields["commits"]; commit != "" && !regexp.MustCompile(`(?i)([0-9a-f]{7,40}|https?://\S+/commit/\S+)`).MatchString(commit) {
 				out = append(out, Diagnostic{Error, "code-evidence", path, "Commits is not a traceable commit hash or commit URL.", "Record a commit hash or URL."})
 			}
-		}
-		if kind == "task" && (status == "validated" || status == "released") {
-			for _, field := range []string{"pr", "test status", "gate logs", "qa evidence"} {
-				if placeholder(fields[field]) {
-					out = append(out, Diagnostic{Error, "code-evidence", path, "Validated task has no concrete " + field + ".", "Record passing validation evidence."})
-				}
-			}
-			if pr := fields["pr"]; pr != "" && !regexp.MustCompile(`(?i)(https?://\S+/(pull|merge_requests)/\d+|#\d+)`).MatchString(pr) {
+			if pr := fields["pr"]; !placeholder(pr) && !regexp.MustCompile(`(?i)(https?://\S+/(pull|merge_requests)/\d+|#\d+)`).MatchString(pr) {
 				out = append(out, Diagnostic{Error, "code-evidence", path, "PR is not a traceable PR reference.", "Record a PR URL or number."})
 			}
 		}

@@ -1,5 +1,4 @@
 # Technical Discovery: Attendee QR check-in
-
 Status: draft
 
 ## Requirement-to-codebase map
@@ -17,4 +16,3 @@ The worked example has no application codebase. Code paths, modules, tests, and 
 ## Handoff
 
 Next: implementation-planner only in a real adopter repository with inspectable code.
-

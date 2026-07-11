@@ -108,8 +108,11 @@ Use this checklist in order. Do not generate downstream artifacts from incomplet
 
 - [ ] Copy product/domains/_template-domain/ to a stable domain slug.
 - [ ] Replace template IDs, names, slugs, parents, delivery metadata, and handoffs.
-- [ ] Continue Domain -> User Goal -> Feature -> Use Case -> Specification.
-- [ ] Generate Design, Plan, Graph, and Tasks only when their gates permit it.
+- [ ] Continue Domain -> User Goal -> Domain Evolution -> selected Feature -> Use Case.
+- [ ] Use spec-framework work --feature <id-or-path>, then status/next for navigation.
+- [ ] Create modular Specification contracts according to rigor.
+- [ ] Generate Design, Technical Discovery, resolve the Architecture Gate, then Plan, Graph, and Tasks.
+- [ ] Run spec-framework gates before Code Runner and claim graph tasks when coordinating agents.
 
 ## 7. Validate readiness
 

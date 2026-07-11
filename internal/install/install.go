@@ -149,7 +149,8 @@ func Upgrade(opts Options) (Result, error) {
 	}
 	for source, dest := range map[string]string{
 		"FRAMEWORK.md": "FRAMEWORK.md", "framework/AGENTS.framework.md": "AGENTS.framework.md",
-		"framework/decisions": "decisions", "framework/skills": "skills", "framework/template": "templates",
+		"framework/delivery-closure.md": "delivery-closure.md",
+		"framework/decisions":           "decisions", "framework/skills": "skills", "framework/template": "templates",
 	} {
 		if err := copyTree(source, filepath.Join(spec, dest)); err != nil {
 			return Result{}, err

@@ -28,6 +28,10 @@ spec-framework import materialize --run IMPORT-001 --approved-by "Product Owner"
 
 The command rejects missing evidence, paths outside `product/`, duplicate targets, non-draft content, and existing destination files.
 
+Use `spec-framework work --feature <path-or-id>` to create an independent workspace, then `status` and `next` to see blockers and the canonical next skill. Use `approve` for human-reviewed status grants, `gates` before Code Runner, and `graph ready/claim/release/complete` to coordinate task ownership.
+
+See [delivery-closure.md](delivery-closure.md) for the complete operational flow and command examples.
+
 Install a versioned release binary as described in [install.md](install.md). Go and Node.js are not runtime requirements for adopters.
 
 Manual bootstrap:

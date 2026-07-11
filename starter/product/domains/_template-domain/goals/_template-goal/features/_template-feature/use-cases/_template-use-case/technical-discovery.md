@@ -1,5 +1,4 @@
 # Technical Discovery: [use case]
-
 Status: draft
 
 ## Requirement-to-codebase map
@@ -13,4 +12,3 @@ Status: draft
 | Verdict | Decision | Rationale |
 | --- | --- | --- |
 | `[Decision required | Not required]` | `[DEC-* or N/A]` | `[reason]` |
-

@@ -62,6 +62,40 @@ func TestImportValidationDetectsChangedSourceAndDuplicateTargets(t *testing.T) {
 	}
 }
 
+func TestDeliveryClosureRejectsLegacyAndUnknownHandoffs(t *testing.T) {
+	root := t.TempDir()
+	_ = os.MkdirAll(filepath.Join(root, "framework", "skills", "known"), 0755)
+	s := Snapshot{Root: root, FrameworkRoot: root, Text: map[string]string{"framework/skills/a/SKILL.md": "## Handoff\nNext: 05-old.md\n", "framework/skills/b/SKILL.md": "## Handoff\nNext: missing-skill.\n"}}
+	d := validateDeliveryClosure(s)
+	legacy, unknown := false, false
+	for _, x := range d {
+		if strings.Contains(x.Message, "Legacy numbered") {
+			legacy = true
+		}
+		if strings.Contains(x.Message, "Unknown next skill") {
+			unknown = true
+		}
+	}
+	if !legacy || !unknown {
+		t.Fatalf("legacy=%v unknown=%v diagnostics=%+v", legacy, unknown, d)
+	}
+}
+
+func TestValidatedTaskRequiresMatchingDiffHashes(t *testing.T) {
+	text := "# Task\n\n| Field | Value |\n| --- | --- |\n| Status | validated |\n| Branch | feature/x |\n| Base commit | abcdef1 |\n| Diff hash | hash-a |\n| Changed paths | src/x.go |\n| Test status | passed |\n| Commits | abcdef2 |\n| Code paths | src/x.go |\n| Code Review diff hash | hash-a |\n| QA diff hash | hash-b |\n"
+	s := Snapshot{Text: map[string]string{"domains/x/use-cases/u/tasks/TK-1.md": text}}
+	d := validateDeliveryClosure(s)
+	found := false
+	for _, x := range d {
+		if x.Check == "diff-staleness" {
+			found = true
+		}
+	}
+	if !found {
+		t.Fatalf("diagnostics=%+v", d)
+	}
+}
+
 func TestDiagnosticsAreDeterministic(t *testing.T) {
 	root := t.TempDir()
 	_ = os.MkdirAll(filepath.Join(root, "domains", "a"), 0755)

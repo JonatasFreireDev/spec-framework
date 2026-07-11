@@ -157,6 +157,7 @@ func Validate(ctx context.Context, root, frameworkRoot string) (Result, error) {
 	d = append(d, validateDeliveryAndRigor(snap)...)
 	d = append(d, validateRegistryAndApprovalGates(snap)...)
 	d = append(d, validateImportRuns(snap)...)
+	d = append(d, validateDeliveryClosure(snap)...)
 	sort.Slice(d, func(i, j int) bool {
 		a, b := d[i], d[j]
 		if a.Severity != b.Severity {

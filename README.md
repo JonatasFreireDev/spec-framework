@@ -41,6 +41,19 @@ go run ./cmd/spec-framework init --target ../my-product --agents codex --startin
 
 # After Artifact Importer proposes mappings and a human approves them
 spec-framework import materialize --run IMPORT-001 --approved-by "Product Owner" --yes
+
+# Select and navigate one feature without creating a global active feature
+spec-framework work --feature FT-001 --domain events --goal manage-event --created-by "Product Owner"
+spec-framework work --feature FT-001 --use-case send-invitation --created-by "Product Owner"
+spec-framework status --work WORK-001
+spec-framework next --work WORK-001
+
+# Record an explicit approval and inspect implementation readiness
+spec-framework approve --artifact domains/events/context.md --grant approved --approved-by "Product Owner" --yes
+spec-framework gates
+
+# Operate an approved execution graph without automatically running agents
+spec-framework graph ready --graph domains/events/goals/manage/features/invites/use-cases/send/execution-graph.json
 spec-framework validate
 spec-framework upgrade --target ../my-product --agents codex,cursor,claude --yes
 ```
