@@ -47,6 +47,6 @@ execution-graph.json; ordered DAG; Delivery Level/Priority on graph and nodes; p
 - [ ] Leaves a clear handoff for the next skill.
 
 ## Handoff
-Next: 12-task-generator.md
+Next: task-generator.
 
 Pass forward approved artifacts, open questions, decisions, dependencies, risks, and any remaining audit findings.

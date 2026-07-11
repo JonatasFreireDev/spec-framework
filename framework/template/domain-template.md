@@ -43,6 +43,26 @@ flowchart TD
 | --- | --- | --- |
 | `[concept]` | `[definition]` | `[notes]` |
 
+## Invariants, Commands, And Events
+
+| Type | Name | Rule/meaning | Source |
+| --- | --- | --- | --- |
+| Invariant | `[rule]` | `[must always hold]` | `[decision/evidence]` |
+| Command | `[command]` | `[intent and authority]` | `[source]` |
+| Event | `[event]` | `[observable fact]` | `[source]` |
+
+## Data Ownership And Source Of Truth
+
+| Concept/data | Owning domain/system | Source of truth | Consistency | Authorization boundary |
+| --- | --- | --- | --- | --- |
+| `[data]` | `[owner]` | `[system]` | `[transactional/eventual]` | `[who may read/write]` |
+
+## Cross-domain Contracts
+
+| Domain/system | Contract | Direction | Failure/compatibility expectations |
+| --- | --- | --- | --- |
+| `[dependency]` | `[API/event/process]` | `[in/out]` | `[expectations]` |
+
 ## 🎯 User Goals
 
 | Goal | Status | Delivery | Priority |

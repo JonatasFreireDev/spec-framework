@@ -26,6 +26,30 @@
 | Security Review | [security-review.md](security-review.md) |
 | Analytics | [analytics.md](analytics.md) |
 | Audit | [audit.md](audit.md) |
+| Technical Discovery | [technical-discovery.md](technical-discovery.md) |
+| Product contract | [contracts/product.md](contracts/product.md) |
+| Behavior contract | [contracts/behavior.md](contracts/behavior.md) |
+| UX contract | [contracts/ux.md](contracts/ux.md) |
+| API contract | [contracts/api.md](contracts/api.md) |
+| Data contract | [contracts/data.md](contracts/data.md) |
+| Security contract | [contracts/security.md](contracts/security.md) |
+| Quality contract | [contracts/quality.md](contracts/quality.md) |
+| Observability contract | [contracts/observability.md](contracts/observability.md) |
+| Rollout contract | [contracts/rollout.md](contracts/rollout.md) |
+
+## Contract Applicability
+
+| Contract | Applies | Status | Rationale |
+| --- | --- | --- | --- |
+| Product | `[yes/no]` | `[draft/approved/N/A]` | `[reason]` |
+| Behavior | `yes` | `[draft/approved]` | `[reason]` |
+| UX | `[yes/no]` | `[draft/approved/N/A]` | `[reason]` |
+| API | `[yes/no]` | `[draft/approved/N/A]` | `[reason]` |
+| Data | `[yes/no]` | `[draft/approved/N/A]` | `[reason]` |
+| Security | `[yes/no]` | `[draft/approved/N/A]` | `[reason]` |
+| Quality | `yes` | `[draft/approved]` | `[reason]` |
+| Observability | `[yes/no]` | `[draft/approved/N/A]` | `[reason]` |
+| Rollout | `[yes/no]` | `[draft/approved/N/A]` | `[reason]` |
 
 ## 🚚 Delivery
 

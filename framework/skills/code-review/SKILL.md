@@ -51,8 +51,9 @@ Code Review verifies that implementation matches the Specification, tasks, archi
 
 1. Confirm the review target and status.
 2. Read the source artifacts and code evidence.
-3. Inspect the diff/code paths against the three lenses.
-4. Classify findings as `blocker`, `required_fix`, or `note`.
+3. Record the base commit and normalized diff hash; review exactly that immutable working-tree snapshot and mark prior review stale when it changes.
+4. Inspect the diff/code paths against the three lenses.
+5. Classify findings as `blocker`, `required_fix`, or `note`.
 5. Cite file and line when possible.
 6. Route each blocking or required finding using FDR-006:
    - defect/regression -> `bug-fixer`;
@@ -79,6 +80,6 @@ Code Review verifies that implementation matches the Specification, tasks, archi
 
 ## Handoff
 
-Next: QA AI, Security Review AI, bug-fixer, code-runner, or Product Historian depending on findings.
+Next: qa when passed; otherwise bug-fixer, code-runner, or product-historian according to findings.
 
 Pass forward the review target, verdict, findings, routes, owners, files reviewed, residual risks, and whether validation can proceed.

@@ -39,6 +39,7 @@ tasks.md; task files or task records with Delivery Level/Priority; acceptance ch
 7. Record decision candidates for high-impact or hard-to-reverse choices.
 8. Ask for approval before moving the artifact to the next ladder step.
 9. Update context.md with new links, dependencies, questions, and status changes.
+10. Map every task to concrete `REQ-*` and `AC-*` identifiers and at least one planned `TEST-*` or explicit non-test evidence method.
 
 ## Quality checklist
 - [ ] Preserves traceability to the parent artifact.
@@ -53,6 +54,6 @@ tasks.md; task files or task records with Delivery Level/Priority; acceptance ch
 - [ ] Leaves a clear handoff for the next skill.
 
 ## Handoff
-Next: 14-qa.md
+Next: code-runner after tasks and graph are approved and implementation gates are configured.
 
 Pass forward approved artifacts, open questions, decisions, dependencies, risks, and any remaining audit findings.

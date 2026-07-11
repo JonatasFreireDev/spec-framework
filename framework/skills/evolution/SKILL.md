@@ -46,6 +46,6 @@ Evolution proposals; opportunity notes; expected impact; required approvals.
 - [ ] Leaves a clear handoff for the next skill or orchestrator.
 
 ## Handoff
-Next: 20-documentation-writer.md
+Next: documentation-writer.
 
 Pass forward approved artifacts, findings, open questions, decisions, dependencies, risks, and required follow-up work.

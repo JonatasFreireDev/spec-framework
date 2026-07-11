@@ -21,6 +21,8 @@ Do not write product scope, product decisions, approval records, or delivery evi
 
 Do not write framework-method decisions into `product/knowledge/decisions/`.
 
+Use `.product/workspaces/WORK-NNN.json` for concurrent feature focus; never invent a global active feature. Before implementation, require modular specification contracts by rigor, approved Design, Technical Discovery, a resolved Architecture Gate, configured gates, graph/tasks, and an exclusive claim when graph runtime is used. `implemented` uses working-tree evidence and diff hash; commit only after Code Review and QA approve that same hash.
+
 ## Required Reading
 
 Before creating or updating framework-governed work:

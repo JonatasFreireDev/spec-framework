@@ -18,6 +18,7 @@
 | Context | [context.md](context.md) |
 | Specification | [specification.md](specification.md) |
 | Design | [design.md](design.md) |
+| Technical Discovery | [technical-discovery.md](technical-discovery.md) |
 | Execution Graph | [execution-graph.json](execution-graph.json) |
 | Tasks | [tasks.md](tasks.md) |
 | Tests | [tests.md](tests.md) |

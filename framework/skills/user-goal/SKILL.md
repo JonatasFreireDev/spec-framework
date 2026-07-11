@@ -46,6 +46,6 @@ goal.md; goal context.md; candidate journeys; feature opportunity list.
 - [ ] Leaves a clear handoff for the next skill.
 
 ## Handoff
-Next: 06-journey.md
+Next: journey.
 
 Pass forward approved artifacts, open questions, decisions, dependencies, risks, and any remaining audit findings.

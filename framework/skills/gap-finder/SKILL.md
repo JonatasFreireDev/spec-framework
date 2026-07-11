@@ -46,6 +46,6 @@ Gap report; severity; evidence; required additions; recommended next skill.
 - [ ] Leaves a clear handoff for the next skill or orchestrator.
 
 ## Handoff
-Next: 16-conflict-finder.md
+Next: conflict-finder.
 
 Pass forward approved artifacts, findings, open questions, decisions, dependencies, risks, and required follow-up work.

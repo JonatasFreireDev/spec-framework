@@ -46,6 +46,6 @@ Dependency report; blocked items; dependency graph notes; parallelization opport
 - [ ] Leaves a clear handoff for the next skill or orchestrator.
 
 ## Handoff
-Next: 18-impact-analyzer.md
+Next: impact-analyzer.
 
 Pass forward approved artifacts, findings, open questions, decisions, dependencies, risks, and required follow-up work.

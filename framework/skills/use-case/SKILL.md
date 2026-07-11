@@ -47,6 +47,6 @@ use-case.md files; use-case context.md files; inherited Delivery Level and Prior
 - [ ] Leaves a clear handoff for the next skill.
 
 ## Handoff
-Next: 09-specification.md
+Next: specification.
 
 Pass forward approved artifacts, open questions, decisions, dependencies, risks, and any remaining audit findings.

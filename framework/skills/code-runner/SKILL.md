@@ -56,8 +56,10 @@ If a precondition is missing, stop and report the blocker. Do not invent missing
    - implement the smallest code change that satisfies the task;
    - run the test until green;
    - run the applicable gates from `gates.md`.
-6. Record implementation evidence in the task file when appropriate: branch, code paths, test status, and gate logs or limitation notes. Do not mark approval-gated status unless the user explicitly asks and required evidence exists.
-7. Stop at green. Do not commit, push, merge, or create approval records.
+6. Record working-tree evidence in the task file: branch, base commit, changed paths, normalized diff hash, narrow test, and applicable gate results. `implemented` does not require a commit.
+7. Stop when any applicable gate command is `TBD`; only an explicit `N/A` with rationale is non-blocking.
+8. Hand the immutable diff hash to Code Review and QA. Any later diff change stales both verdicts.
+9. Stop at green. Do not commit, push, merge, or create approval records.
 
 ## Boundaries
 
@@ -80,6 +82,6 @@ If a precondition is missing, stop and report the blocker. Do not invent missing
 
 ## Handoff
 
-Next: QA AI.
+Next: code-review, then QA. Do not commit before both independent gates pass.
 
 Pass forward the task id, files changed, tests added, gates run, output summary, limitations, open blockers, and whether QA can independently verify the work.

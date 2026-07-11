@@ -24,8 +24,8 @@ When a skill mentions a product-relative path such as `knowledge/conventions/gat
 ## Expected Files
 
 - `<skill-name>/SKILL.md`: one skill per folder.
-- Specialist skills: problem, vision, strategy, domain, goal, journey, feature, use case, UX/UI, specification, implementation planning, graph, task, code runner, bug fixer, QA, code review, security review, threat modeler, commit crafter, PR finalizer, audit, documentation, history, and artifact import.
-- Orchestrator skills: product, existing product import, new feature, audit, evolution, documentation, and release.
+- Specialist skills: problem, vision, strategy, domain, goal, journey, feature, use case, UX/UI, specification, technical discovery, implementation planning, graph, task, code runner, bug fixer, QA, code review, security review, threat modeler, commit crafter, PR finalizer, audit, documentation, history, and artifact import.
+- Orchestrator skills: product, domain evolution, existing product import, new feature, audit, evolution, documentation, and release.
 
 ## Responsible Skill
 
@@ -34,3 +34,5 @@ Primary owner: Documentation Orchestrator.
 ## Next Step
 
 Read the smallest skill that owns the next artifact. If a request spans multiple artifacts, start with the matching orchestrator and stop at approval gates.
+
+All `Next:` handoffs use canonical skill folder names. Numbered legacy filenames are invalid and the validator reports them.

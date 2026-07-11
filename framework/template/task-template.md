@@ -40,6 +40,9 @@
 | Type | `[database/backend/frontend/test/analytics/docs/security]` |
 | Depends on | `[task ids or none]` |
 | Source sections | `[Specification sections or plan sections]` |
+| Requirements | `[REQ-* ids]` |
+| Acceptance criteria | `[AC-* ids]` |
+| Planned tests | `[TEST-* ids or explicit evidence method]` |
 | Write scope | `[paths/modules this task may touch]` |
 | Shared resources | `[generated indexes/locales/local database/schema/contracts or none]` |
 | Graph node status | `[graph node operational status]` |
@@ -57,12 +60,25 @@
 | Field | Value |
 | --- | --- |
 | Branch | `N/A until implementation` |
-| Commits | `N/A until implementation` |
+| Base commit | `N/A until implementation` |
+| Diff hash | `N/A until implementation` |
+| Commits | `N/A until QA and Code Review pass` |
 | PR | `N/A until implementation` |
 | Code paths | `N/A until implementation` |
 | Monorepo model | `docs and code live in the same product repository` |
 | Commit convention | `knowledge/conventions/commits.md` |
 | PR convention | `knowledge/conventions/pull-requests.md` |
+
+## Working Tree Evidence
+
+| Field | Value |
+| --- | --- |
+| Changed paths | `[repo-relative paths or N/A]` |
+| Diff hash | `[sha256 of reviewed diff or N/A]` |
+| Narrow test | `[command and result or N/A]` |
+| Applicable gates | `[gate ids and results or N/A]` |
+| Code Review diff hash | `[hash or pending]` |
+| QA diff hash | `[hash or pending]` |
 
 ## Validation Evidence
 
@@ -83,6 +99,6 @@
 
 | Field | Value |
 | --- | --- |
-| Ready for implementation | `[yes/no]` |
+| Ready for implementation | `[yes/no; requires configured gates]` |
 | Required next skill | `[skill]` |
 | Notes | `[handoff notes]` |

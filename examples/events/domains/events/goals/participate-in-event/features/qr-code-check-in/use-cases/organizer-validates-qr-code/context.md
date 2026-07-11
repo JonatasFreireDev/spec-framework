@@ -39,6 +39,8 @@ documents:
   security_review: security-review.md
   analytics: analytics.md
   audit: audit.md
+  technical_discovery: technical-discovery.md
+  contracts: contracts/
 delivery:
   level: L1
   priority: P0
@@ -96,9 +98,11 @@ This context gives agents the local map for the organizer validation use case. I
 | Security Review | [security-review.md](security-review.md) |
 | Analytics | [analytics.md](analytics.md) |
 | Audit | [audit.md](audit.md) |
+| Technical Discovery | [technical-discovery.md](technical-discovery.md) |
+| Contracts | [contracts/](contracts/) |
 
 ## Handoff
 
-Next recommended skill: Specification AI.
+Next recommended skill: specification.
 
 Do not generate application code from this folder. Generate implementation tasks only after Specification and Design approval.

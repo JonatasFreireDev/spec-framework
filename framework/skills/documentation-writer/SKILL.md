@@ -46,6 +46,6 @@ Updated docs; updated context.md files; index updates; changelog notes.
 - [ ] Leaves a clear handoff for the next skill or orchestrator.
 
 ## Handoff
-Next: 21-product-historian.md
+Next: product-historian.
 
 Pass forward approved artifacts, findings, open questions, decisions, dependencies, risks, and required follow-up work.

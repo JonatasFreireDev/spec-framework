@@ -28,6 +28,7 @@ Commit Crafter packages completed work into atomic commits by concern, following
 - the active product root's `knowledge/conventions/gates.md`.
 - Relevant task files and code evidence.
 - QA Evidence, Code Review, and Security Review when the commit is part of validation/release work.
+- Matching Code Review and QA diff hashes for working-tree implementation; refuse to commit when the diff changed after either gate.
 - `framework/decisions/FDR-008-delivery-commits-and-prs.md`.
 
 ## Preconditions
@@ -75,6 +76,6 @@ Commit Crafter packages completed work into atomic commits by concern, following
 
 ## Handoff
 
-Next: PR Finalizer or the human owner.
+Next: pr-finalizer or the human owner.
 
 Pass forward commit hashes, commit messages, files included, gates run, skipped gates or limitations, and any remaining uncommitted changes.

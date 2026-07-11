@@ -35,8 +35,9 @@ QA verdict; test evidence; blocking findings; residual risks; required fixes.
 ## Workflow
 1. Read the relevant context and identify artifact status.
 2. Read the active product root's `knowledge/conventions/gates.md` and identify applicable gates for the delivery.
-3. Re-run applicable gates independently when the environment is available. Do not rely on task checkboxes, handoff notes, or claimed pass/fail status.
-4. Record real gate output in `qa-evidence.md`: command, environment, log path or captured output, CI URL when available, and limitation notes when a gate cannot run.
+3. Confirm the current base commit and diff hash match the snapshot approved by Code Review; otherwise report stale evidence and stop.
+4. Re-run applicable gates independently when the environment is available. Do not rely on task checkboxes, handoff notes, or claimed pass/fail status.
+5. Record real gate output in `qa-evidence.md`: command, environment, log path or captured output, CI URL when available, and limitation notes when a gate cannot run.
 5. Hunt for hollow tests, missing assertions, missing negative cases, missing permission cases, scope drift outside the task writeScope, and divergence from the Specification.
 6. For UI deliveries, require proportional visual evidence: a local screenshot or CI artifact is enough. Check basic accessibility: role/label, focus, touch target, and contrast.
 7. Separate verified facts from assumptions and recommendations.
@@ -66,6 +67,6 @@ QA verdict; test evidence; blocking findings; residual risks; required fixes.
 - [ ] Leaves a clear handoff for the next skill or orchestrator.
 
 ## Handoff
-Next: bug-fixer, code-runner, product-historian, Security Review AI, or Audit Orchestrator depending on FDR-006 routing.
+Next: commit-crafter when QA and Code Review pass; otherwise bug-fixer, code-runner, product-historian, or security-review according to FDR-006 routing.
 
 Pass forward approved artifacts, findings, open questions, decisions, dependencies, risks, and required follow-up work.

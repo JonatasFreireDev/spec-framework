@@ -21,7 +21,7 @@ Create the implementation contract that unifies product, UX, rules, data, APIs, 
 Approved use case; feature context; business rules; design notes; engineering constraints; decisions.
 
 ## Outputs
-specification.md; Delivery Level/Priority rationale; unresolved questions; decision candidates; context.md updates.
+`specification.md` root contract; applicable `contracts/*.md`; stable `REQ-*` and `AC-*` coverage; Delivery Level/Priority rationale; unresolved questions; decision candidates; context.md updates.
 
 ## Required reading
 - the framework root's `FRAMEWORK.md`
@@ -36,6 +36,8 @@ specification.md; Delivery Level/Priority rationale; unresolved questions; decis
 4. Record decision candidates for high-impact or hard-to-reverse choices.
 5. Ask for approval before moving the artifact to the next ladder step.
 6. Update context.md with new links, dependencies, questions, and status changes.
+7. Keep `specification.md` as the canonical index; split concerns into product, behavior, UX, API, data, security, quality, observability, and rollout contracts according to rigor.
+8. Give every testable requirement and acceptance criterion a stable ID and reject duplicate or orphan IDs.
 
 ## Quality checklist
 - [ ] Preserves traceability to the parent artifact.
@@ -47,6 +49,6 @@ specification.md; Delivery Level/Priority rationale; unresolved questions; decis
 - [ ] Leaves a clear handoff for the next skill.
 
 ## Handoff
-Next: 13-ux-ui.md
+Next: ux-ui.
 
 Pass forward approved specification, Delivery Level, Priority, open questions, decisions, dependencies, risks, and any remaining audit findings.

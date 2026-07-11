@@ -48,6 +48,6 @@ design.md; UX flow; UI states; accessibility notes; empty/loading/error states; 
 - [ ] Leaves a clear handoff for the next skill or orchestrator.
 
 ## Handoff
-Next: 10-implementation-planner.md
+Next: technical-discovery.
 
 Pass forward approved artifacts, findings, open questions, decisions, dependencies, risks, and required follow-up work.

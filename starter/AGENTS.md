@@ -36,6 +36,8 @@ Start with Product Orchestrator, Problem Discovery AI, Vision AI, and Strategy A
 1. Read `product/context.md`.
 2. Complete the foundation contexts and documents under `product/foundation/`.
 3. Replace `TBD` commands in `product/knowledge/conventions/gates.md` before implementation work.
-4. Copy `product/domains/_template-domain/` when creating the first real domain.
-5. Rename template folders to stable slugs and update every `slug` field in `context.md`.
-6. Keep product scope inside `product/`; do not encode product-specific rules inside `.spec-framework/`.
+4. Copy `product/domains/_template-domain/` when creating the first real domain, then use Domain Evolution to select a delivery slice before New Feature orchestration.
+5. Use `spec-framework work`, `status`, and `next` to navigate a selected feature without global mutable focus.
+6. Do not invoke Code Runner while `spec-framework gates` reports applicable `TBD` commands.
+7. Rename template folders to stable slugs and update every `slug` field in `context.md`.
+8. Keep product scope inside `product/`; do not encode product-specific rules inside `.spec-framework/`.

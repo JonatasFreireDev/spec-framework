@@ -57,6 +57,8 @@ flowchart LR
 | Field | Value |
 | --- | --- |
 | Gate source | `knowledge/conventions/gates.md` |
+| Base commit | `[commit hash]` |
+| Verified diff hash | `[same sha256 approved by Code Review]` |
 | Test command | `[command or method]` |
 | Gate logs | `[path, URL, or captured command output]` |
 | CI URL | `[URL or N/A]` |

@@ -75,6 +75,6 @@ If any hard precondition fails, stop and report the blocker.
 
 ## Handoff
 
-Next: human reviewer, Release Orchestrator, or Product Historian for missing decisions.
+Next: human reviewer, release-orchestrator, or product-historian for missing decisions.
 
 Pass forward PR URL/id or prepared PR body, branch, commits, evidence links, unresolved blockers, and release readiness notes.

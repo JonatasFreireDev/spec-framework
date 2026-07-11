@@ -21,7 +21,7 @@ Define features that serve a user goal while keeping scope, Delivery Level, Prio
 Approved goal and journey; opportunity list; constraints; related features.
 
 ## Outputs
-feature.md; feature context.md; Delivery Level; Priority; scope/non-goals; related use-case candidates.
+feature.md; feature context.md; Delivery Level; Priority; explicit delivery slice; scope/non-goals; related use-case candidates.
 
 ## Required reading
 - the framework root's `FRAMEWORK.md`
@@ -42,11 +42,12 @@ feature.md; feature context.md; Delivery Level; Priority; scope/non-goals; relat
 - [ ] Uses the correct template and naming conventions.
 - [ ] States scope, non-goals, assumptions, and open questions.
 - [ ] Carries Delivery Level and Priority from roadmap, or marks the missing prioritization as a blocker.
+- [ ] Declares user value, entry point, observable end state, independent releasability, reversibility, and deferred behavior.
 - [ ] Detects gaps, conflicts, and dependencies.
 - [ ] Records meaningful decisions or decision candidates.
 - [ ] Leaves a clear handoff for the next skill.
 
 ## Handoff
-Next: 08-use-case.md
+Next: use-case after the feature and delivery slice are approved.
 
 Pass forward approved artifacts, open questions, decisions, dependencies, risks, and any remaining audit findings.

@@ -36,6 +36,17 @@
 | --- | --- |
 | `[behavior]` | `[excluded behavior]` |
 
+## Delivery Slice
+
+| Field | Value |
+| --- | --- |
+| User value | `[observable value]` |
+| Entry point | `[where the slice begins]` |
+| End state | `[observable completion]` |
+| Independently releasable | `[yes/no]` |
+| Reversible | `[yes/no and how]` |
+| Deferred | `[explicitly postponed behavior]` |
+
 ## 🎬 Use Cases
 
 | Use Case | Status | Delivery | Priority | Notes |

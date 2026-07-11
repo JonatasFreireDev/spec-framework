@@ -17,6 +17,7 @@
       "path": "tasks/TASK-TEMPLATE-001.md",
       "title": "Implement first vertical slice",
       "type": "implementation",
+      "status": "pending",
       "dependsOn": [],
       "writeScope": [
         "src/template-use-case"

@@ -50,6 +50,8 @@ flowchart LR
 | Field | Value |
 | --- | --- |
 | Branch | `[branch or N/A]` |
+| Base commit | `[commit hash]` |
+| Reviewed diff hash | `[sha256]` |
 | Commits | `[commit hashes or N/A]` |
 | PR | `[PR URL/id or N/A]` |
 | Code paths | `[repo-relative paths]` |

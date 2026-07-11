@@ -46,6 +46,6 @@ Conflict report; affected files; conflicting claims; proposed resolution options
 - [ ] Leaves a clear handoff for the next skill or orchestrator.
 
 ## Handoff
-Next: 17-dependency-analyzer.md
+Next: dependency-analyzer.
 
 Pass forward approved artifacts, findings, open questions, decisions, dependencies, risks, and required follow-up work.

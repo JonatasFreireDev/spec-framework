@@ -46,6 +46,6 @@ Impact report; affected artifacts; risk level; migration or update plan; approva
 - [ ] Leaves a clear handoff for the next skill or orchestrator.
 
 ## Handoff
-Next: 19-evolution.md
+Next: evolution.
 
 Pass forward approved artifacts, findings, open questions, decisions, dependencies, risks, and required follow-up work.

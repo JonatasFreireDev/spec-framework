@@ -21,7 +21,7 @@ Model product domains, ownership boundaries, dependencies, and cross-domain risk
 Approved strategy; glossary; business rules; existing code/docs; domain candidates.
 
 ## Outputs
-domain.md files; domain context.md files; dependency notes; boundary decisions.
+domain.md files; domain context.md files; ubiquitous language; invariants; commands/events; data ownership; source-of-truth and authorization boundaries; dependency notes; boundary decisions.
 
 ## Required reading
 - the framework root's `FRAMEWORK.md`
@@ -46,6 +46,6 @@ domain.md files; domain context.md files; dependency notes; boundary decisions.
 - [ ] Leaves a clear handoff for the next skill.
 
 ## Handoff
-Next: 05-user-goal.md
+Next: user-goal, then domain-evolution-orchestrator when goals and journeys are ready.
 
 Pass forward approved artifacts, open questions, decisions, dependencies, risks, and any remaining audit findings.

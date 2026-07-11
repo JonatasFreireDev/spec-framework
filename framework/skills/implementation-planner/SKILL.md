@@ -48,6 +48,6 @@ implementation-plan.md; inherited Delivery Level and Priority; phases; dependenc
 - [ ] Leaves a clear handoff for the next skill.
 
 ## Handoff
-Next: 11-execution-graph.md
+Next: execution-graph.
 
 Pass forward approved artifacts, open questions, decisions, dependencies, risks, and any remaining audit findings.

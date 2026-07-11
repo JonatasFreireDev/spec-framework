@@ -18,7 +18,7 @@ Orchestrator. Controls workflow, gates, handoffs, and approval checkpoints. It s
 - Approved product decisions in the active product root's `knowledge/decisions/`.
 
 ## Default sequence
-Impact Analyzer -> Feature -> Use Case -> Specification -> UX/UI -> Implementation Planner -> Execution Graph -> Task Generator
+Impact Analyzer -> Feature -> Use Case -> Specification -> UX/UI -> Technical Discovery -> Architecture Gate -> Implementation Planner -> Execution Graph -> Task Generator
 
 ## Operating rules
 1. Identify the current artifact status before routing work.
@@ -31,7 +31,7 @@ Impact Analyzer -> Feature -> Use Case -> Specification -> UX/UI -> Implementati
 8. Update context and indexes only after the source artifact is approved.
 
 ## Outputs
-approved feature scope; specification; design; implementation plan; execution graph; task set; approval log.
+approved feature scope; specification contracts; design; technical discovery; resolved Architecture Gate; implementation plan; execution graph; task set; approval evidence references.
 
 ## Gate checklist
 - [ ] Inputs are approved or explicitly marked as draft.

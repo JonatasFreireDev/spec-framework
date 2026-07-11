@@ -47,6 +47,6 @@ strategy.md; personas.md; competitors.md; metrics.md; roadmap.md with Delivery L
 - [ ] Leaves a clear handoff for the next skill.
 
 ## Handoff
-Next: 04-domain-architect.md
+Next: domain-architect.
 
 Pass forward approved artifacts, open questions, decisions, dependencies, risks, and any remaining audit findings.

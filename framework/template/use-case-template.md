@@ -42,6 +42,17 @@
 | Depends on | `[artifact ids/paths]` |
 | Rationale | `[why this belongs here]` |
 
+## Delivery Slice
+
+| Field | Value |
+| --- | --- |
+| User value | `[observable value]` |
+| Entry point | `[trigger]` |
+| End state | `[observable completion]` |
+| Independently releasable | `[yes/no]` |
+| Reversible | `[yes/no and how]` |
+| Deferred | `[explicitly postponed behavior]` |
+
 ## 👤 Actors
 
 | Actor | Role In Flow |

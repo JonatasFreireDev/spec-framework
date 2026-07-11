@@ -120,7 +120,7 @@ Executable unit derived from the Specification and the Execution Graph. A task m
 
 The framework uses a monorepo model for product delivery: documentation, code, and evidence live in the same product repository, and this `spec-framework` repository remains as a template/laboratory. Links between task and code must use paths relative to the repository when pointing to internal files; PRs can use a URL or an external identifier.
 
-A task in `implemented` must record `Branch`, `Commits`, and `Code paths` in its canonical file. A task in `validated` or `released` must also record `PR`, approved `Test status`, and at least one concrete piece of evidence, such as `Gate logs`, `CI URL`, `Screenshots`, or `QA evidence`.
+A task in `implemented` must record immutable working-tree evidence: `Branch`, `Base commit`, `Changed paths`, `Diff hash`, tests, and applicable gate results. Commits are intentionally deferred until independent Code Review and QA approve the same diff hash. A task in `validated` or `released` must record `Commits`, `Code paths`, `PR` when policy requires it, approved `Test status`, and concrete evidence such as gate logs, CI URL, screenshots, or QA evidence.
 
 ### Rigor Tier
 
@@ -326,6 +326,17 @@ The flow for a new feature must be:
 Feature -> Use Cases -> Specification -> Design -> Implementation Plan -> Execution Graph -> Tasks -> Implementation -> QA Evidence -> Security Review -> Review -> Audit -> Release
 ```
 
+The closed delivery flow is:
+
+```text
+Domain -> Domain Evolution -> Feature Selection -> New Feature -> Use Cases
+-> Specification Contracts -> Design -> Technical Discovery -> Architecture Gate
+-> Implementation Plan -> Execution Graph -> Tasks -> Code Runner
+-> Code Review -> QA -> Commit Crafter -> PR Finalizer
+```
+
+`specification.md` remains the root contract. Large concerns live under `contracts/` (`product`, `behavior`, `ux`, `api`, `data`, `security`, `quality`, `observability`, and `rollout`) and use stable `REQ-*` and `AC-*` identifiers. Tier S requires behavior and quality; Tier M adds product, UX, API, data, rollout, and Technical Discovery; Tier L adds security and observability. An inapplicable contract must say `Not applicable` with rationale.
+
 Design is mandatory for any use case with an interface. For deliveries without UI, `design.md` must exist as a short artifact with `Not applicable`, justification, and impacts on accessibility, observability, or operations when relevant.
 
 QA Evidence and Security Review are validation gates. QA Evidence proves that acceptance criteria, tasks, flows, edge cases, regression, accessibility, observability, and security controls were verified. Security Review evaluates authentication, authorization, privacy, abuse, sensitive data, tokens, logs, dependencies, rollout, rollback, and residual risk. Security Review must also read the product's security baseline in `knowledge/conventions/security-baseline.md` and active threats in `audits/security/threat-register.md`. An artifact must not reach `validated` or `released` when there is a QA or security blocker.
@@ -427,6 +438,8 @@ Gates:
 
 The Implementation Plan is created after the Specification and the Design, and before the tasks. It must not write code. It must define the build strategy.
 
+Before planning, `technical-discovery.md` must map applicable requirements to the real codebase and stable knowledge in `engineering/`. Its Architecture Gate must reference an approved decision or state `Not required` with concrete rationale.
+
 Recommended sections:
 
 - Technical objective
@@ -519,6 +532,17 @@ Rules:
 - Snapshots in the graph, such as `title` and `type`, are allowed only when they match the referenced task file.
 - Every dependency change updates the graph.
 - QA failures can create new nodes in the graph.
+
+The CLI can operate, but not automatically execute, the graph:
+
+```text
+spec-framework graph ready --graph <path>
+spec-framework graph claim --graph <path> --task TK-001 --agent codex
+spec-framework graph release --task TK-001 --agent codex
+spec-framework graph complete --graph <path> --task TK-001 --agent codex
+```
+
+Claims live in `.product/claims.json`. They provide exclusive operational ownership; they do not grant artifact approval or permission to exceed `writeScope`.
 ## 9. Skills
 
 Skills are specialists. They can operate in modes such as `create`, `update`, `audit`, `evolve`, `explain`, `compare`, and `refactor`, but each must have a clear responsibility.
@@ -569,6 +593,10 @@ Skills are specialists. They can operate in modes such as `create`, `update`, `a
 ## 10. Orchestrators
 
 Orchestrators do not create primary artifacts. They control flow, order, gates, and handoffs.
+
+### Domain Evolution Orchestrator
+
+Coordinates approved goals, journeys, opportunity gaps, candidate features, delivery slices, dependency/impact analysis, and explicit human feature selection. It hands the selected feature to New Feature Orchestrator.
 
 ### Existing Product Import Orchestrator
 
@@ -683,13 +711,13 @@ Mandatory transitions:
 - `proposed`: does not require an approval record, but must not advance from an incomplete parent gate.
 - `approved` and later states: require a corresponding approval record in `.product/history/`, with `artifact_id`, `path`, `content_hash`, `status_granted`, `approved_by`, `approved_at`, and `notes`.
 - `approved -> in_progress`: requires an approved task or an explicit prototype/draft exception.
-- `in_progress -> implemented`: requires structured evidence in the task file: branch, commits, and code paths.
+- `in_progress -> implemented`: requires structured working-tree evidence in the task file: branch, base commit, changed paths, diff hash, tests, and gate results. It does not require a commit.
 - Code Runner can produce code and technical evidence, but does not commit, push, merge, create approval records, or approve QA.
 - Commit Crafter can create local commits when explicitly invoked, but does not push, merge, or create approval records.
 - Bug Fixer reproduces the defect with a failing test before fixing, fixes the root cause with a minimal change, leaves a permanent regression test, and returns to QA.
 - `implemented -> validated`: requires approved QA Evidence with no blockers; requires approved Security Review when there is code, data, permissions, tokens, API, payments, uploads, messaging, search, admin, sensitive analytics, or any privacy/abuse risk.
 - `implemented -> validated`: requires approved Code Review with no `blocker` or `required_fix` findings for executable deliveries.
-- `implemented -> validated`: for an individual task, also requires PR, approved test status, and concrete evidence such as gate logs, CI URL, screenshots, or QA evidence.
+- `implemented -> validated`: for an individual task, requires Code Review and QA approval over the same current diff hash, followed by Commit Crafter evidence, code paths, approved test status, and concrete evidence such as gate logs, CI URL, screenshots, or QA evidence. PR is required when repository policy declares it mandatory.
 - PR Finalizer can prepare or open a PR when the hard gates are green or when the user explicitly requests a draft/prototype; it does not merge.
 - Technical gates for the product live in `knowledge/conventions/gates.md`. Skills that execute or verify code must read that file and record the real output of applicable gates.
 - `validated` and later states require non-placeholder QA Evidence for applicable gates. When a gate cannot be executed due to environment unavailability, QA must explicitly record the limitation instead of forging evidence.
@@ -764,6 +792,16 @@ In this repository, Codex is working on the framework itself. In product reposit
 In a newly initialized product repository, read `BOOTSTRAP.md` first. It explains the ordered foundation gates and distinguishes a structurally valid starter from a product that is ready for implementation.
 
 During `init`, choose the repository's starting point. This choice customizes `BOOTSTRAP.md`; it does not remove skills, orchestrators, artifacts, rigor requirements, or approval gates. When starting from existing documents, the CLI creates a source inventory and an analysis-only import run under `product/knowledge/imports/`. Review and explicitly approve mappings before materializing draft product artifacts.
+
+Operational navigation uses concurrent workspaces rather than a global active feature:
+
+```text
+spec-framework work --feature <path-or-id> --created-by <human>
+spec-framework status --work WORK-001
+spec-framework next --work WORK-001
+spec-framework approve --artifact <path> --grant approved --approved-by <human> --yes
+spec-framework gates
+```
 
 Recommended prompt for the architecture phase:
 

@@ -46,6 +46,6 @@ problem.md; opportunities.md; research questions; assumptions; risk notes; conte
 - [ ] Leaves a clear handoff for the next skill.
 
 ## Handoff
-Next: 02-vision.md
+Next: vision.
 
 Pass forward approved artifacts, open questions, decisions, dependencies, risks, and any remaining audit findings.

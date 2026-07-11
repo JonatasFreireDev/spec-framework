@@ -46,6 +46,6 @@ journeys.md; journey map; states; failure paths; opportunity notes.
 - [ ] Leaves a clear handoff for the next skill.
 
 ## Handoff
-Next: 07-feature.md
+Next: domain-evolution-orchestrator for candidate comparison and selection.
 
 Pass forward approved artifacts, open questions, decisions, dependencies, risks, and any remaining audit findings.

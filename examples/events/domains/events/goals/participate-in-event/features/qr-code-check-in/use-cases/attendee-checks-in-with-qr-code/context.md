@@ -5,7 +5,7 @@ id: UC-001
 type: use-case
 name: Attendee checks in with QR code
 status: draft
-owner_skill: 08-use-case.md
+owner_skill: use-case
 slug: attendee-checks-in-with-qr-code
 rigor_tier: L
 last_updated: 2026-07-09
@@ -39,6 +39,8 @@ Defines the concrete interaction where an attendee presents a QR code and an org
 - SEC-001 - security-review.md - security review
 - UC-001:analytics - analytics.md - measurement plan
 - UC-001:audit - audit.md - audit evidence
+- TD-001 - technical-discovery.md - codebase impact and Architecture Gate
+- UC-001:contracts - contracts/ - modular Tier L contracts
 - TK-001..TK-006 - tasks.md - executable work
 
 ## Dependencies
@@ -69,6 +71,8 @@ Defines the concrete interaction where an attendee presents a QR code and an org
 - Tasks: tasks.md
 - QA evidence: qa-evidence.md
 - Security review: security-review.md
+- Technical discovery: technical-discovery.md
+- Contracts: contracts/
 
 ## Decisions
 
@@ -88,7 +92,7 @@ Defines the concrete interaction where an attendee presents a QR code and an org
 
 ## Handoff
 
-Next recommended skill: 09-specification.md
+Next recommended skill: specification
 Required reading before next step:
 - use-case.md
 - specification.md

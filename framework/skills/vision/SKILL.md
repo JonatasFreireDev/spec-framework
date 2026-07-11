@@ -46,6 +46,6 @@ vision.md; principles.md; north-star.md; context.md updates; decision candidates
 - [ ] Leaves a clear handoff for the next skill.
 
 ## Handoff
-Next: 03-strategy.md
+Next: strategy.
 
 Pass forward approved artifacts, open questions, decisions, dependencies, risks, and any remaining audit findings.
