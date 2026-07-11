@@ -1,30 +1,37 @@
 package wizard
 
 import (
-	tea "charm.land/bubbletea/v2"
 	"testing"
+
+	"github.com/JonatasFreireDev/spec-framework/internal/install"
 )
 
-func key(code rune, text string) tea.KeyPressMsg {
-	return tea.KeyPressMsg(tea.Key{Code: code, Text: text})
-}
-func TestInitModelBuildsConfirmedMultiAgentPlan(t *testing.T) {
-	m := NewInitModel()
-	next, _ := m.Update(key(tea.KeyDown, ""))
-	m = next.(InitModel)
-	next, _ = m.Update(key(tea.KeySpace, " "))
-	m = next.(InitModel)
-	next, _ = m.Update(key(tea.KeyEnter, ""))
-	m = next.(InitModel)
-	for _, r := range "../product" {
-		next, _ = m.Update(key(r, string(r)))
-		m = next.(InitModel)
+func TestAgentOptionsMapChoices(t *testing.T) {
+	opts := agentOptions()
+	if len(opts) != len(choices) {
+		t.Fatalf("got %d options, want %d", len(opts), len(choices))
 	}
-	next, _ = m.Update(key(tea.KeyEnter, ""))
-	m = next.(InitModel)
-	next, _ = m.Update(key('y', "y"))
-	m = next.(InitModel)
-	if !m.Confirmed || m.Target != "../product" || len(m.Agents()) != 2 {
-		t.Fatalf("model=%+v agents=%v", m, m.Agents())
+	for i, opt := range opts {
+		want := choices[i]
+		if opt.Value != want.Agent {
+			t.Errorf("option %d value = %q, want %q", i, opt.Value, want.Agent)
+		}
+		if opt.Key != want.Name {
+			t.Errorf("option %d key = %q, want %q", i, opt.Key, want.Name)
+		}
+	}
+}
+
+func TestResultAgentNames(t *testing.T) {
+	r := Result{Agents: []install.Agent{install.Codex, install.Claude}}
+	got := r.AgentNames()
+	want := []string{"codex", "claude"}
+	if len(got) != len(want) {
+		t.Fatalf("got %v, want %v", got, want)
+	}
+	for i := range want {
+		if got[i] != want[i] {
+			t.Fatalf("got %v, want %v", got, want)
+		}
 	}
 }
