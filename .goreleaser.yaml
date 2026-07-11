@@ -27,4 +27,4 @@ changelog:
   use: git
 
 release:
-  draft: true
+  draft: false

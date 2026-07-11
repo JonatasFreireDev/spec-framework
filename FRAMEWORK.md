@@ -229,6 +229,8 @@ In an adopter product repository, the structure above must live under `product/`
 
 ```text
 repo/
+  README.md
+  BOOTSTRAP.md
   .spec-framework/
     FRAMEWORK.md
     AGENTS.framework.md
@@ -741,6 +743,8 @@ This prevents AI suggestions from turning into silent scope.
 ## 15. How To Use With Codex
 
 In this repository, Codex is working on the framework itself. In product repositories, Codex must operate on an instance created from `starter/`, reading the method in `.spec-framework/` and writing product artifacts in `product/`.
+
+In a newly initialized product repository, read `BOOTSTRAP.md` first. It explains the ordered foundation gates and distinguishes a structurally valid starter from a product that is ready for implementation.
 
 Recommended prompt for the architecture phase:
 

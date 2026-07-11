@@ -67,7 +67,18 @@ func Init(opts Options) (Result, error) {
 	if err := copyTree("starter", target); err != nil {
 		return Result{}, err
 	}
-	return Upgrade(Options{Target: target, Version: opts.Version, Agents: opts.Agents, Force: true})
+	result, err := Upgrade(Options{Target: target, Version: opts.Version, Agents: opts.Agents, Force: true})
+	if err != nil {
+		return Result{}, err
+	}
+	version := opts.Version
+	if version == "" {
+		version = "dev"
+	}
+	if err := writeStarterGuides(target, version, opts.Agents); err != nil {
+		return Result{}, err
+	}
+	return result, nil
 }
 
 func Upgrade(opts Options) (Result, error) {
@@ -128,25 +139,7 @@ func Upgrade(opts Options) (Result, error) {
 			_ = writeJSON(productManifest, value)
 		}
 	}
-	workflow := fmt.Sprintf(`name: Framework Validation
-on: [pull_request, push]
-permissions:
-  contents: read
-jobs:
-  validate:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Install pinned Spec Framework CLI
-        env:
-          SPEC_FRAMEWORK_VERSION: %q
-        run: |
-          curl -fsSLO "https://github.com/JonatasFreireDev/spec-framework/releases/download/v${SPEC_FRAMEWORK_VERSION}/spec-framework_${SPEC_FRAMEWORK_VERSION}_linux_amd64.tar.gz"
-          tar -xzf "spec-framework_${SPEC_FRAMEWORK_VERSION}_linux_amd64.tar.gz"
-          sudo install spec-framework /usr/local/bin/spec-framework
-      - name: Validate framework
-        run: spec-framework validate
-`, version)
+	workflow := productWorkflow(version)
 	if err := writeFile(filepath.Join(target, ".github", "workflows", "framework-validation.yml"), []byte(workflow), 0644); err != nil {
 		return Result{}, err
 	}
