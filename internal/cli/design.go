@@ -14,7 +14,7 @@ import (
 
 func runDesign(args []string, stdout, stderr io.Writer) int {
 	if len(args) == 0 {
-		fmt.Fprintln(stderr, "design requires init, import, inspect, map, verify, migrate, adapter, audit, or verify-fidelity")
+		fmt.Fprintln(stderr, "design requires init, import, register, inspect, map, verify, migrate, adapter, audit, or verify-fidelity")
 		return 2
 	}
 	command := args[0]
@@ -32,6 +32,7 @@ func runDesign(args []string, stdout, stderr io.Writer) int {
 	jsonOutput := flags.Bool("json", false, "JSON output")
 	adapter := flags.String("adapter", "", "adapter name")
 	dryRun := flags.Bool("dry-run", false, "preview migration without writing")
+	writeReport := flags.Bool("write-report", false, "write UX review evidence under product/design")
 	maturity := flags.String("maturity", "wireframe", "target visual maturity")
 	version := flags.String("version", "", "immutable external source version")
 	nodes := flags.String("nodes", "", "comma-separated Figma node IDs or Penpot object IDs")
@@ -145,6 +146,14 @@ func runDesign(args []string, stdout, stderr io.Writer) int {
 			return 1
 		}
 		fmt.Fprint(stdout, report)
+		if *writeReport {
+			path, err := design.WriteAudit(p, *useCase, report)
+			if err != nil {
+				fmt.Fprintln(stderr, err)
+				return 1
+			}
+			fmt.Fprintln(stdout, "Evidence:", path)
+		}
 	default:
 		fmt.Fprintln(stderr, "unknown design command", command)
 		return 2

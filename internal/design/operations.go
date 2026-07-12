@@ -75,6 +75,21 @@ func Audit(productRoot, useCase string) (string, error) {
 	return b.String(), nil
 }
 
+func WriteAudit(productRoot, useCase, report string) (string, error) {
+	uc, _, err := resolveUseCase(productRoot, useCase)
+	if err != nil {
+		return "", err
+	}
+	path := filepath.Join(productRoot, "design", "use-cases", filepath.Base(uc), "evidence", "ux-review.md")
+	if err := os.MkdirAll(filepath.Dir(path), 0o755); err != nil {
+		return "", err
+	}
+	if err := os.WriteFile(path, []byte(report), 0o644); err != nil {
+		return "", err
+	}
+	return filepath.ToSlash(path), nil
+}
+
 func DecodeUseCaseManifest(data []byte) (UseCaseManifest, error) {
 	var m UseCaseManifest
 	err := json.Unmarshal(data, &m)

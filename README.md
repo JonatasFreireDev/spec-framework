@@ -84,7 +84,22 @@ See [framework/adoption.md](framework/adoption.md).
 ## Ladder
 
 ```text
-Problem -> Vision -> Strategy -> Domain -> User Goal -> Feature -> Use Case -> Specification -> Design -> Implementation Plan -> Execution Graph -> Tasks -> Code -> Validation -> Audit
+    Problem -> Vision -> Strategy -> Domain -> User Goal -> Feature -> Use Case -> Specification -> Design -> Implementation Plan -> Execution Graph -> Tasks -> Code -> Validation -> Audit
+
+## Visual Design Workflows
+
+Design can be generated, evolved from an existing interface, or adopted from versioned Figma, Penpot, image, or other visual sources.
+
+```bash
+spec-framework design init --product-root product --use-case <path> --mode generate
+spec-framework design import --product-root product --use-case <path> --type images --source <directory> --authority visual-canonical
+spec-framework design register --product-root product --use-case <path> --type figma --source <url> --version <version> --nodes <ids> --authority visual-canonical
+spec-framework design map --product-root product --use-case <path> --mappings mapping.json
+spec-framework design inspect --product-root product --use-case <path>
+spec-framework design audit --product-root product --use-case <path> --write-report
+```
+
+Impeccable, Figma, and Penpot are optional adapters. Imported or generated assets never approve Design; independent UX Review and the existing human approval gate still apply.
 ```
 
 ## Repository Boundary
