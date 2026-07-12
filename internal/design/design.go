@@ -156,6 +156,37 @@ func UpdateMappings(productRoot, useCase string, mappings []Mapping) (string, er
 
 func Verify(productRoot, useCase string) (Inspection, error) { return Inspect(productRoot, useCase) }
 
+func RegisterRemote(productRoot, useCase, sourceType, location, version, authority, sourceID string, metadata map[string]string) (SourceManifest, string, error) {
+	if !oneOf(sourceType, "figma", "penpot") {
+		return SourceManifest{}, "", fmt.Errorf("remote design source must be figma or penpot")
+	}
+	if location == "" || version == "" {
+		return SourceManifest{}, "", errors.New("remote design source requires location and immutable version")
+	}
+	if !oneOf(authority, "visual_canonical", "reference", "inspiration") {
+		return SourceManifest{}, "", fmt.Errorf("invalid source authority %q", authority)
+	}
+	uc, _, err := resolveUseCase(productRoot, useCase)
+	if err != nil {
+		return SourceManifest{}, "", err
+	}
+	if sourceID == "" {
+		sourceID, err = nextSourceID(filepath.Join(productRoot, "design", "sources"))
+		if err != nil {
+			return SourceManifest{}, "", err
+		}
+	}
+	manifest := SourceManifest{SchemaVersion: 1, ID: sourceID, Type: sourceType, Authority: authority, Location: location, Version: Version{Kind: sourceType + "-version", Value: version}, Adapter: sourceType, Metadata: metadata, Screens: []Screen{}}
+	path := filepath.Join(productRoot, "design", "sources", sourceID, "manifest.json")
+	if err := writeJSON(path, manifest); err != nil {
+		return SourceManifest{}, "", err
+	}
+	if err := attachSource(productRoot, filepath.Base(uc), sourceID, authority); err != nil {
+		return SourceManifest{}, "", err
+	}
+	return manifest, filepath.ToSlash(path), nil
+}
+
 func attachSource(root, slug, sourceID, authority string) error {
 	path := filepath.Join(root, "design", "use-cases", slug, "manifest.json")
 	var m UseCaseManifest

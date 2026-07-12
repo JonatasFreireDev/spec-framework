@@ -33,6 +33,8 @@ func runDesign(args []string, stdout, stderr io.Writer) int {
 	adapter := flags.String("adapter", "", "adapter name")
 	dryRun := flags.Bool("dry-run", false, "preview migration without writing")
 	maturity := flags.String("maturity", "wireframe", "target visual maturity")
+	version := flags.String("version", "", "immutable external source version")
+	nodes := flags.String("nodes", "", "comma-separated Figma node IDs or Penpot object IDs")
 	if err := flags.Parse(args[1:]); err != nil {
 		return 2
 	}
@@ -65,6 +67,17 @@ func runDesign(args []string, stdout, stderr io.Writer) int {
 			return 1
 		}
 		fmt.Fprintf(stdout, "Imported %s (%d screens)\n- Manifest: %s\n- Version: %s:%s\n", manifest.ID, len(manifest.Screens), path, manifest.Version.Kind, manifest.Version.Value)
+	case "register":
+		metadata := map[string]string{}
+		if strings.TrimSpace(*nodes) != "" {
+			metadata["selection"] = *nodes
+		}
+		manifest, path, err := design.RegisterRemote(p, *useCase, *sourceType, *source, *version, auth, *sourceID, metadata)
+		if err != nil {
+			fmt.Fprintln(stderr, err)
+			return 1
+		}
+		fmt.Fprintf(stdout, "Registered %s source %s\n- Manifest: %s\n- Version: %s\n", manifest.Type, manifest.ID, path, manifest.Version.Value)
 	case "inspect", "verify":
 		result, err := design.Inspect(p, *useCase)
 		if err != nil {
