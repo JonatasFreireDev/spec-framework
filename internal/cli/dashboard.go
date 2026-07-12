@@ -65,6 +65,9 @@ func writeDashboard(root, work string, asJSON bool, out, errout io.Writer) int {
 	if d.DesignMode != "" {
 		fmt.Fprintf(out, "Design: %s/%s · Fidelity: %s · Sources: %d · Mappings: %d\n", d.DesignMode, d.DesignMaturity, d.DesignFidelity, d.DesignSources, d.DesignMappings)
 	}
+	if d.DesignSystemID != "" {
+		fmt.Fprintf(out, "Design System: %s@%s · Status: %s · Tokens: %d · Components: %d · Patterns: %d\n", d.DesignSystemID, d.DesignSystemVersion, d.DesignSystemStatus, d.DesignSystemTokens, d.DesignSystemComponents, d.DesignSystemPatterns)
+	}
 	if d.LatestCheckpoint != "" {
 		fmt.Fprintln(out, "Checkpoint:", d.LatestCheckpoint)
 	}

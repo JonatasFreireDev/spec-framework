@@ -1,0 +1,6 @@
+{
+  "schemaVersion": 1,
+  "system": "DSYS-001",
+  "version": "0.1.0",
+  "themes": { "default": { "status": "draft", "inherits": "tokens.json" } }
+}

@@ -39,6 +39,7 @@ The validator checks:
 - stale `product/...` paths outside framework adoption documentation;
 - decision index paths in `.product/decisions.json`;
 - visual Design source identity, immutable versions, authority, screen inventories, snapshot paths, origin mode, maturity, fidelity policy, source references, and requirement coverage values;
+- canonical Design System identity, status, semantic version, token schema, aliases and cycles, plus proposed-or-later Design consumer pins;
 - decision references against `.product/decisions.json`, including approved delivery dependencies;
 - visual Mermaid standards for flowcharts;
 - Mermaid progress state assignments using `done`, `current`, `pending`, and `blocked`;

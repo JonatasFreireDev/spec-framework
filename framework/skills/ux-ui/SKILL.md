@@ -30,7 +30,7 @@ design.md; origin mode and visual maturity; versioned source references; screen 
 - Approved product decisions in the active product root's `knowledge/decisions/` and `.product/decisions.json`.
 
 ## Workflow
-1. Read the relevant context and identify artifact status.
+1. Read the relevant context, the declared Design System when present, and identify artifact status.
 2. Select or preserve `generate`, `evolve`, or `adopt`; never infer that a reference is canonical.
 3. Register every source with authority, location, and immutable version or hash.
 4. Compare screens and states against stable REQ/AC identifiers and the design system.
@@ -49,6 +49,7 @@ design.md; origin mode and visual maturity; versioned source references; screen 
 - [ ] Detects gaps, conflicts, and dependencies.
 - [ ] Records or requests decisions for meaningful changes.
 - [ ] Versioned sources, authority, maturity, coverage, and deviations are explicit.
+- [ ] Pins the Design System id/version and records consumed tokens, components, patterns, and deviations when a system is declared.
 - [ ] Does not treat imported or generated visual evidence as approval.
 - [ ] Leaves a clear handoff for the next skill or orchestrator.
 

@@ -44,6 +44,19 @@ sources:
     version: content-hash
 ```
 
+```yaml
+design_system:
+  id: DSYS-001
+  path: design/system/design-system.md
+  version: 0.1.0
+  authority: canonical
+uses:
+  tokens: []
+  components: []
+  patterns: []
+  deviations: []
+```
+
 Precedence: approved decisions and safety requirements -> Specification -> canonical visual source -> design system -> references -> inspiration.
 
 ## 🎯 UX Goal

@@ -15,6 +15,8 @@ import (
 	"sort"
 	"strings"
 	"sync"
+
+	"github.com/JonatasFreireDev/spec-framework/internal/designsystem"
 )
 
 type Severity string
@@ -159,6 +161,7 @@ func Validate(ctx context.Context, root, frameworkRoot string) (Result, error) {
 	d = append(d, validateImportRuns(snap)...)
 	d = append(d, validateDeliveryClosure(snap)...)
 	d = append(d, validateDesignArtifacts(snap)...)
+	d = append(d, validateDesignSystem(snap)...)
 	sort.Slice(d, func(i, j int) bool {
 		a, b := d[i], d[j]
 		if a.Severity != b.Severity {
@@ -184,6 +187,51 @@ func Validate(ctx context.Context, root, frameworkRoot string) (Result, error) {
 		}
 	}
 	return r, nil
+}
+
+func validateDesignSystem(s Snapshot) []Diagnostic {
+	contextPath := "design/system/context.md"
+	if _, exists := s.Text[contextPath]; !exists {
+		return nil
+	}
+	var out []Diagnostic
+	out = append(out, validateContext(contextPath, s.Text[contextPath])...)
+	inspection, err := designsystem.Inspect(s.Root)
+	if err != nil {
+		return append(out, Diagnostic{Error, "design-system", contextPath, err.Error(), "Restore or initialize the Design System."})
+	}
+	for _, blocker := range inspection.Blockers {
+		out = append(out, Diagnostic{Error, "design-system", "design/system/tokens/tokens.json", blocker, "Repair the Design System contract or tokens."})
+	}
+	for rel, text := range s.Text {
+		if !strings.HasSuffix(rel, "/design.md") || !strings.HasPrefix(rel, "domains/") || strings.Contains(strings.ToLower(text), "not applicable") {
+			continue
+		}
+		status := markdownStatus(text)
+		if !requiresApproval(status) && status != "proposed" {
+			continue
+		}
+		if !strings.Contains(text, "design_system:") || !strings.Contains(text, "id: "+inspection.ID) || !strings.Contains(text, "version: "+inspection.Version) {
+			out = append(out, Diagnostic{Error, "design-system-consumer", rel, "Proposed-or-later Design must pin the declared Design System id and version", "Add design_system id/path/version and consumed tokens/components/patterns."})
+		}
+		if status != "draft" && inspection.Status != "approved" {
+			out = append(out, Diagnostic{Error, "design-system-consumer", rel, "Design consumes a Design System that is not approved", "Approve the system with a current approval record or keep Design draft."})
+		}
+	}
+	return out
+}
+
+func markdownStatus(text string) string {
+	patterns := []*regexp.Regexp{
+		regexp.MustCompile(`(?im)^\s*[-|]?\s*status\s*[:|]\s*` + "`?" + `([a-z_ -]+)`),
+		regexp.MustCompile(`(?im)^\s*status:\s*([a-z_]+)`),
+	}
+	for _, pattern := range patterns {
+		if match := pattern.FindStringSubmatch(text); len(match) == 2 {
+			return strings.TrimSpace(strings.Trim(match[1], "`| "))
+		}
+	}
+	return "draft"
 }
 
 func validateDesignArtifacts(s Snapshot) []Diagnostic {

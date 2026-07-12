@@ -108,6 +108,10 @@ Design declares two independent dimensions. `origin_mode` is `generate` when the
 
 Approved decisions and the Specification remain authoritative for behavior, security, privacy, and business rules. A source marked `visual_canonical` is authoritative only for presentation and interaction details that do not conflict with those higher-precedence contracts. Design tools and services are adapters; they never replace `design.md` or approve it.
 
+### Design System
+
+The Design System is an optional shared product artifact for products with recurring interface foundations, tokens, components, and patterns. It lives under `design/system/`, declares `generate`, `evolve`, or `adopt`, and uses semantic versioning. `design-system.md` is the human contract and `tokens/tokens.json` is the mechanical token source. Use-case Designs pin the system id/version and record consumed tokens, components, patterns, and deviations. A Design System does not replace the Specification or approve use-case Design.
+
 ### Implementation Plan
 
 Translates the Specification into technical strategy. Thinks like a Tech Lead: sequencing, phases, dependencies, risks, slices, migrations, backend, frontend, tests, and rollout.
@@ -232,6 +236,17 @@ product/
                   audit.md
 
   design/
+    system/
+      context.md
+      design-system.md
+      foundations/
+      tokens/
+        tokens.json
+        themes.json
+      components/
+      patterns/
+      sources/
+      evidence/
   engineering/
   audits/
   releases/
@@ -439,6 +454,7 @@ Gates:
 - Without an approved Design, or one marked `Not applicable`, do not generate the Implementation Plan.
 - Blocking UX findings go back to Specification or Design before proceeding.
 - Canonical visual sources must have an immutable version or content hash. Missing required states, unresolved Specification conflicts, or unreviewed strict-fidelity deviations block Design from advancing.
+- When the product declares a Design System, proposed-or-later use-case Design must pin its approved id/version and may not introduce shared tokens, components, or patterns silently.
 
 ## 7. Implementation Plan
 
@@ -574,6 +590,7 @@ Skills are specialists. They can operate in modes such as `create`, `update`, `a
 - Use Case AI: details verifiable interactions.
 - UX/UI AI: defines flows, states, wireframes, mockups, design system, and accessibility.
 - UX Review AI: reviews design against the design system, UX principles, accessibility, and state coverage.
+- Design System AI: creates, adopts, evolves, versions, and audits shared foundations, tokens, components, patterns, and sources before they are consumed by use-case Design.
 
 ### Specification And Planning
 
