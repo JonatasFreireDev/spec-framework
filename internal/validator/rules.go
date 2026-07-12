@@ -174,6 +174,13 @@ func validateDeliveryClosure(s Snapshot) []Diagnostic {
 			continue
 		}
 		base := filepath.ToSlash(filepath.Dir(rel))
+		traceSeverity := Warning
+		if graph, ok := s.JSON[base+"/execution-graph.json"].(map[string]any); ok {
+			status := strings.ToLower(firstString(graph["status"], "draft"))
+			if status != "" && status != "draft" {
+				traceSeverity = Error
+			}
+		}
 		required := []string{"contracts/behavior.md", "contracts/quality.md"}
 		if tier == "M" || tier == "L" {
 			required = append(required, "contracts/product.md", "contracts/ux.md", "contracts/api.md", "contracts/data.md", "contracts/rollout.md", "technical-discovery.md")
@@ -185,6 +192,19 @@ func validateDeliveryClosure(s Snapshot) []Diagnostic {
 			path := base + "/" + name
 			if _, ok := s.Text[path]; !ok {
 				out = append(out, Diagnostic{Warning, "delivery-closure", path, "Rigor " + tier + " contract is missing.", "Create it or mark the contract Not applicable with rationale during migration."})
+			}
+		}
+		plan := s.Text[base+"/implementation-plan.md"]
+		planStatus := strings.ToLower(strings.Trim(tableFields(plan)["status"], "` []"))
+		if needsParent(planStatus) {
+			discovery := s.Text[base+"/technical-discovery.md"]
+			discoveryStatus := strings.ToLower(strings.Trim(tableFields(discovery)["status"], "` []"))
+			if !feeds(discoveryStatus) {
+				out = append(out, Diagnostic{Error, "approval-gates", base + "/implementation-plan.md", "Implementation Plan requires approved Technical Discovery.", "Approve Technical Discovery before advancing the plan."})
+			}
+			resolved := strings.Contains(discovery, "Not required") || regexp.MustCompile(`DEC-\d+`).MatchString(discovery)
+			if !resolved {
+				out = append(out, Diagnostic{Error, "architecture-gate", base + "/technical-discovery.md", "Architecture Gate is unresolved.", "Reference an approved DEC-* or record Not required with rationale."})
 			}
 		}
 		reqPattern := regexp.MustCompile(`\bREQ-\d+\b`)
@@ -205,19 +225,19 @@ func validateDeliveryClosure(s Snapshot) []Diagnostic {
 		quality := s.Text[base+"/contracts/quality.md"]
 		for _, id := range uniqueStrings(reqPattern.FindAllString(contracts, -1)) {
 			if !strings.Contains(tasks, id) {
-				out = append(out, Diagnostic{Warning, "traceability", base, "Requirement " + id + " has no task mapping.", "Reference it from at least one task."})
+				out = append(out, Diagnostic{traceSeverity, "traceability", base, "Requirement " + id + " has no task mapping.", "Reference it from at least one task."})
 			}
 		}
 		for _, id := range uniqueStrings(acPattern.FindAllString(contracts, -1)) {
 			if !strings.Contains(tasks, id) {
-				out = append(out, Diagnostic{Warning, "traceability", base, "Acceptance criterion " + id + " has no task mapping.", "Reference it from a task."})
+				out = append(out, Diagnostic{traceSeverity, "traceability", base, "Acceptance criterion " + id + " has no task mapping.", "Reference it from a task."})
 			}
 			if !strings.Contains(quality, id) {
-				out = append(out, Diagnostic{Warning, "traceability", base + "/contracts/quality.md", "Acceptance criterion " + id + " has no quality mapping.", "Map it to a TEST-* or evidence method."})
+				out = append(out, Diagnostic{traceSeverity, "traceability", base + "/contracts/quality.md", "Acceptance criterion " + id + " has no quality mapping.", "Map it to a TEST-* or evidence method."})
 			}
 		}
 		if len(acPattern.FindAllString(contracts, -1)) > 0 && len(testPattern.FindAllString(quality, -1)) == 0 {
-			out = append(out, Diagnostic{Warning, "traceability", base + "/contracts/quality.md", "Acceptance criteria have no TEST-* identifiers.", "Add stable test ids or explicit non-test evidence."})
+			out = append(out, Diagnostic{traceSeverity, "traceability", base + "/contracts/quality.md", "Acceptance criteria have no TEST-* identifiers.", "Add stable test ids or explicit non-test evidence."})
 		}
 	}
 	gatesText := s.Text["knowledge/conventions/gates.md"]
@@ -797,7 +817,7 @@ func normalizeSkill(value string) string {
 }
 
 func validateDeliveryAndRigor(s Snapshot) []Diagnostic {
-	required := map[string]bool{"domain": true, "goal": true, "feature": true, "use-case": true, "specification": true, "implementation-plan": true, "execution-graph": true, "taskset": true, "task": true}
+	required := map[string]bool{"domain": true, "goal": true, "feature": true, "use-case": true, "specification": true, "technical-discovery": true, "implementation-plan": true, "execution-graph": true, "taskset": true, "task": true}
 	levels := map[string]bool{"L0": true, "L1": true, "L2": true, "L3": true, "L4": true, "L5": true, "N/A": true}
 	priorities := map[string]bool{"P0": true, "P1": true, "P2": true, "P3": true, "N/A": true}
 	var out []Diagnostic
@@ -900,7 +920,7 @@ func validateRegistryAndApprovalGates(s Snapshot) []Diagnostic {
 		}
 		id, _ := uc["id"].(string)
 		children := byParent[id]
-		sequence := []struct{ child, parent, rule string }{{"design", "specification", "design requires an approved Specification"}, {"implementation-plan", "design", "implementation plan requires approved Design"}, {"execution-graph", "implementation-plan", "execution graph requires approved Implementation Plan"}, {"taskset", "execution-graph", "tasks require approved Execution Graph"}}
+		sequence := []struct{ child, parent, rule string }{{"design", "specification", "design requires an approved Specification"}, {"technical-discovery", "design", "technical discovery requires approved Design"}, {"implementation-plan", "technical-discovery", "implementation plan requires approved Technical Discovery"}, {"execution-graph", "implementation-plan", "execution graph requires approved Implementation Plan"}, {"taskset", "execution-graph", "tasks require approved Execution Graph"}}
 		for _, gate := range sequence {
 			child := children[gate.child]
 			if child == nil {
@@ -918,6 +938,41 @@ func validateRegistryAndApprovalGates(s Snapshot) []Diagnostic {
 			if parent == nil || !feeds(parentStatus) {
 				path, _ := child["path"].(string)
 				out = append(out, Diagnostic{Error, "approval-gates", path, gate.rule + ".", "Keep the child draft until its parent is approved."})
+			}
+		}
+	}
+	ucIDPattern := regexp.MustCompile(`\bUC-[A-Z0-9-]+\b`)
+	for _, feature := range items {
+		if strings.ReplaceAll(firstString(feature["type"], ""), "_", "-") != "feature" {
+			continue
+		}
+		id := firstString(feature["id"], "")
+		path := firstString(feature["path"], "")
+		status := strings.ToLower(firstString(feature["status"], "draft"))
+		severity := Warning
+		if status != "draft" {
+			severity = Error
+		}
+		declared := map[string]bool{}
+		for _, x := range ucIDPattern.FindAllString(s.Text[path], -1) {
+			declared[x] = true
+		}
+		actual := map[string]bool{}
+		for _, child := range items {
+			for _, parent := range stringSlice(child["parentIds"]) {
+				if parent == id && strings.ReplaceAll(firstString(child["type"], ""), "_", "-") == "use-case" {
+					actual[firstString(child["id"], "")] = true
+				}
+			}
+		}
+		for x := range declared {
+			if !actual[x] {
+				out = append(out, Diagnostic{severity, "feature-coverage", path, "Feature declares use case " + x + " but no canonical Use Case exists.", "Create the Use Case or remove it from the feature scope."})
+			}
+		}
+		for x := range actual {
+			if !declared[x] {
+				out = append(out, Diagnostic{severity, "feature-coverage", path, "Canonical use case " + x + " is not listed by the Feature.", "Add it to the Feature coverage table."})
 			}
 		}
 	}

@@ -203,6 +203,8 @@ func validateGraph(file string, value any, snap Snapshot) []Diagnostic {
 		return []Diagnostic{{Error, "execution-graph", file, "Execution graph must contain nodes[]", "Add a nodes array."}}
 	}
 	ids := map[string]bool{}
+	graphStatus := strings.ToLower(fmt.Sprint(object["status"]))
+	requireTaskFiles := graphStatus == "materialized" || graphStatus == "approved" || graphStatus == "in_progress" || graphStatus == "implemented" || graphStatus == "validated" || graphStatus == "released"
 	objects := map[string]map[string]any{}
 	var out []Diagnostic
 	for _, raw := range nodes {
@@ -227,7 +229,7 @@ func validateGraph(file string, value any, snap Snapshot) []Diagnostic {
 		path, _ := node["path"].(string)
 		if path != "" {
 			full := filepath.ToSlash(filepath.Join(base, path))
-			if _, ok := snap.Text[full]; !ok {
+			if _, ok := snap.Text[full]; !ok && requireTaskFiles {
 				out = append(out, Diagnostic{Error, "execution-graph", file, fmt.Sprintf("Node %s path does not exist: %s", id, path), "Create the canonical task file."})
 			}
 		}

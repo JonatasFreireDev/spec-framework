@@ -58,6 +58,12 @@ func (app App) Run(args []string, stdout, stderr io.Writer) int {
 		return runGates(args[1:], stdout, stderr)
 	case "graph":
 		return runGraph(args[1:], stdout, stderr)
+	case "task":
+		return runTask(args[1:], stdout, stderr)
+	case "guide":
+		return runGuide(args[1:], stdout, stderr)
+	case "review", "approve-stage":
+		return runStage(args[0], args[1:], stdout, stderr)
 	case "resume", "handoff", "checkpoint", "lease", "commands", "schedule", "integrate", "runtime":
 		return runRuntime(args[0], args[1:], stdout, stderr)
 	default:
@@ -213,7 +219,7 @@ func runGates(args []string, stdout, stderr io.Writer) int {
 }
 func runGraph(args []string, stdout, stderr io.Writer) int {
 	if len(args) == 0 {
-		fmt.Fprintln(stderr, "graph requires ready, claim, release, or complete")
+		fmt.Fprintln(stderr, "graph requires ready, materialize, claim, release, or complete")
 		return 2
 	}
 	command := args[0]
@@ -223,6 +229,7 @@ func runGraph(args []string, stdout, stderr io.Writer) int {
 	graph := flags.String("graph", "", "execution graph path")
 	task := flags.String("task", "", "task id")
 	agent := flags.String("agent", "", "agent id")
+	yes := flags.Bool("yes", false, "confirm mutation")
 	if err := flags.Parse(args[1:]); err != nil {
 		return 2
 	}
@@ -243,6 +250,29 @@ func runGraph(args []string, stdout, stderr io.Writer) int {
 		}
 	}
 	switch command {
+	case "materialize":
+		if g == "" {
+			fmt.Fprintln(stderr, "graph materialize requires --graph")
+			return 2
+		}
+		if !*yes {
+			fmt.Fprintln(stdout, "Preview: materialize missing task files and tasks.md; re-run with --yes")
+			return 0
+		}
+		result, err := workflow.MaterializeTasks(g)
+		if err != nil {
+			fmt.Fprintln(stderr, err)
+			return 1
+		}
+		if _, err := validator.WriteRegistry(p); err != nil {
+			fmt.Fprintln(stderr, "materialized but registry update failed:", err)
+			return 1
+		}
+		fmt.Fprintf(stdout, "MATERIALIZED %d tasks\n", len(result.Tasks))
+		for _, p := range result.Tasks {
+			fmt.Fprintln(stdout, "-", p)
+		}
+		return 0
 	case "ready":
 		nodes, err := workflow.ReadyUnclaimed(p, g)
 		if err != nil {
@@ -555,6 +585,10 @@ Commands:
   approve    Review and record an explicit artifact approval.
   gates      Check whether implementation gates are configured.
   graph      Inspect and operate execution graph claims.
+  task       Inspect task readiness.
+  guide      Explain the current workspace gate and next action.
+  review     Preview a workspace stage approval.
+  approve-stage Approve every eligible artifact in a stage atomically.
   resume     Resume a persisted runtime workspace.
   handoff    Persist an agent/orchestrator handoff.
   checkpoint Persist a resumable checkpoint.

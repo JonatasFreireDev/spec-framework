@@ -198,11 +198,25 @@ func WorkspaceStatus(root, id string) (Status, error) {
 		return Status{}, fmt.Errorf("workspace feature not found in registry: %s", path)
 	}
 	next, blockers := nextFor(root, a, w.Scope["use_case"])
+	previous := w.CurrentStep
 	w.CurrentStep = next
 	w.RecommendedSkill = next
 	w.BlockedBy = blockers
 	if err := writeJSON(filepath.Join(workspaceDir(root, id), "workspace.json"), w); err != nil {
 		return Status{}, err
+	}
+	state := RuntimeState{Version: RuntimeVersion, WorkspaceID: id, Phase: next, Status: "active", UpdatedAt: time.Now().UTC().Format(time.RFC3339), Blockers: blockers}
+	if len(blockers) > 0 {
+		state.Status = "blocked"
+	}
+	if err := writeJSON(filepath.Join(workspaceDir(root, id), "state.json"), state); err != nil {
+		return Status{}, err
+	}
+	if previous != "" && previous != next {
+		baseCommit, _ := gitOutput(filepath.Dir(root), "rev-parse", "HEAD")
+		input := Hash(a.Path + "\n" + a.Status)
+		_, _ = WriteCheckpoint(root, id, next, strings.TrimSpace(baseCommit), input, Hash(strings.Join(blockers, "\n")))
+		_, _ = WriteHandoff(root, id, previous, next, "Workflow advanced after gate evaluation.")
 	}
 	return Status{Workspace: w, Artifact: a, Next: next, Blockers: blockers}, nil
 }
@@ -753,7 +767,7 @@ func validTransition(from, to string) bool {
 	if from == to {
 		return true
 	}
-	allowed := map[string][]string{"draft": {"proposed", "approved"}, "proposed": {"approved"}, "approved": {"in_progress"}, "in_progress": {"implemented"}, "implemented": {"validated"}, "validated": {"released"}}
+	allowed := map[string][]string{"draft": {"proposed", "approved"}, "proposed": {"approved"}, "materialized": {"approved"}, "approved": {"in_progress"}, "in_progress": {"implemented"}, "implemented": {"validated"}, "validated": {"released"}}
 	return contains(allowed[from], to)
 }
 func readJSON(path string, value any) error {
