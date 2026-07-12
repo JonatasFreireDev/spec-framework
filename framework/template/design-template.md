@@ -29,6 +29,23 @@
 | Depends on | `[SPEC-XXX/path]` |
 | Rationale | `[why this design belongs here]` |
 
+## Design Contract
+
+```yaml
+design:
+  origin_mode: generate # generate | evolve | adopt
+  maturity: contract # contract | wireframe | mockup | prototype
+  fidelity_policy: balanced # strict | balanced | exploratory
+sources:
+  - id: SPEC-XXX
+    type: specification
+    authority: behavioral # behavioral | visual_canonical | reference | inspiration
+    location: specification.md
+    version: content-hash
+```
+
+Precedence: approved decisions and safety requirements -> Specification -> canonical visual source -> design system -> references -> inspiration.
+
 ## 🎯 UX Goal
 
 [Describe the user experience outcome this design must make possible.]
@@ -86,9 +103,21 @@ flowchart TD
 
 ## 🖼️ Mockups Or Wireframes
 
-| Asset | Path/Link | Status |
-| --- | --- | --- |
-| `[mockup]` | `[path/link]` | `[draft/proposed/approved/missing]` |
+| Asset ID | Stage | Path/Link | Viewport | Source | Status |
+| --- | --- | --- | --- | --- | --- |
+| `[VIS-XXX]` | `[wireframe/mockup/prototype]` | `[path/link]` | `[mobile/desktop/etc.]` | `[DSRC-XXX]` | `[draft/reviewed/missing]` |
+
+## Screen Inventory And Coverage
+
+| Screen ID | Screen/State | REQ/AC | Coverage | Notes |
+| --- | --- | --- | --- | --- |
+| `[SCREEN-XXX]` | `[screen and state]` | `[REQ-*/AC-*]` | `[covered/partial/missing/conflict/not-verifiable/not-applicable]` | `[notes]` |
+
+## Fidelity And Deviations
+
+| Source | Target | Result | Evidence | Required Action |
+| --- | --- | --- | --- | --- |
+| `[DSRC-XXX/SCREEN-XXX]` | `[asset or implementation]` | `[match/deviation/unverified]` | `[path/link]` | `[none/review/decision]` |
 
 ## 🔐 Open Questions And Decisions
 

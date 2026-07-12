@@ -104,6 +104,10 @@ Is the source of truth for implementation. It must cover product, flow, UI, APIs
 
 Translates the Specification into a verifiable user experience: visual flow, navigation, wireframes, mockups, states, accessibility, and alignment with the design system. When the feature has no interface, the artifact must explicitly record `Not applicable` and explain why.
 
+Design declares two independent dimensions. `origin_mode` is `generate` when the solution is created from the Specification, `evolve` when an existing interface is intentionally changed, and `adopt` when a versioned external source is authoritative. `maturity` is `contract`, `wireframe`, `mockup`, or `prototype`. Existing descriptive designs are compatible as `generate/contract`.
+
+Approved decisions and the Specification remain authoritative for behavior, security, privacy, and business rules. A source marked `visual_canonical` is authoritative only for presentation and interaction details that do not conflict with those higher-precedence contracts. Design tools and services are adapters; they never replace `design.md` or approve it.
+
 ### Implementation Plan
 
 Translates the Specification into technical strategy. Thinks like a Tech Lead: sequencing, phases, dependencies, risks, slices, migrations, backend, frontend, tests, and rollout.
@@ -427,12 +431,14 @@ Outputs:
 - `design.md` in the use case, with visual flow, states, accessibility, components, displayed data, and links to mockups when they exist.
 - Mockups or wireframes in `product/design/` or the product's canonical design directory, when the delivery needs visual reference.
 - UX review recorded before the Implementation Plan when UI is relevant to acceptance.
+- A versioned source manifest, screen inventory, requirement mapping, and fidelity evidence when Design adopts or evolves an external source.
 
 Gates:
 
 - Without an approved Specification, do not generate design.
 - Without an approved Design, or one marked `Not applicable`, do not generate the Implementation Plan.
 - Blocking UX findings go back to Specification or Design before proceeding.
+- Canonical visual sources must have an immutable version or content hash. Missing required states, unresolved Specification conflicts, or unreviewed strict-fidelity deviations block Design from advancing.
 
 ## 7. Implementation Plan
 

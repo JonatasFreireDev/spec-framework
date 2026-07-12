@@ -21,7 +21,7 @@ Translate an approved specification into flows, states, interaction rules, acces
 Approved specification; source feature/use case; inherited Delivery Level and Priority; journey; design system; UX principles; platform constraints.
 
 ## Outputs
-design.md; UX flow; UI states; accessibility notes; empty/loading/error states; design risks; Not applicable rationale when there is no UI.
+design.md; origin mode and visual maturity; versioned source references; screen inventory and requirement coverage; UX flow; UI states; accessibility notes; empty/loading/error states; fidelity policy and deviations; design risks; Not applicable rationale when there is no UI.
 
 ## Required reading
 - the framework root's `FRAMEWORK.md`
@@ -31,11 +31,14 @@ design.md; UX flow; UI states; accessibility notes; empty/loading/error states; 
 
 ## Workflow
 1. Read the relevant context and identify artifact status.
-2. Compare the artifact against the framework, template, and approved decisions.
-3. Separate verified facts from assumptions and recommendations.
-4. Report gaps, conflicts, dependencies, and risks with file-level evidence when possible.
-5. Ask for approval before changing canonical product artifacts.
-6. Update context.md or decision indexes only when the change is approved.
+2. Select or preserve `generate`, `evolve`, or `adopt`; never infer that a reference is canonical.
+3. Register every source with authority, location, and immutable version or hash.
+4. Compare screens and states against stable REQ/AC identifiers and the design system.
+5. Separate verified facts from assumptions and recommendations.
+6. Report missing states, conflicts, fidelity deviations, dependencies, and risks before proposing changes.
+7. Keep design prototypes under `product/design/` and mark them non-production.
+8. Ask for approval before changing canonical product artifacts or modifying an adopted strict-fidelity source.
+9. Hand off to independent UX Review before Design approval.
 
 ## Quality checklist
 - [ ] Preserves traceability to affected artifacts.
@@ -45,6 +48,8 @@ design.md; UX flow; UI states; accessibility notes; empty/loading/error states; 
 - [ ] Distinguishes blockers from suggestions.
 - [ ] Detects gaps, conflicts, and dependencies.
 - [ ] Records or requests decisions for meaningful changes.
+- [ ] Versioned sources, authority, maturity, coverage, and deviations are explicit.
+- [ ] Does not treat imported or generated visual evidence as approval.
 - [ ] Leaves a clear handoff for the next skill or orchestrator.
 
 ## Handoff
