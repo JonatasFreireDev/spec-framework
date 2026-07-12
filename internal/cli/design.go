@@ -32,6 +32,7 @@ func runDesign(args []string, stdout, stderr io.Writer) int {
 	jsonOutput := flags.Bool("json", false, "JSON output")
 	adapter := flags.String("adapter", "", "adapter name")
 	dryRun := flags.Bool("dry-run", false, "preview migration without writing")
+	maturity := flags.String("maturity", "wireframe", "target visual maturity")
 	if err := flags.Parse(args[1:]); err != nil {
 		return 2
 	}
@@ -108,6 +109,15 @@ func runDesign(args []string, stdout, stderr io.Writer) int {
 		if *adapter == "" {
 			fmt.Fprintln(stderr, "design adapter requires --adapter impeccable|figma|penpot")
 			return 2
+		}
+		if *adapter == "impeccable" && *useCase != "" {
+			plan, err := design.ImpeccablePlan(p, *useCase, *maturity)
+			if err != nil {
+				fmt.Fprintln(stderr, err)
+				return 1
+			}
+			fmt.Fprint(stdout, design.EncodeAdapterPlan(plan))
+			return 0
 		}
 		info, err := design.AdapterInfo(*adapter)
 		if err != nil {
