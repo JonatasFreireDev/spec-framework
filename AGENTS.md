@@ -15,7 +15,7 @@ Always read `FRAMEWORK.md` before changing framework behavior.
 | `starter/` | Clean skeleton copied into new adopter repositories. |
 | `examples/events/` | Worked product fixture used for learning and validation; never use it as the starter. |
 | `cmd/`, `internal/`, `assets.go` | Go CLI, embedded assets, installer, runtime, workflow, and validator implementation. |
-| `.agents/`, `.claude/`, `.codex/` | Repository-maintenance skills and agent integrations. |
+| `.codex/` | Repository-maintenance skills and Codex integration. |
 
 Do not encode Events product scope into reusable framework assets. Do not treat `examples/events/` as the clean source for new products.
 

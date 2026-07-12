@@ -8,11 +8,11 @@ This folder stores Codex-facing assets that belong to this repository. It keeps 
 
 Use this folder when maintaining repository-local skills, skill metadata, or future Codex configuration. Do not store product artifacts here.
 
-In this framework repository, worked product artifacts live under `examples/events/`. In adopter repositories, product artifacts live under `product/`. Framework method assets live under `.spec-framework/`.
+In this framework repository, worked product artifacts live under `examples/events/`. In adopter repositories, product artifacts live under `product/`. Framework method assets are resolved from the versioned external runtime.
 
 ## Expected Files
 
-- `skills/`: repository-local Codex skills in folder-per-skill format. These are mirrored into adopter repositories for Codex discovery.
+- `skills/`: repository-local maintenance skills for Codex. They are not mirrored into adopter repositories.
 
 ## Responsible Skill
 

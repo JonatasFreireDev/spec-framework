@@ -12,8 +12,8 @@ Finish one approved release of this repository without bypassing gates or silent
 ## Required reading
 
 - `FRAMEWORK.md`.
-- `.agents/skills/release-smoke/SKILL.md`.
-- `.agents/skills/verify/SKILL.md`.
+- `.codex/skills/release-smoke/SKILL.md`.
+- `.codex/skills/verify/SKILL.md`.
 - `framework/skills/release-orchestrator/SKILL.md`.
 - `framework/skills/commit-crafter/SKILL.md`.
 - `framework/skills/pr-finalizer/SKILL.md`.
@@ -43,7 +43,7 @@ Finish one approved release of this repository without bypassing gates or silent
 10. Observe the tag-triggered release workflow until completion.
 11. Download published archives and `checksums.txt` into a clean temporary directory.
 12. Verify checksums before extraction, version output, filenames, and the full OS/architecture matrix.
-13. Run Release Smoke with the downloaded binary: version, help, init, validate, upgrade preservation, agent targets, move dry-run/apply, import/materialization when applicable, and cleanup.
+13. Run Release Smoke with the downloaded binary: version, help, manifest-only init, validate, upgrade preservation, external dispatcher/runtime checks, move dry-run/apply, import/materialization when applicable, and cleanup.
 14. Report release URL, tag, commit, CI, assets, checksums, smoke evidence, limitations, rollback, and final verdict.
 15. If anything fails, stop and route a corrective release. Do not conceal or rewrite publication history.
 
