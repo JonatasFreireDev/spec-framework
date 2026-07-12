@@ -741,6 +741,8 @@ Staleness is a condition derived by the validator, not an editable status. Downs
 
 Relevant product decisions must be recorded in `knowledge/decisions/` and indexed in `.product/decisions.json`.
 
+`DEC-*` is the single product decision identity; an ADR is a DEC whose type is `architecture`. Decisions declare `type`, artifact/path `scope`, and optional structured `workflowEffects` (`requiredTaskTypes`, `requiredGates`, `requiredEvidence`, `requiredWriteScopes`, and `sharedResources`). A DEC can unblock an Architecture Gate only when it exists, is indexed, is approved, has a current hash-matching approval record, and applies to the affected scope. Decision prose is never executable. Effects constrain Graph, Tasks, Task Readiness, and configured gates; they never silently generate work.
+
 Framework or method decisions live in `framework/decisions/FDR-*` or as explicit amendments to this document. Skill contracts, gates, writeScope, QA policies, failure routing, commit policy, validators, and orchestration rules must not be recorded in `knowledge/decisions/`, because that folder is reserved for the adopter product.
 
 A decision must be created when it:
