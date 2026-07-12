@@ -32,6 +32,11 @@ type WorkflowDashboard struct {
 	TaskReady        int             `json:"task_ready"`
 	LatestCheckpoint string          `json:"latest_checkpoint,omitempty"`
 	LatestHandoff    string          `json:"latest_handoff,omitempty"`
+	DesignMode       string          `json:"design_mode,omitempty"`
+	DesignMaturity   string          `json:"design_maturity,omitempty"`
+	DesignFidelity   string          `json:"design_fidelity,omitempty"`
+	DesignSources    int             `json:"design_sources"`
+	DesignMappings   int             `json:"design_mappings"`
 }
 
 func BuildDashboard(root, id string) (WorkflowDashboard, error) {
@@ -75,6 +80,14 @@ func BuildDashboard(root, id string) (WorkflowDashboard, error) {
 			d.TaskTotal = len(g.Nodes)
 			ready, _ := ReadyUnclaimed(root, graph)
 			d.TaskReady = len(ready)
+		}
+		var designManifest map[string]any
+		if readJSON(filepath.Join(root, "design", "use-cases", filepath.Base(uc), "manifest.json"), &designManifest) == nil {
+			d.DesignMode = fmt.Sprint(designManifest["originMode"])
+			d.DesignMaturity = fmt.Sprint(designManifest["maturity"])
+			d.DesignFidelity = fmt.Sprint(designManifest["fidelityPolicy"])
+			d.DesignSources = len(stringAnySlice(designManifest["sources"]))
+			d.DesignMappings = len(stringMapSlice(designManifest["mappings"]))
 		}
 	}
 	d.Decisions = dashboardDecisions(root, d.Feature, d.UseCase)

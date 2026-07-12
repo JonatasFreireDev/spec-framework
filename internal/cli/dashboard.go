@@ -62,6 +62,9 @@ func writeDashboard(root, work string, asJSON bool, out, errout io.Writer) int {
 	fmt.Fprintln(out, strings.Join(flow, "  →  "))
 	fmt.Fprintf(out, "\nCurrent: %s · Skill: %s · Expected: %s\n", d.CurrentStep, d.RecommendedSkill, d.ExpectedArtifact)
 	fmt.Fprintf(out, "Graph: %s · Tasks: %d total / %d ready\n", valueOr(d.GraphStatus, "not created"), d.TaskTotal, d.TaskReady)
+	if d.DesignMode != "" {
+		fmt.Fprintf(out, "Design: %s/%s · Fidelity: %s · Sources: %d · Mappings: %d\n", d.DesignMode, d.DesignMaturity, d.DesignFidelity, d.DesignSources, d.DesignMappings)
+	}
 	if d.LatestCheckpoint != "" {
 		fmt.Fprintln(out, "Checkpoint:", d.LatestCheckpoint)
 	}
