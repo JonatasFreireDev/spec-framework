@@ -9,7 +9,6 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/JonatasFreireDev/spec-framework/internal/design"
 	"github.com/JonatasFreireDev/spec-framework/internal/install"
 	"github.com/JonatasFreireDev/spec-framework/internal/moveartifact"
 	"github.com/JonatasFreireDev/spec-framework/internal/sourceimport"
