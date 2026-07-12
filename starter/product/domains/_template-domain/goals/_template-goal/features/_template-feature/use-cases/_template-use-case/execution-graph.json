@@ -2,6 +2,7 @@
   "id": "GRAPH-TEMPLATE",
   "status": "draft",
   "sourceSpecification": "SPEC-TEMPLATE",
+  "decisions": [],
   "delivery": {
     "level": "L1",
     "priority": "P0",
@@ -31,6 +32,7 @@
       "plannedTests": [
         "TEST-001"
       ],
+      "decisions": [],
       "writeScope": [
         "src/template-use-case"
       ],

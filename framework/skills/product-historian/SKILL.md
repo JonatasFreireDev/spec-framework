@@ -30,6 +30,8 @@ Decision records; updated decisions index; supersede notes; historical rationale
 - Approved product decisions in the active product root's `knowledge/decisions/` and `.product/decisions.json`.
 
 ## Workflow
+1. Classify each DEC as product, architecture, security, data, or delivery; declare artifact/path scope and structured workflow effects in the decision index.
+2. Keep architectural ADRs in the canonical DEC system rather than creating a parallel ADR store.
 1. Read the relevant context and identify artifact status.
 2. Compare the artifact against the framework, template, and approved decisions.
 3. Separate verified facts from assumptions and recommendations.

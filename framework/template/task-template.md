@@ -43,6 +43,7 @@
 | Requirements | `[REQ-* ids]` |
 | Acceptance criteria | `[AC-* ids]` |
 | Planned tests | `[TEST-* ids or explicit evidence method]` |
+| Applicable decisions | `[DEC-* ids or N/A]` |
 | Write scope | `[paths/modules this task may touch]` |
 | Shared resources | `[generated indexes/locales/local database/schema/contracts or none]` |
 | Graph node status | `[graph node operational status]` |

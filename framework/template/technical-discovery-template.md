@@ -30,6 +30,8 @@
 | Decision | `[DEC-* or N/A]` |
 | Rationale | `[concrete rationale]` |
 
+A referenced DEC must be indexed, approved, covered by a current approval record, and scope-compatible. `Not required` must name the existing pattern or decision that already covers the change.
+
 ## Planning blockers
 
 - `[blocker or None]`

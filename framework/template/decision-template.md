@@ -7,7 +7,8 @@
 | ID | `[DEC-XXX]` |
 | Status | `[proposed | approved | superseded | rejected]` |
 | Date | `[YYYY-MM-DD]` |
-| Scope | `[product/security/architecture/data/UX/release]` |
+| Type | `[product | architecture | security | data | delivery]` |
+| Scope | `[artifact IDs or product-relative path prefixes]` |
 | Owner | `[role/person]` |
 
 ## ✅ Decision
@@ -55,6 +56,20 @@ flowchart LR
 | Artifact | Required Update |
 | --- | --- |
 | `[path/id]` | `[update]` |
+
+## Workflow Effects
+
+Mirror this structure in the decision's `.product/decisions.json` entry. Empty arrays are valid.
+
+```json
+{
+  "requiredTaskTypes": [],
+  "requiredGates": [],
+  "requiredEvidence": [],
+  "requiredWriteScopes": [],
+  "sharedResources": []
+}
+```
 
 ## 🔁 Supersedes
 

@@ -30,6 +30,7 @@ implementation-plan.md; inherited Delivery Level and Priority; phases; dependenc
 - Approved product decisions in the active product root's `knowledge/decisions/` and `.product/decisions.json`.
 
 ## Workflow
+1. Propagate every applicable DEC reference and its validated workflow effects into phases, gates, evidence, rollout, rollback, and candidate tasks; never infer commands from decision prose.
 1. Read the parent context and confirm the artifact status.
 2. Identify missing information, assumptions, conflicts, and dependencies.
 3. Propose the artifact or revision using the matching template.

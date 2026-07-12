@@ -32,6 +32,7 @@
 | Requirements | REQ-TEMPLATE-001 |
 | Acceptance criteria | AC-TEMPLATE-001 |
 | Planned tests | TEST-TEMPLATE-001 |
+| Applicable decisions | N/A |
 | Write scope | src/template-use-case |
 | Shared resources | none |
 | Graph node status | pending |

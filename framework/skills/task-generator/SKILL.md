@@ -42,6 +42,7 @@ tasks.md; task files or task records with Delivery Level/Priority; acceptance ch
 8. Ask for approval of the validated Graph + Tasks set before moving either to the next ladder step.
 9. Update context.md with new links, dependencies, questions, and status changes.
 10. Map every task to concrete `REQ-*` and `AC-*` identifiers and at least one planned `TEST-*` or explicit non-test evidence method.
+11. Propagate applicable DEC references and ensure every structured workflow effect is covered by Graph/Task contracts; do not create unapproved scope to satisfy an effect.
 
 ## Quality checklist
 - [ ] Preserves traceability to the parent artifact.

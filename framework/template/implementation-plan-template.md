@@ -19,6 +19,7 @@
 | Specification | [specification.md](specification.md) |
 | Design | [design.md](design.md) |
 | Technical Discovery | [technical-discovery.md](technical-discovery.md) |
+| Applicable decisions | `[DEC-* ids or N/A]` |
 | Execution Graph | [execution-graph.json](execution-graph.json) |
 | Tasks | [tasks.md](tasks.md) |
 | Tests | [tests.md](tests.md) |

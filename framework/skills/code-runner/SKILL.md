@@ -41,6 +41,7 @@ Code Runner turns a task contract into code and executable evidence. It does not
 - Task has concrete `writeScope`.
 - Task lists source sections and acceptance checks.
 - Required decisions are approved.
+- Applicable DEC effects are satisfied by the task/graph and Task Readiness is green; decision prose is never treated as an executable command.
 - The task has an active lease owned by this agent and runs in its isolated worktree when the scheduler marks it parallel.
 
 If a precondition is missing, stop and report the blocker. Do not invent missing product behavior.

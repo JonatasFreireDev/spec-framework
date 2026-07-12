@@ -34,7 +34,7 @@ Approved specification contracts; approved design or `Not applicable`; stable en
 2. Inspect stable architecture under the active product root's `engineering/` and the real code/test tree.
 3. Map each `REQ-*` to existing modules, APIs, data owners, tests, conventions, and likely paths.
 4. Identify new dependencies, migrations, permission boundaries, shared resources, and rollout constraints.
-5. Set the Architecture Gate to `Decision required` with candidates, or `Not required` with concrete rationale.
+5. Set the Architecture Gate to `Decision required` with candidates, or `Not required` with concrete rationale. A referenced DEC must exist, be indexed, approved with a current hash-matching approval record, and apply to this use-case scope.
 6. Stop when the codebase cannot be inspected or an architecture decision is unresolved.
 7. Hand the approved report to Implementation Planner.
 

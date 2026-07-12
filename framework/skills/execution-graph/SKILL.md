@@ -34,6 +34,7 @@ execution-graph.json; ordered DAG; Delivery Level/Priority on graph and nodes; p
 2. Create the graph as `draft`, validate its DAG and contracts, then move it to `proposed` for human review without requiring task files to exist.
 3. After review, use confirmed graph materialization to create canonical task files and `tasks.md`; never create them ad hoc or overwrite existing tasks.
 4. Require Graph + Tasks validation before the graph advances from `materialized` to `approved`.
+5. Reference applicable DEC IDs and cover their required task types, write scopes, shared resources, gates, and evidence contracts.
 2. Identify missing information, assumptions, conflicts, and dependencies.
 3. Propose the artifact or revision using the matching template.
 4. Record decision candidates for high-impact or hard-to-reverse choices.
