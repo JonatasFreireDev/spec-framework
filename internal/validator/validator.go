@@ -158,6 +158,7 @@ func Validate(ctx context.Context, root, frameworkRoot string) (Result, error) {
 	d = append(d, validateRegistryAndApprovalGates(snap)...)
 	d = append(d, validateImportRuns(snap)...)
 	d = append(d, validateDeliveryClosure(snap)...)
+	d = append(d, validateDesignArtifacts(snap)...)
 	sort.Slice(d, func(i, j int) bool {
 		a, b := d[i], d[j]
 		if a.Severity != b.Severity {
@@ -183,6 +184,110 @@ func Validate(ctx context.Context, root, frameworkRoot string) (Result, error) {
 		}
 	}
 	return r, nil
+}
+
+func validateDesignArtifacts(s Snapshot) []Diagnostic {
+	var out []Diagnostic
+	sources := map[string]map[string]any{}
+	for rel, value := range s.JSON {
+		if !strings.HasPrefix(rel, "design/sources/") || !strings.HasSuffix(rel, "/manifest.json") {
+			continue
+		}
+		m, ok := value.(map[string]any)
+		if !ok {
+			out = append(out, Diagnostic{Error, "design-source", rel, "Invalid source manifest JSON", "Write a valid manifest object."})
+			continue
+		}
+		id := fmt.Sprint(m["id"])
+		if !regexp.MustCompile(`^DSRC-[0-9]{3,}$`).MatchString(id) {
+			out = append(out, Diagnostic{Error, "design-source", rel, "Invalid or missing source id", "Use DSRC-NNN."})
+		}
+		if !validString(m["authority"], "visual_canonical", "reference", "inspiration") {
+			out = append(out, Diagnostic{Error, "design-source", rel, "Invalid source authority", "Use visual_canonical, reference, or inspiration."})
+		}
+		version, _ := m["version"].(map[string]any)
+		if strings.TrimSpace(fmt.Sprint(version["value"])) == "" {
+			out = append(out, Diagnostic{Error, "design-source", rel, "Source version is missing", "Record an immutable version or SHA-256."})
+		}
+		screens, ok := m["screens"].([]any)
+		if !ok {
+			out = append(out, Diagnostic{Error, "design-source", rel, "screens must be an array", "Add a screen inventory."})
+		}
+		seen := map[string]bool{}
+		for _, raw := range screens {
+			screen, _ := raw.(map[string]any)
+			screenID := fmt.Sprint(screen["id"])
+			if screenID == "" || seen[screenID] {
+				out = append(out, Diagnostic{Error, "design-source", rel, "Screen IDs must be present and unique", "Assign stable SCREEN-NNN ids."})
+			}
+			seen[screenID] = true
+			if asset := strings.TrimSpace(fmt.Sprint(screen["asset"])); asset != "" {
+				assetPath := filepath.ToSlash(filepath.Join(filepath.Dir(rel), asset))
+				if _, exists := s.Text[assetPath]; !exists {
+					out = append(out, Diagnostic{Error, "design-source", rel, "Missing visual asset: " + asset, "Restore the snapshot or update the manifest."})
+				}
+			}
+		}
+		sources[id] = m
+	}
+	for rel, value := range s.JSON {
+		if !strings.HasPrefix(rel, "design/use-cases/") || !strings.HasSuffix(rel, "/manifest.json") {
+			continue
+		}
+		m, ok := value.(map[string]any)
+		if !ok {
+			continue
+		}
+		if !validString(m["originMode"], "generate", "evolve", "adopt") {
+			out = append(out, Diagnostic{Error, "design-contract", rel, "Invalid originMode", "Use generate, evolve, or adopt."})
+		}
+		if !validString(m["maturity"], "contract", "wireframe", "mockup", "prototype") {
+			out = append(out, Diagnostic{Error, "design-contract", rel, "Invalid maturity", "Use contract, wireframe, mockup, or prototype."})
+		}
+		if !validString(m["fidelityPolicy"], "strict", "balanced", "exploratory") {
+			out = append(out, Diagnostic{Error, "design-contract", rel, "Invalid fidelityPolicy", "Use strict, balanced, or exploratory."})
+		}
+		for _, id := range stringAnySlice(m["sources"]) {
+			if _, exists := sources[id]; !exists {
+				out = append(out, Diagnostic{Error, "design-contract", rel, "Missing source manifest: " + id, "Import or restore the source."})
+			}
+		}
+		for _, raw := range anySlice(m["mappings"]) {
+			mapping, _ := raw.(map[string]any)
+			if strings.TrimSpace(fmt.Sprint(mapping["requirement"])) == "" {
+				out = append(out, Diagnostic{Error, "design-coverage", rel, "Mapping is missing requirement", "Reference a stable REQ-* id."})
+			}
+			if !validString(mapping["coverage"], "covered", "partial", "missing", "conflict", "not-verifiable", "not-applicable") {
+				out = append(out, Diagnostic{Error, "design-coverage", rel, "Invalid mapping coverage", "Use a supported coverage state."})
+			}
+		}
+	}
+	return out
+}
+
+func validString(value any, options ...string) bool {
+	s := fmt.Sprint(value)
+	for _, option := range options {
+		if s == option {
+			return true
+		}
+	}
+	return false
+}
+
+func anySlice(value any) []any {
+	items, _ := value.([]any)
+	return items
+}
+
+func stringAnySlice(value any) []string {
+	var out []string
+	for _, item := range anySlice(value) {
+		if s, ok := item.(string); ok {
+			out = append(out, s)
+		}
+	}
+	return out
 }
 func validateContext(file, text string) []Diagnostic {
 	var out []Diagnostic
