@@ -280,12 +280,32 @@ func nextFor(root string, a Artifact, useCaseSelector string) (string, []string)
 		return "implementation-planner", []string{"implementation plan is missing or not approved"}
 	}
 	graph := filepath.Join(uc, "execution-graph.json")
-	if !approvedJSON(graph) {
-		return "execution-graph", []string{"execution graph is missing or not approved"}
+	graphState := jsonStatus(graph)
+	switch graphState {
+	case "":
+		return "execution-graph", []string{"execution graph is missing"}
+	case "draft":
+		return "execution-graph", []string{"execution graph is still draft"}
+	case "proposed":
+		return "task-generator", nil
+	case "materialized":
+		return "task-generator", []string{"materialized graph and tasks require final approval"}
+	default:
+		if !isApproved(graphState) {
+			return "execution-graph", []string{"execution graph has unsupported status " + graphState}
+		}
 	}
 	tasks, _ := os.ReadDir(filepath.Join(uc, "tasks"))
 	if len(tasks) == 0 {
 		return "task-generator", []string{"task files are missing"}
+	}
+	for _, task := range tasks {
+		if task.IsDir() || filepath.Ext(task.Name()) != ".md" {
+			continue
+		}
+		if !approvedDocument(filepath.Join(uc, "tasks", task.Name())) {
+			return "task-generator", []string{"task " + task.Name() + " is not approved"}
+		}
 	}
 	if missing, err := GateReadiness(root); err != nil || len(missing) > 0 {
 		return "code-runner", []string{"implementation gates are not configured"}
@@ -323,6 +343,13 @@ func approvedJSON(path string) bool {
 		return false
 	}
 	return isApproved(fmt.Sprint(raw["status"]))
+}
+func jsonStatus(path string) string {
+	var raw map[string]any
+	if readJSON(path, &raw) != nil {
+		return ""
+	}
+	return strings.ToLower(fmt.Sprint(raw["status"]))
 }
 func extractStatus(text string) string {
 	re := regexp.MustCompile(`(?mi)^\s*status:\s*` + "`?" + `([a-z_]+)` + "`?")
