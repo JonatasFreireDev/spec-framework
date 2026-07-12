@@ -134,7 +134,7 @@ func inferType(path string) string {
 	if strings.Contains(filepath.ToSlash(path), "/tasks/") {
 		return "task"
 	}
-	return map[string]string{"domain.md": "domain", "goal.md": "goal", "feature.md": "feature", "use-case.md": "use-case", "specification.md": "specification", "design.md": "design", "technical-discovery.md": "technical-discovery", "engineering-proposal.md": "engineering-proposal", "engineering-review.md": "engineering-review", "implementation-plan.md": "implementation-plan", "tasks.md": "taskset", "tests.md": "tests", "analytics.md": "analytics", "audit.md": "audit", "qa-evidence.md": "qa-evidence", "security-review.md": "security-review", "code-review.md": "code-review"}[base]
+	return map[string]string{"domain.md": "domain", "goal.md": "goal", "feature.md": "feature", "use-case.md": "use-case", "specification.md": "specification", "design.md": "design", "engineering-system.md": "engineering-system", "technical-discovery.md": "technical-discovery", "engineering-proposal.md": "engineering-proposal", "engineering-review.md": "engineering-review", "implementation-plan.md": "implementation-plan", "tasks.md": "taskset", "tests.md": "tests", "analytics.md": "analytics", "audit.md": "audit", "qa-evidence.md": "qa-evidence", "security-review.md": "security-review", "code-review.md": "code-review"}[base]
 }
 func first(values ...string) string {
 	for _, v := range values {

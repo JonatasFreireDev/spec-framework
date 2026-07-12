@@ -18,7 +18,7 @@ func TestEngineeringSystemInspectJSON(t *testing.T) {
 		"context.md":                     "---\nid: ENGSYS-TEST-001\nstatus: draft\nversion: 0.1.0\norigin_mode: generate\n---\n",
 		"engineering-system.md":          "# Engineering System\n",
 		"architecture/system-context.md": "# Context\n",
-		"engineering-system.yaml":        "scope: product\nareas:\n  system_context:\n    contract: architecture/system-context.md\n    maturity: baseline\n    evidence: []\ndecisions: []\nstandards: []\nfitness_functions: []\n",
+		"engineering-system.yaml":        "schema_version: 1\nid: ENGSYS-TEST-001\nstatus: draft\nversion: 0.1.0\norigin_mode: generate\nscope: product\nareas:\n  system_context:\n    contract: architecture/system-context.md\n    maturity: baseline\n    evidence: []\ndecisions: []\nstandards: []\nfitness_functions: []\n",
 	}
 	for name, body := range files {
 		path := filepath.Join(engineering, filepath.FromSlash(name))

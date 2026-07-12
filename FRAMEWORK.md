@@ -479,7 +479,7 @@ The Implementation Plan is created after the Specification and the Design, and b
 
 Before planning, `technical-discovery.md` must map applicable requirements to the real codebase and stable knowledge in `engineering/`. Its Architecture Gate must reference an approved decision or state `Not required` with concrete rationale.
 
-When Engineering Proposal applies, `engineering-proposal.md` must pin the Engineering System version or explicitly state that no shared system is configured, distinguish existing evidence from the intended change, and receive a non-blocking `engineering-review.md` verdict before the Implementation Plan advances. Tier L always requires both artifacts. Engineering Review never substitutes for approval of a required product decision.
+When Engineering Proposal applies, `engineering-proposal.md` must pin the Engineering System version or explicitly state that no shared system is configured, distinguish existing evidence from the intended change, and receive a non-blocking `engineering-review.md` verdict before the Implementation Plan advances. A passed review records the SHA-256 hash of the current proposal; any proposal change makes the review stale. Proposed-or-later consumption of a configured Engineering System requires its current approved version and hash-matching approval evidence. Tier L always requires both artifacts. Engineering Review never substitutes for approval of a required product decision.
 
 Recommended sections:
 
@@ -695,7 +695,7 @@ Keeps `context.md`, indexes, templates, decisions, and derived artifacts synchro
 
 ### QA Orchestration
 
-QA is an independent, read-only verifier. QA re-executes the gates declared in `knowledge/conventions/gates.md` whenever possible, records real output or an explicit limitation, and routes blockers to the appropriate path instead of fixing code. Specialized routes such as bug-fixer and code-runner will be formalized by future evolutions.
+QA is an independent, read-only verifier. QA re-executes the gates declared in `knowledge/conventions/gates.md` whenever possible, records real output or an explicit limitation, and routes blockers to the appropriate Code Runner, Bug Fixer, test owner, Product Historian, or human path instead of fixing code.
 
 ### Implementation Orchestration
 
@@ -764,7 +764,7 @@ Rules:
 Mandatory transitions:
 
 - `proposed`: does not require an approval record, but must not advance from an incomplete parent gate.
-- `approved` and later states: require a corresponding approval record in `.product/history/`, with `artifact_id`, `path`, `content_hash`, `status_granted`, `approved_by`, `approved_at`, and `notes`.
+- `approved` and later states: require a corresponding approval record in `.product/history/`, with `artifact_id`, `path`, `content_hash`, `status_granted`, `approved_by`, `approved_at`, and `notes`. Validator and operational navigation both require that record to match the current artifact content; editing status prose alone never advances work.
 - `approved -> in_progress`: requires an approved task or an explicit prototype/draft exception.
 - `in_progress -> implemented`: requires structured working-tree evidence in the task file: branch, base commit, changed paths, diff hash, tests, and gate results. It does not require a commit.
 - Code Runner can produce code and technical evidence, but does not commit, push, merge, create approval records, or approve QA.

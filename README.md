@@ -147,6 +147,7 @@ Inspect the shared Engineering System and list the structured triggers that make
 spec-framework engineering-system inspect --product-root product
 spec-framework engineering-system validate --product-root product
 spec-framework engineering-system triggers
+spec-framework engineering-system migrate --product-root product --dry-run
 ```
 ```
 

@@ -178,6 +178,10 @@ func validateDeliveryClosure(s Snapshot) []Diagnostic {
 		base := filepath.ToSlash(filepath.Dir(rel))
 		triggers, invalidTriggers := engineeringsystem.Triggers(text)
 		for _, trigger := range invalidTriggers {
+			if trigger == "invalid_yaml" {
+				out = append(out, Diagnostic{Error, "engineering-trigger", rel, "Use-case context has invalid YAML metadata.", "Repair the context YAML before evaluating engineering triggers."})
+				continue
+			}
 			out = append(out, Diagnostic{Error, "engineering-trigger", rel, "Unknown engineering trigger " + trigger + ".", "Use a trigger listed by spec-framework engineering-system triggers."})
 		}
 		engineeringApplies := tier == "L" || len(triggers) > 0
@@ -223,6 +227,10 @@ func validateDeliveryClosure(s Snapshot) []Diagnostic {
 				verdict := strings.ToLower(strings.Trim(fields["verdict"], "` []"))
 				if !feeds(reviewStatus) || verdict != "passed" {
 					out = append(out, Diagnostic{Error, "engineering-review-gate", base + "/implementation-plan.md", "Implementation Plan requires a passed approved Engineering Review for this delivery.", "Keep the plan draft until Engineering Review passes against the current proposal."})
+				}
+				proposal := s.Text[base+"/engineering-proposal.md"]
+				if fields["proposal hash"] != Hash(proposal) {
+					out = append(out, Diagnostic{Error, "engineering-review-staleness", base + "/engineering-review.md", "Engineering Review does not match the current proposal hash.", "Re-run Engineering Review before advancing the plan."})
 				}
 			}
 		}

@@ -1,13 +1,14 @@
 package engineeringsystem
 
 import (
-	"errors"
 	"fmt"
 	"os"
 	"path/filepath"
 	"regexp"
 	"sort"
 	"strings"
+
+	"go.yaml.in/yaml/v3"
 )
 
 var allowedTriggers = map[string]bool{
@@ -49,25 +50,64 @@ type Inspection struct {
 	Blockers         []string `json:"blockers,omitempty"`
 }
 
+type contextDocument struct {
+	ID                  string   `yaml:"id"`
+	Status              string   `yaml:"status"`
+	Version             string   `yaml:"version"`
+	OriginMode          string   `yaml:"origin_mode"`
+	EngineeringTriggers []string `yaml:"engineering_triggers"`
+}
+
+type catalogDocument struct {
+	SchemaVersion    int                    `yaml:"schema_version"`
+	ID               string                 `yaml:"id"`
+	Status           string                 `yaml:"status"`
+	Version          string                 `yaml:"version"`
+	OriginMode       string                 `yaml:"origin_mode"`
+	Scope            string                 `yaml:"scope"`
+	Areas            map[string]catalogArea `yaml:"areas"`
+	Decisions        []any                  `yaml:"decisions"`
+	Standards        []any                  `yaml:"standards"`
+	FitnessFunctions []any                  `yaml:"fitness_functions"`
+}
+
+type catalogArea struct {
+	Contract string   `yaml:"contract"`
+	Maturity string   `yaml:"maturity"`
+	Evidence []string `yaml:"evidence"`
+}
+
 func Inspect(root string) (Inspection, error) {
 	dir := filepath.Join(root, "engineering")
-	context, err := os.ReadFile(filepath.Join(dir, "context.md"))
+	contextData, err := os.ReadFile(filepath.Join(dir, "context.md"))
 	if err != nil {
 		return Inspection{}, err
 	}
-	catalogPath := filepath.Join(dir, "engineering-system.yaml")
-	catalog, err := os.ReadFile(catalogPath)
+	var context contextDocument
+	if err := yaml.Unmarshal([]byte(yamlPayload(string(contextData))), &context); err != nil {
+		return Inspection{}, fmt.Errorf("engineering/context.md has invalid YAML metadata: %w", err)
+	}
+	catalogData, err := os.ReadFile(filepath.Join(dir, "engineering-system.yaml"))
 	if err != nil {
 		return Inspection{}, err
+	}
+	var catalog catalogDocument
+	if err := yaml.Unmarshal(catalogData, &catalog); err != nil {
+		return Inspection{}, fmt.Errorf("engineering-system.yaml is invalid YAML: %w", err)
 	}
 	i := Inspection{
-		ID:         field(string(context), "id"),
-		Status:     field(string(context), "status"),
-		Version:    field(string(context), "version"),
-		OriginMode: field(string(context), "origin_mode"),
-		Scope:      field(string(catalog), "scope"),
+		ID:               context.ID,
+		Status:           context.Status,
+		Version:          context.Version,
+		OriginMode:       context.OriginMode,
+		Scope:            catalog.Scope,
+		Decisions:        len(catalog.Decisions),
+		Standards:        len(catalog.Standards),
+		FitnessFunctions: len(catalog.FitnessFunctions),
 	}
-	i.Areas, i.Decisions, i.Standards, i.FitnessFunctions, i.Blockers = parseCatalog(string(catalog), dir)
+	if catalog.SchemaVersion != 1 {
+		i.Blockers = append(i.Blockers, "catalog schema_version must be 1")
+	}
 	if !regexp.MustCompile(`^ENGSYS-[A-Z0-9-]+$`).MatchString(i.ID) {
 		i.Blockers = append(i.Blockers, "context engineering system id is invalid")
 	}
@@ -80,6 +120,36 @@ func Inspect(root string) (Inspection, error) {
 	if i.Scope == "" {
 		i.Blockers = append(i.Blockers, "catalog scope is missing")
 	}
+	for field, values := range map[string][2]string{
+		"id":          {context.ID, catalog.ID},
+		"status":      {context.Status, catalog.Status},
+		"version":     {context.Version, catalog.Version},
+		"origin_mode": {context.OriginMode, catalog.OriginMode},
+	} {
+		if values[1] == "" || values[0] != values[1] {
+			i.Blockers = append(i.Blockers, fmt.Sprintf("context and catalog %s do not match", field))
+		}
+	}
+	if len(catalog.Areas) == 0 {
+		i.Blockers = append(i.Blockers, "catalog areas are missing")
+	}
+	for name, source := range catalog.Areas {
+		area := Area{Name: name, Contract: source.Contract, Maturity: source.Maturity, Evidence: len(source.Evidence)}
+		i.Areas = append(i.Areas, area)
+		if area.Contract == "" || area.Maturity == "" {
+			i.Blockers = append(i.Blockers, fmt.Sprintf("area %s is missing contract or maturity", name))
+			continue
+		}
+		if !allowedMaturity[area.Maturity] {
+			i.Blockers = append(i.Blockers, fmt.Sprintf("area %s has invalid maturity %s", name, area.Maturity))
+		}
+		if _, err := os.Stat(filepath.Join(dir, filepath.FromSlash(area.Contract))); err != nil {
+			i.Blockers = append(i.Blockers, fmt.Sprintf("area %s contract %s is missing", name, area.Contract))
+		}
+		if area.Maturity != "baseline" && area.Evidence == 0 {
+			i.Blockers = append(i.Blockers, fmt.Sprintf("area %s maturity %s requires evidence", name, area.Maturity))
+		}
+	}
 	if _, err := os.Stat(filepath.Join(dir, "engineering-system.md")); err != nil {
 		i.Blockers = append(i.Blockers, "engineering-system.md is missing")
 	}
@@ -91,29 +161,53 @@ func Inspect(root string) (Inspection, error) {
 
 func Validate(root string) (Inspection, error) { return Inspect(root) }
 
+func Migrate(root string, dryRun bool) ([]string, error) {
+	path := filepath.Join(root, "engineering", "engineering-system.yaml")
+	data, err := os.ReadFile(path)
+	if err != nil {
+		return nil, err
+	}
+	var document yaml.Node
+	if err := yaml.Unmarshal(data, &document); err != nil {
+		return nil, fmt.Errorf("engineering-system.yaml is invalid YAML: %w", err)
+	}
+	if len(document.Content) == 0 || document.Content[0].Kind != yaml.MappingNode {
+		return nil, fmt.Errorf("engineering-system.yaml must be a YAML mapping")
+	}
+	mapping := document.Content[0]
+	for index := 0; index+1 < len(mapping.Content); index += 2 {
+		if mapping.Content[index].Value == "schema_version" {
+			if mapping.Content[index+1].Value != "1" {
+				return nil, fmt.Errorf("unsupported schema_version %s", mapping.Content[index+1].Value)
+			}
+			return []string{"Engineering System catalog already uses schema_version 1"}, nil
+		}
+	}
+	change := "ADD engineering/engineering-system.yaml schema_version: 1"
+	if dryRun {
+		return []string{change}, nil
+	}
+	key := &yaml.Node{Kind: yaml.ScalarNode, Tag: "!!str", Value: "schema_version"}
+	value := &yaml.Node{Kind: yaml.ScalarNode, Tag: "!!int", Value: "1"}
+	mapping.Content = append([]*yaml.Node{key, value}, mapping.Content...)
+	updated, err := yaml.Marshal(&document)
+	if err != nil {
+		return nil, err
+	}
+	if err := os.WriteFile(path, updated, 0o644); err != nil {
+		return nil, err
+	}
+	return []string{change}, nil
+}
+
 func Triggers(text string) (valid, invalid []string) {
-	lines := strings.Split(strings.ReplaceAll(text, "\r\n", "\n"), "\n")
-	in := false
-	indent := -1
+	var context contextDocument
+	if err := yaml.Unmarshal([]byte(yamlPayload(text)), &context); err != nil {
+		return nil, []string{"invalid_yaml"}
+	}
 	seen := map[string]bool{}
-	for _, line := range lines {
-		trimmed := strings.TrimSpace(line)
-		currentIndent := len(line) - len(strings.TrimLeft(line, " \t"))
-		if strings.HasPrefix(strings.ToLower(trimmed), "engineering_triggers:") {
-			in = true
-			indent = currentIndent
-			continue
-		}
-		if !in {
-			continue
-		}
-		if trimmed == "" || strings.HasPrefix(trimmed, "#") {
-			continue
-		}
-		if currentIndent <= indent || !strings.HasPrefix(trimmed, "-") {
-			break
-		}
-		value := strings.Trim(strings.TrimSpace(strings.TrimPrefix(trimmed, "-")), "`\"'")
+	for _, value := range context.EngineeringTriggers {
+		value = strings.TrimSpace(value)
 		if value == "" || seen[value] {
 			continue
 		}
@@ -138,94 +232,25 @@ func AllowedTriggers() []string {
 	return out
 }
 
-func parseCatalog(text, root string) ([]Area, int, int, int, []string) {
-	lines := strings.Split(strings.ReplaceAll(text, "\r\n", "\n"), "\n")
-	section := ""
-	areaName := ""
-	area := Area{}
-	var areas []Area
-	counts := map[string]int{}
-	var blockers []string
-	flush := func() {
-		if areaName == "" {
-			return
-		}
-		area.Name = areaName
-		areas = append(areas, area)
-		areaName = ""
-		area = Area{}
-	}
-	for _, line := range lines {
-		trimmed := strings.TrimSpace(line)
-		if trimmed == "" || strings.HasPrefix(trimmed, "#") {
-			continue
-		}
-		indent := len(line) - len(strings.TrimLeft(line, " \t"))
-		if indent == 0 && strings.HasSuffix(trimmed, ":") {
-			flush()
-			section = strings.TrimSuffix(trimmed, ":")
-			continue
-		}
-		if section == "areas" && indent == 2 && strings.HasSuffix(trimmed, ":") {
-			flush()
-			areaName = strings.TrimSuffix(trimmed, ":")
-			continue
-		}
-		if section == "areas" && areaName != "" && indent >= 4 {
-			key, value := pair(trimmed)
-			switch key {
-			case "contract":
-				area.Contract = value
-			case "maturity":
-				area.Maturity = value
-			case "evidence":
-				if value != "[]" && value != "" {
-					area.Evidence++
-				}
+func yamlPayload(text string) string {
+	text = strings.TrimPrefix(text, "\ufeff")
+	trimmed := strings.TrimSpace(text)
+	if strings.HasPrefix(trimmed, "---") {
+		lines := strings.Split(trimmed, "\n")
+		for index := 1; index < len(lines); index++ {
+			if strings.TrimSpace(lines[index]) == "---" {
+				return strings.Join(lines[1:index], "\n")
 			}
-			continue
-		}
-		if (section == "decisions" || section == "standards" || section == "fitness_functions") && strings.HasPrefix(trimmed, "-") {
-			counts[section]++
 		}
 	}
-	flush()
-	if len(areas) == 0 {
-		blockers = append(blockers, "catalog areas are missing")
-	}
-	for _, item := range areas {
-		if item.Contract == "" || item.Maturity == "" {
-			blockers = append(blockers, fmt.Sprintf("area %s is missing contract or maturity", item.Name))
-			continue
-		}
-		if !allowedMaturity[item.Maturity] {
-			blockers = append(blockers, fmt.Sprintf("area %s has invalid maturity %s", item.Name, item.Maturity))
-		}
-		if _, err := os.Stat(filepath.Join(root, filepath.FromSlash(item.Contract))); err != nil {
-			blockers = append(blockers, fmt.Sprintf("area %s contract %s is missing", item.Name, item.Contract))
-		}
-		if item.Maturity != "baseline" && item.Evidence == 0 {
-			blockers = append(blockers, fmt.Sprintf("area %s maturity %s requires evidence", item.Name, item.Maturity))
+	lower := strings.ToLower(text)
+	if start := strings.Index(lower, "```yaml"); start >= 0 {
+		body := text[start+len("```yaml"):]
+		if end := strings.Index(body, "```"); end >= 0 {
+			return body[:end]
 		}
 	}
-	return areas, counts["decisions"], counts["standards"], counts["fitness_functions"], blockers
-}
-
-func pair(line string) (string, string) {
-	parts := strings.SplitN(line, ":", 2)
-	if len(parts) != 2 {
-		return "", ""
-	}
-	return strings.TrimSpace(parts[0]), strings.Trim(strings.TrimSpace(parts[1]), "`\"'")
-}
-
-func field(text, name string) string {
-	re := regexp.MustCompile(`(?m)^\s*` + regexp.QuoteMeta(name) + `:\s*([^\r\n#]+)`)
-	match := re.FindStringSubmatch(text)
-	if len(match) != 2 {
-		return ""
-	}
-	return strings.Trim(strings.TrimSpace(match[1]), "`\"'")
+	return text
 }
 
 func oneOf(value string, options ...string) bool {
@@ -248,5 +273,3 @@ func unique(items []string) []string {
 	}
 	return out
 }
-
-var ErrNotConfigured = errors.New("Engineering System is not configured")

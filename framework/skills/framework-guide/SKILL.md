@@ -58,7 +58,7 @@ Intent summary; discovered state; recommended command or specialist; mutation pr
 | Diagnose or install an optional visual adapter | `adapters list/status/doctor`, then version-pinned `install/update --yes` after preview |
 | Inspect a decision change | `impact` |
 | Prepare implementation | `gates`, Graph readiness, then Task readiness |
-| Establish or inspect shared engineering contracts | `engineering-system inspect/validate` plus Engineering System, then Technical Discovery for a delivery |
+| Establish, inspect, or migrate shared engineering contracts | `engineering-system inspect/validate/migrate` plus Engineering System, then Technical Discovery for a delivery |
 | Review a proposed technical solution | Engineering Proposal, then independent Engineering Review |
 | Execute governed commands | Command Planner, then Command Executor |
 | Validate repository state | `validate` |

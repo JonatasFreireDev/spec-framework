@@ -101,9 +101,12 @@ spec-framework dashboard --work WORK-001
 spec-framework engineering-system inspect
 spec-framework engineering-system validate
 spec-framework engineering-system triggers
+spec-framework engineering-system migrate --dry-run
 spec-framework decisions migrate
 ```
 
 Use `decisions migrate` as a preview first. Existing repositories should use `--interactive` to review ambiguous inferred types and scopes before applying the metadata migration.
+
+Engineering System catalogs created before schema versioning must run `engineering-system migrate --dry-run` and then the same command without `--dry-run`. The migration only adds `schema_version: 1`, preserves product-owned fields, and never creates approval records. Approved systems must be re-approved by a human after any migrated content change.
 
 Adoption is backed by the validator, package smoke tests, and the external-runtime / `product/` boundary.

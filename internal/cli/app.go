@@ -744,7 +744,7 @@ Commands:
   import     Materialize approved source mappings as drafts.
   design     Initialize, import, inspect, map, verify, migrate, or audit Design assets.
   design-system Initialize, inspect, validate, or migrate the product Design System.
-  engineering-system Inspect or validate the product Engineering System and list technical triggers.
+  engineering-system Inspect, validate, or migrate the product Engineering System and list technical triggers.
   skill      Resolve a pinned specialized skill path.
   adapters   List, diagnose, install, or update optional external adapters.
   work       Select a feature and create a concurrent workspace.

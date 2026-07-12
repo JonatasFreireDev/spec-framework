@@ -30,7 +30,7 @@ Approved Specification; Design; approved Technical Discovery; `engineering-propo
 - Approved product decisions in the active product root's `knowledge/decisions/` and `.product/decisions.json`.
 
 ## Workflow
-1. Read the proposal and calculate or record its content hash so later edits make the review stale.
+1. Read the proposal and record its normalized SHA-256 content hash so later edits make the review stale.
 2. Verify requirement coverage, architecture boundaries, ownership, integrations, dependencies, quality attributes, security, observability, migration, rollout, rollback, and testability.
 3. Verify every governed choice has a scope-compatible approved `DEC-*` and current approval record.
 4. Set `blocked` for missing decisions or unsafe unresolved contracts, `required_fix` for correctable proposal gaps, and `passed` only when no blocking finding remains.

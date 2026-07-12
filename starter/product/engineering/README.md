@@ -20,4 +20,4 @@ Framework validators and framework method decisions should be installed or refer
 
 Complete `engineering-system.md` and `engineering-system.yaml` from real code and operational evidence. Define product-specific gates in `knowledge/conventions/gates.md`; do not claim maturity or create architecture decisions from placeholder content.
 
-Inspect with `spec-framework engineering-system inspect` and validate with `spec-framework engineering-system validate`. Use `spec-framework engineering-system triggers` before declaring delivery-specific triggers in a use-case context.
+Inspect with `spec-framework engineering-system inspect` and validate with `spec-framework engineering-system validate`. Use `spec-framework engineering-system triggers` before declaring delivery-specific triggers in a use-case context. Legacy catalogs can preview schema migration with `spec-framework engineering-system migrate --dry-run`; migration never creates approval records.

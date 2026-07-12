@@ -14,7 +14,7 @@ import (
 
 func runEngineeringSystem(args []string, stdout, stderr io.Writer) int {
 	if len(args) == 0 {
-		fmt.Fprintln(stderr, "engineering-system requires inspect, validate, or triggers")
+		fmt.Fprintln(stderr, "engineering-system requires inspect, validate, triggers, or migrate")
 		return 2
 	}
 	command := args[0]
@@ -22,6 +22,7 @@ func runEngineeringSystem(args []string, stdout, stderr io.Writer) int {
 	flags.SetOutput(stderr)
 	root := flags.String("product-root", "product", "product root")
 	asJSON := flags.Bool("json", false, "JSON output")
+	dryRun := flags.Bool("dry-run", false, "preview migration without writing")
 	if err := flags.Parse(args[1:]); err != nil {
 		return 2
 	}
@@ -39,6 +40,17 @@ func runEngineeringSystem(args []string, stdout, stderr io.Writer) int {
 	productRoot := *root
 	if !filepath.IsAbs(productRoot) {
 		productRoot = filepath.Join(cwd, productRoot)
+	}
+	if command == "migrate" {
+		items, err := engineeringsystem.Migrate(productRoot, *dryRun)
+		if err != nil {
+			fmt.Fprintln(stderr, err)
+			return 1
+		}
+		for _, item := range items {
+			fmt.Fprintln(stdout, item)
+		}
+		return 0
 	}
 	if command != "inspect" && command != "validate" {
 		fmt.Fprintln(stderr, "unknown engineering-system command", command)

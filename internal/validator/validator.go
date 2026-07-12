@@ -192,18 +192,75 @@ func Validate(ctx context.Context, root, frameworkRoot string) (Result, error) {
 }
 
 func validateEngineeringSystem(s Snapshot) []Diagnostic {
-	if _, exists := s.Text["engineering/context.md"]; !exists {
-		return nil
-	}
-	inspection, err := engineeringsystem.Inspect(s.Root)
-	if err != nil {
-		return []Diagnostic{{Error, "engineering-system", "engineering/context.md", err.Error(), "Restore or initialize the Engineering System contract."}}
-	}
 	var out []Diagnostic
-	for _, blocker := range inspection.Blockers {
-		out = append(out, Diagnostic{Error, "engineering-system", "engineering/engineering-system.yaml", blocker, "Repair the Engineering System catalog, contract paths, maturity, or evidence."})
+	inspection := engineeringsystem.Inspection{}
+	configured := false
+	if _, exists := s.Text["engineering/context.md"]; exists {
+		var err error
+		inspection, err = engineeringsystem.Inspect(s.Root)
+		if err != nil {
+			out = append(out, Diagnostic{Error, "engineering-system", "engineering/context.md", err.Error(), "Restore or initialize the Engineering System contract."})
+		} else {
+			for _, blocker := range inspection.Blockers {
+				out = append(out, Diagnostic{Error, "engineering-system", "engineering/engineering-system.yaml", blocker, "Repair the Engineering System catalog, contract paths, maturity, or evidence."})
+			}
+			configured = inspection.Scope != "not-configured"
+		}
+	}
+	for rel, proposal := range s.Text {
+		if !strings.HasPrefix(rel, "domains/") || !strings.HasSuffix(rel, "/engineering-proposal.md") {
+			continue
+		}
+		fields := tableFields(proposal)
+		pin := strings.TrimSpace(fields["engineering system"])
+		if !configured {
+			if !strings.EqualFold(pin, "Not configured") {
+				out = append(out, Diagnostic{Error, "engineering-system-consumer", rel, "Engineering Proposal must declare Not configured while no Engineering System is configured.", "Use Not configured or establish the shared Engineering System first."})
+			}
+		} else {
+			expected := inspection.ID + " @ " + inspection.Version
+			if pin != expected {
+				out = append(out, Diagnostic{Error, "engineering-system-consumer", rel, "Engineering Proposal does not pin the declared Engineering System id and version.", "Set Engineering System to " + expected + "."})
+			}
+			status := markdownStatus(proposal)
+			if requiresApproval(status) && (inspection.Status != "approved" || !currentApproval(s, inspection.ID, "engineering/engineering-system.md", inspection.Status)) {
+				out = append(out, Diagnostic{Error, "engineering-system-consumer", rel, "Advanced Engineering Proposal consumes an Engineering System without current approval evidence.", "Approve the current Engineering System or keep the proposal draft."})
+			}
+		}
+	}
+	for rel, review := range s.Text {
+		if !strings.HasPrefix(rel, "domains/") || !strings.HasSuffix(rel, "/engineering-review.md") {
+			continue
+		}
+		fields := tableFields(review)
+		if strings.ToLower(fields["verdict"]) != "passed" {
+			continue
+		}
+		proposalPath := filepath.ToSlash(filepath.Join(filepath.Dir(rel), "engineering-proposal.md"))
+		proposal, exists := s.Text[proposalPath]
+		if !exists || fields["proposal hash"] != Hash(proposal) {
+			out = append(out, Diagnostic{Error, "engineering-review-staleness", rel, "Passed Engineering Review does not match the current Engineering Proposal hash.", "Re-run Engineering Review and record the current SHA-256 proposal hash."})
+		}
 	}
 	return out
+}
+
+func currentApproval(s Snapshot, id, path, status string) bool {
+	text, exists := s.Text[filepath.ToSlash(path)]
+	if !exists || !requiresApproval(status) {
+		return false
+	}
+	expected := Hash(text)
+	for rel, value := range s.JSON {
+		if !strings.HasPrefix(rel, ".product/history/approval-") {
+			continue
+		}
+		record, _ := value.(map[string]any)
+		if record["artifact_id"] == id && filepath.ToSlash(fmt.Sprint(record["path"])) == filepath.ToSlash(path) && record["status_granted"] == status && record["content_hash"] == expected {
+			return true
+		}
+	}
+	return false
 }
 
 func validateDesignSystem(s Snapshot) []Diagnostic {

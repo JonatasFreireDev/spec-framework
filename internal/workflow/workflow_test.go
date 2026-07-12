@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"os"
 	"path/filepath"
+	"strings"
 	"sync"
 	"sync/atomic"
 	"testing"
@@ -20,7 +21,10 @@ func setupProduct(t *testing.T) string {
 	for _, a := range r.Artifacts {
 		path := filepath.Join(root, filepath.FromSlash(a.Path))
 		_ = os.MkdirAll(filepath.Dir(path), 0755)
-		_ = os.WriteFile(path, []byte("id: "+a.ID+"\nstatus: "+a.Status+"\n"), 0644)
+		text := "id: " + a.ID + "\nstatus: " + a.Status + "\n"
+		_ = os.WriteFile(path, []byte(text), 0644)
+		_ = os.MkdirAll(filepath.Join(root, ".product", "history"), 0o755)
+		_ = writeJSON(filepath.Join(root, ".product", "history", "approval-"+strings.ToLower(a.ID)+".json"), Approval{ArtifactID: a.ID, Path: a.Path, ContentHash: Hash(text), StatusGranted: a.Status, ApprovedBy: "Test Owner"})
 	}
 	return root
 }
@@ -141,5 +145,61 @@ func TestClaimRejectsParallelScopeConflict(t *testing.T) {
 	}
 	if _, err := ClaimTask(root, path, "T2", "claude"); err == nil {
 		t.Fatal("overlapping scope claim allowed")
+	}
+}
+
+func TestApprovedDocumentRequiresCurrentApprovalRecord(t *testing.T) {
+	root := t.TempDir()
+	path := filepath.Join(root, "artifact.md")
+	text := "# Artifact\n\n| Field | Value |\n| --- | --- |\n| Status | `approved` |\n"
+	if err := os.WriteFile(path, []byte(text), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	if approvedDocument(root, path) {
+		t.Fatal("status text bypassed approval history")
+	}
+	if err := os.MkdirAll(filepath.Join(root, ".product", "history"), 0o755); err != nil {
+		t.Fatal(err)
+	}
+	record := Approval{ArtifactID: "ART-1", Path: "artifact.md", ContentHash: Hash(text), StatusGranted: "approved", ApprovedBy: "Human"}
+	if err := writeJSON(filepath.Join(root, ".product", "history", "approval-art-1.json"), record); err != nil {
+		t.Fatal(err)
+	}
+	if !approvedDocument(root, path) {
+		t.Fatal("current approval record was not accepted")
+	}
+}
+
+func TestPassedEngineeringReviewBecomesStaleAfterProposalChange(t *testing.T) {
+	root := t.TempDir()
+	dir := filepath.Join(root, "use-case")
+	if err := os.MkdirAll(filepath.Join(root, ".product", "history"), 0o755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.MkdirAll(dir, 0o755); err != nil {
+		t.Fatal(err)
+	}
+	proposalPath := filepath.Join(dir, "engineering-proposal.md")
+	reviewPath := filepath.Join(dir, "engineering-review.md")
+	proposal := "# Proposal\n"
+	if err := os.WriteFile(proposalPath, []byte(proposal), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	review := "# Review\n\n| Field | Value |\n| --- | --- |\n| Status | `approved` |\n| Verdict | `passed` |\n| Proposal hash | `" + Hash(proposal) + "` |\n"
+	if err := os.WriteFile(reviewPath, []byte(review), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	record := Approval{ArtifactID: "ENGREV-1", Path: "use-case/engineering-review.md", ContentHash: Hash(review), StatusGranted: "approved", ApprovedBy: "Human"}
+	if err := writeJSON(filepath.Join(root, ".product", "history", "approval-engrev-1.json"), record); err != nil {
+		t.Fatal(err)
+	}
+	if !passedEngineeringReview(root, reviewPath, proposalPath) {
+		t.Fatal("current passed review was rejected")
+	}
+	if err := os.WriteFile(proposalPath, []byte("# Changed Proposal\n"), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	if passedEngineeringReview(root, reviewPath, proposalPath) {
+		t.Fatal("stale review was accepted after proposal change")
 	}
 }

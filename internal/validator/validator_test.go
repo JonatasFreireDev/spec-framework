@@ -216,6 +216,71 @@ func TestEventsFixtureRemainsReady(t *testing.T) {
 	}
 }
 
+func TestEngineeringProposalMustPinCurrentSystem(t *testing.T) {
+	root := t.TempDir()
+	for name, body := range map[string]string{
+		"engineering/context.md":                        "---\nid: ENGSYS-001\nstatus: draft\nversion: 1.0.0\norigin_mode: generate\n---\n",
+		"engineering/engineering-system.md":             "| Field | Value |\n| --- | --- |\n| ID | ENGSYS-001 |\n| Status | draft |\n",
+		"engineering/engineering-system.yaml":           "schema_version: 1\nid: ENGSYS-001\nstatus: draft\nversion: 1.0.0\norigin_mode: generate\nscope: product\nareas:\n  modules:\n    contract: architecture/modules.md\n    maturity: baseline\n    evidence: []\n",
+		"engineering/architecture/modules.md":           "# Modules\n",
+		"domains/d/use-cases/u/engineering-proposal.md": "| Field | Value |\n| --- | --- |\n| ID | ENGPROP-1 |\n| Status | draft |\n| Engineering System | ENGSYS-OLD @ 0.9.0 |\n",
+	} {
+		path := filepath.Join(root, filepath.FromSlash(name))
+		if err := os.MkdirAll(filepath.Dir(path), 0o755); err != nil {
+			t.Fatal(err)
+		}
+		if err := os.WriteFile(path, []byte(body), 0o644); err != nil {
+			t.Fatal(err)
+		}
+	}
+	snapshot, err := Scan(context.Background(), root, root, 1)
+	if err != nil {
+		t.Fatal(err)
+	}
+	found := false
+	for _, diagnostic := range validateEngineeringSystem(snapshot) {
+		if diagnostic.Check == "engineering-system-consumer" {
+			found = true
+		}
+	}
+	if !found {
+		t.Fatal("expected invalid Engineering System pin diagnostic")
+	}
+}
+
+func TestPassedEngineeringReviewMustMatchProposalHash(t *testing.T) {
+	root := t.TempDir()
+	for name, body := range map[string]string{
+		"engineering/context.md":                        "---\nid: ENGSYS-001\nstatus: draft\nversion: 1.0.0\norigin_mode: generate\n---\n",
+		"engineering/engineering-system.md":             "# System\n",
+		"engineering/engineering-system.yaml":           "schema_version: 1\nid: ENGSYS-001\nstatus: draft\nversion: 1.0.0\norigin_mode: generate\nscope: not-configured\nareas:\n  modules:\n    contract: architecture/modules.md\n    maturity: baseline\n    evidence: []\n",
+		"engineering/architecture/modules.md":           "# Modules\n",
+		"domains/d/use-cases/u/engineering-proposal.md": "# Current Proposal\n\n| Field | Value |\n| --- | --- |\n| Engineering System | Not configured |\n",
+		"domains/d/use-cases/u/engineering-review.md":   "| Field | Value |\n| --- | --- |\n| Verdict | passed |\n| Proposal hash | deadbeef |\n",
+	} {
+		path := filepath.Join(root, filepath.FromSlash(name))
+		if err := os.MkdirAll(filepath.Dir(path), 0o755); err != nil {
+			t.Fatal(err)
+		}
+		if err := os.WriteFile(path, []byte(body), 0o644); err != nil {
+			t.Fatal(err)
+		}
+	}
+	snapshot, err := Scan(context.Background(), root, root, 1)
+	if err != nil {
+		t.Fatal(err)
+	}
+	found := false
+	for _, diagnostic := range validateEngineeringSystem(snapshot) {
+		if diagnostic.Check == "engineering-review-staleness" {
+			found = true
+		}
+	}
+	if !found {
+		t.Fatal("expected stale Engineering Review diagnostic")
+	}
+}
+
 func TestDiagnosticsAreDeterministic(t *testing.T) {
 	root := t.TempDir()
 	_ = os.MkdirAll(filepath.Join(root, "domains", "a"), 0755)

@@ -161,8 +161,8 @@ func PreviewApproval(root, artifactPath, grant string) (ApprovalPreview, error) 
 	var blockers []string
 	for _, pid := range a.ParentIDs {
 		for _, p := range r.Artifacts {
-			if p.ID == pid && !isApproved(p.Status) {
-				blockers = append(blockers, fmt.Sprintf("parent %s is %s", pid, p.Status))
+			if p.ID == pid && (!isApproved(p.Status) || !hasCurrentApproval(root, filepath.Join(root, filepath.FromSlash(p.Path)), p.Status)) {
+				blockers = append(blockers, fmt.Sprintf("parent %s lacks current approval evidence", pid))
 			}
 		}
 	}
@@ -257,36 +257,36 @@ func nextFor(root string, a Artifact, useCaseSelector string) (string, []string)
 		}
 		uc = found
 	}
-	if !approvedDocument(filepath.Join(uc, "context.md")) {
+	if !approvedDocument(root, filepath.Join(uc, "context.md")) {
 		return "use-case", []string{"use case is not approved"}
 	}
-	if !approvedDocument(filepath.Join(uc, "specification.md")) {
+	if !approvedDocument(root, filepath.Join(uc, "specification.md")) {
 		return "specification", []string{"specification is missing or not approved"}
 	}
 	for _, contract := range requiredContracts(filepath.Join(uc, "context.md")) {
 		path := filepath.Join(uc, "contracts", contract+".md")
-		if !approvedDocument(path) && !notApplicableDocument(path) {
+		if !approvedDocument(root, path) && !notApplicableDocument(path) {
 			return "specification", []string{"required " + contract + " contract is missing or not approved"}
 		}
 	}
-	if !approvedDocument(filepath.Join(uc, "design.md")) && !notApplicableDocument(filepath.Join(uc, "design.md")) {
+	if !approvedDocument(root, filepath.Join(uc, "design.md")) && !notApplicableDocument(filepath.Join(uc, "design.md")) {
 		return "ux-ui", []string{"design is missing, not approved, or lacks Not applicable rationale"}
 	}
-	if !approvedDocument(filepath.Join(uc, "technical-discovery.md")) {
+	if !approvedDocument(root, filepath.Join(uc, "technical-discovery.md")) {
 		return "technical-discovery", []string{"technical discovery is missing or not approved"}
 	}
 	if !architectureResolved(filepath.Join(uc, "technical-discovery.md")) {
 		return "product-historian", []string{"Architecture Gate is unresolved"}
 	}
 	if engineeringReviewApplies(filepath.Join(uc, "context.md")) {
-		if !approvedDocument(filepath.Join(uc, "engineering-proposal.md")) {
+		if !approvedDocument(root, filepath.Join(uc, "engineering-proposal.md")) {
 			return "engineering-proposal", []string{"applicable engineering proposal is missing or not approved"}
 		}
-		if !passedEngineeringReview(filepath.Join(uc, "engineering-review.md")) {
+		if !passedEngineeringReview(root, filepath.Join(uc, "engineering-review.md"), filepath.Join(uc, "engineering-proposal.md")) {
 			return "engineering-review", []string{"applicable engineering review is missing, not approved, or not passed"}
 		}
 	}
-	if !approvedDocument(filepath.Join(uc, "implementation-plan.md")) {
+	if !approvedDocument(root, filepath.Join(uc, "implementation-plan.md")) {
 		return "implementation-planner", []string{"implementation plan is missing or not approved"}
 	}
 	graph := filepath.Join(uc, "execution-graph.json")
@@ -313,7 +313,7 @@ func nextFor(root string, a Artifact, useCaseSelector string) (string, []string)
 		if task.IsDir() || filepath.Ext(task.Name()) != ".md" {
 			continue
 		}
-		if !approvedDocument(filepath.Join(uc, "tasks", task.Name())) {
+		if !approvedDocument(root, filepath.Join(uc, "tasks", task.Name())) {
 			return "task-generator", []string{"task " + task.Name() + " is not approved"}
 		}
 	}
@@ -323,13 +323,13 @@ func nextFor(root string, a Artifact, useCaseSelector string) (string, []string)
 	return "code-runner", nil
 }
 
-func approvedDocument(path string) bool {
+func approvedDocument(root, path string) bool {
 	data, err := os.ReadFile(path)
 	if err != nil {
 		return false
 	}
 	status := extractStatus(string(data))
-	return isApproved(status)
+	return isApproved(status) && hasCurrentApproval(root, path, status)
 }
 func notApplicableDocument(path string) bool {
 	data, err := os.ReadFile(path)
@@ -363,13 +363,21 @@ func engineeringReviewApplies(path string) bool {
 	triggers, _ := engineeringsystem.Triggers(string(data))
 	return tierLDocument(path) || len(triggers) > 0
 }
-func passedEngineeringReview(path string) bool {
+func passedEngineeringReview(root, path, proposalPath string) bool {
 	data, err := os.ReadFile(path)
 	if err != nil {
 		return false
 	}
 	text := string(data)
-	return isApproved(extractStatus(text)) && regexp.MustCompile(`(?mi)^\|\s*Verdict\s*\|\s*`+"`?"+`passed`+"`?"+`\s*\|`).MatchString(text)
+	if !approvedDocument(root, path) || !regexp.MustCompile(`(?mi)^\|\s*Verdict\s*\|\s*`+"`?"+`passed`+"`?"+`\s*\|`).MatchString(text) {
+		return false
+	}
+	proposal, err := os.ReadFile(proposalPath)
+	if err != nil {
+		return false
+	}
+	match := regexp.MustCompile(`(?mi)^\|\s*Proposal hash\s*\|\s*` + "`?" + `([a-f0-9]{64})` + "`?" + `\s*\|`).FindStringSubmatch(text)
+	return len(match) == 2 && match[1] == Hash(string(proposal))
 }
 func approvedJSON(path string) bool {
 	var raw map[string]any
@@ -448,8 +456,8 @@ func Approve(root, artifactPath, grant, approvedBy, notes string) (Approval, err
 	}
 	for _, pid := range r.Artifacts[idx].ParentIDs {
 		for _, p := range r.Artifacts {
-			if p.ID == pid && !isApproved(p.Status) {
-				return Approval{}, fmt.Errorf("parent %s is %s", pid, p.Status)
+			if p.ID == pid && (!isApproved(p.Status) || !hasCurrentApproval(root, filepath.Join(root, filepath.FromSlash(p.Path)), p.Status)) {
+				return Approval{}, fmt.Errorf("parent %s lacks current approval evidence", pid)
 			}
 		}
 	}

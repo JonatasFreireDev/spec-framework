@@ -119,11 +119,19 @@ func BuildDashboard(root, id string) (WorkflowDashboard, error) {
 		d.DesignSystemComponents = system.Components
 		d.DesignSystemPatterns = system.Patterns
 	}
-	if system, err := engineeringsystem.Inspect(root); err == nil {
-		d.EngineeringSystemID = system.ID
-		d.EngineeringSystemStatus = system.Status
-		d.EngineeringSystemVersion = system.Version
-		d.EngineeringSystemAreas = len(system.Areas)
+	if _, statErr := os.Stat(filepath.Join(root, "engineering", "context.md")); statErr == nil {
+		system, inspectErr := engineeringsystem.Inspect(root)
+		if inspectErr != nil {
+			d.Blockers = append(d.Blockers, "Engineering System: "+inspectErr.Error())
+		} else {
+			d.EngineeringSystemID = system.ID
+			d.EngineeringSystemStatus = system.Status
+			d.EngineeringSystemVersion = system.Version
+			d.EngineeringSystemAreas = len(system.Areas)
+			for _, blocker := range system.Blockers {
+				d.Blockers = append(d.Blockers, "Engineering System: "+blocker)
+			}
+		}
 	}
 	return d, nil
 }
