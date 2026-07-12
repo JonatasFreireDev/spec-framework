@@ -3,6 +3,7 @@ package wizard
 import (
 	"bytes"
 	"os"
+	"path/filepath"
 	"testing"
 
 	"github.com/JonatasFreireDev/spec-framework/internal/install"
@@ -56,6 +57,27 @@ func TestShowImpeccableVersionOnlyWhenInstalling(t *testing.T) {
 	}
 	if !showImpeccableVersion(true) {
 		t.Error("showImpeccableVersion(true) = false, want true")
+	}
+}
+
+func TestStartingPointDescriptions(t *testing.T) {
+	for _, startingPoint := range []string{"new-product", "existing-product", "existing-documents", "existing-feature", "existing-implementation", "audit-only"} {
+		if description := startingPointDescription(startingPoint); description == "" {
+			t.Errorf("startingPointDescription(%q) is empty", startingPoint)
+		}
+	}
+	if description := startingPointDescription("unknown"); description != "" {
+		t.Fatalf("unknown description = %q, want empty", description)
+	}
+}
+
+func TestDefaultTargetDirectoryUsesWorkingDirectory(t *testing.T) {
+	want, err := filepath.Abs(".")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if got := defaultTargetDirectory(); got != want {
+		t.Fatalf("defaultTargetDirectory() = %q, want %q", got, want)
 	}
 }
 

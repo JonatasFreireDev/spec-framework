@@ -148,7 +148,7 @@ func (m initModel) summaryView() string {
 // RunInit drives the interactive installer wizard and returns the plan.
 func RunInit(input io.Reader, output io.Writer) (Result, error) {
 	var selected []install.Agent
-	var target string
+	target := defaultTargetDirectory()
 	startingPoint := "new-product"
 	var sources string
 	installImpeccable := false
@@ -176,6 +176,9 @@ func RunInit(input io.Reader, output io.Writer) (Result, error) {
 		huh.NewGroup(
 			huh.NewSelect[string]().
 				Title("Where is this project starting?").
+				DescriptionFunc(func() string {
+					return startingPointDescription(startingPoint)
+				}, &startingPoint).
 				Options(
 					huh.NewOption("New product", "new-product"),
 					huh.NewOption("Existing product", "existing-product"),
@@ -217,7 +220,7 @@ func RunInit(input io.Reader, output io.Writer) (Result, error) {
 		huh.NewGroup(
 			huh.NewInput().
 				Title("Target directory").
-				Placeholder("../product").
+				Description("Defaults to the current working directory.").
 				Value(&target).
 				Validate(func(s string) error {
 					if strings.TrimSpace(s) == "" {
@@ -276,6 +279,26 @@ func showSourcePaths(startingPoint string) bool {
 
 func showImpeccableVersion(installImpeccable bool) bool {
 	return installImpeccable
+}
+
+func startingPointDescription(startingPoint string) string {
+	descriptions := map[string]string{
+		"new-product":             "Start product discovery and engineering contracts from a clean product skeleton.",
+		"existing-product":        "Adopt an existing product and map its current scope, decisions, and delivery state.",
+		"existing-documents":      "Inventory local files or directories such as epics and PRDs; URLs are not supported yet.",
+		"existing-feature":        "Bring an existing feature into the framework and reconstruct its traceability.",
+		"existing-implementation": "Inspect an existing codebase and derive product and engineering context from evidence.",
+		"audit-only":              "Evaluate the current product and implementation without starting a delivery workflow.",
+	}
+	return descriptions[startingPoint]
+}
+
+func defaultTargetDirectory() string {
+	dir, err := os.Getwd()
+	if err != nil {
+		return "."
+	}
+	return dir
 }
 
 func programOptions(input io.Reader, output io.Writer) []tea.ProgramOption {

@@ -584,7 +584,8 @@ func (app App) runInit(args []string, stdout, stderr io.Writer) int {
 			fmt.Fprintln(stderr, "Product initialized, but optional Impeccable installation failed:", err)
 			return 1
 		}
-		fmt.Fprintln(stdout, "[3/3] Impeccable installed; reload the selected agent harness")
+		fmt.Fprintln(stdout, "[3/3] Impeccable installed")
+		fmt.Fprintln(stdout, "Next: reload the selected agent harness, then run /impeccable init inside it.")
 	}
 	return 0
 }
