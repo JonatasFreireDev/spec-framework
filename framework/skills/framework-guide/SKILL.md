@@ -40,6 +40,7 @@ Intent summary; discovered state; recommended command or specialist; mutation pr
 | Ask where work stands | `dashboard`, `status`, or `next` |
 | Review or approve a stage | `review` before `approve` or `approve-stage` |
 | Generate, evolve, or adopt Design | `design init/import/register/inspect/map/audit` plus UX/UI and UX Review |
+| Create, adopt, evolve, or inspect a shared Design System | `design-system init/inspect/validate/migrate` plus Design System Skill |
 | Inspect a decision change | `impact` |
 | Prepare implementation | `gates`, Graph readiness, then Task readiness |
 | Execute governed commands | Command Planner, then Command Executor |

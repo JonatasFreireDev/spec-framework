@@ -8,6 +8,7 @@ import (
 	"os"
 	"path/filepath"
 
+	"github.com/JonatasFreireDev/spec-framework/internal/designsystem"
 	"github.com/JonatasFreireDev/spec-framework/internal/workflow"
 )
 
@@ -135,13 +136,37 @@ func runImpact(args []string, out, errout io.Writer) int {
 	fs.SetOutput(errout)
 	root := fs.String("product-root", "product", "product root")
 	decision := fs.String("decision", "", "decision id")
+	designSystem := fs.String("design-system", "", "Design System id")
 	asJSON := fs.Bool("json", false, "JSON output")
 	if e := fs.Parse(args); e != nil {
 		return 2
 	}
-	if *decision == "" {
-		fmt.Fprintln(errout, "impact requires --decision DEC-NNN")
+	if *decision == "" && *designSystem == "" {
+		fmt.Fprintln(errout, "impact requires --decision DEC-NNN or --design-system DSYS-NNN")
 		return 2
+	}
+	if *designSystem != "" {
+		r, e := designsystem.ImpactReport(productPath(*root), *designSystem)
+		if e != nil {
+			fmt.Fprintln(errout, e)
+			return 1
+		}
+		if *asJSON {
+			b, _ := json.MarshalIndent(r, "", "  ")
+			fmt.Fprintln(out, string(b))
+		} else {
+			fmt.Fprintf(out, "Design System: %s@%s\n", r.ID, r.Version)
+			for _, item := range r.Consumers {
+				fmt.Fprintln(out, "CONSUMER", item)
+			}
+			for _, blocker := range r.Blockers {
+				fmt.Fprintln(out, "BLOCKED", blocker)
+			}
+		}
+		if len(r.Blockers) > 0 {
+			return 1
+		}
+		return 0
 	}
 	r, e := workflow.DecisionImpactReport(productPath(*root), *decision)
 	if e != nil {

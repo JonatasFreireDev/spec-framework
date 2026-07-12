@@ -50,6 +50,8 @@ func (app App) Run(args []string, stdout, stderr io.Writer) int {
 		return runImport(args[1:], stdout, stderr)
 	case "design":
 		return runDesign(args[1:], stdout, stderr)
+	case "design-system":
+		return runDesignSystem(args[1:], stdout, stderr)
 	case "work":
 		return runWork(args[1:], stdout, stderr)
 	case "status", "next":
@@ -593,6 +595,7 @@ Commands:
   init       Initialize a product repository.
   import     Materialize approved source mappings as drafts.
   design     Initialize, import, inspect, map, verify, migrate, or audit Design assets.
+  design-system Initialize, inspect, validate, or migrate the product Design System.
   work       Select a feature and create a concurrent workspace.
   status     Show workspace readiness and blockers.
   next       Show the next skill for a workspace.

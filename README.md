@@ -100,6 +100,15 @@ spec-framework design audit --product-root product --use-case <path> --write-rep
 ```
 
 Impeccable, Figma, and Penpot are optional adapters. Imported or generated assets never approve Design; independent UX Review and the existing human approval gate still apply.
+
+Initialize and inspect the shared Design System when the product has recurring foundations, tokens, components, or patterns:
+
+```bash
+spec-framework design-system init --product-root product --mode generate
+spec-framework design-system inspect --product-root product
+spec-framework design-system validate --product-root product
+spec-framework design-system migrate --product-root product --dry-run
+```
 ```
 
 ## Repository Boundary

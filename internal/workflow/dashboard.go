@@ -6,6 +6,8 @@ import (
 	"path/filepath"
 	"sort"
 	"strings"
+
+	"github.com/JonatasFreireDev/spec-framework/internal/designsystem"
 )
 
 type WorkflowStage struct {
@@ -15,28 +17,34 @@ type WorkflowStage struct {
 	Detail string `json:"detail,omitempty"`
 }
 type WorkflowDashboard struct {
-	WorkspaceID      string          `json:"workspace_id"`
-	Feature          string          `json:"feature"`
-	UseCase          string          `json:"use_case,omitempty"`
-	CurrentStep      string          `json:"current_step"`
-	RecommendedSkill string          `json:"recommended_skill"`
-	ExpectedArtifact string          `json:"expected_artifact"`
-	Stages           []WorkflowStage `json:"stages"`
-	Blockers         []string        `json:"blockers,omitempty"`
-	RequiredReading  []string        `json:"required_reading,omitempty"`
-	NextCommands     []string        `json:"next_commands,omitempty"`
-	Decisions        []string        `json:"decisions,omitempty"`
-	ActiveLeases     []string        `json:"active_leases,omitempty"`
-	GraphStatus      string          `json:"graph_status,omitempty"`
-	TaskTotal        int             `json:"task_total"`
-	TaskReady        int             `json:"task_ready"`
-	LatestCheckpoint string          `json:"latest_checkpoint,omitempty"`
-	LatestHandoff    string          `json:"latest_handoff,omitempty"`
-	DesignMode       string          `json:"design_mode,omitempty"`
-	DesignMaturity   string          `json:"design_maturity,omitempty"`
-	DesignFidelity   string          `json:"design_fidelity,omitempty"`
-	DesignSources    int             `json:"design_sources"`
-	DesignMappings   int             `json:"design_mappings"`
+	WorkspaceID            string          `json:"workspace_id"`
+	Feature                string          `json:"feature"`
+	UseCase                string          `json:"use_case,omitempty"`
+	CurrentStep            string          `json:"current_step"`
+	RecommendedSkill       string          `json:"recommended_skill"`
+	ExpectedArtifact       string          `json:"expected_artifact"`
+	Stages                 []WorkflowStage `json:"stages"`
+	Blockers               []string        `json:"blockers,omitempty"`
+	RequiredReading        []string        `json:"required_reading,omitempty"`
+	NextCommands           []string        `json:"next_commands,omitempty"`
+	Decisions              []string        `json:"decisions,omitempty"`
+	ActiveLeases           []string        `json:"active_leases,omitempty"`
+	GraphStatus            string          `json:"graph_status,omitempty"`
+	TaskTotal              int             `json:"task_total"`
+	TaskReady              int             `json:"task_ready"`
+	LatestCheckpoint       string          `json:"latest_checkpoint,omitempty"`
+	LatestHandoff          string          `json:"latest_handoff,omitempty"`
+	DesignMode             string          `json:"design_mode,omitempty"`
+	DesignMaturity         string          `json:"design_maturity,omitempty"`
+	DesignFidelity         string          `json:"design_fidelity,omitempty"`
+	DesignSources          int             `json:"design_sources"`
+	DesignMappings         int             `json:"design_mappings"`
+	DesignSystemID         string          `json:"design_system_id,omitempty"`
+	DesignSystemStatus     string          `json:"design_system_status,omitempty"`
+	DesignSystemVersion    string          `json:"design_system_version,omitempty"`
+	DesignSystemTokens     int             `json:"design_system_tokens"`
+	DesignSystemComponents int             `json:"design_system_components"`
+	DesignSystemPatterns   int             `json:"design_system_patterns"`
 }
 
 func BuildDashboard(root, id string) (WorkflowDashboard, error) {
@@ -94,6 +102,14 @@ func BuildDashboard(root, id string) (WorkflowDashboard, error) {
 	d.ActiveLeases = dashboardLeases(root)
 	d.LatestCheckpoint = latestRuntimeFile(workspaceDir(root, id), "checkpoints")
 	d.LatestHandoff = latestRuntimeFile(workspaceDir(root, id), "handoffs")
+	if system, err := designsystem.Inspect(root); err == nil {
+		d.DesignSystemID = system.ID
+		d.DesignSystemStatus = system.Status
+		d.DesignSystemVersion = system.Version
+		d.DesignSystemTokens = system.Tokens
+		d.DesignSystemComponents = system.Components
+		d.DesignSystemPatterns = system.Patterns
+	}
 	return d, nil
 }
 func resolveDashboardUseCase(root string, w Workspace) string {

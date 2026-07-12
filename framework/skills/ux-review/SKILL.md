@@ -26,10 +26,11 @@ UX review verdict; coverage and fidelity findings; accessibility and responsive 
 ## Workflow
 1. Verify source identity, authority, version, and availability.
 2. Verify every applicable REQ/AC is mapped to screens and states.
-3. Review hierarchy, clarity, navigation, content, loading, empty, success, error, disabled, and permission states.
-4. Review keyboard access, labels/roles, contrast, touch targets, reduced motion, and responsive coverage.
-5. For strict fidelity, compare targets against the canonical source and classify deviations.
-6. Return `approved`, `approved_with_notes`, or `blocked`; do not edit Design or approval records.
+3. Verify the pinned Design System version, tokens, components, patterns, and deviations when a system is declared.
+4. Review hierarchy, clarity, navigation, content, loading, empty, success, error, disabled, and permission states.
+5. Review keyboard access, labels/roles, contrast, touch targets, reduced motion, and responsive coverage.
+6. For strict fidelity, compare targets against the canonical source and classify deviations.
+7. Return `approved`, `approved_with_notes`, or `blocked`; do not edit Design or approval records.
 
 ## Blocking findings
 - Required behavior or state is missing or conflicts with the Specification.
