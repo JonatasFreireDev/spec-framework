@@ -23,6 +23,8 @@ Do not write framework-method decisions into `product/knowledge/decisions/`.
 
 Use `.product/workspaces/WORK-NNN/` for concurrent feature focus and resume from `state.json`, the latest checkpoint, and the latest handoff; never invent a global active feature. A legacy `WORK-NNN.json` is read-only compatible until explicit runtime migration. Before implementation, require modular specification contracts by rigor, approved Design, Technical Discovery, a resolved Architecture Gate, configured gates, graph/tasks, and an active lease when graph runtime is used. `implemented` uses working-tree evidence and diff hash; commit only after Code Review and task QA approve that same hash, then require Integrated QA after combining task commits.
 
+When the product declares `product/design/system/`, use the Design System skill for shared foundations, tokens, components, patterns, versions, and sources. UX/UI owns use-case Design and must pin the approved Design System version before proposed-or-later use. External visual tools are optional adapters; their installation, output, and availability never grant product approval or replace framework contracts.
+
 ## Required Reading
 
 Before creating or updating framework-governed work:
@@ -40,6 +42,8 @@ The active product root is `product/`.
 When a skill mentions product-relative paths such as `knowledge/conventions/gates.md`, `.product/decisions.json`, `domains/`, `audits/`, or `releases/`, resolve them under `product/`.
 
 When a skill mentions framework-relative paths such as `FRAMEWORK.md`, `templates/`, `skills/`, or framework decisions, resolve them under `.spec-framework/`. Run executable operations through the installed `spec-framework` CLI.
+
+Use `spec-framework guide` or `dashboard` when routing is unclear. Use `spec-framework adapters` for supervised optional-adapter discovery or installation; never install an external adapter silently.
 
 ## Gates
 
