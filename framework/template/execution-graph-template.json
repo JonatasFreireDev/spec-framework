@@ -1,6 +1,6 @@
 {
   "id": "GRAPH-XXX",
-  "status": "draft",
+  "status": "draft|proposed|materialized|approved",
   "sourceSpecification": "SPEC-XXX",
   "sourceDesign": "DESIGN-XXX|Not applicable",
   "sourceImplementationPlan": "PLAN-XXX",
@@ -18,6 +18,9 @@
       "ownerSkill": "code-runner|documentation-writer|qa|security-review",
       "dependsOn": [],
       "sourceSections": ["Specification > Data Contract"],
+      "requirements": ["REQ-001"],
+      "acceptanceCriteria": ["AC-001"],
+      "plannedTests": ["TEST-001 or explicit evidence method"],
       "delivery": {
         "level": "L1",
         "priority": "P0"

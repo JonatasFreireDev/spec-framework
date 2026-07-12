@@ -100,5 +100,6 @@
 | Field | Value |
 | --- | --- |
 | Ready for implementation | `[yes/no; requires configured gates]` |
+| Readiness command | `spec-framework task readiness --graph ../execution-graph.json --task [TK-XXX-001]` |
 | Required next skill | `[skill]` |
 | Notes | `[handoff notes]` |

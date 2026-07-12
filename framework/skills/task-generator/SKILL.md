@@ -11,6 +11,8 @@ Planning
 ## Responsibility
 Generate small, executable, testable tasks from the execution graph and source specification.
 
+Task Generator materializes exactly the nodes of a reviewed proposed graph. It does not invent additional tasks during materialization and never overwrites an existing canonical task.
+
 ## Operating modes
 - create: produce the first version of the artifact.
 - update: revise an existing artifact while preserving approved decisions.
@@ -35,9 +37,9 @@ tasks.md; task files or task records with Delivery Level/Priority; acceptance ch
 3. For every graph node, declare concrete `writeScope` paths/modules and `sharedResources` when generated files, indexes, locales, local database state, schema, contracts, or other shared assets are touched.
 4. Guarantee safe parallelism by construction: nodes with no dependency path between them must have disjoint `writeScope` values and must not share the same `sharedResources`.
 5. When scopes or shared resources overlap, choose exactly one: split the scopes, merge the tasks, add a dependency to serialize the work, or assign the shared resource to a single node.
-6. Propose the artifact or revision using the matching template.
+6. Materialize the proposed graph atomically into `tasks/*.md` and generated `tasks.md`, changing graph status to `materialized`.
 7. Record decision candidates for high-impact or hard-to-reverse choices.
-8. Ask for approval before moving the artifact to the next ladder step.
+8. Ask for approval of the validated Graph + Tasks set before moving either to the next ladder step.
 9. Update context.md with new links, dependencies, questions, and status changes.
 10. Map every task to concrete `REQ-*` and `AC-*` identifiers and at least one planned `TEST-*` or explicit non-test evidence method.
 

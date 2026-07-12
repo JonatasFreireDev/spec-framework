@@ -19,6 +19,18 @@
       "type": "implementation",
       "status": "pending",
       "dependsOn": [],
+      "sourceSections": [
+        "Specification > Behavior"
+      ],
+      "requirements": [
+        "REQ-001"
+      ],
+      "acceptanceCriteria": [
+        "AC-001"
+      ],
+      "plannedTests": [
+        "TEST-001"
+      ],
       "writeScope": [
         "src/template-use-case"
       ],

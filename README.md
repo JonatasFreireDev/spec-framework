@@ -54,6 +54,10 @@ spec-framework gates
 
 # Operate an approved execution graph without automatically running agents
 spec-framework graph ready --graph domains/events/goals/manage/features/invites/use-cases/send/execution-graph.json
+spec-framework graph materialize --graph domains/events/goals/manage/features/invites/use-cases/send/execution-graph.json --yes
+spec-framework task readiness --graph domains/events/goals/manage/features/invites/use-cases/send/execution-graph.json --task TK-001
+spec-framework guide --work WORK-001
+spec-framework review --work WORK-001 --stage tasks
 
 # Resume, lease, schedule, and execute governed local commands
 spec-framework resume --work WORK-001

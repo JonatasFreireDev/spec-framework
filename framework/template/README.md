@@ -22,6 +22,8 @@ Use these templates whenever a new canonical artifact is created or an existing 
 - `decision-template.md`, `approval-record-template.json`, `derivation-record-template.json`, `release-template.md`: human approval, derivation, decision, and release artifacts.
 - `domain-evolution-template.md`: opportunity mapping, candidate comparison, slicing, and explicit feature selection.
 - `technical-discovery-template.md`: requirement-to-codebase mapping and Architecture Gate.
+- `execution-graph-template.json`: proposed DAG contract; task paths become mandatory after atomic materialization.
+- `task-template.md`: canonical task contract and readiness handoff.
 - `specification-contract-template.md`: reusable structure for modular product, behavior, UX, API, data, security, quality, observability, and rollout contracts.
 
 ## Responsible Skill

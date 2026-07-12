@@ -31,6 +31,9 @@ execution-graph.json; ordered DAG; Delivery Level/Priority on graph and nodes; p
 
 ## Workflow
 1. Read the parent context and confirm the artifact status.
+2. Create the graph as `draft`, validate its DAG and contracts, then move it to `proposed` for human review without requiring task files to exist.
+3. After review, use confirmed graph materialization to create canonical task files and `tasks.md`; never create them ad hoc or overwrite existing tasks.
+4. Require Graph + Tasks validation before the graph advances from `materialized` to `approved`.
 2. Identify missing information, assumptions, conflicts, and dependencies.
 3. Propose the artifact or revision using the matching template.
 4. Record decision candidates for high-impact or hard-to-reverse choices.
@@ -47,6 +50,6 @@ execution-graph.json; ordered DAG; Delivery Level/Priority on graph and nodes; p
 - [ ] Leaves a clear handoff for the next skill.
 
 ## Handoff
-Next: task-generator.
+Next: task-generator through confirmed graph materialization.
 
 Pass forward approved artifacts, open questions, decisions, dependencies, risks, and any remaining audit findings.

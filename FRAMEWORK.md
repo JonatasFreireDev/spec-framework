@@ -807,6 +807,11 @@ spec-framework status --work WORK-001
 spec-framework next --work WORK-001
 spec-framework approve --artifact <path> --grant approved --approved-by <human> --yes
 spec-framework gates
+spec-framework guide --work WORK-001
+spec-framework graph materialize --graph <execution-graph.json> --yes
+spec-framework task readiness --graph <execution-graph.json> --task TK-001 [--json]
+spec-framework review --work WORK-001 --stage <stage>
+spec-framework approve-stage --work WORK-001 --stage <stage> --approved-by <human> --yes
 ```
 
 Recommended prompt for the architecture phase:
