@@ -10,17 +10,17 @@ import (
 )
 
 type DecisionImpact struct {
-	ID                                                             string `json:"id"`
-	Type                                                           string `json:"type"`
-	Status                                                         string `json:"status"`
-	Path                                                           string `json:"path"`
-	Valid                                                          bool   `json:"valid"`
-	AffectedArtifacts []string `json:"affected_artifacts,omitempty"`
-	References []string `json:"references,omitempty"`
-	StaleArtifacts []string `json:"stale_artifacts,omitempty"`
-	PropagationGaps []string `json:"propagation_gaps,omitempty"`
-	WorkflowEffects                                                map[string]any `json:"workflow_effects,omitempty"`
-	Blockers                                                       []string       `json:"blockers,omitempty"`
+	ID                string         `json:"id"`
+	Type              string         `json:"type"`
+	Status            string         `json:"status"`
+	Path              string         `json:"path"`
+	Valid             bool           `json:"valid"`
+	AffectedArtifacts []string       `json:"affected_artifacts,omitempty"`
+	References        []string       `json:"references,omitempty"`
+	StaleArtifacts    []string       `json:"stale_artifacts,omitempty"`
+	PropagationGaps   []string       `json:"propagation_gaps,omitempty"`
+	WorkflowEffects   map[string]any `json:"workflow_effects,omitempty"`
+	Blockers          []string       `json:"blockers,omitempty"`
 }
 
 func DecisionImpactReport(root, id string) (DecisionImpact, error) {
@@ -39,7 +39,22 @@ func DecisionImpactReport(root, id string) (DecisionImpact, error) {
 	if d == nil {
 		return DecisionImpact{}, fmt.Errorf("decision %s is not indexed", id)
 	}
-	decisionType := fmt.Sprint(d["type"]); if decisionType == "<nil>" || decisionType == "" { scope:=fmt.Sprint(d["scope"]); switch { case strings.Contains(scope,"architecture"): decisionType="architecture"; case strings.Contains(scope,"security"): decisionType="security"; case strings.Contains(scope,"data"): decisionType="data"; case strings.Contains(scope,"release")||strings.Contains(scope,"delivery"):decisionType="delivery"; default:decisionType="product" } }
+	decisionType := fmt.Sprint(d["type"])
+	if decisionType == "<nil>" || decisionType == "" {
+		scope := fmt.Sprint(d["scope"])
+		switch {
+		case strings.Contains(scope, "architecture"):
+			decisionType = "architecture"
+		case strings.Contains(scope, "security"):
+			decisionType = "security"
+		case strings.Contains(scope, "data"):
+			decisionType = "data"
+		case strings.Contains(scope, "release") || strings.Contains(scope, "delivery"):
+			decisionType = "delivery"
+		default:
+			decisionType = "product"
+		}
+	}
 	r := DecisionImpact{ID: id, Type: decisionType, Status: fmt.Sprint(d["status"]), Path: filepath.ToSlash(fmt.Sprint(d["path"])), WorkflowEffects: map[string]any{}}
 	r.AffectedArtifacts = stringAnySlice(d["affectedArtifacts"])
 	if x, ok := d["workflowEffects"].(map[string]any); ok {
