@@ -9,6 +9,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"regexp"
 	"sort"
 	"strings"
 	"time"
@@ -234,6 +235,9 @@ func CreateTaskWorktree(repoRoot, work, task string) (string, error) {
 }
 
 func CreateCommandPlan(root, work, task, cwd, source, risk string, argv []string, timeout int) (CommandPlan, error) {
+	if regexp.MustCompile(`(?i)^DEC-\d+$`).MatchString(strings.TrimSpace(source)) {
+		return CommandPlan{}, fmt.Errorf("decision text is not an executable command source; use a validated gate")
+	}
 	risk = strings.ToUpper(risk)
 	if risk != "R0" && risk != "R1" {
 		return CommandPlan{}, fmt.Errorf("risk %s is disabled", risk)

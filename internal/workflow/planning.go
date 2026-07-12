@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"regexp"
 	"sort"
 	"strings"
 	"time"
@@ -137,7 +138,7 @@ func renderTask(graph, node map[string]any) string {
 		return strings.Join(x, ", ")
 	}
 	delivery, _ := node["delivery"].(map[string]any)
-	return fmt.Sprintf("# Task: %s\n\n## Snapshot\n\n| Field | Value |\n| --- | --- |\n| ID | `%s` |\n| Status | `draft` |\n| Source graph | `%s` |\n| Source specification | `%s` |\n| Source node | `%s` |\n| Owner skill | `%s` |\n| Next skill | `code-runner` |\n\n## Delivery\n\n| Field | Value |\n| --- | --- |\n| Level | `%s` |\n| Priority | `%s` |\n| Depends on | `%s` |\n| Rationale | Inherited from the approved graph. |\n\n## Task Contract\n\n| Field | Value |\n| --- | --- |\n| Title | %s |\n| Type | `%s` |\n| Depends on | `%s` |\n| Source sections | `%s` |\n| Requirements | `%s` |\n| Acceptance criteria | `%s` |\n| Planned tests | `%s` |\n| Write scope | `%s` |\n| Shared resources | `%s` |\n| Graph node status | `%s` |\n\n## Objective\n\n%s\n\n## Acceptance Checks\n\n- %s\n\n## Blockers\n\n- None.\n\n## Handoff\n\n| Field | Value |\n| --- | --- |\n| Ready for implementation | `no; requires approval and readiness check` |\n| Required next skill | `code-runner` |\n| Notes | Materialized from the proposed execution graph. |\n", title, id, graph["id"], graph["sourceSpecification"], id, node["ownerSkill"], delivery["level"], delivery["priority"], list(node["dependsOn"]), title, node["type"], list(node["dependsOn"]), list(node["sourceSections"]), list(node["requirements"]), list(node["acceptanceCriteria"]), list(node["plannedTests"]), list(node["writeScope"]), list(node["sharedResources"]), node["status"], title, list(node["acceptanceChecks"]))
+	return fmt.Sprintf("# Task: %s\n\n## Snapshot\n\n| Field | Value |\n| --- | --- |\n| ID | `%s` |\n| Status | `draft` |\n| Source graph | `%s` |\n| Source specification | `%s` |\n| Source node | `%s` |\n| Owner skill | `%s` |\n| Next skill | `code-runner` |\n\n## Delivery\n\n| Field | Value |\n| --- | --- |\n| Level | `%s` |\n| Priority | `%s` |\n| Depends on | `%s` |\n| Rationale | Inherited from the approved graph. |\n\n## Task Contract\n\n| Field | Value |\n| --- | --- |\n| Title | %s |\n| Type | `%s` |\n| Depends on | `%s` |\n| Source sections | `%s` |\n| Requirements | `%s` |\n| Acceptance criteria | `%s` |\n| Planned tests | `%s` |\n| Applicable decisions | `%s` |\n| Write scope | `%s` |\n| Shared resources | `%s` |\n| Graph node status | `%s` |\n\n## Objective\n\n%s\n\n## Acceptance Checks\n\n- %s\n\n## Blockers\n\n- None.\n\n## Handoff\n\n| Field | Value |\n| --- | --- |\n| Ready for implementation | `no; requires approval and readiness check` |\n| Required next skill | `code-runner` |\n| Notes | Materialized from the proposed execution graph. |\n", title, id, graph["id"], graph["sourceSpecification"], id, node["ownerSkill"], delivery["level"], delivery["priority"], list(node["dependsOn"]), title, node["type"], list(node["dependsOn"]), list(node["sourceSections"]), list(node["requirements"]), list(node["acceptanceCriteria"]), list(node["plannedTests"]), list(node["decisions"]), list(node["writeScope"]), list(node["sharedResources"]), node["status"], title, list(node["acceptanceChecks"]))
 }
 func renderTaskIndex(graph map[string]any, nodes []any) string {
 	var b strings.Builder
@@ -194,6 +195,51 @@ func CheckTaskReadiness(root, graphPath, taskID string) (TaskReadiness, error) {
 	add("write-scope", len(n.WriteScope) > 0, "writeScope is required")
 	trace := strings.Contains(text, "REQ-") && strings.Contains(text, "AC-") && (strings.Contains(text, "TEST-") || strings.Contains(strings.ToLower(text), "evidence"))
 	add("traceability", trace, "REQ, AC, and TEST/evidence are required")
+	graphBytes, _ := os.ReadFile(graphPath)
+	decisionIDs := uniqueDecisionIDs(text + "\n" + string(graphBytes))
+	for _, decision := range decisionEffectsFor(root, decisionIDs) {
+		id := fmt.Sprint(decision["id"])
+		effects, _ := decision["workflowEffects"].(map[string]any)
+		for _, required := range stringAnySlice(effects["requiredTaskTypes"]) {
+			found := false
+			for _, x := range g.Nodes {
+				if x.Type == required {
+					found = true
+				}
+			}
+			add("decision-"+id+"-task-type-"+required, found, "graph must cover required task type")
+		}
+		for _, required := range stringAnySlice(effects["requiredWriteScopes"]) {
+			found := false
+			for _, x := range g.Nodes {
+				for _, scope := range x.WriteScope {
+					if scope == required || strings.HasPrefix(scope, strings.TrimSuffix(required, "/")+"/") {
+						found = true
+					}
+				}
+			}
+			add("decision-"+id+"-write-scope", found, "graph must cover "+required)
+		}
+		for _, required := range stringAnySlice(effects["sharedResources"]) {
+			found := false
+			for _, x := range g.Nodes {
+				for _, resource := range x.SharedResources {
+					if resource == required {
+						found = true
+					}
+				}
+			}
+			add("decision-"+id+"-resource", found, "graph must declare shared resource "+required)
+		}
+		gatesText, _ := os.ReadFile(filepath.Join(root, "knowledge", "conventions", "gates.md"))
+		for _, required := range stringAnySlice(effects["requiredGates"]) {
+			configured := strings.Contains(string(gatesText), required) && !lineForIDContains(string(gatesText), required, "TBD")
+			add("decision-"+id+"-gate-"+required, configured, "required gate must be configured")
+		}
+		for _, required := range stringAnySlice(effects["requiredEvidence"]) {
+			add("decision-"+id+"-evidence", strings.Contains(strings.ToLower(text), strings.ToLower(required)), "task must declare evidence "+required)
+		}
+	}
 	missing, e := GateReadiness(root)
 	add("technical-gates", e == nil && len(missing) == 0, "all product gates must be configured")
 	if _, e = os.Stat(leasePath(root, taskID)); e == nil {
@@ -202,6 +248,27 @@ func CheckTaskReadiness(root, graphPath, taskID string) (TaskReadiness, error) {
 		add("lease", true, "lease available")
 	}
 	return r, nil
+}
+func uniqueDecisionIDs(text string) []string {
+	re := regexp.MustCompile(`\bDEC-\d+\b`)
+	seen := map[string]bool{}
+	var out []string
+	for _, x := range re.FindAllString(text, -1) {
+		if !seen[x] {
+			seen[x] = true
+			out = append(out, x)
+		}
+	}
+	sort.Strings(out)
+	return out
+}
+func lineForIDContains(text, id, needle string) bool {
+	for _, line := range strings.Split(text, "\n") {
+		if strings.Contains(line, id) && strings.Contains(strings.ToUpper(line), strings.ToUpper(needle)) {
+			return true
+		}
+	}
+	return false
 }
 
 func hasCurrentApproval(root, artifactPath, status string) bool {

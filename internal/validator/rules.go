@@ -722,6 +722,15 @@ func validateDecisions(s Snapshot) []Diagnostic {
 	}
 	raw, _ := index["decisions"].([]any)
 	known := map[string]map[string]any{}
+	records := map[string][]map[string]any{}
+	for path, value := range s.JSON {
+		if strings.HasPrefix(path, ".product/history/approval-") {
+			if rec, ok := value.(map[string]any); ok {
+				id, _ := rec["artifact_id"].(string)
+				records[id] = append(records[id], rec)
+			}
+		}
+	}
 	var out []Diagnostic
 	for _, item := range raw {
 		d, ok := item.(map[string]any)
@@ -743,6 +752,42 @@ func validateDecisions(s Snapshot) []Diagnostic {
 		} else if _, exists := s.Text[filepath.ToSlash(path)]; !exists {
 			out = append(out, Diagnostic{Error, "decisions-index", path, id + " decision path does not exist.", "Create the decision or fix its path."})
 		}
+		decisionType, _ := d["type"].(string)
+		if decisionType == "" {
+			if scope, _ := d["scope"].(string); strings.Contains(scope, "architecture") {
+				decisionType = "architecture"
+			}
+		}
+		if decisionType != "" && !map[string]bool{"product": true, "architecture": true, "security": true, "data": true, "delivery": true}[decisionType] {
+			out = append(out, Diagnostic{Error, "decisions-index", ".product/decisions.json", id + " has unsupported type " + decisionType + ".", "Use a canonical decision type."})
+		}
+		status, _ := d["status"].(string)
+		if status == "approved" && path != "" {
+			text := s.Text[filepath.ToSlash(path)]
+			matched := false
+			for _, rec := range records[id] {
+				if rec["path"] == path && rec["status_granted"] == "approved" && rec["content_hash"] == Hash(text) {
+					matched = true
+				}
+			}
+			if !matched {
+				out = append(out, Diagnostic{Error, "decision-approval", path, id + " is approved but has no current hash-matching approval record.", "Re-approve the current decision through the human approval flow."})
+			}
+		}
+		if effects, exists := d["workflowEffects"]; exists {
+			obj, ok := effects.(map[string]any)
+			if !ok {
+				out = append(out, Diagnostic{Error, "decision-effects", ".product/decisions.json", id + " workflowEffects must be an object.", "Use structured effect arrays."})
+			} else {
+				for _, field := range []string{"requiredTaskTypes", "requiredGates", "requiredEvidence", "requiredWriteScopes", "sharedResources"} {
+					if v, present := obj[field]; present {
+						if _, ok := v.([]any); !ok {
+							out = append(out, Diagnostic{Error, "decision-effects", ".product/decisions.json", id + " " + field + " must be an array.", "Use an array, including [] when empty."})
+						}
+					}
+				}
+			}
+		}
 	}
 	decisionRef := regexp.MustCompile(`\bDEC-\d+\b`)
 	for path, text := range s.Text {
@@ -753,9 +798,36 @@ func validateDecisions(s Snapshot) []Diagnostic {
 			if known[id] == nil {
 				out = append(out, Diagnostic{Error, "decision-references", path, "Unknown decision reference: " + id, "Add it to .product/decisions.json or fix the reference."})
 			}
+			if strings.HasSuffix(path, "/technical-discovery.md") {
+				d := known[id]
+				if d != nil && firstString(d["status"], "") != "approved" {
+					out = append(out, Diagnostic{Error, "architecture-gate", path, id + " is not approved.", "Approve the decision before advancing Technical Discovery."})
+				}
+				if d != nil && !decisionApplies(d, path) {
+					out = append(out, Diagnostic{Error, "decision-scope", path, id + " does not apply to this use-case scope.", "Add the affected path to decision scope/affectedArtifacts or reference the correct decision."})
+				}
+			}
 		}
 	}
 	return dedupeDiagnostics(out)
+}
+func decisionApplies(d map[string]any, path string) bool {
+	var scopes []string
+	scopes = append(scopes, stringSlice(d["scope"])...)
+	if s, ok := d["scope"].(string); ok {
+		scopes = append(scopes, strings.Split(s, "/")...)
+	}
+	scopes = append(scopes, stringSlice(d["affectedArtifacts"])...)
+	if len(scopes) == 0 {
+		return false
+	}
+	for _, s := range scopes {
+		s = filepath.ToSlash(strings.TrimSpace(s))
+		if s == "product" || s == "architecture" || s == "security" || s == "data" || s == "delivery" || strings.HasPrefix(path, strings.TrimSuffix(s, "/")) || strings.HasPrefix(s, filepath.ToSlash(filepath.Dir(path))) {
+			return true
+		}
+	}
+	return false
 }
 func dedupeDiagnostics(items []Diagnostic) []Diagnostic {
 	seen := map[string]bool{}

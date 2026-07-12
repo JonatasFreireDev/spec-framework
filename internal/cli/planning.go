@@ -129,3 +129,48 @@ func runStage(command string, args []string, out, errout io.Writer) int {
 	fmt.Fprintf(out, "APPROVED %d artifacts\n", len(records))
 	return 0
 }
+
+func runImpact(args []string, out, errout io.Writer) int {
+	fs := flag.NewFlagSet("impact", flag.ContinueOnError)
+	fs.SetOutput(errout)
+	root := fs.String("product-root", "product", "product root")
+	decision := fs.String("decision", "", "decision id")
+	asJSON := fs.Bool("json", false, "JSON output")
+	if e := fs.Parse(args); e != nil {
+		return 2
+	}
+	if *decision == "" {
+		fmt.Fprintln(errout, "impact requires --decision DEC-NNN")
+		return 2
+	}
+	r, e := workflow.DecisionImpactReport(productPath(*root), *decision)
+	if e != nil {
+		fmt.Fprintln(errout, e)
+		return 1
+	}
+	if *asJSON {
+		b, _ := json.MarshalIndent(r, "", "  ")
+		fmt.Fprintln(out, string(b))
+	} else {
+		fmt.Fprintf(out, "Decision: %s\nType: %s\nStatus: %s\nValid: %t\n", r.ID, r.Type, r.Status, r.Valid)
+		for _, x := range r.AffectedArtifacts {
+			fmt.Fprintln(out, "AFFECTS", x)
+		}
+		for _, x := range r.References {
+			fmt.Fprintln(out, "REFERENCED", x)
+		}
+		for _, x := range r.StaleArtifacts {
+			fmt.Fprintln(out, "STALE", x)
+		}
+		for _, x := range r.PropagationGaps {
+			fmt.Fprintln(out, "MISSING", x)
+		}
+		for _, x := range r.Blockers {
+			fmt.Fprintln(out, "BLOCKED", x)
+		}
+	}
+	if !r.Valid {
+		return 1
+	}
+	return 0
+}

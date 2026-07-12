@@ -64,6 +64,8 @@ func (app App) Run(args []string, stdout, stderr io.Writer) int {
 		return runGuide(args[1:], stdout, stderr)
 	case "review", "approve-stage":
 		return runStage(args[0], args[1:], stdout, stderr)
+	case "impact":
+		return runImpact(args[1:], stdout, stderr)
 	case "resume", "handoff", "checkpoint", "lease", "commands", "schedule", "integrate", "runtime":
 		return runRuntime(args[0], args[1:], stdout, stderr)
 	default:
@@ -589,6 +591,7 @@ Commands:
   guide      Explain the current workspace gate and next action.
   review     Preview a workspace stage approval.
   approve-stage Approve every eligible artifact in a stage atomically.
+  impact     Inspect a decision's validity, propagation, effects, and staleness.
   resume     Resume a persisted runtime workspace.
   handoff    Persist an agent/orchestrator handoff.
   checkpoint Persist a resumable checkpoint.

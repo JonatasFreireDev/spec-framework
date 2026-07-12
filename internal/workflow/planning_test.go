@@ -84,3 +84,28 @@ func TestApproveStageUsesIndividualApprovalRecords(t *testing.T) {
 		t.Fatalf("%+v", records)
 	}
 }
+
+func TestReadinessEnforcesDecisionEffects(t *testing.T) {
+	root := t.TempDir()
+	_ = os.MkdirAll(filepath.Join(root, ".product"), 0755)
+	_ = os.MkdirAll(filepath.Join(root, "knowledge", "conventions"), 0755)
+	_ = os.WriteFile(filepath.Join(root, "knowledge", "conventions", "gates.md"), []byte("| `GATE-BASE` | `go test` | |\n"), 0644)
+	_ = writeJSON(filepath.Join(root, ".product", "decisions.json"), map[string]any{"decisions": []any{map[string]any{"id": "DEC-010", "status": "approved", "workflowEffects": map[string]any{"requiredGates": []any{"GATE-DECISION"}}}}})
+	graph := filepath.Join(root, "execution-graph.json")
+	_ = writeJSON(graph, map[string]any{"id": "G", "status": "approved", "nodes": []any{map[string]any{"id": "TK-1", "path": "tasks/TK-1.md", "type": "backend", "status": "pending", "dependsOn": []any{}, "writeScope": []any{"src"}, "sharedResources": []any{}}}})
+	_ = os.MkdirAll(filepath.Join(root, "tasks"), 0755)
+	_ = os.WriteFile(filepath.Join(root, "tasks", "TK-1.md"), []byte("| Status | `draft` |\nREQ-001 AC-001 TEST-001 DEC-010\n"), 0644)
+	r, err := CheckTaskReadiness(root, graph, "TK-1")
+	if err != nil {
+		t.Fatal(err)
+	}
+	found := false
+	for _, c := range r.Checks {
+		if c.ID == "decision-DEC-010-gate-GATE-DECISION" && c.Status == "block" {
+			found = true
+		}
+	}
+	if !found {
+		t.Fatalf("missing decision effect check: %+v", r.Checks)
+	}
+}

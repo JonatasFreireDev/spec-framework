@@ -479,6 +479,7 @@ type Graph struct {
 }
 type Node struct {
 	ID              string   `json:"id"`
+	Type            string   `json:"type"`
 	Path            string   `json:"path"`
 	DependsOn       []string `json:"dependsOn"`
 	Status          string   `json:"status"`
