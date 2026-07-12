@@ -815,6 +815,9 @@ spec-framework task readiness --graph <execution-graph.json> --task TK-001 [--js
 spec-framework review --work WORK-001 --stage <stage>
 spec-framework approve-stage --work WORK-001 --stage <stage> --approved-by <human> --yes
 spec-framework impact --decision DEC-021 [--json]
+spec-framework dashboard --work WORK-001 [--json]
+spec-framework status --work WORK-001 --graph [--json]
+spec-framework decisions migrate [--dry-run | --interactive | --yes]
 ```
 
 Recommended prompt for the architecture phase:

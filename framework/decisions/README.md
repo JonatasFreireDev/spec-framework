@@ -29,6 +29,7 @@ Product decisions do not live here. Product decisions continue to live in `knowl
 | [FDR-017](FDR-017-resumable-parallel-runtime.md) | Resumable parallel runtime | approved | Governance baseline |
 | [FDR-018](FDR-018-feature-to-task-operational-closure.md) | Feature-to-Task operational closure | approved | Governance baseline |
 | [FDR-019](FDR-019-executable-product-decision-effects.md) | Executable product decision effects | approved | Governance baseline |
+| [FDR-020](FDR-020-consolidated-cli-and-guided-migrations.md) | Consolidated CLI and guided migrations | approved | Governance baseline |
 
 ## Rule
 
