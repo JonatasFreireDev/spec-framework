@@ -30,7 +30,7 @@ When a skill mentions a product-relative path such as `knowledge/conventions/gat
 
 Runtime v2 also includes the `command-planner` and `command-executor` operational skills. The planner owns immutable argv-based plans; the executor is restricted to local R0/R1 plans.
 
-Use `framework-guide` as the conversational entry point when the person does not know which command, workspace, artifact owner, or gate applies. It must read CLI state first and route runtime execution back through Command Planner and Command Executor.
+Use `framework-guide` as the conversational entry point when the person does not know which command, workspace, artifact owner, or gate applies. It activates product operations only from a valid `product/.product/framework.json`, routes bootstrap/init before activation when explicitly requested, resolves pinned specialist contracts with `spec-framework skill path`, reads CLI state first, and routes governed runtime execution back through Command Planner and Command Executor.
 
 Delivery Orchestrator reports through the consolidated dashboard model. Product Historian owns review of guided legacy decision migration; the migration tool only updates `.product/decisions.json` metadata and never edits DEC content or approvals.
 
