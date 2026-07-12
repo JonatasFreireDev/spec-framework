@@ -9,6 +9,7 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/JonatasFreireDev/spec-framework/internal/design"
 	"github.com/JonatasFreireDev/spec-framework/internal/install"
 	"github.com/JonatasFreireDev/spec-framework/internal/moveartifact"
 	"github.com/JonatasFreireDev/spec-framework/internal/sourceimport"
@@ -48,6 +49,8 @@ func (app App) Run(args []string, stdout, stderr io.Writer) int {
 		return runValidate(args[1:], stdout, stderr)
 	case "import":
 		return runImport(args[1:], stdout, stderr)
+	case "design":
+		return runDesign(args[1:], stdout, stderr)
 	case "work":
 		return runWork(args[1:], stdout, stderr)
 	case "status", "next":
@@ -590,6 +593,7 @@ func writeHelp(output io.Writer) {
 Commands:
   init       Initialize a product repository.
   import     Materialize approved source mappings as drafts.
+  design     Initialize, import, inspect, map, verify, migrate, or audit Design assets.
   work       Select a feature and create a concurrent workspace.
   status     Show workspace readiness and blockers.
   next       Show the next skill for a workspace.
