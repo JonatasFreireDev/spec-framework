@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"os"
 	"strings"
 
 	tea "charm.land/bubbletea/v2"
@@ -186,14 +187,10 @@ func RunInit(input io.Reader, output io.Writer) (Result, error) {
 				Value(&startingPoint),
 		),
 		huh.NewGroup(
-			huh.NewInput().Title("Source paths (comma-separated; required for existing documents)").Value(&sources).
-				Validate(func(s string) error {
-					if startingPoint == "existing-documents" && strings.TrimSpace(s) == "" {
-						return errors.New("at least one source path is required")
-					}
-					return nil
-				}),
-		),
+			huh.NewInput().Title("Source paths (comma-separated; required for existing documents)").Value(&sources),
+		).WithHideFunc(func() bool {
+			return !showSourcePaths(startingPoint)
+		}),
 		huh.NewGroup(
 			huh.NewConfirm().
 				Title("Install the optional Impeccable design adapter?").
@@ -232,12 +229,15 @@ func RunInit(input io.Reader, output io.Writer) (Result, error) {
 				Title("Apply this installation plan?").
 				Affirmative("Yes").
 				Negative("No").
-				Value(&confirmed),
+				Value(&confirmed).
+				Validate(func(bool) error {
+					return validateSources(startingPoint, sources)
+				}),
 		),
 	)
 
 	model := initModel{form: form, selected: &selected, target: &target, startingPoint: &startingPoint, sources: &sources, installImpeccable: &installImpeccable, impeccableVersion: &impeccableVersion, confirmed: &confirmed}
-	final, err := tea.NewProgram(model, tea.WithInput(input), tea.WithOutput(output)).Run()
+	final, err := tea.NewProgram(model, programOptions(input, output)...).Run()
 	if err != nil {
 		return Result{}, fmt.Errorf("init wizard: %w", err)
 	}
@@ -259,6 +259,27 @@ func RunInit(input io.Reader, output io.Writer) (Result, error) {
 		Confirmed:         confirmed,
 		Cancelled:         !confirmed,
 	}, nil
+}
+
+func validateSources(startingPoint, sources string) error {
+	if showSourcePaths(startingPoint) && strings.TrimSpace(sources) == "" {
+		return errors.New("at least one source path is required for existing documents")
+	}
+	return nil
+}
+
+func showSourcePaths(startingPoint string) bool {
+	return startingPoint == "existing-documents"
+}
+
+func programOptions(input io.Reader, output io.Writer) []tea.ProgramOption {
+	options := []tea.ProgramOption{tea.WithOutput(output)}
+	// Let Bubble Tea manage the process stdin so it can fall back to /dev/tty
+	// when a Unix launcher redirects stdin. Injected readers still support tests.
+	if input != os.Stdin {
+		options = append(options, tea.WithInput(input))
+	}
+	return options
 }
 
 func splitValues(value string) []string {

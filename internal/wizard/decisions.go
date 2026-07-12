@@ -45,7 +45,7 @@ func RunDecisionMigration(input io.Reader, output io.Writer, plan workflow.Decis
 	confirmed := true
 	groups = append(groups, huh.NewGroup(huh.NewConfirm().Title("Apply migration with backup?").Affirmative("Apply").Negative("Cancel").Value(&confirmed)))
 	form := huh.NewForm(groups...)
-	final, err := tea.NewProgram(migrationModel{form: form}, tea.WithInput(input), tea.WithOutput(output)).Run()
+	final, err := tea.NewProgram(migrationModel{form: form}, programOptions(input, output)...).Run()
 	if err != nil {
 		return nil, false, fmt.Errorf("decision migration wizard: %w", err)
 	}
