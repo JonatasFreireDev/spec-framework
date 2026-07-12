@@ -4,7 +4,7 @@
 
 This folder contains the product-owned Specification Driven Development tree.
 
-Framework method assets live in `../.spec-framework/`.
+Framework method assets are resolved from the versioned user cache using `.product/framework.json`.
 
 ## Product Flow
 

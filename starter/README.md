@@ -4,17 +4,14 @@
 
 This folder is the clean skeleton for a new product repository using Specification Driven Development.
 
-Copy the contents of this folder into a new product repository. The copied repository will contain:
+The CLI copies `starter/product/` into a new or existing product repository. The adopter repository receives:
 
 ```text
-.spec-framework/
-  # how to operate the framework
-
 product/
   # product-owned SDD tree
 ```
 
-Then install or copy the framework assets described in [../framework/adoption.md](../framework/adoption.md).
+Framework assets live in the versioned user cache and are resolved from `product/.product/framework.json`. Do not copy `.spec-framework/` or agent skill trees into the adopter repository.
 
 ## Included Product-Owned Areas
 
@@ -43,7 +40,7 @@ Then install or copy the framework assets described in [../framework/adoption.md
 
 ## Boundary Rule
 
-Do not put framework method decisions in `product/knowledge/decisions/`. Product decisions go there; framework decisions live under `.spec-framework/decisions/`.
+Do not put framework method decisions in `product/knowledge/decisions/`. Product decisions go there; framework decisions live in the pinned external runtime.
 
 ## Starter Templates
 

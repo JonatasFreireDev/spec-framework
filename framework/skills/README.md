@@ -14,7 +14,7 @@ Skills are written to work in both this framework repository and adopter reposit
 
 | Path kind | In this repository | In adopter repositories |
 | --- | --- | --- |
-| Framework method assets | `framework/skills/`, `framework/template/`, `framework/decisions/`, `framework/validators/`, `framework/tools/`, `framework/tests/` | `.spec-framework/` |
+| Framework method assets | `framework/skills/`, `framework/template/`, `framework/decisions/`, `framework/validators/`, `framework/tools/`, `framework/tests/` | Versioned external user cache resolved from `product/.product/framework.json` |
 | Active product artifacts | `examples/events/` | `product/` |
 | Product decisions and state | `examples/events/knowledge/decisions/`, `examples/events/.product/` | `product/knowledge/decisions/`, `product/.product/` |
 | Product gates and conventions | `examples/events/knowledge/conventions/` | `product/knowledge/conventions/` |

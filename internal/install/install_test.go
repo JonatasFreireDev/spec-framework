@@ -3,46 +3,45 @@ package install
 import (
 	"os"
 	"path/filepath"
-	"strings"
 	"testing"
 )
 
-func TestInitGeneratesSelectedAgentSkillTrees(t *testing.T) {
+func TestInitKeepsRuntimeAndDispatchersOutsideRepository(t *testing.T) {
+	t.Setenv("SPEC_FRAMEWORK_CACHE", filepath.Join(t.TempDir(), "cache"))
+	agentHome := filepath.Join(t.TempDir(), "agents")
+	t.Setenv("SPEC_FRAMEWORK_AGENT_HOME", agentHome)
 	target := filepath.Join(t.TempDir(), "product")
 	result, err := Init(Options{Target: target, Version: "test", Agents: []Agent{Codex, Cursor, Claude}})
 	if err != nil {
 		t.Fatal(err)
 	}
-	if result.SkillCount != 3 {
-		t.Fatalf("skill target count=%d", result.SkillCount)
+	if result.SkillCount != 0 {
+		t.Fatalf("repository-local skill target count=%d", result.SkillCount)
 	}
-	for _, file := range []string{".agents/skills/code-runner/SKILL.md", ".cursor/skills/code-runner/SKILL.md", ".claude/skills/code-runner/SKILL.md", ".spec-framework/manifest.json", ".spec-framework/delivery-closure.md", "product/.product/framework.json"} {
+	for _, file := range []string{"product/.product/framework.json", "product/BOOTSTRAP.md"} {
 		if _, err := os.Stat(filepath.Join(target, filepath.FromSlash(file))); err != nil {
 			t.Errorf("missing %s: %v", file, err)
 		}
 	}
-	for _, file := range []string{"README.md", "BOOTSTRAP.md"} {
-		data, err := os.ReadFile(filepath.Join(target, file))
-		if err != nil {
-			t.Fatalf("missing generated %s: %v", file, err)
-		}
-		if len(data) < 200 {
-			t.Fatalf("generated %s is unexpectedly empty", file)
+	for _, file := range []string{".spec-framework", ".agents", ".cursor", ".claude", ".github"} {
+		if _, err := os.Stat(filepath.Join(target, file)); !os.IsNotExist(err) {
+			t.Fatalf("repository was polluted with %s", file)
 		}
 	}
-	workflow, err := os.ReadFile(filepath.Join(target, ".github", "workflows", "framework-validation.yml"))
-	if err != nil {
-		t.Fatal(err)
-	}
-	if strings.Contains(string(workflow), "releases/download/vdev") {
-		t.Fatal("development workflow points to nonexistent vdev release")
-	}
-	if _, err := os.Stat(filepath.Join(target, ".claude", "skills", "threat-modeler", "agents", "openai.yaml")); !os.IsNotExist(err) {
-		t.Fatal("Codex metadata leaked into Claude skills")
+	for _, path := range []string{
+		filepath.Join(agentHome, ".codex", "skills", "spec-framework", "SKILL.md"),
+		filepath.Join(agentHome, ".cursor", "skills", "spec-framework", "SKILL.md"),
+		filepath.Join(agentHome, ".claude", "skills", "spec-framework", "SKILL.md"),
+	} {
+		if _, err := os.Stat(path); err != nil {
+			t.Fatal(err)
+		}
 	}
 }
 
 func TestInitFromExistingDocumentsCreatesImportRun(t *testing.T) {
+	t.Setenv("SPEC_FRAMEWORK_CACHE", filepath.Join(t.TempDir(), "cache"))
+	t.Setenv("SPEC_FRAMEWORK_AGENT_HOME", filepath.Join(t.TempDir(), "agents"))
 	target := filepath.Join(t.TempDir(), "product-repo")
 	source := filepath.Join(t.TempDir(), "epic.md")
 	if err := os.WriteFile(source, []byte("# Epic\n\nPayment and event features."), 0644); err != nil {
@@ -72,6 +71,8 @@ func TestParseStartingPoint(t *testing.T) {
 }
 
 func TestInstalledAgentsReadsManifestSelection(t *testing.T) {
+	t.Setenv("SPEC_FRAMEWORK_CACHE", filepath.Join(t.TempDir(), "cache"))
+	t.Setenv("SPEC_FRAMEWORK_AGENT_HOME", filepath.Join(t.TempDir(), "agents"))
 	target := filepath.Join(t.TempDir(), "product")
 	if _, err := Init(Options{Target: target, Agents: []Agent{Codex, Cursor, Claude}}); err != nil {
 		t.Fatal(err)
@@ -86,6 +87,8 @@ func TestInstalledAgentsReadsManifestSelection(t *testing.T) {
 }
 
 func TestUpgradePreservesProductContent(t *testing.T) {
+	t.Setenv("SPEC_FRAMEWORK_CACHE", filepath.Join(t.TempDir(), "cache"))
+	t.Setenv("SPEC_FRAMEWORK_AGENT_HOME", filepath.Join(t.TempDir(), "agents"))
 	target := filepath.Join(t.TempDir(), "product")
 	_, err := Init(Options{Target: target, Agents: []Agent{Codex}})
 	if err != nil {
@@ -103,7 +106,7 @@ func TestUpgradePreservesProductContent(t *testing.T) {
 		t.Fatal("product content changed")
 	}
 	readme := filepath.Join(target, "README.md")
-	bootstrap := filepath.Join(target, "BOOTSTRAP.md")
+	bootstrap := filepath.Join(target, "client-owned.txt")
 	if err := os.WriteFile(readme, []byte("adopter readme"), 0644); err != nil {
 		t.Fatal(err)
 	}

@@ -25,7 +25,7 @@ Intent summary; discovered state; recommended command or specialist; mutation pr
 
 ## Required reading
 - the framework root's `FRAMEWORK.md`
-- The repository's `BOOTSTRAP.md` when it exists.
+- The active product root's `BOOTSTRAP.md` when it exists.
 - Relevant parent and local `context.md` files after the scope is known.
 - Approved product decisions in the active product root's `knowledge/decisions/` and `.product/decisions.json`.
 - CLI help for commands whose flags or behavior are not already evidenced in the current session.

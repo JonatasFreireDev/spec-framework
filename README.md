@@ -18,10 +18,17 @@ This repository is the framework laboratory and reusable base for Specification 
 
 For a new product repository, start from [starter/](starter/) rather than copying this repository root.
 
-The starter creates two explicit roots:
+One-command interactive bootstrap on Windows:
+
+```powershell
+irm https://raw.githubusercontent.com/JonatasFreireDev/spec-framework/master/scripts/init.ps1 | iex
+```
+
+The script resolves a concrete release, verifies its checksum, installs the CLI for the current user, and opens the `init` wizard. The initialized repository receives only `product/`.
+
+The starter adds one explicit root to the adopter repository:
 
 ```text
-.spec-framework/  # how the framework works
 product/          # the product being built
 ```
 
@@ -30,7 +37,7 @@ Current recommended flow:
 During initialization, Impeccable remains optional. Interactive `init` offers an install/skip choice. Headless initialization requires an explicit provider version:
 
 ```bash
-spec-framework init --target ../my-product --agents codex --install-impeccable --impeccable-version latest --yes
+spec-framework init ../my-product --agents codex --install-impeccable --impeccable-version latest --yes
 ```
 
 The product is initialized first. If the optional provider installer fails, the CLI reports partial success and exits non-zero without deleting the initialized product.
@@ -38,7 +45,7 @@ The product is initialized first. If the optional provider installer fails, the 
 `latest` is resolved through npm to a concrete semantic version before preview or execution. Use an exact value such as `2.3.2` when a fully reproducible build is required; the provider is never executed as an unresolved `@latest` package.
 
 ```text
-spec-framework init --target ../my-product --agents codex --yes -> fill product/foundation -> create product/domains -> spec-framework validate
+spec-framework init ../my-product --agents codex --yes -> fill product/foundation -> create product/domains -> spec-framework validate
 ```
 
 Local CLI form:
@@ -141,7 +148,7 @@ spec-framework design-system migrate --product-root product --dry-run
 | --- | --- |
 | Framework method, validators, skills, templates, and FDRs | This repository core |
 | New product state and product scope | `product/` in a repo created from `starter/` |
-| Installed framework method assets | `.spec-framework/` in a repo created from `starter/` |
+| Installed framework method assets | Versioned user cache resolved by `product/.product/framework.json` |
 | Example domains and use cases | `examples/` |
 
 ## Quality Gates

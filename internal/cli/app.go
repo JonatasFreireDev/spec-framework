@@ -3,6 +3,7 @@ package cli
 import (
 	"bytes"
 	"context"
+	"encoding/json"
 	"flag"
 	"fmt"
 	"io"
@@ -13,6 +14,7 @@ import (
 	"github.com/JonatasFreireDev/spec-framework/internal/adapters"
 	"github.com/JonatasFreireDev/spec-framework/internal/install"
 	"github.com/JonatasFreireDev/spec-framework/internal/moveartifact"
+	"github.com/JonatasFreireDev/spec-framework/internal/runtimeassets"
 	"github.com/JonatasFreireDev/spec-framework/internal/sourceimport"
 	"github.com/JonatasFreireDev/spec-framework/internal/validator"
 	"github.com/JonatasFreireDev/spec-framework/internal/wizard"
@@ -46,6 +48,8 @@ func (app App) Run(args []string, stdout, stderr io.Writer) int {
 		return app.runInit(args[1:], stdout, stderr)
 	case "upgrade":
 		return app.runUpgrade(args[1:], stdout, stderr)
+	case "migrate":
+		return app.runMigrate(args[1:], stdout, stderr)
 	case "validate":
 		return runValidate(args[1:], stdout, stderr)
 	case "import":
@@ -54,6 +58,8 @@ func (app App) Run(args []string, stdout, stderr io.Writer) int {
 		return runDesign(args[1:], stdout, stderr)
 	case "design-system":
 		return runDesignSystem(args[1:], stdout, stderr)
+	case "skill":
+		return runSkill(args[1:], stdout, stderr)
 	case "adapters":
 		return runAdapters(args[1:], stdout, stderr)
 	case "work":
@@ -85,6 +91,30 @@ func (app App) Run(args []string, stdout, stderr io.Writer) int {
 		writeHelp(stderr)
 		return 2
 	}
+}
+
+func runSkill(args []string, stdout, stderr io.Writer) int {
+	if len(args) != 2 || args[0] != "path" {
+		fmt.Fprintln(stderr, "usage: spec-framework skill path <skill-name>")
+		return 2
+	}
+	cwd, err := os.Getwd()
+	if err != nil {
+		fmt.Fprintln(stderr, err)
+		return 1
+	}
+	_, _, frameworkRoot, _, err := runtimeassets.Resolve(cwd)
+	if err != nil {
+		fmt.Fprintln(stderr, err)
+		return 1
+	}
+	path := filepath.Join(frameworkRoot, "skills", args[1], "SKILL.md")
+	if _, err := os.Stat(path); err != nil {
+		fmt.Fprintf(stderr, "unknown framework skill %q\n", args[1])
+		return 1
+	}
+	fmt.Fprintln(stdout, path)
+	return 0
 }
 
 func runWork(args []string, stdout, stderr io.Writer) int {
@@ -384,8 +414,8 @@ func runImport(args []string, stdout, stderr io.Writer) int {
 func runValidate(args []string, stdout, stderr io.Writer) int {
 	flags := flag.NewFlagSet("validate", flag.ContinueOnError)
 	flags.SetOutput(stderr)
-	productRoot := flags.String("product-root", "product", "product root")
-	frameworkRoot := flags.String("framework-root", ".spec-framework", "framework root")
+	productRoot := flags.String("product-root", "", "product root; discovered from product/.product/framework.json by default")
+	frameworkRoot := flags.String("framework-root", "", "framework root; resolved from the versioned user cache by default")
 	writeReport := flags.Bool("write-report", false, "write validation and readiness reports")
 	writeRegistry := flags.Bool("write-registry", false, "rebuild the artifact registry")
 	if err := flags.Parse(args); err != nil {
@@ -396,13 +426,34 @@ func runValidate(args []string, stdout, stderr io.Writer) int {
 		fmt.Fprintln(stderr, err)
 		return 1
 	}
-	productPath := *productRoot
-	if !filepath.IsAbs(productPath) {
-		productPath = filepath.Join(cwd, productPath)
-	}
-	frameworkPath := *frameworkRoot
-	if !filepath.IsAbs(frameworkPath) {
-		frameworkPath = filepath.Join(cwd, frameworkPath)
+	productPath, frameworkPath := *productRoot, *frameworkRoot
+	if productPath == "" && frameworkPath == "" {
+		_, productPath, frameworkPath, _, err = runtimeassets.Resolve(cwd)
+		if err != nil {
+			fmt.Fprintln(stderr, err)
+			return 1
+		}
+	} else {
+		if productPath == "" {
+			productPath = "product"
+		}
+		if frameworkPath == "" {
+			resolveFrom := cwd
+			if productPath != "" {
+				resolveFrom = productPath
+			}
+			_, _, frameworkPath, _, err = runtimeassets.Resolve(resolveFrom)
+			if err != nil {
+				fmt.Fprintln(stderr, err)
+				return 1
+			}
+		}
+		if !filepath.IsAbs(productPath) {
+			productPath = filepath.Join(cwd, productPath)
+		}
+		if !filepath.IsAbs(frameworkPath) {
+			frameworkPath = filepath.Join(cwd, frameworkPath)
+		}
 	}
 	if *writeRegistry {
 		path, err := validator.WriteRegistry(productPath)
@@ -457,8 +508,18 @@ func (app App) runInit(args []string, stdout, stderr io.Writer) int {
 	installImpeccable := flags.Bool("install-impeccable", false, "install the optional Impeccable adapter after init")
 	impeccableVersion := flags.String("impeccable-version", "", "explicit Impeccable CLI version")
 	yes := flags.Bool("yes", false, "run headlessly")
+	positionalTarget := ""
+	if len(args) > 0 && !strings.HasPrefix(args[0], "-") {
+		positionalTarget, args = args[0], args[1:]
+	}
 	if err := flags.Parse(args); err != nil {
 		return 2
+	}
+	if *target == "" {
+		*target = positionalTarget
+	}
+	if *target == "" && flags.NArg() == 1 {
+		*target = flags.Arg(0)
 	}
 	if !*yes {
 		result, err := wizard.RunInit(os.Stdin, stdout)
@@ -504,7 +565,7 @@ func (app App) runInit(args []string, stdout, stderr io.Writer) int {
 		fmt.Fprintln(stderr, err)
 		return 1
 	}
-	fmt.Fprintf(stdout, "Initialized Spec Framework product at %s\n- Product root: product\n- Framework assets: .spec-framework\n- Agent integrations: %s\n- Starting point: %s\n", result.Target, *agentsValue, result.StartingPoint)
+	fmt.Fprintf(stdout, "Initialized Spec Framework product at %s\n- Product root: product\n- Framework runtime: %s\n- Repository-local agent trees: none\n- Starting point: %s\n", result.Target, result.SpecRoot, result.StartingPoint)
 	if result.ImportID != "" {
 		fmt.Fprintf(stdout, "- Import inventory: product/knowledge/imports/runs/%s\n", result.ImportID)
 	}
@@ -527,6 +588,60 @@ func (app App) runInit(args []string, stdout, stderr io.Writer) int {
 		fmt.Fprint(stderr, providerErr.String())
 		fmt.Fprintln(stdout, "- Impeccable: installed; reload the selected agent harness")
 	}
+	return 0
+}
+
+func (app App) runMigrate(args []string, stdout, stderr io.Writer) int {
+	if len(args) == 0 || args[0] != "external-runtime" {
+		fmt.Fprintln(stderr, "usage: spec-framework migrate external-runtime [--target <path>] [--dry-run|--yes]")
+		return 2
+	}
+	flags := flag.NewFlagSet("migrate external-runtime", flag.ContinueOnError)
+	flags.SetOutput(stderr)
+	target := flags.String("target", ".", "legacy repository root")
+	dryRun := flags.Bool("dry-run", false, "preview without writing")
+	yes := flags.Bool("yes", false, "apply migration")
+	if err := flags.Parse(args[1:]); err != nil {
+		return 2
+	}
+	legacy := filepath.Join(*target, ".spec-framework", "manifest.json")
+	data, err := os.ReadFile(legacy)
+	if err != nil {
+		fmt.Fprintln(stderr, "legacy manifest not found:", legacy)
+		return 1
+	}
+	var value map[string]any
+	if err := json.Unmarshal(data, &value); err != nil {
+		fmt.Fprintln(stderr, err)
+		return 1
+	}
+	version, _ := value["version"].(string)
+	if version == "" {
+		version = app.version
+	}
+	fmt.Fprintf(stdout, "Migration preview\n- Runtime version: %s\n- Create: product/.product/framework.json\n- Preserve for manual review: .spec-framework and local agent trees\n", version)
+	if *dryRun || !*yes {
+		fmt.Fprintln(stdout, "No files changed. Re-run with --yes to apply.")
+		return 0
+	}
+	agents := []install.Agent{install.Codex}
+	if raw, ok := value["agents"].([]any); ok {
+		var names []string
+		for _, item := range raw {
+			if name, ok := item.(string); ok {
+				names = append(names, name)
+			}
+		}
+		if parsed, err := install.ParseAgents(strings.Join(names, ",")); err == nil {
+			agents = parsed
+		}
+	}
+	result, err := install.Upgrade(install.Options{Target: *target, Version: version, Agents: agents})
+	if err != nil {
+		fmt.Fprintln(stderr, err)
+		return 1
+	}
+	fmt.Fprintf(stdout, "Migrated manifest; runtime available at %s\n", result.SpecRoot)
 	return 0
 }
 
@@ -569,7 +684,7 @@ func (app App) runUpgrade(args []string, stdout, stderr io.Writer) int {
 		fmt.Fprintln(stderr, err)
 		return 1
 	}
-	fmt.Fprintf(stdout, "Upgraded Spec Framework assets at %s\n- Product root preserved: product\n- Framework assets updated: .spec-framework\n- Version: %s\n", result.Target, app.version)
+	fmt.Fprintf(stdout, "Upgraded Spec Framework runtime at %s\n- Product root preserved: product\n- Framework runtime: %s\n- Version: %s\n", result.Target, result.SpecRoot, app.version)
 	return 0
 }
 
@@ -623,10 +738,11 @@ func writeHelp(output io.Writer) {
 	fmt.Fprint(output, `Usage: spec-framework <command> [options]
 
 Commands:
-  init       Initialize a product repository.
+  init       Initialize product/ and the external versioned runtime.
   import     Materialize approved source mappings as drafts.
   design     Initialize, import, inspect, map, verify, migrate, or audit Design assets.
   design-system Initialize, inspect, validate, or migrate the product Design System.
+  skill      Resolve a pinned specialized skill path.
   adapters   List, diagnose, install, or update optional external adapters.
   work       Select a feature and create a concurrent workspace.
   status     Show workspace readiness and blockers.
@@ -651,7 +767,8 @@ Commands:
   runtime    Migrate a v1 workspace to runtime v2.
   validate   Validate a product repository.
   move       Move an artifact and update references.
-  upgrade    Refresh installed framework assets.
+  upgrade    Refresh the external runtime and pinned manifest.
+  migrate    Preview or apply legacy external-runtime migration.
   version    Print the CLI version.
   help       Show this help.
 `)

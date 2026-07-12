@@ -11,6 +11,8 @@ import (
 )
 
 func TestGoCLIInitValidateUpgradeAndMove(t *testing.T) {
+	t.Setenv("SPEC_FRAMEWORK_CACHE", filepath.Join(t.TempDir(), "cache"))
+	t.Setenv("SPEC_FRAMEWORK_AGENT_HOME", filepath.Join(t.TempDir(), "agents"))
 	parent := t.TempDir()
 	target := filepath.Join(parent, "product")
 	var stdout, stderr bytes.Buffer
@@ -18,15 +20,15 @@ func TestGoCLIInitValidateUpgradeAndMove(t *testing.T) {
 	if code := app.Run([]string{"init", "--target", target, "--agents", "codex,cursor,claude", "--yes"}, &stdout, &stderr); code != 0 {
 		t.Fatalf("init=%d stderr=%s", code, stderr.String())
 	}
-	for _, path := range []string{".agents/skills/code-runner/SKILL.md", ".cursor/skills/code-runner/SKILL.md", ".claude/skills/code-runner/SKILL.md", ".spec-framework/manifest.json"} {
+	for _, path := range []string{"product/.product/framework.json", "product/BOOTSTRAP.md"} {
 		if _, err := os.Stat(filepath.Join(target, filepath.FromSlash(path))); err != nil {
 			t.Fatal(err)
 		}
 	}
 	stdout.Reset()
 	stderr.Reset()
-	if code := app.Run([]string{"validate", "--product-root", filepath.Join(target, "product"), "--framework-root", filepath.Join(target, ".spec-framework")}, &stdout, &stderr); code != 0 {
-		t.Fatalf("absolute validate=%d stdout=%s stderr=%s", code, stdout.String(), stderr.String())
+	if code := app.Run([]string{"validate"}, &stdout, &stderr); code == 0 {
+		t.Fatal("validate outside the product repository should not activate")
 	}
 	old, err := os.Getwd()
 	if err != nil {
@@ -36,6 +38,11 @@ func TestGoCLIInitValidateUpgradeAndMove(t *testing.T) {
 		t.Fatal(err)
 	}
 	defer os.Chdir(old)
+	stdout.Reset()
+	stderr.Reset()
+	if code := app.Run([]string{"validate"}, &stdout, &stderr); code != 0 {
+		t.Fatalf("absolute validate=%d stdout=%s stderr=%s", code, stdout.String(), stderr.String())
+	}
 	stdout.Reset()
 	stderr.Reset()
 	if code := app.Run([]string{"validate"}, &stdout, &stderr); code != 0 {
@@ -64,6 +71,8 @@ func TestGoCLIInitValidateUpgradeAndMove(t *testing.T) {
 }
 
 func TestCLIExistingDocumentsMaterialization(t *testing.T) {
+	t.Setenv("SPEC_FRAMEWORK_CACHE", filepath.Join(t.TempDir(), "cache"))
+	t.Setenv("SPEC_FRAMEWORK_AGENT_HOME", filepath.Join(t.TempDir(), "agents"))
 	root := t.TempDir()
 	target := filepath.Join(root, "repo")
 	source := filepath.Join(root, "epic.md")
@@ -100,6 +109,8 @@ func TestCLIExistingDocumentsMaterialization(t *testing.T) {
 }
 
 func TestCLIWorkspaceApprovalGatesAndGraph(t *testing.T) {
+	t.Setenv("SPEC_FRAMEWORK_CACHE", filepath.Join(t.TempDir(), "cache"))
+	t.Setenv("SPEC_FRAMEWORK_AGENT_HOME", filepath.Join(t.TempDir(), "agents"))
 	root := t.TempDir()
 	target := filepath.Join(root, "repo")
 	var stdout, stderr bytes.Buffer
@@ -130,7 +141,7 @@ func TestCLIWorkspaceApprovalGatesAndGraph(t *testing.T) {
 	}
 	stdout.Reset()
 	stderr.Reset()
-	if code := app.Run([]string{"validate", "--product-root", product, "--framework-root", filepath.Join(target, ".spec-framework")}, &stdout, &stderr); code != 0 {
+	if code := app.Run([]string{"validate", "--product-root", product}, &stdout, &stderr); code != 0 {
 		t.Fatalf("validate after approvals=%d %s %s", code, stdout.String(), stderr.String())
 	}
 	stdout.Reset()

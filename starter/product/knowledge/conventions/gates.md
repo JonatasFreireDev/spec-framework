@@ -29,5 +29,4 @@ Replace placeholder commands before any task can move to `implemented`, `validat
 | --- | --- |
 | No checkbox-only QA | QA evidence must include real output, CI URL, screenshot, or explicit limitation. |
 | No hidden failures | Failing gates must route to owner and required fix. |
-| Product-specific | Do not edit `.spec-framework/` to encode product commands. |
-
+| Product-specific | Keep product commands here; do not modify the external framework runtime to encode product behavior. |

@@ -12,12 +12,12 @@ Use these roots:
 
 | Root | Purpose |
 | --- | --- |
-| `.spec-framework/` | Installed framework method, skills, templates, validators, tools, and framework decisions. |
+| Versioned user cache | Installed framework method, skills, templates, validators, tools, and framework decisions. |
 | `product/` | Product-owned state, foundation, domains, decisions, audits, releases, and evidence. |
-| `.agents/skills/`, `.cursor/skills/`, `.claude/skills/` | Generated agent-specific skill trees. Treat these as derived copies of `.spec-framework/skills/`. |
+| User-scoped `spec-framework` dispatcher | Manifest-gated resolver for the pinned specialized skill contracts. |
 | `product/knowledge/imports/` | Source evidence, immutable inventories, proposed mappings, conflicts, and import reports. |
 
-Do not write product scope, product decisions, approval records, or delivery evidence into `.spec-framework/`.
+Do not write product scope, product decisions, approval records, or delivery evidence into the external runtime cache.
 
 Do not write framework-method decisions into `product/knowledge/decisions/`.
 
@@ -29,11 +29,11 @@ When the product declares `product/design/system/`, use the Design System skill 
 
 Before creating or updating framework-governed work:
 
-1. Read `.spec-framework/FRAMEWORK.md`.
+1. Resolve and read the pinned framework root's `FRAMEWORK.md`.
 2. Read the relevant `product/**/context.md` files.
-3. Read the matching template in `.spec-framework/templates/` when creating or normalizing an artifact.
+3. Read the matching template in the pinned framework root's `templates/` when creating or normalizing an artifact.
 4. Read approved product decisions in `product/knowledge/decisions/` and `product/.product/decisions.json` when relevant.
-5. Read framework decisions in `.spec-framework/decisions/` when the work touches method, gates, validators, skills, or workflow policy.
+5. Read framework decisions in the pinned framework root's `decisions/` when the work touches method, gates, validators, skills, or workflow policy.
 
 ## Active Product Root
 
@@ -41,7 +41,7 @@ The active product root is `product/`.
 
 When a skill mentions product-relative paths such as `knowledge/conventions/gates.md`, `.product/decisions.json`, `domains/`, `audits/`, or `releases/`, resolve them under `product/`.
 
-When a skill mentions framework-relative paths such as `FRAMEWORK.md`, `templates/`, `skills/`, or framework decisions, resolve them under `.spec-framework/`. Run executable operations through the installed `spec-framework` CLI.
+When a skill mentions framework-relative paths such as `FRAMEWORK.md`, `templates/`, `skills/`, or framework decisions, resolve them under the versioned runtime returned by the CLI. Run executable operations through the installed `spec-framework` CLI.
 
 Use `spec-framework guide` or `dashboard` when routing is unclear. Use `spec-framework adapters` for supervised optional-adapter discovery or installation; never install an external adapter silently.
 
@@ -59,4 +59,4 @@ If a product artifact is `approved` or later and its approval record is missing 
 
 Save product reports under `product/audits/`.
 
-Save framework-upgrade or installation diagnostics under `.spec-framework/` only when they are framework metadata, not product evidence.
+Keep framework-upgrade or installation diagnostics in the external cache only when they are framework metadata, not product evidence.
