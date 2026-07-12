@@ -103,6 +103,10 @@ Stable commands:
 spec-framework init --target ../my-product
 spec-framework validate
 spec-framework upgrade --target ../my-product
+spec-framework dashboard --work WORK-001
+spec-framework decisions migrate
 ```
+
+Use `decisions migrate` as a preview first. Existing repositories should use `--interactive` to review ambiguous inferred types and scopes before applying the metadata migration.
 
 Adoption is backed by the validator, package smoke tests, and the `.spec-framework/` / `product/` boundary.

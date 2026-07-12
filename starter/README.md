@@ -39,6 +39,7 @@ Then install or copy the framework assets described in [../framework/adoption.md
 6. Continue through Goal -> Feature -> Use Case -> Specification -> Design -> Implementation Plan -> Execution Graph -> Tasks.
 7. Replace product gate placeholders in `product/knowledge/conventions/gates.md` before marking executable work as implemented or validated.
 8. Use `spec-framework work`, then `resume`, leases, checkpoints, and handoffs so execution can be continued without conversation history.
+9. Use `spec-framework dashboard --work WORK-001` for the consolidated flow and `spec-framework decisions migrate` to preview legacy decision metadata upgrades.
 
 ## Boundary Rule
 

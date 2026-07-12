@@ -59,6 +59,10 @@ spec-framework task readiness --graph domains/events/goals/manage/features/invit
 spec-framework guide --work WORK-001
 spec-framework review --work WORK-001 --stage tasks
 spec-framework impact --decision DEC-021
+spec-framework dashboard --work WORK-001
+spec-framework status --work WORK-001 --graph --json
+spec-framework decisions migrate --product-root product
+spec-framework decisions migrate --product-root product --interactive
 
 # Resume, lease, schedule, and execute governed local commands
 spec-framework resume --work WORK-001

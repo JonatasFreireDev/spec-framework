@@ -29,6 +29,8 @@ When a skill mentions a product-relative path such as `knowledge/conventions/gat
 
 Runtime v2 also includes the `command-planner` and `command-executor` operational skills. The planner owns immutable argv-based plans; the executor is restricted to local R0/R1 plans.
 
+Delivery Orchestrator reports through the consolidated dashboard model. Product Historian owns review of guided legacy decision migration; the migration tool only updates `.product/decisions.json` metadata and never edits DEC content or approvals.
+
 ## Responsible Skill
 
 Primary owner: Documentation Orchestrator.

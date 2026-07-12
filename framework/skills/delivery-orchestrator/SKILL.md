@@ -37,7 +37,8 @@ Updated workspace state; structured handoff; checkpoint request; routed next orc
 4. Produce or update only the runtime artifact owned by this skill.
 5. Persist evidence and an explicit structured handoff; never rely on chat history.
 6. For documentary work, update runtime state and create a checkpoint/handoff whenever the canonical gate changes. Use `guide` output to explain rather than execute the next skill.
-7. Stop at human approval, remote mutation, conflict, security, or attempt-limit gates.
+7. Use the consolidated dashboard model when reporting workflow state so humans and agents see the same stages, blockers, graph/tasks, decisions, leases, and next actions.
+8. Stop at human approval, remote mutation, conflict, security, or attempt-limit gates.
 
 ## Quality checklist
 - [ ] Preserves traceability to affected artifacts.
