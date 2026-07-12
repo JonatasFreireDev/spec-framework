@@ -16,6 +16,16 @@ func TestRegistryAndPinnedArgv(t *testing.T) {
 	}
 }
 
+func TestResolveExactVersionWithoutNetwork(t *testing.T) {
+	resolved, err := ResolveVersion("impeccable", "2.3.2")
+	if err != nil || resolved != "2.3.2" {
+		t.Fatalf("resolved=%q err=%v", resolved, err)
+	}
+	if _, err := ResolveVersion("impeccable", "banana"); err == nil {
+		t.Fatal("expected invalid version error")
+	}
+}
+
 func TestInspectFindsProjectSkill(t *testing.T) {
 	root := t.TempDir()
 	path := filepath.Join(root, ".agents", "skills", "impeccable", "SKILL.md")

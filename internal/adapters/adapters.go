@@ -3,10 +3,12 @@ package adapters
 import (
 	"bytes"
 	"context"
+	"errors"
 	"fmt"
 	"os"
 	"os/exec"
 	"path/filepath"
+	"regexp"
 	"runtime"
 	"sort"
 	"strings"
@@ -131,6 +133,40 @@ func ProviderArgv(id, action, version string) ([]string, error) {
 		return nil, fmt.Errorf("unsupported adapter action %q", action)
 	}
 	return append([]string{definition.Package + "@" + version}, suffix...), nil
+}
+
+func ResolveVersion(id, requested string) (string, error) {
+	definition, err := Lookup(id)
+	if err != nil {
+		return "", err
+	}
+	requested = strings.TrimSpace(requested)
+	if requested == "" {
+		return "", errors.New("an explicit version or latest is required")
+	}
+	if requested != "latest" {
+		if !regexp.MustCompile(`^[0-9]+\.[0-9]+\.[0-9]+(?:[-+][0-9A-Za-z.-]+)?$`).MatchString(requested) {
+			return "", fmt.Errorf("invalid provider version %q; use semantic version or latest", requested)
+		}
+		return requested, nil
+	}
+	npm, err := findNpm()
+	if err != nil {
+		return "", err
+	}
+	ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
+	defer cancel()
+	cmd := exec.CommandContext(ctx, npm, "view", definition.Package, "version")
+	var output bytes.Buffer
+	cmd.Stdout, cmd.Stderr = &output, &output
+	if err := cmd.Run(); err != nil {
+		return "", fmt.Errorf("resolve latest %s version: %s", id, strings.TrimSpace(output.String()))
+	}
+	resolved := strings.TrimSpace(output.String())
+	if !regexp.MustCompile(`^[0-9]+\.[0-9]+\.[0-9]+(?:[-+][0-9A-Za-z.-]+)?$`).MatchString(resolved) {
+		return "", fmt.Errorf("provider returned invalid version %q", resolved)
+	}
+	return resolved, nil
 }
 
 func Execute(root, id, action, version string, stdout, stderr *bytes.Buffer) error {

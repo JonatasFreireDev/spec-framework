@@ -151,7 +151,7 @@ func RunInit(input io.Reader, output io.Writer) (Result, error) {
 	startingPoint := "new-product"
 	var sources string
 	installImpeccable := false
-	var impeccableVersion string
+	impeccableVersion := "latest"
 	confirmed := true
 
 	form := huh.NewForm(
@@ -204,8 +204,9 @@ func RunInit(input io.Reader, output io.Writer) (Result, error) {
 		),
 		huh.NewGroup(
 			huh.NewInput().
-				Title("Impeccable CLI version (required when installing)").
-				Placeholder("2.3.2").
+				Title("Impeccable CLI version").
+				Description("Use latest to resolve the current recommended version, or enter an exact semantic version.").
+				Placeholder("latest").
 				Value(&impeccableVersion).
 				Validate(func(s string) error {
 					if installImpeccable && strings.TrimSpace(s) == "" {

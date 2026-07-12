@@ -30,10 +30,12 @@ Current recommended flow:
 During initialization, Impeccable remains optional. Interactive `init` offers an install/skip choice. Headless initialization requires an explicit provider version:
 
 ```bash
-spec-framework init --target ../my-product --agents codex --install-impeccable --impeccable-version 2.3.2 --yes
+spec-framework init --target ../my-product --agents codex --install-impeccable --impeccable-version latest --yes
 ```
 
 The product is initialized first. If the optional provider installer fails, the CLI reports partial success and exits non-zero without deleting the initialized product.
+
+`latest` is resolved through npm to a concrete semantic version before preview or execution. Use an exact value such as `2.3.2` when a fully reproducible build is required; the provider is never executed as an unresolved `@latest` package.
 
 ```text
 spec-framework init --target ../my-product --agents codex --yes -> fill product/foundation -> create product/domains -> spec-framework validate
@@ -120,6 +122,8 @@ spec-framework adapters install impeccable --version 2.3.2 --yes
 ```
 
 The first install command is a preview. `--yes` executes the official version-pinned provider command. Adapter removal is intentionally unavailable until the provider offers a documented reversible command.
+
+For convenience, `--version latest` resolves and displays the current concrete version before execution.
 
 Initialize and inspect the shared Design System when the product has recurring foundations, tokens, components, or patterns:
 

@@ -108,12 +108,17 @@ func runAdapters(args []string, stdout, stderr io.Writer) int {
 			fmt.Fprintln(stderr, err)
 			return 1
 		}
-		argv, err := adapters.ProviderArgv(id, action, *version)
+		resolved, err := adapters.ResolveVersion(id, *version)
 		if err != nil {
 			fmt.Fprintln(stderr, err)
 			return 2
 		}
-		fmt.Fprintf(stdout, "Adapter mutation preview\n- Action: %s\n- Provider: %s\n- Package: %s@%s\n- Runtime: %s\n- Working directory: %s\n- Command: %s %s\n", action, status.Provider, status.Package, *version, status.NpxPath, filepath.Clean(p), status.NpxPath, strings.Join(argv, " "))
+		argv, err := adapters.ProviderArgv(id, action, resolved)
+		if err != nil {
+			fmt.Fprintln(stderr, err)
+			return 2
+		}
+		fmt.Fprintf(stdout, "Adapter mutation preview\n- Action: %s\n- Provider: %s\n- Requested version: %s\n- Resolved version: %s\n- Package: %s@%s\n- Runtime: %s\n- Working directory: %s\n- Command: %s %s\n", action, status.Provider, *version, resolved, status.Package, resolved, status.NpxPath, filepath.Clean(p), status.NpxPath, strings.Join(argv, " "))
 		if !*yes {
 			fmt.Fprintln(stdout, "Re-run with --yes to execute the external provider command.")
 			return 0
@@ -123,7 +128,7 @@ func runAdapters(args []string, stdout, stderr io.Writer) int {
 			return 1
 		}
 		var providerOut, providerErr bytes.Buffer
-		if err := adapters.Execute(p, id, action, *version, &providerOut, &providerErr); err != nil {
+		if err := adapters.Execute(p, id, action, resolved, &providerOut, &providerErr); err != nil {
 			fmt.Fprint(stdout, providerOut.String())
 			fmt.Fprint(stderr, providerErr.String())
 			fmt.Fprintln(stderr, err)

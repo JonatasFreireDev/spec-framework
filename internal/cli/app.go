@@ -509,10 +509,15 @@ func (app App) runInit(args []string, stdout, stderr io.Writer) int {
 		fmt.Fprintf(stdout, "- Import inventory: product/knowledge/imports/runs/%s\n", result.ImportID)
 	}
 	if *installImpeccable {
-		argv, _ := adapters.ProviderArgv("impeccable", "install", *impeccableVersion)
-		fmt.Fprintf(stdout, "Installing optional adapter\n- Provider: pbakaus/impeccable\n- Version: %s\n- Command: npx %s\n", *impeccableVersion, strings.Join(argv, " "))
+		resolved, resolveErr := adapters.ResolveVersion("impeccable", *impeccableVersion)
+		if resolveErr != nil {
+			fmt.Fprintln(stderr, "Product initialized, but Impeccable version resolution failed:", resolveErr)
+			return 1
+		}
+		argv, _ := adapters.ProviderArgv("impeccable", "install", resolved)
+		fmt.Fprintf(stdout, "Installing optional adapter\n- Provider: pbakaus/impeccable\n- Requested version: %s\n- Resolved version: %s\n- Command: npx %s\n", *impeccableVersion, resolved, strings.Join(argv, " "))
 		var providerOut, providerErr bytes.Buffer
-		if err := adapters.Execute(result.Target, "impeccable", "install", *impeccableVersion, &providerOut, &providerErr); err != nil {
+		if err := adapters.Execute(result.Target, "impeccable", "install", resolved, &providerOut, &providerErr); err != nil {
 			fmt.Fprint(stdout, providerOut.String())
 			fmt.Fprint(stderr, providerErr.String())
 			fmt.Fprintln(stderr, "Product initialized, but optional Impeccable installation failed:", err)

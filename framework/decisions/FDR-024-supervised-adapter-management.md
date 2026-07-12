@@ -26,7 +26,7 @@ Add supervised adapter management with read-only `list`, `status`, and `doctor`,
 | Execution | Commands use direct argv in the repository root, not a shell string. |
 | State | Status is detected from supported harness skill paths; credentials are never persisted. |
 | Removal | Not provided until the upstream provider has a documented, reversible removal contract. |
-| Initialization | Interactive `init` offers explicit install/skip and version input; headless `init` requires `--install-impeccable`, `--impeccable-version`, and `--yes`. Product initialization remains valid if the optional provider subsequently fails. |
+| Initialization | Interactive `init` offers explicit install/skip and defaults version input to `latest`; headless `init` requires `--install-impeccable`, `--impeccable-version`, and `--yes`. `latest` is resolved to a concrete semantic version before execution. Product initialization remains valid if the optional provider subsequently fails. |
 | Failure | Provider exit code and output are preserved; the framework never reports a failed install as ready. |
 
 ## Consequences
