@@ -66,6 +66,10 @@ func (app App) Run(args []string, stdout, stderr io.Writer) int {
 		return runStage(args[0], args[1:], stdout, stderr)
 	case "impact":
 		return runImpact(args[1:], stdout, stderr)
+	case "dashboard":
+		return runDashboard(args[1:], stdout, stderr)
+	case "decisions":
+		return runDecisions(args[1:], stdout, stderr)
 	case "resume", "handoff", "checkpoint", "lease", "commands", "schedule", "integrate", "runtime":
 		return runRuntime(args[0], args[1:], stdout, stderr)
 	default:
@@ -118,6 +122,8 @@ func runWorkStatus(command string, args []string, stdout, stderr io.Writer) int 
 	flags.SetOutput(stderr)
 	root := flags.String("product-root", "product", "product root")
 	id := flags.String("work", "", "workspace id")
+	graphView := flags.Bool("graph", false, "show consolidated workflow")
+	asJSON := flags.Bool("json", false, "JSON output")
 	if err := flags.Parse(args); err != nil {
 		return 2
 	}
@@ -129,6 +135,9 @@ func runWorkStatus(command string, args []string, stdout, stderr io.Writer) int 
 	p := *root
 	if !filepath.IsAbs(p) {
 		p = filepath.Join(cwd, p)
+	}
+	if *graphView {
+		return writeDashboard(p, *id, *asJSON, stdout, stderr)
 	}
 	s, err := workflow.WorkspaceStatus(p, *id)
 	if err != nil {
@@ -592,6 +601,8 @@ Commands:
   review     Preview a workspace stage approval.
   approve-stage Approve every eligible artifact in a stage atomically.
   impact     Inspect a decision's validity, propagation, effects, and staleness.
+  dashboard  Show one consolidated workflow, graph, runtime, and decision view.
+  decisions  Preview or run guided migration of legacy decision metadata.
   resume     Resume a persisted runtime workspace.
   handoff    Persist an agent/orchestrator handoff.
   checkpoint Persist a resumable checkpoint.
