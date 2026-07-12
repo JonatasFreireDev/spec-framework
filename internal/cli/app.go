@@ -1,6 +1,7 @@
 package cli
 
 import (
+	"bytes"
 	"context"
 	"flag"
 	"fmt"
@@ -9,6 +10,7 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/JonatasFreireDev/spec-framework/internal/adapters"
 	"github.com/JonatasFreireDev/spec-framework/internal/install"
 	"github.com/JonatasFreireDev/spec-framework/internal/moveartifact"
 	"github.com/JonatasFreireDev/spec-framework/internal/sourceimport"
@@ -452,6 +454,8 @@ func (app App) runInit(args []string, stdout, stderr io.Writer) int {
 	sourcesValue := flags.String("sources", "", "comma-separated source files or directories for existing-documents")
 	sourceDir := flags.String("source-dir", "", "source directory for existing-documents")
 	force := flags.Bool("force", false, "allow non-empty target")
+	installImpeccable := flags.Bool("install-impeccable", false, "install the optional Impeccable adapter after init")
+	impeccableVersion := flags.String("impeccable-version", "", "explicit Impeccable CLI version")
 	yes := flags.Bool("yes", false, "run headlessly")
 	if err := flags.Parse(args); err != nil {
 		return 2
@@ -470,9 +474,15 @@ func (app App) runInit(args []string, stdout, stderr io.Writer) int {
 		*agentsValue = strings.Join(selected, ",")
 		*startingPoint = result.StartingPoint
 		*sourcesValue = strings.Join(result.Sources, ",")
+		*installImpeccable = result.InstallImpeccable
+		*impeccableVersion = result.ImpeccableVersion
 	}
 	if *target == "" {
 		fmt.Fprintln(stderr, "init requires --target")
+		return 2
+	}
+	if *installImpeccable && strings.TrimSpace(*impeccableVersion) == "" {
+		fmt.Fprintln(stderr, "--install-impeccable requires --impeccable-version")
 		return 2
 	}
 	agents, err := install.ParseAgents(*agentsValue)
@@ -497,6 +507,20 @@ func (app App) runInit(args []string, stdout, stderr io.Writer) int {
 	fmt.Fprintf(stdout, "Initialized Spec Framework product at %s\n- Product root: product\n- Framework assets: .spec-framework\n- Agent integrations: %s\n- Starting point: %s\n", result.Target, *agentsValue, result.StartingPoint)
 	if result.ImportID != "" {
 		fmt.Fprintf(stdout, "- Import inventory: product/knowledge/imports/runs/%s\n", result.ImportID)
+	}
+	if *installImpeccable {
+		argv, _ := adapters.ProviderArgv("impeccable", "install", *impeccableVersion)
+		fmt.Fprintf(stdout, "Installing optional adapter\n- Provider: pbakaus/impeccable\n- Version: %s\n- Command: npx %s\n", *impeccableVersion, strings.Join(argv, " "))
+		var providerOut, providerErr bytes.Buffer
+		if err := adapters.Execute(result.Target, "impeccable", "install", *impeccableVersion, &providerOut, &providerErr); err != nil {
+			fmt.Fprint(stdout, providerOut.String())
+			fmt.Fprint(stderr, providerErr.String())
+			fmt.Fprintln(stderr, "Product initialized, but optional Impeccable installation failed:", err)
+			return 1
+		}
+		fmt.Fprint(stdout, providerOut.String())
+		fmt.Fprint(stderr, providerErr.String())
+		fmt.Fprintln(stdout, "- Impeccable: installed; reload the selected agent harness")
 	}
 	return 0
 }

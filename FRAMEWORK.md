@@ -853,6 +853,8 @@ spec-framework adapters install impeccable --version <provider-cli-version> [--y
 
 External adapters are optional. Read-only discovery and diagnosis may run without confirmation. Install and update must show the exact provider command, require an explicit version and `--yes`, execute with direct argv from the repository root, and never fabricate readiness after a provider failure. Removal is unsupported until the provider documents a reversible contract.
 
+Interactive `init` may offer an explicit optional-adapter install choice. Headless installation requires adapter-specific selection, an explicit provider version, and `--yes`. Framework initialization completes before the external provider runs; provider failure is reported as partial success and never rolls back or deletes the initialized product.
+
 Recommended prompt for the architecture phase:
 
 ```text

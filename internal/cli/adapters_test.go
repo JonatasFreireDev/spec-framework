@@ -19,3 +19,11 @@ func TestAdaptersListAndInstallPreview(t *testing.T) {
 		t.Fatalf("preview=%d out=%s err=%s", code, out.String(), errout.String())
 	}
 }
+
+func TestInitRequiresPinnedImpeccableVersion(t *testing.T) {
+	var out, errout bytes.Buffer
+	code := New("test").Run([]string{"init", "--target", t.TempDir(), "--agents", "codex", "--install-impeccable", "--yes"}, &out, &errout)
+	if code != 2 || !strings.Contains(errout.String(), "--impeccable-version") {
+		t.Fatalf("init=%d out=%s err=%s", code, out.String(), errout.String())
+	}
+}

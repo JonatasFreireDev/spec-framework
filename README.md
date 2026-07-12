@@ -27,6 +27,14 @@ product/          # the product being built
 
 Current recommended flow:
 
+During initialization, Impeccable remains optional. Interactive `init` offers an install/skip choice. Headless initialization requires an explicit provider version:
+
+```bash
+spec-framework init --target ../my-product --agents codex --install-impeccable --impeccable-version 2.3.2 --yes
+```
+
+The product is initialized first. If the optional provider installer fails, the CLI reports partial success and exits non-zero without deleting the initialized product.
+
 ```text
 spec-framework init --target ../my-product --agents codex --yes -> fill product/foundation -> create product/domains -> spec-framework validate
 ```
