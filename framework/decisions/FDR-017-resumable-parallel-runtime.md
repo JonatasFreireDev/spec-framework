@@ -40,6 +40,24 @@ integrations/INTEGRATION-NNN.json
 | Versioning | Checkpoints, handoffs, plan summaries, claims, and integration records are versionable; worktrees, locks, raw logs, and secrets are not. |
 | Compatibility | v2 reads flat v1 workspaces; writes v2 only. Migration is explicit and supports dry-run. |
 
+### Deferred evolution: supervised automatic agent spawning
+
+Automatic agent spawning is deliberately outside runtime v2. A future FDR may enable it only after the current runtime has production evidence and must define:
+
+| Area | Required future contract |
+| --- | --- |
+| Provider adapter | Explicit adapters for supported agent runtimes; no assumption that Codex, Claude Code, and Cursor share invocation semantics. |
+| Supervision | Present the computed wave and require human confirmation before starting agents. |
+| Concurrency | Enforce repository and resource capacity plus a configurable `max_parallel`; queue excess ready tasks deterministically. |
+| Ownership | Acquire a lease and isolated worktree before spawning; maintain heartbeat while the process is alive. |
+| Recovery | Resume from the latest valid checkpoint and handoff; inspect partial diffs before reassignment; stop after the configured attempt limit. |
+| Authority | Start with R0/R1 only. R2 needs explicit approval; R3/R4, push, deploy, remote merge, and automatic conflict resolution remain prohibited. |
+| Completion | Capture the agent result and evidence, then route through task Code Review, task QA, commit creation, governed integration, and Integrated QA. |
+| Cancellation | Support graceful cancellation, lease release, process cleanup, and preservation of inspectable worktree state. |
+| Observability | Record spawn, heartbeat, timeout, retry, cancellation, completion, resource use, and sanitized failure evidence. |
+
+Minimum readiness before proposing that FDR: successful use in real adopter repositories, Linux race coverage, crash/recovery tests, provider contract tests, resource-pressure tests, and evidence that manual supervised waves are stable.
+
 ## Consequences
 
 | Type | Consequence |
@@ -47,7 +65,7 @@ integrations/INTEGRATION-NNN.json
 | Positive | A new agent can reconstruct scope, staleness, ownership, evidence, and next action without chat history. |
 | Positive | Independent tasks can run in isolated worktrees with deterministic resource conflict checks. |
 | Negative | Git/runtime state and cross-platform process control become framework responsibilities. |
-| Follow-up | R2, automatic agent spawning, R3/R4, and remote merge remain future gated evolutions. |
+| Follow-up | Supervised automatic agent spawning is mapped above as a separate future FDR; R2, R3/R4, and remote merge remain independently gated evolutions. |
 
 ## FRAMEWORK.md Amendments
 

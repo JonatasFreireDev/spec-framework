@@ -870,7 +870,8 @@ Before persisting each stage, list the decisions, gaps, conflicts, and approval 
 
 - Queryable knowledge graph.
 - Automatic impact analysis.
-- Parallel task execution by agents.
+- Supervised automatic agent spawning with provider adapters, `max_parallel`, leases, isolated worktrees, heartbeat, cancellation, and checkpoint recovery.
+- Task-level review/QA followed by governed integration and Integrated QA for automatically spawned work.
 - Automatic replanning after failures.
 
 ## 17. Final Rule
