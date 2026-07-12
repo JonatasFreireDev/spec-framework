@@ -140,6 +140,14 @@ spec-framework design-system inspect --product-root product
 spec-framework design-system validate --product-root product
 spec-framework design-system migrate --product-root product --dry-run
 ```
+
+Inspect the shared Engineering System and list the structured triggers that make Engineering Proposal and Review applicable to Tier S/M:
+
+```bash
+spec-framework engineering-system inspect --product-root product
+spec-framework engineering-system validate --product-root product
+spec-framework engineering-system triggers
+```
 ```
 
 ## Repository Boundary

@@ -17,6 +17,7 @@ import (
 	"sync"
 
 	"github.com/JonatasFreireDev/spec-framework/internal/designsystem"
+	"github.com/JonatasFreireDev/spec-framework/internal/engineeringsystem"
 )
 
 type Severity string
@@ -162,6 +163,7 @@ func Validate(ctx context.Context, root, frameworkRoot string) (Result, error) {
 	d = append(d, validateDeliveryClosure(snap)...)
 	d = append(d, validateDesignArtifacts(snap)...)
 	d = append(d, validateDesignSystem(snap)...)
+	d = append(d, validateEngineeringSystem(snap)...)
 	sort.Slice(d, func(i, j int) bool {
 		a, b := d[i], d[j]
 		if a.Severity != b.Severity {
@@ -187,6 +189,21 @@ func Validate(ctx context.Context, root, frameworkRoot string) (Result, error) {
 		}
 	}
 	return r, nil
+}
+
+func validateEngineeringSystem(s Snapshot) []Diagnostic {
+	if _, exists := s.Text["engineering/context.md"]; !exists {
+		return nil
+	}
+	inspection, err := engineeringsystem.Inspect(s.Root)
+	if err != nil {
+		return []Diagnostic{{Error, "engineering-system", "engineering/context.md", err.Error(), "Restore or initialize the Engineering System contract."}}
+	}
+	var out []Diagnostic
+	for _, blocker := range inspection.Blockers {
+		out = append(out, Diagnostic{Error, "engineering-system", "engineering/engineering-system.yaml", blocker, "Repair the Engineering System catalog, contract paths, maturity, or evidence."})
+	}
+	return out
 }
 
 func validateDesignSystem(s Snapshot) []Diagnostic {

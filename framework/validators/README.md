@@ -25,7 +25,7 @@ The validator checks:
 - required use-case artifact bundles;
 - traceability between parent, child, source, graph, and task artifacts;
 - status policy between parent and child artifacts;
-- approval gates between Specification, Design, Implementation Plan, Execution Graph, and Tasks;
+- approval gates between Specification, Design, Technical Discovery, applicable Engineering Proposal and Engineering Review, Implementation Plan, Execution Graph, and Tasks;
 - approval records in `.product/history/` for `approved` and later statuses;
 - derived staleness through `.product/derivations.json`;
 - validation gates for approved tests, QA evidence, Security Review, and audit before `validated` or `released`;
@@ -40,6 +40,7 @@ The validator checks:
 - decision index paths in `.product/decisions.json`;
 - visual Design source identity, immutable versions, authority, screen inventories, snapshot paths, origin mode, maturity, fidelity policy, source references, and requirement coverage values;
 - canonical Design System identity, status, semantic version, token schema, aliases and cycles, plus proposed-or-later Design consumer pins;
+- canonical Engineering System identity, semantic version, origin, catalog areas, maturity evidence, contract paths, and structured delivery triggers;
 - decision references against `.product/decisions.json`, including approved delivery dependencies;
 - visual Mermaid standards for flowcharts;
 - Mermaid progress state assignments using `done`, `current`, `pending`, and `blocked`;

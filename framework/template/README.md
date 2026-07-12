@@ -15,7 +15,8 @@ Use these templates whenever a new canonical artifact is created or an existing 
 - `persona-template.md`, `metric-template.md`, `roadmap-item-template.md`: strategy support artifacts.
 - `domain-template.md`, `goal-template.md`, `feature-template.md`, `use-case-template.md`: product hierarchy artifacts.
 - `journey-template.md`: user journey artifact.
-- `specification-template.md`, `design-template.md`, `design-system-template.md`, `design-component-template.md`, `design-pattern-template.md`, `implementation-plan-template.md`: planning and shared Design contracts.
+- `specification-template.md`, `design-template.md`, `design-system-template.md`, `design-component-template.md`, `design-pattern-template.md`, `engineering-system-template.md`, `engineering-proposal-template.md`, `engineering-review-template.md`, `implementation-plan-template.md`: planning, shared Design and Engineering contracts, and independent technical review.
+- `engineering-system-template.yaml`, `quality-model-template.md`, `fitness-functions-template.yaml`: mechanical Engineering System catalog and product quality contracts.
 - `execution-graph-template.json`, `tasks-template.md`, `tests-template.md`: executable planning artifacts.
 - `qa-evidence-template.md`, `security-review-template.md`, `security-baseline-template.md`, `threat-register-template.md`: validation evidence, security gate, and proactive threat modeling artifacts.
 - `analytics-template.md`, `audit-template.md`, `readiness-report-template.md`: validation and measurement artifacts.

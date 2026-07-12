@@ -58,6 +58,8 @@ Intent summary; discovered state; recommended command or specialist; mutation pr
 | Diagnose or install an optional visual adapter | `adapters list/status/doctor`, then version-pinned `install/update --yes` after preview |
 | Inspect a decision change | `impact` |
 | Prepare implementation | `gates`, Graph readiness, then Task readiness |
+| Establish or inspect shared engineering contracts | `engineering-system inspect/validate` plus Engineering System, then Technical Discovery for a delivery |
+| Review a proposed technical solution | Engineering Proposal, then independent Engineering Review |
 | Execute governed commands | Command Planner, then Command Executor |
 | Validate repository state | `validate` |
 | Move an artifact | `move --dry-run`, review mentions, then apply |
@@ -66,7 +68,7 @@ Intent summary; discovered state; recommended command or specialist; mutation pr
 ## Workflow
 1. Restate the goal in one sentence and determine whether the request is explanation, inspection, planning, local mutation, approval, remote mutation, or release.
 2. Apply the activation boundary. If active, discover the repository root, product root, pinned version, agents, and starting point from the canonical manifest; do not ask for information the CLI or repository can provide safely.
-3. Prefer read-only inspection first: `help`, `dashboard`, `status`, `guide`, `next`, `review`, `impact`, `task readiness`, `gates`, `validate`, `skill path`, or migration `--dry-run`.
+3. Prefer read-only inspection first: `help`, `dashboard`, `status`, `guide`, `next`, `review`, `impact`, `task readiness`, `gates`, `validate`, `engineering-system inspect`, `engineering-system triggers`, `skill path`, or migration `--dry-run`.
 4. Resolve the active scope and read its `context.md`, parents, approvals, decisions, and staleness before recommending a mutation.
 5. Present or execute the smallest command that advances one valid gate. State what it reads, writes, and cannot authorize.
 6. Require explicit human identity and confirmation for approval commands. Never convert conversational agreement into unrelated product approval records.

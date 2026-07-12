@@ -8,6 +8,7 @@ status: draft
 owner_skill: Use Case AI
 slug: _template-use-case
 rigor_tier: N/A
+engineering_triggers: []
 
 parents:
   - FT-TEMPLATE
@@ -26,6 +27,8 @@ related:
   - use-case.md
   - specification.md
   - design.md
+  - engineering-proposal.md
+  - engineering-review.md
   - implementation-plan.md
   - execution-graph.json
   - tasks.md
@@ -35,6 +38,8 @@ documents:
   canonical: use-case.md
   specification: specification.md
   design: design.md
+  engineering_proposal: engineering-proposal.md
+  engineering_review: engineering-review.md
   implementation_plan: implementation-plan.md
   execution_graph: execution-graph.json
   tasks_index: tasks.md

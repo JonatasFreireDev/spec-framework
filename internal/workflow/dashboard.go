@@ -8,6 +8,7 @@ import (
 	"strings"
 
 	"github.com/JonatasFreireDev/spec-framework/internal/designsystem"
+	"github.com/JonatasFreireDev/spec-framework/internal/engineeringsystem"
 )
 
 type WorkflowStage struct {
@@ -17,34 +18,39 @@ type WorkflowStage struct {
 	Detail string `json:"detail,omitempty"`
 }
 type WorkflowDashboard struct {
-	WorkspaceID            string          `json:"workspace_id"`
-	Feature                string          `json:"feature"`
-	UseCase                string          `json:"use_case,omitempty"`
-	CurrentStep            string          `json:"current_step"`
-	RecommendedSkill       string          `json:"recommended_skill"`
-	ExpectedArtifact       string          `json:"expected_artifact"`
-	Stages                 []WorkflowStage `json:"stages"`
-	Blockers               []string        `json:"blockers,omitempty"`
-	RequiredReading        []string        `json:"required_reading,omitempty"`
-	NextCommands           []string        `json:"next_commands,omitempty"`
-	Decisions              []string        `json:"decisions,omitempty"`
-	ActiveLeases           []string        `json:"active_leases,omitempty"`
-	GraphStatus            string          `json:"graph_status,omitempty"`
-	TaskTotal              int             `json:"task_total"`
-	TaskReady              int             `json:"task_ready"`
-	LatestCheckpoint       string          `json:"latest_checkpoint,omitempty"`
-	LatestHandoff          string          `json:"latest_handoff,omitempty"`
-	DesignMode             string          `json:"design_mode,omitempty"`
-	DesignMaturity         string          `json:"design_maturity,omitempty"`
-	DesignFidelity         string          `json:"design_fidelity,omitempty"`
-	DesignSources          int             `json:"design_sources"`
-	DesignMappings         int             `json:"design_mappings"`
-	DesignSystemID         string          `json:"design_system_id,omitempty"`
-	DesignSystemStatus     string          `json:"design_system_status,omitempty"`
-	DesignSystemVersion    string          `json:"design_system_version,omitempty"`
-	DesignSystemTokens     int             `json:"design_system_tokens"`
-	DesignSystemComponents int             `json:"design_system_components"`
-	DesignSystemPatterns   int             `json:"design_system_patterns"`
+	WorkspaceID              string          `json:"workspace_id"`
+	Feature                  string          `json:"feature"`
+	UseCase                  string          `json:"use_case,omitempty"`
+	CurrentStep              string          `json:"current_step"`
+	RecommendedSkill         string          `json:"recommended_skill"`
+	ExpectedArtifact         string          `json:"expected_artifact"`
+	Stages                   []WorkflowStage `json:"stages"`
+	Blockers                 []string        `json:"blockers,omitempty"`
+	RequiredReading          []string        `json:"required_reading,omitempty"`
+	NextCommands             []string        `json:"next_commands,omitempty"`
+	Decisions                []string        `json:"decisions,omitempty"`
+	ActiveLeases             []string        `json:"active_leases,omitempty"`
+	GraphStatus              string          `json:"graph_status,omitempty"`
+	TaskTotal                int             `json:"task_total"`
+	TaskReady                int             `json:"task_ready"`
+	LatestCheckpoint         string          `json:"latest_checkpoint,omitempty"`
+	LatestHandoff            string          `json:"latest_handoff,omitempty"`
+	DesignMode               string          `json:"design_mode,omitempty"`
+	DesignMaturity           string          `json:"design_maturity,omitempty"`
+	DesignFidelity           string          `json:"design_fidelity,omitempty"`
+	DesignSources            int             `json:"design_sources"`
+	DesignMappings           int             `json:"design_mappings"`
+	DesignSystemID           string          `json:"design_system_id,omitempty"`
+	DesignSystemStatus       string          `json:"design_system_status,omitempty"`
+	DesignSystemVersion      string          `json:"design_system_version,omitempty"`
+	DesignSystemTokens       int             `json:"design_system_tokens"`
+	DesignSystemComponents   int             `json:"design_system_components"`
+	DesignSystemPatterns     int             `json:"design_system_patterns"`
+	EngineeringSystemID      string          `json:"engineering_system_id,omitempty"`
+	EngineeringSystemStatus  string          `json:"engineering_system_status,omitempty"`
+	EngineeringSystemVersion string          `json:"engineering_system_version,omitempty"`
+	EngineeringSystemAreas   int             `json:"engineering_system_areas"`
+	EngineeringTriggers      []string        `json:"engineering_triggers,omitempty"`
 }
 
 func BuildDashboard(root, id string) (WorkflowDashboard, error) {
@@ -57,7 +63,7 @@ func BuildDashboard(root, id string) (WorkflowDashboard, error) {
 		return WorkflowDashboard{}, err
 	}
 	d := WorkflowDashboard{WorkspaceID: id, Feature: w.Scope["feature"], UseCase: w.Scope["use_case"], CurrentStep: guide.CurrentStep, RecommendedSkill: guide.RecommendedSkill, ExpectedArtifact: guide.ExpectedArtifact, Blockers: guide.Blockers, RequiredReading: guide.RequiredReading, NextCommands: guide.Commands}
-	order := []struct{ id, label, skill string }{{"feature", "Feature", "feature"}, {"use-case", "Use Case", "use-case"}, {"specification", "Specification", "specification"}, {"design", "Design", "ux-ui"}, {"technical-discovery", "Technical Discovery", "technical-discovery"}, {"architecture-gate", "Architecture Gate", "product-historian"}, {"implementation-plan", "Implementation Plan", "implementation-planner"}, {"execution-graph", "Execution Graph", "execution-graph"}, {"tasks", "Tasks", "task-generator"}, {"code-runner", "Ready for Code", "code-runner"}}
+	order := []struct{ id, label, skill string }{{"feature", "Feature", "feature"}, {"use-case", "Use Case", "use-case"}, {"specification", "Specification", "specification"}, {"design", "Design", "ux-ui"}, {"technical-discovery", "Technical Discovery", "technical-discovery"}, {"architecture-gate", "Architecture Gate", "product-historian"}, {"engineering-proposal", "Engineering Proposal", "engineering-proposal"}, {"engineering-review", "Engineering Review", "engineering-review"}, {"implementation-plan", "Implementation Plan", "implementation-planner"}, {"execution-graph", "Execution Graph", "execution-graph"}, {"tasks", "Tasks", "task-generator"}, {"code-runner", "Ready for Code", "code-runner"}}
 	current := len(order) - 1
 	for i, x := range order {
 		if x.skill == guide.CurrentStep {
@@ -97,6 +103,9 @@ func BuildDashboard(root, id string) (WorkflowDashboard, error) {
 			d.DesignSources = len(stringAnySlice(designManifest["sources"]))
 			d.DesignMappings = len(stringMapSlice(designManifest["mappings"]))
 		}
+		if context, err := os.ReadFile(filepath.Join(uc, "context.md")); err == nil {
+			d.EngineeringTriggers, _ = engineeringsystem.Triggers(string(context))
+		}
 	}
 	d.Decisions = dashboardDecisions(root, d.Feature, d.UseCase)
 	d.ActiveLeases = dashboardLeases(root)
@@ -109,6 +118,12 @@ func BuildDashboard(root, id string) (WorkflowDashboard, error) {
 		d.DesignSystemTokens = system.Tokens
 		d.DesignSystemComponents = system.Components
 		d.DesignSystemPatterns = system.Patterns
+	}
+	if system, err := engineeringsystem.Inspect(root); err == nil {
+		d.EngineeringSystemID = system.ID
+		d.EngineeringSystemStatus = system.Status
+		d.EngineeringSystemVersion = system.Version
+		d.EngineeringSystemAreas = len(system.Areas)
 	}
 	return d, nil
 }

@@ -304,9 +304,9 @@ func WorkspaceGuide(root, id string) (Guide, error) {
 		return Guide{}, err
 	}
 	g := Guide{WorkspaceID: id, CurrentStep: s.Next, RecommendedSkill: s.Next, Blockers: s.Blockers}
-	m := map[string][]string{"use-case": {"feature context", "feature.md"}, "specification": {"use-case context", "use-case.md"}, "ux-ui": {"specification.md", "contracts/"}, "technical-discovery": {"specification.md", "design.md", "engineering/"}, "product-historian": {"technical-discovery.md", "knowledge/decisions/"}, "implementation-planner": {"technical-discovery.md", "design.md", "specification.md"}, "execution-graph": {"implementation-plan.md"}, "task-generator": {"execution-graph.json"}, "code-runner": {"task file", "knowledge/conventions/gates.md"}}
+	m := map[string][]string{"use-case": {"feature context", "feature.md"}, "specification": {"use-case context", "use-case.md"}, "ux-ui": {"specification.md", "contracts/"}, "technical-discovery": {"specification.md", "design.md", "engineering/"}, "product-historian": {"technical-discovery.md", "knowledge/decisions/"}, "engineering-proposal": {"technical-discovery.md", "engineering/", "knowledge/decisions/"}, "engineering-review": {"engineering-proposal.md", "technical-discovery.md", "engineering/", "knowledge/decisions/"}, "implementation-planner": {"engineering-proposal.md", "engineering-review.md", "technical-discovery.md", "design.md", "specification.md"}, "execution-graph": {"implementation-plan.md"}, "task-generator": {"execution-graph.json"}, "code-runner": {"task file", "knowledge/conventions/gates.md"}}
 	g.RequiredReading = m[s.Next]
-	g.ExpectedArtifact = map[string]string{"feature": "approved feature scope", "use-case": "use-cases/<slug>/", "specification": "specification.md and contracts/", "ux-ui": "design.md", "technical-discovery": "technical-discovery.md", "product-historian": "resolved Architecture Gate", "implementation-planner": "implementation-plan.md", "execution-graph": "execution-graph.json", "task-generator": "tasks/*.md and tasks.md", "code-runner": "working-tree evidence"}[s.Next]
+	g.ExpectedArtifact = map[string]string{"feature": "approved feature scope", "use-case": "use-cases/<slug>/", "specification": "specification.md and contracts/", "ux-ui": "design.md", "technical-discovery": "technical-discovery.md", "product-historian": "resolved Architecture Gate", "engineering-proposal": "engineering-proposal.md", "engineering-review": "engineering-review.md with a current verdict", "implementation-planner": "implementation-plan.md", "execution-graph": "execution-graph.json", "task-generator": "tasks/*.md and tasks.md", "code-runner": "working-tree evidence"}[s.Next]
 	g.Commands = []string{"spec-framework status --work " + id, "Use skill: " + s.Next}
 	return g, nil
 }
@@ -321,7 +321,7 @@ func ReviewStage(root, work, stage string) (StageReview, error) {
 		return StageReview{}, err
 	}
 	prefix := strings.TrimSuffix(filepath.ToSlash(w.Scope["feature"]), "context.md")
-	types := map[string][]string{"feature": {"feature"}, "use-cases": {"use-case"}, "specification": {"specification", "specification-contract"}, "design": {"design"}, "technical-discovery": {"technical-discovery"}, "planning": {"implementation-plan"}, "tasks": {"execution-graph", "task", "taskset"}}[stage]
+	types := map[string][]string{"feature": {"feature"}, "use-cases": {"use-case"}, "specification": {"specification", "specification-contract"}, "design": {"design"}, "technical-discovery": {"technical-discovery"}, "engineering": {"engineering-proposal", "engineering-review"}, "planning": {"implementation-plan"}, "tasks": {"execution-graph", "task", "taskset"}}[stage]
 	if len(types) == 0 {
 		return StageReview{}, fmt.Errorf("unknown stage %s", stage)
 	}

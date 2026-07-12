@@ -98,6 +98,9 @@ spec-framework init ../my-product
 spec-framework validate
 spec-framework upgrade --target ../my-product
 spec-framework dashboard --work WORK-001
+spec-framework engineering-system inspect
+spec-framework engineering-system validate
+spec-framework engineering-system triggers
 spec-framework decisions migrate
 ```
 

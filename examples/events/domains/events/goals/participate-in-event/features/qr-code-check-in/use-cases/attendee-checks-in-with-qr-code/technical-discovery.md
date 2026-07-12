@@ -15,4 +15,4 @@ The worked example has no application codebase. Code paths, modules, tests, and 
 
 ## Handoff
 
-Next: implementation-planner only in a real adopter repository with inspectable code.
+Next: engineering-proposal, preserving the lack of inspectable application code as a planning blocker.

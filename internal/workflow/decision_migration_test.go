@@ -45,7 +45,7 @@ func TestBuildDashboardShowsCanonicalStages(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if len(d.Stages) != 10 || d.CurrentStep != "use-case" {
+	if len(d.Stages) != 12 || d.CurrentStep != "use-case" || d.Stages[6].ID != "engineering-proposal" || d.Stages[7].ID != "engineering-review" {
 		t.Fatalf("%+v", d)
 	}
 }

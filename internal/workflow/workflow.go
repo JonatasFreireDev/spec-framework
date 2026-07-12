@@ -12,6 +12,8 @@ import (
 	"sort"
 	"strings"
 	"time"
+
+	"github.com/JonatasFreireDev/spec-framework/internal/engineeringsystem"
 )
 
 type Artifact struct {
@@ -276,6 +278,14 @@ func nextFor(root string, a Artifact, useCaseSelector string) (string, []string)
 	if !architectureResolved(filepath.Join(uc, "technical-discovery.md")) {
 		return "product-historian", []string{"Architecture Gate is unresolved"}
 	}
+	if engineeringReviewApplies(filepath.Join(uc, "context.md")) {
+		if !approvedDocument(filepath.Join(uc, "engineering-proposal.md")) {
+			return "engineering-proposal", []string{"applicable engineering proposal is missing or not approved"}
+		}
+		if !passedEngineeringReview(filepath.Join(uc, "engineering-review.md")) {
+			return "engineering-review", []string{"applicable engineering review is missing, not approved, or not passed"}
+		}
+	}
 	if !approvedDocument(filepath.Join(uc, "implementation-plan.md")) {
 		return "implementation-planner", []string{"implementation plan is missing or not approved"}
 	}
@@ -336,6 +346,30 @@ func architectureResolved(path string) bool {
 	}
 	text := string(data)
 	return strings.Contains(text, "Not required") || regexp.MustCompile(`DEC-\d+`).MatchString(text)
+}
+func tierLDocument(path string) bool {
+	data, err := os.ReadFile(path)
+	if err != nil {
+		return false
+	}
+	text := strings.ToUpper(string(data))
+	return strings.Contains(text, "RIGOR_TIER: L") || strings.Contains(text, "| L |")
+}
+func engineeringReviewApplies(path string) bool {
+	data, err := os.ReadFile(path)
+	if err != nil {
+		return false
+	}
+	triggers, _ := engineeringsystem.Triggers(string(data))
+	return tierLDocument(path) || len(triggers) > 0
+}
+func passedEngineeringReview(path string) bool {
+	data, err := os.ReadFile(path)
+	if err != nil {
+		return false
+	}
+	text := string(data)
+	return isApproved(extractStatus(text)) && regexp.MustCompile(`(?mi)^\|\s*Verdict\s*\|\s*`+"`?"+`passed`+"`?"+`\s*\|`).MatchString(text)
 }
 func approvedJSON(path string) bool {
 	var raw map[string]any

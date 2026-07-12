@@ -9,6 +9,8 @@ import (
 	"regexp"
 	"sort"
 	"strings"
+
+	"github.com/JonatasFreireDev/spec-framework/internal/engineeringsystem"
 )
 
 func validateImportRuns(s Snapshot) []Diagnostic {
@@ -174,6 +176,11 @@ func validateDeliveryClosure(s Snapshot) []Diagnostic {
 			continue
 		}
 		base := filepath.ToSlash(filepath.Dir(rel))
+		triggers, invalidTriggers := engineeringsystem.Triggers(text)
+		for _, trigger := range invalidTriggers {
+			out = append(out, Diagnostic{Error, "engineering-trigger", rel, "Unknown engineering trigger " + trigger + ".", "Use a trigger listed by spec-framework engineering-system triggers."})
+		}
+		engineeringApplies := tier == "L" || len(triggers) > 0
 		traceSeverity := Warning
 		if graph, ok := s.JSON[base+"/execution-graph.json"].(map[string]any); ok {
 			status := strings.ToLower(firstString(graph["status"], "draft"))
@@ -187,6 +194,9 @@ func validateDeliveryClosure(s Snapshot) []Diagnostic {
 		}
 		if tier == "L" {
 			required = append(required, "contracts/security.md", "contracts/observability.md")
+		}
+		if engineeringApplies {
+			required = append(required, "engineering-proposal.md", "engineering-review.md")
 		}
 		for _, name := range required {
 			path := base + "/" + name
@@ -205,6 +215,15 @@ func validateDeliveryClosure(s Snapshot) []Diagnostic {
 			resolved := strings.Contains(discovery, "Not required") || regexp.MustCompile(`DEC-\d+`).MatchString(discovery)
 			if !resolved {
 				out = append(out, Diagnostic{Error, "architecture-gate", base + "/technical-discovery.md", "Architecture Gate is unresolved.", "Reference an approved DEC-* or record Not required with rationale."})
+			}
+			if engineeringApplies {
+				review := s.Text[base+"/engineering-review.md"]
+				fields := tableFields(review)
+				reviewStatus := strings.ToLower(strings.Trim(fields["status"], "` []"))
+				verdict := strings.ToLower(strings.Trim(fields["verdict"], "` []"))
+				if !feeds(reviewStatus) || verdict != "passed" {
+					out = append(out, Diagnostic{Error, "engineering-review-gate", base + "/implementation-plan.md", "Implementation Plan requires a passed approved Engineering Review for this delivery.", "Keep the plan draft until Engineering Review passes against the current proposal."})
+				}
 			}
 		}
 		reqPattern := regexp.MustCompile(`\bREQ-\d+\b`)
@@ -314,7 +333,7 @@ func tableFields(text string) map[string]string {
 		if key == "field" || strings.Trim(m[1], " -") == "" {
 			continue
 		}
-		out[key] = strings.TrimSpace(m[2])
+		out[key] = strings.Trim(strings.TrimSpace(m[2]), "`")
 	}
 	return out
 }
@@ -369,6 +388,10 @@ func validateUseCaseBundles(s Snapshot) []Diagnostic {
 		}
 		required := append([]string{}, base...)
 		required = append(required, tierFiles[tier]...)
+		triggers, _ := engineeringsystem.Triggers(contextText)
+		if tier == "L" || len(triggers) > 0 {
+			required = append(required, "engineering-proposal.md", "engineering-review.md")
+		}
 		for _, name := range required {
 			path := dir + "/" + name
 			if _, ok := s.Text[path]; !ok {
@@ -889,7 +912,7 @@ func normalizeSkill(value string) string {
 }
 
 func validateDeliveryAndRigor(s Snapshot) []Diagnostic {
-	required := map[string]bool{"domain": true, "goal": true, "feature": true, "use-case": true, "specification": true, "technical-discovery": true, "implementation-plan": true, "execution-graph": true, "taskset": true, "task": true}
+	required := map[string]bool{"domain": true, "goal": true, "feature": true, "use-case": true, "specification": true, "technical-discovery": true, "engineering-proposal": true, "engineering-review": true, "implementation-plan": true, "execution-graph": true, "taskset": true, "task": true}
 	levels := map[string]bool{"L0": true, "L1": true, "L2": true, "L3": true, "L4": true, "L5": true, "N/A": true}
 	priorities := map[string]bool{"P0": true, "P1": true, "P2": true, "P3": true, "N/A": true}
 	var out []Diagnostic
@@ -992,8 +1015,16 @@ func validateRegistryAndApprovalGates(s Snapshot) []Diagnostic {
 		}
 		id, _ := uc["id"].(string)
 		children := byParent[id]
-		sequence := []struct{ child, parent, rule string }{{"design", "specification", "design requires an approved Specification"}, {"technical-discovery", "design", "technical discovery requires approved Design"}, {"implementation-plan", "technical-discovery", "implementation plan requires approved Technical Discovery"}, {"execution-graph", "implementation-plan", "execution graph requires approved Implementation Plan"}, {"taskset", "execution-graph", "tasks require approved Execution Graph"}}
+		ucPath, _ := uc["path"].(string)
+		contextText := s.Text[filepath.ToSlash(ucPath)]
+		tierL := strings.ToUpper(metadata(contextText)["rigor_tier"]) == "L"
+		triggers, _ := engineeringsystem.Triggers(contextText)
+		engineeringApplies := tierL || len(triggers) > 0
+		sequence := []struct{ child, parent, rule string }{{"design", "specification", "design requires an approved Specification"}, {"technical-discovery", "design", "technical discovery requires approved Design"}, {"engineering-proposal", "technical-discovery", "engineering proposal requires approved Technical Discovery"}, {"engineering-review", "engineering-proposal", "engineering review requires an approved Engineering Proposal"}, {"implementation-plan", "engineering-review", "implementation plan requires approved Engineering Review when applicable"}, {"execution-graph", "implementation-plan", "execution graph requires approved Implementation Plan"}, {"taskset", "execution-graph", "tasks require approved Execution Graph"}}
 		for _, gate := range sequence {
+			if !engineeringApplies && (gate.child == "engineering-proposal" || gate.child == "engineering-review" || gate.parent == "engineering-review") {
+				continue
+			}
 			child := children[gate.child]
 			if child == nil {
 				continue

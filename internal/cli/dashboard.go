@@ -68,6 +68,12 @@ func writeDashboard(root, work string, asJSON bool, out, errout io.Writer) int {
 	if d.DesignSystemID != "" {
 		fmt.Fprintf(out, "Design System: %s@%s · Status: %s · Tokens: %d · Components: %d · Patterns: %d\n", d.DesignSystemID, d.DesignSystemVersion, d.DesignSystemStatus, d.DesignSystemTokens, d.DesignSystemComponents, d.DesignSystemPatterns)
 	}
+	if d.EngineeringSystemID != "" {
+		fmt.Fprintf(out, "Engineering System: %s@%s - Status: %s - Areas: %d\n", d.EngineeringSystemID, d.EngineeringSystemVersion, d.EngineeringSystemStatus, d.EngineeringSystemAreas)
+	}
+	if len(d.EngineeringTriggers) > 0 {
+		fmt.Fprintln(out, "Engineering triggers:", strings.Join(d.EngineeringTriggers, ", "))
+	}
 	if d.LatestCheckpoint != "" {
 		fmt.Fprintln(out, "Checkpoint:", d.LatestCheckpoint)
 	}

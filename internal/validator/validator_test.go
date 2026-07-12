@@ -96,6 +96,126 @@ func TestValidatedTaskRequiresMatchingDiffHashes(t *testing.T) {
 	}
 }
 
+func TestTierLRequiresEngineeringProposalAndReview(t *testing.T) {
+	s := Snapshot{Text: map[string]string{
+		"domains/d/goals/g/features/f/use-cases/u/context.md": "---\nrigor_tier: L\n---\n",
+	}}
+	diagnostics := validateUseCaseBundles(s)
+	wants := map[string]bool{"engineering-proposal.md": false, "engineering-review.md": false}
+	for _, diagnostic := range diagnostics {
+		for name := range wants {
+			if strings.HasSuffix(diagnostic.File, name) {
+				wants[name] = true
+			}
+		}
+	}
+	for name, found := range wants {
+		if !found {
+			t.Fatalf("missing diagnostic for %s: %+v", name, diagnostics)
+		}
+	}
+}
+
+func TestTierLAdvancedPlanRequiresPassedEngineeringReview(t *testing.T) {
+	base := "domains/d/goals/g/features/f/use-cases/u"
+	s := Snapshot{Text: map[string]string{
+		base + "/context.md":              "---\nrigor_tier: L\n---\n",
+		base + "/implementation-plan.md":  "| Field | Value |\n| --- | --- |\n| Status | `proposed` |\n",
+		base + "/technical-discovery.md":  "| Field | Value |\n| --- | --- |\n| Status | `approved` |\n| Verdict | Not required |\n",
+		base + "/engineering-review.md":   "| Field | Value |\n| --- | --- |\n| Status | `draft` |\n| Verdict | `blocked` |\n",
+		base + "/engineering-proposal.md": "| Field | Value |\n| --- | --- |\n| Status | `draft` |\n",
+	}}
+	found := false
+	for _, diagnostic := range validateDeliveryClosure(s) {
+		if diagnostic.Check == "engineering-review-gate" {
+			found = true
+		}
+	}
+	if !found {
+		t.Fatal("expected engineering-review-gate diagnostic")
+	}
+}
+
+func TestRegistryNormalizesInlineCodeTableValues(t *testing.T) {
+	path := "domains/d/goals/g/features/f/use-cases/u/engineering-proposal.md"
+	s := Snapshot{Text: map[string]string{
+		"domains/d/goals/g/features/f/use-cases/u/context.md": "---\nid: UC-1\nrigor_tier: L\n---\n",
+		path: "| Field | Value |\n| --- | --- |\n| ID | `ENGPROP-1` |\n| Status | `draft` |\n| Owner skill | `engineering-proposal` |\n| Level | `L1` |\n| Priority | `P0` |\n| Rationale | Inherited. |\n",
+	}}
+	artifacts := buildRegistry(s)
+	if len(artifacts) != 1 {
+		t.Fatalf("artifacts=%+v", artifacts)
+	}
+	artifact := artifacts[0]
+	delivery, _ := artifact["delivery"].(map[string]any)
+	if artifact["id"] != "ENGPROP-1" || artifact["status"] != "draft" || artifact["ownerSkill"] != "engineering-proposal" || delivery["level"] != "L1" || delivery["priority"] != "P0" {
+		t.Fatalf("artifact=%+v", artifact)
+	}
+}
+
+func TestTierMRegistryDoesNotRequireEngineeringReview(t *testing.T) {
+	base := "domains/d/goals/g/features/f/use-cases/u"
+	s := Snapshot{Text: map[string]string{
+		base + "/context.md":             "---\nid: UC-1\ntype: use-case\nstatus: approved\nrigor_tier: M\n---\n",
+		base + "/technical-discovery.md": "| Field | Value |\n| --- | --- |\n| ID | TD-1 |\n| Status | approved |\n",
+		base + "/implementation-plan.md": "| Field | Value |\n| --- | --- |\n| ID | PLAN-1 |\n| Status | proposed |\n",
+	}}
+	for _, diagnostic := range validateRegistryAndApprovalGates(s) {
+		if diagnostic.Check == "approval-gates" && strings.Contains(diagnostic.Message, "Engineering Review") {
+			t.Fatalf("Tier M should remain compatible: %+v", diagnostic)
+		}
+	}
+}
+
+func TestTierMTriggerRequiresEngineeringProposalAndReview(t *testing.T) {
+	base := "domains/d/goals/g/features/f/use-cases/u"
+	s := Snapshot{Text: map[string]string{
+		base + "/context.md": "---\nrigor_tier: M\nengineering_triggers:\n  - new_dependency\n---\n",
+	}}
+	diagnostics := validateUseCaseBundles(s)
+	wants := map[string]bool{"engineering-proposal.md": false, "engineering-review.md": false}
+	for _, diagnostic := range diagnostics {
+		for name := range wants {
+			if strings.HasSuffix(diagnostic.File, name) {
+				wants[name] = true
+			}
+		}
+	}
+	for name, found := range wants {
+		if !found {
+			t.Fatalf("trigger did not require %s: %+v", name, diagnostics)
+		}
+	}
+}
+
+func TestUnknownEngineeringTriggerIsRejected(t *testing.T) {
+	base := "domains/d/goals/g/features/f/use-cases/u"
+	s := Snapshot{Text: map[string]string{
+		base + "/context.md": "---\nrigor_tier: M\nengineering_triggers:\n  - invented_trigger\n---\n",
+	}}
+	found := false
+	for _, diagnostic := range validateDeliveryClosure(s) {
+		if diagnostic.Check == "engineering-trigger" {
+			found = true
+		}
+	}
+	if !found {
+		t.Fatal("expected unknown engineering trigger diagnostic")
+	}
+}
+
+func TestEventsFixtureRemainsReady(t *testing.T) {
+	frameworkRoot := filepath.Clean(filepath.Join("..", ".."))
+	productRoot := filepath.Join(frameworkRoot, "examples", "events")
+	result, err := Validate(context.Background(), productRoot, frameworkRoot)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if result.Errors != 0 || result.Warnings != 0 || result.Notes != 0 {
+		t.Fatalf("events fixture is not ready: %+v", result.Diagnostics)
+	}
+}
+
 func TestDiagnosticsAreDeterministic(t *testing.T) {
 	root := t.TempDir()
 	_ = os.MkdirAll(filepath.Join(root, "domains", "a"), 0755)

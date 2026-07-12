@@ -8,6 +8,10 @@ status: draft
 owner_skill: use-case
 slug: attendee-checks-in-with-qr-code
 rigor_tier: L
+engineering_triggers:
+  - migration
+  - security_boundary_change
+  - data_ownership_change
 last_updated: 2026-07-09
 delivery:
   level: L1
@@ -40,6 +44,8 @@ Defines the concrete interaction where an attendee presents a QR code and an org
 - UC-001:analytics - analytics.md - measurement plan
 - UC-001:audit - audit.md - audit evidence
 - TD-001 - technical-discovery.md - codebase impact and Architecture Gate
+- ENGPROP-001 - engineering-proposal.md - intended technical change
+- ENGREV-001 - engineering-review.md - independent blocked review
 - UC-001:contracts - contracts/ - modular Tier L contracts
 - TK-001..TK-006 - tasks.md - executable work
 
@@ -72,6 +78,8 @@ Defines the concrete interaction where an attendee presents a QR code and an org
 - QA evidence: qa-evidence.md
 - Security review: security-review.md
 - Technical discovery: technical-discovery.md
+- Engineering proposal: engineering-proposal.md
+- Engineering review: engineering-review.md
 - Contracts: contracts/
 
 ## Decisions

@@ -5,7 +5,8 @@
 ```text
 Domain -> Domain Evolution -> Feature Selection -> Use Cases
 -> Specification Contracts -> Design -> Technical Discovery -> Architecture Gate
--> Plan -> Graph -> Tasks -> Code Runner -> Code Review -> QA
+-> Engineering Proposal -> Engineering Review -> Plan -> Graph -> Tasks
+-> Code Runner -> Code Review -> QA
 -> Commit Crafter -> PR Finalizer
 ```
 
@@ -31,6 +32,8 @@ spec-framework approve --artifact domains/events/context.md --grant approved --a
 The first command previews the transition, resulting hash, and parent blockers. `--yes` atomically updates artifact status, registry status, and the approval record. Invalid status jumps and unapproved parents are blocked.
 
 ## Implementation Readiness
+
+Tier L requires an approved Engineering Proposal and a passed, current Engineering Review before the Implementation Plan advances. Engineering Review does not approve decisions; unresolved architecture, ownership, security, or data choices return to Product Historian plus a human.
 
 ```bash
 spec-framework gates

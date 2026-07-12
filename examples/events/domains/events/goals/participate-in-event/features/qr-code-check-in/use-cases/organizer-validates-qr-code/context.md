@@ -8,6 +8,10 @@ status: proposed
 owner_skill: use-case
 slug: organizer-validates-qr-code
 rigor_tier: L
+engineering_triggers:
+  - data_ownership_change
+  - security_boundary_change
+  - operational_change
 parents:
   - FT-001
 children:
@@ -21,6 +25,8 @@ children:
   - SEC-002
   - ANA-002
   - AUD-002
+  - ENGPROP-002
+  - ENGREV-002
 depends_on:
   - UC-001
 used_by:
@@ -40,6 +46,8 @@ documents:
   analytics: analytics.md
   audit: audit.md
   technical_discovery: technical-discovery.md
+  engineering_proposal: engineering-proposal.md
+  engineering_review: engineering-review.md
   contracts: contracts/
 delivery:
   level: L1
@@ -99,6 +107,8 @@ This context gives agents the local map for the organizer validation use case. I
 | Analytics | [analytics.md](analytics.md) |
 | Audit | [audit.md](audit.md) |
 | Technical Discovery | [technical-discovery.md](technical-discovery.md) |
+| Engineering Proposal | [engineering-proposal.md](engineering-proposal.md) |
+| Engineering Review | [engineering-review.md](engineering-review.md) |
 | Contracts | [contracts/](contracts/) |
 
 ## Handoff

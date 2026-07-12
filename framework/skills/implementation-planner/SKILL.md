@@ -18,7 +18,7 @@ Think like a tech lead and translate an approved specification plus approved des
 - explain: summarize the artifact and why it exists.
 
 ## Inputs
-Approved specification; approved design or `Not applicable` design artifact; Delivery Level; Priority; architecture context; dependencies; risks; codebase constraints.
+Approved specification; approved design or `Not applicable` design artifact; approved Technical Discovery; applicable Engineering Proposal and passed Engineering Review; Delivery Level; Priority; architecture context; dependencies; risks; codebase constraints.
 
 ## Outputs
 implementation-plan.md; inherited Delivery Level and Priority; phases; dependency notes; rollback plan; candidate task slices.
@@ -34,15 +34,17 @@ implementation-plan.md; inherited Delivery Level and Priority; phases; dependenc
 1. Read the parent context and confirm the artifact status.
 2. Identify missing information, assumptions, conflicts, and dependencies.
 3. Propose the artifact or revision using the matching template.
-4. Record decision candidates for high-impact or hard-to-reverse choices.
-5. Ask for approval before moving the artifact to the next ladder step.
-6. Update context.md with new links, dependencies, questions, and status changes.
+4. For Tier L or another applicable delivery, refuse to plan until Engineering Review passed against the current Engineering Proposal.
+5. Record decision candidates for high-impact or hard-to-reverse choices.
+6. Ask for approval before moving the artifact to the next ladder step.
+7. Update context.md with new links, dependencies, questions, and status changes.
 
 ## Quality checklist
 - [ ] Preserves traceability to the parent artifact.
 - [ ] Uses the correct template and naming conventions.
 - [ ] States scope, non-goals, assumptions, and open questions.
 - [ ] Refuses to plan UI-bearing work without approved design.
+- [ ] Refuses applicable work without a passed, current Engineering Review.
 - [ ] Carries Delivery Level and Priority into phases and candidate tasks.
 - [ ] Detects gaps, conflicts, and dependencies.
 - [ ] Records meaningful decisions or decision candidates.

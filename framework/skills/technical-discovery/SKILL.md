@@ -36,7 +36,7 @@ Approved specification contracts; approved design or `Not applicable`; stable en
 4. Identify new dependencies, migrations, permission boundaries, shared resources, and rollout constraints.
 5. Set the Architecture Gate to `Decision required` with candidates, or `Not required` with concrete rationale. A referenced DEC must exist, be indexed, approved with a current hash-matching approval record, and apply to this use-case scope.
 6. Stop when the codebase cannot be inspected or an architecture decision is unresolved.
-7. Hand the approved report to Implementation Planner.
+7. Hand the approved report to Engineering Proposal when the Architecture Gate is resolved.
 
 ## Quality checklist
 - [ ] Preserves traceability to affected artifacts.
@@ -49,6 +49,6 @@ Approved specification contracts; approved design or `Not applicable`; stable en
 - [ ] Leaves a clear handoff for the next skill or orchestrator.
 
 ## Handoff
-Next: implementation-planner after the Architecture Gate is resolved.
+Next: engineering-proposal after the Architecture Gate is resolved.
 
 Pass forward requirement mappings, code paths, architecture evidence, decisions, dependencies, risks, migrations, tests, and rollout constraints.

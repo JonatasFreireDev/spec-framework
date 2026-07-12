@@ -18,7 +18,7 @@ Orchestrator. Controls workflow, gates, handoffs, and approval checkpoints. It s
 - Approved product decisions in the active product root's `knowledge/decisions/`.
 
 ## Default sequence
-Impact Analyzer -> Feature -> Use Case -> Specification -> UX/UI -> Technical Discovery -> Architecture Gate -> Implementation Planner -> Execution Graph -> Task Generator
+Impact Analyzer -> Feature -> Use Case -> Specification -> UX/UI -> Technical Discovery -> Architecture Gate -> Engineering Proposal -> Engineering Review -> Implementation Planner -> Execution Graph -> Task Generator
 
 ## Operating rules
 1. Identify the current artifact status before routing work.
@@ -27,11 +27,12 @@ Impact Analyzer -> Feature -> Use Case -> Specification -> UX/UI -> Technical Di
 4. Preserve traceability from parent artifacts to child artifacts.
 5. Keep audit findings separate from product decisions until approved.
 6. Require `Delivery Level` and `Priority` before Specification and preserve them through every downstream artifact.
-7. For UI-bearing use cases, require approved `design.md` before Implementation Planner. For non-UI use cases, require `design.md` marked `Not applicable`.
+7. For UI-bearing use cases, require approved `design.md` before Technical Discovery. For non-UI use cases, require `design.md` marked `Not applicable`.
+8. Require Engineering Proposal and a passed Engineering Review for Tier L and any delivery whose context declares a supported `engineering_trigger`.
 8. Update context and indexes only after the source artifact is approved.
 
 ## Outputs
-approved feature scope; specification contracts; design; technical discovery; resolved Architecture Gate; implementation plan; execution graph; task set; approval evidence references.
+approved feature scope; specification contracts; design; technical discovery; resolved Architecture Gate; applicable Engineering Proposal and Engineering Review; implementation plan; execution graph; task set; approval evidence references.
 
 ## Gate checklist
 - [ ] Inputs are approved or explicitly marked as draft.

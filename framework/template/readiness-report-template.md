@@ -95,6 +95,8 @@ flowchart LR
 
 ### Planning Completeness
 
+- [ ] Tier L has an Engineering Proposal pinned to the Engineering System or marked `Not configured`.
+- [ ] Applicable Engineering Review passed against the current proposal and has no unresolved decision blocker.
 - [ ] Implementation phases are sequenced.
 - [ ] Dependencies are explicit.
 - [ ] Risks are documented.

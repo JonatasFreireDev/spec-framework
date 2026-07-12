@@ -112,6 +112,20 @@ Approved decisions and the Specification remain authoritative for behavior, secu
 
 The Design System is an optional shared product artifact for products with recurring interface foundations, tokens, components, and patterns. It lives under `design/system/`, declares `generate`, `evolve`, or `adopt`, and uses semantic versioning. `design-system.md` is the human contract and `tokens/tokens.json` is the mechanical token source. Use-case Designs pin the system id/version and record consumed tokens, components, patterns, and deviations. A Design System does not replace the Specification or approve use-case Design.
 
+### Engineering System
+
+The Engineering System is an optional shared product artifact for stable architecture, module and data ownership, integrations, standards, quality attributes, fitness functions, operations, and evidence. It lives under `engineering/`, declares `generate`, `evolve`, or `adopt`, and uses semantic versioning. `engineering-system.md` is the human contract and `engineering-system.yaml` is the mechanical catalog. Maturity is declared by area as `baseline`, `mapped`, `governed`, `verified`, or `operated`; it describes available evidence and never grants approval.
+
+Approved decisions and the Specification remain authoritative. The Engineering System records and links established technical constraints but does not replace `DEC-*` records or their approval evidence.
+
+### Engineering Proposal
+
+Translates an approved Specification, Design, Technical Discovery, and resolved Architecture Gate into the intended technical solution for one delivery. It describes boundaries, data ownership, integrations, dependencies, operations, tests, rollout, and deviations from the pinned Engineering System without sequencing implementation tasks.
+
+### Engineering Review
+
+Independently and read-only evaluates an Engineering Proposal before Implementation Planning. It verifies architecture, decisions, ownership, dependencies, quality attributes, operations, and testability. It does not edit the proposal, approve product decisions, or review implementation code.
+
 ### Implementation Plan
 
 Translates the Specification into technical strategy. Thinks like a Tech Lead: sequencing, phases, dependencies, risks, slices, migrations, backend, frontend, tests, and rollout.
@@ -136,7 +150,7 @@ Use cases declare `rigor_tier` in `context.md` to adjust documentary rigor to ri
 
 - `S`: small and low risk; requires specification, tasks, and tests.
 - `M`: normal product flow; also requires design, implementation plan, and execution graph.
-- `L`: critical or sensitive flow; also requires analytics, audit, QA evidence, and Security Review.
+- `L`: critical or sensitive flow; also requires Engineering Proposal, Engineering Review, analytics, audit, QA evidence, and Security Review.
 - `N/A`: structural example or placeholder without product scope.
 
 Automatic Tier L triggers: auth, permissions, roles, payment, PII, upload, UGC, public surface, or migration that touches RLS/policies. A tier change requires an approval record for the use case, but not a new DEC when the policy remains the same.
@@ -225,6 +239,9 @@ product/
                   context.md
                   use-case.md
                   specification.md
+                  technical-discovery.md
+                  engineering-proposal.md
+                  engineering-review.md
                   implementation-plan.md
                   execution-graph.json
                   tasks/
@@ -248,6 +265,14 @@ product/
       sources/
       evidence/
   engineering/
+    context.md
+    engineering-system.md
+    engineering-system.yaml
+    architecture/
+    standards/
+    quality/
+    runbooks/
+    evidence/
   audits/
   releases/
   skills/
@@ -334,7 +359,7 @@ decisions:
 The flow for a new feature must be:
 
 ```text
-Feature -> Use Cases -> Specification -> Design -> Implementation Plan -> Execution Graph -> Tasks -> Implementation -> QA Evidence -> Security Review -> Review -> Audit -> Release
+Feature -> Use Cases -> Specification -> Design -> Technical Discovery -> Engineering Proposal -> Engineering Review -> Implementation Plan -> Execution Graph -> Tasks -> Implementation -> QA Evidence -> Security Review -> Review -> Audit -> Release
 ```
 
 The closed delivery flow is:
@@ -342,7 +367,7 @@ The closed delivery flow is:
 ```text
 Domain -> Domain Evolution -> Feature Selection -> New Feature -> Use Cases
 -> Specification Contracts -> Design -> Technical Discovery -> Architecture Gate
--> Implementation Plan -> Execution Graph -> Tasks -> Code Runner
+-> Engineering Proposal -> Engineering Review -> Implementation Plan -> Execution Graph -> Tasks -> Code Runner
 -> Code Review -> QA -> Commit Crafter -> PR Finalizer
 ```
 
@@ -398,7 +423,7 @@ Open questions
 
 Security Review is not an absolute promise of risk absence. The gate's role is to ensure that all defined controls were verified with evidence, that blockers are resolved, and that residual risks are documented and approved by humans when relevant.
 
-Documentary rigor is proportional to the use case's tier. Tier S avoids heavy artifacts when design, analytics, or audit are `Not applicable`; Tier L requires QA Evidence and Security Review by default.
+Documentary rigor is proportional to the use case's tier. Tier S avoids heavy artifacts when design, analytics, or audit are `Not applicable`; Tier L requires Engineering Proposal, Engineering Review, QA Evidence, and Security Review by default. Tier S and M require Engineering Proposal and Engineering Review when `context.md` declares at least one structured `engineering_trigger`: `new_dependency`, `external_integration`, `data_ownership_change`, `migration`, `architecture_boundary_change`, `deployment_change`, `security_boundary_change`, or `operational_change`. Trigger automation reads this closed list and never infers applicability from prose.
 
 ## 6.1. Delivery Prioritization
 
@@ -453,6 +478,8 @@ Gates:
 The Implementation Plan is created after the Specification and the Design, and before the tasks. It must not write code. It must define the build strategy.
 
 Before planning, `technical-discovery.md` must map applicable requirements to the real codebase and stable knowledge in `engineering/`. Its Architecture Gate must reference an approved decision or state `Not required` with concrete rationale.
+
+When Engineering Proposal applies, `engineering-proposal.md` must pin the Engineering System version or explicitly state that no shared system is configured, distinguish existing evidence from the intended change, and receive a non-blocking `engineering-review.md` verdict before the Implementation Plan advances. Tier L always requires both artifacts. Engineering Review never substitutes for approval of a required product decision.
 
 Recommended sections:
 
@@ -587,6 +614,9 @@ Skills are specialists. They can operate in modes such as `create`, `update`, `a
 ### Specification And Planning
 
 - Specification AI: creates the central implementation contract.
+- Engineering System AI: creates, adopts, evolves, versions, and audits shared architecture, standards, quality attributes, fitness functions, operations, and evidence.
+- Engineering Proposal AI: describes one delivery's intended technical change after discovery and before independent review.
+- Engineering Review AI: independently reviews a delivery's Engineering Proposal before implementation planning without editing it or approving decisions.
 - Implementation Planner AI: transforms Specification into a technical plan.
 - Execution Graph AI: transforms the plan into an execution DAG.
 - Task AI: generates small, testable, and traceable executable tasks.

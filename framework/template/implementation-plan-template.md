@@ -19,6 +19,8 @@
 | Specification | [specification.md](specification.md) |
 | Design | [design.md](design.md) |
 | Technical Discovery | [technical-discovery.md](technical-discovery.md) |
+| Engineering Proposal | [engineering-proposal.md](engineering-proposal.md) |
+| Engineering Review | [engineering-review.md](engineering-review.md) |
 | Applicable decisions | `[DEC-* ids or N/A]` |
 | Execution Graph | [execution-graph.json](execution-graph.json) |
 | Tasks | [tasks.md](tasks.md) |

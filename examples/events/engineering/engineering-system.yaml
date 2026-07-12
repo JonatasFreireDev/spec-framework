@@ -1,0 +1,23 @@
+id: ENGSYS-EVENTS-001
+status: draft
+version: 0.1.0
+origin_mode: generate
+scope: documentation-fixture
+areas:
+  system_context:
+    contract: architecture/system-context.md
+    maturity: baseline
+    evidence: []
+  modules:
+    contract: architecture/modules.md
+    maturity: baseline
+    evidence: []
+  quality:
+    contract: quality/quality-model.md
+    maturity: baseline
+    evidence: []
+decisions:
+  - DEC-001
+  - DEC-002
+standards: []
+fitness_functions: []

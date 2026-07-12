@@ -33,10 +33,10 @@ Framework assets live in the versioned user cache and are resolved from `product
 3. Fill `product/foundation/vision/context.md`, `product/foundation/vision/vision.md`, `product/foundation/vision/principles.md`, and `product/foundation/vision/north-star.md`.
 4. Fill `product/foundation/strategy/context.md`, `product/foundation/strategy/strategy.md`, `personas.md`, `metrics.md`, and `roadmap.md`.
 5. Copy `product/domains/_template-domain/` to the first real domain slug and update every `context.md`.
-6. Continue through Goal -> Feature -> Use Case -> Specification -> Design -> Implementation Plan -> Execution Graph -> Tasks.
+6. Continue through Goal -> Feature -> Use Case -> Specification -> Design -> Technical Discovery -> applicable Engineering Proposal and Engineering Review -> Implementation Plan -> Execution Graph -> Tasks.
 7. Replace product gate placeholders in `product/knowledge/conventions/gates.md` before marking executable work as implemented or validated.
 8. Use `spec-framework work`, then `resume`, leases, checkpoints, and handoffs so execution can be continued without conversation history.
-9. Use `spec-framework dashboard --work WORK-001` for the consolidated flow and `spec-framework decisions migrate` to preview legacy decision metadata upgrades.
+9. Use `spec-framework engineering-system inspect` for the shared technical baseline, `spec-framework dashboard --work WORK-001` for the consolidated flow, and `spec-framework decisions migrate` to preview legacy decision metadata upgrades.
 
 ## Boundary Rule
 

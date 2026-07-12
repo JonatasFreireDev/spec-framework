@@ -4,12 +4,13 @@
 
 ```yaml
 id: [DOMAIN-001 | GOAL-001 | FT-001 | UC-001 | SPEC-001 | TK-001]
-type: [domain | goal | feature | use-case | specification | implementation-plan | execution-graph | task]
+type: [domain | goal | feature | use-case | specification | engineering-proposal | engineering-review | implementation-plan | execution-graph | task]
 name: [human readable name]
 status: [draft | proposed | approved | in_progress | implemented | validated | released | deprecated | superseded]
 owner_skill: [skill name]
 slug: [immutable-folder-slug]
 rigor_tier: [S | M | L | N/A]
+engineering_triggers: []
 last_updated: [YYYY-MM-DD]
 delivery:
   level: [L0 | L1 | L2 | L3 | L4 | L5 | N/A]
@@ -72,6 +73,8 @@ flowchart TD
 | Primary | [`[primary document]`]([path]) |
 | Specification | [`[specification]`]([path or N/A]) |
 | Design | [`[design]`]([path or N/A]) |
+| Engineering proposal | [`[engineering proposal]`]([path or N/A]) |
+| Engineering review | [`[engineering review]`]([path or N/A]) |
 | Implementation plan | [`[implementation plan]`]([path or N/A]) |
 | Execution graph | [`[execution graph]`]([path or N/A]) |
 | Tasks | [`[tasks]`]([path or N/A]) |
