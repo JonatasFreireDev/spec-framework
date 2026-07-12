@@ -27,12 +27,14 @@ var choices = []choice{
 
 // Result captures the outcome of the interactive init wizard.
 type Result struct {
-	Target        string
-	Agents        []install.Agent
-	StartingPoint string
-	Sources       []string
-	Confirmed     bool
-	Cancelled     bool
+	Target            string
+	Agents            []install.Agent
+	StartingPoint     string
+	Sources           []string
+	InstallImpeccable bool
+	ImpeccableVersion string
+	Confirmed         bool
+	Cancelled         bool
 }
 
 // AgentNames returns the selected agent identifiers as strings.
@@ -65,13 +67,15 @@ const minFormWidth = 32
 // question. Splitting the form into one group per field makes huh advance
 // one question at a time.
 type initModel struct {
-	form          *huh.Form
-	selected      *[]install.Agent
-	target        *string
-	startingPoint *string
-	sources       *string
-	confirmed     *bool
-	width         int
+	form              *huh.Form
+	selected          *[]install.Agent
+	target            *string
+	startingPoint     *string
+	sources           *string
+	installImpeccable *bool
+	impeccableVersion *string
+	confirmed         *bool
+	width             int
 }
 
 func (m initModel) Init() tea.Cmd { return m.form.Init() }
@@ -126,6 +130,11 @@ func (m initModel) summaryView() string {
 	b.WriteString(label.Render("Agents") + "\n  " + value(agents) + "\n\n")
 	b.WriteString(label.Render("Target") + "\n  " + value(*m.target))
 	b.WriteString("\n\n" + label.Render("Starting point") + "\n  " + value(*m.startingPoint))
+	adapter := "skip"
+	if *m.installImpeccable {
+		adapter = "install @ " + *m.impeccableVersion
+	}
+	b.WriteString("\n\n" + label.Render("Impeccable") + "\n  " + value(adapter))
 
 	box := lipgloss.NewStyle().
 		Border(lipgloss.RoundedBorder()).
@@ -141,6 +150,8 @@ func RunInit(input io.Reader, output io.Writer) (Result, error) {
 	var target string
 	startingPoint := "new-product"
 	var sources string
+	installImpeccable := false
+	impeccableVersion := "latest"
 	confirmed := true
 
 	form := huh.NewForm(
@@ -184,6 +195,27 @@ func RunInit(input io.Reader, output io.Writer) (Result, error) {
 				}),
 		),
 		huh.NewGroup(
+			huh.NewConfirm().
+				Title("Install the optional Impeccable design adapter?").
+				Description("Runs the official version-pinned npx installer after product initialization.").
+				Affirmative("Install").
+				Negative("Skip").
+				Value(&installImpeccable),
+		),
+		huh.NewGroup(
+			huh.NewInput().
+				Title("Impeccable CLI version").
+				Description("Use latest to resolve the current recommended version, or enter an exact semantic version.").
+				Placeholder("latest").
+				Value(&impeccableVersion).
+				Validate(func(s string) error {
+					if installImpeccable && strings.TrimSpace(s) == "" {
+						return errors.New("an explicit Impeccable version is required")
+					}
+					return nil
+				}),
+		),
+		huh.NewGroup(
 			huh.NewInput().
 				Title("Target directory").
 				Placeholder("../product").
@@ -204,7 +236,7 @@ func RunInit(input io.Reader, output io.Writer) (Result, error) {
 		),
 	)
 
-	model := initModel{form: form, selected: &selected, target: &target, startingPoint: &startingPoint, sources: &sources, confirmed: &confirmed}
+	model := initModel{form: form, selected: &selected, target: &target, startingPoint: &startingPoint, sources: &sources, installImpeccable: &installImpeccable, impeccableVersion: &impeccableVersion, confirmed: &confirmed}
 	final, err := tea.NewProgram(model, tea.WithInput(input), tea.WithOutput(output)).Run()
 	if err != nil {
 		return Result{}, fmt.Errorf("init wizard: %w", err)
@@ -218,12 +250,14 @@ func RunInit(input io.Reader, output io.Writer) (Result, error) {
 	}
 
 	return Result{
-		Target:        strings.TrimSpace(target),
-		Agents:        selected,
-		StartingPoint: startingPoint,
-		Sources:       splitValues(sources),
-		Confirmed:     confirmed,
-		Cancelled:     !confirmed,
+		Target:            strings.TrimSpace(target),
+		Agents:            selected,
+		StartingPoint:     startingPoint,
+		Sources:           splitValues(sources),
+		InstallImpeccable: installImpeccable,
+		ImpeccableVersion: strings.TrimSpace(impeccableVersion),
+		Confirmed:         confirmed,
+		Cancelled:         !confirmed,
 	}, nil
 }
 
