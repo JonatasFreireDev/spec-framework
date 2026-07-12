@@ -471,6 +471,8 @@ Example phases:
 
 The Execution Graph is a DAG. It defines dependencies between tasks and enables parallel execution by agents. Each node references the task's canonical file by `path`.
 
+Graph lifecycle is `draft → proposed → materialized → approved`. A draft or proposed graph validates its DAG and task contracts before task files exist. Confirmed materialization creates the missing canonical task files and generated index atomically. From `materialized` onward every node path must exist; approval happens only after Graph + Tasks validation. This avoids making task existence a precondition for approving the plan that defines those tasks.
+
 Example:
 
 ```json
