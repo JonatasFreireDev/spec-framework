@@ -1,7 +1,6 @@
 package cli
 
 import (
-	"bytes"
 	"context"
 	"encoding/json"
 	"flag"
@@ -572,23 +571,20 @@ func (app App) runInit(args []string, stdout, stderr io.Writer) int {
 		fmt.Fprintf(stdout, "- Import inventory: product/knowledge/imports/runs/%s\n", result.ImportID)
 	}
 	if *installImpeccable {
+		fmt.Fprintln(stdout, "[1/3] Resolving Impeccable version...")
 		resolved, resolveErr := adapters.ResolveVersion("impeccable", *impeccableVersion)
 		if resolveErr != nil {
 			fmt.Fprintln(stderr, "Product initialized, but Impeccable version resolution failed:", resolveErr)
 			return 1
 		}
 		argv, _ := adapters.ProviderArgv("impeccable", "install", resolved)
-		fmt.Fprintf(stdout, "Installing optional adapter\n- Provider: pbakaus/impeccable\n- Requested version: %s\n- Resolved version: %s\n- Command: npx %s\n", *impeccableVersion, resolved, strings.Join(argv, " "))
-		var providerOut, providerErr bytes.Buffer
-		if err := adapters.Execute(result.Target, "impeccable", "install", resolved, &providerOut, &providerErr); err != nil {
-			fmt.Fprint(stdout, providerOut.String())
-			fmt.Fprint(stderr, providerErr.String())
+		fmt.Fprintf(stdout, "[1/3] Resolved Impeccable %s\n", resolved)
+		fmt.Fprintf(stdout, "[2/3] Installing optional adapter\n- Provider: pbakaus/impeccable\n- Command: npx %s\n", strings.Join(argv, " "))
+		if err := adapters.Execute(result.Target, "impeccable", "install", resolved, stdout, stderr); err != nil {
 			fmt.Fprintln(stderr, "Product initialized, but optional Impeccable installation failed:", err)
 			return 1
 		}
-		fmt.Fprint(stdout, providerOut.String())
-		fmt.Fprint(stderr, providerErr.String())
-		fmt.Fprintln(stdout, "- Impeccable: installed; reload the selected agent harness")
+		fmt.Fprintln(stdout, "[3/3] Impeccable installed; reload the selected agent harness")
 	}
 	return 0
 }

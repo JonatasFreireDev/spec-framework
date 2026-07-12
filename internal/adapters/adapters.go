@@ -5,6 +5,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"io"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -169,7 +170,7 @@ func ResolveVersion(id, requested string) (string, error) {
 	return resolved, nil
 }
 
-func Execute(root, id, action, version string, stdout, stderr *bytes.Buffer) error {
+func Execute(root, id, action, version string, stdout, stderr io.Writer) error {
 	npx, err := findNpx()
 	if err != nil {
 		return err

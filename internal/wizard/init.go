@@ -147,7 +147,7 @@ func (m initModel) summaryView() string {
 
 // RunInit drives the interactive installer wizard and returns the plan.
 func RunInit(input io.Reader, output io.Writer) (Result, error) {
-	selected := []install.Agent{install.Codex, install.Cursor, install.Claude}
+	var selected []install.Agent
 	var target string
 	startingPoint := "new-product"
 	var sources string
@@ -211,7 +211,9 @@ func RunInit(input io.Reader, output io.Writer) (Result, error) {
 					}
 					return nil
 				}),
-		),
+		).WithHideFunc(func() bool {
+			return !showImpeccableVersion(installImpeccable)
+		}),
 		huh.NewGroup(
 			huh.NewInput().
 				Title("Target directory").
@@ -270,6 +272,10 @@ func validateSources(startingPoint, sources string) error {
 
 func showSourcePaths(startingPoint string) bool {
 	return startingPoint == "existing-documents"
+}
+
+func showImpeccableVersion(installImpeccable bool) bool {
+	return installImpeccable
 }
 
 func programOptions(input io.Reader, output io.Writer) []tea.ProgramOption {

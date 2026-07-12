@@ -50,6 +50,15 @@ func TestShowSourcePathsOnlyForExistingDocuments(t *testing.T) {
 	}
 }
 
+func TestShowImpeccableVersionOnlyWhenInstalling(t *testing.T) {
+	if showImpeccableVersion(false) {
+		t.Error("showImpeccableVersion(false) = true, want false")
+	}
+	if !showImpeccableVersion(true) {
+		t.Error("showImpeccableVersion(true) = false, want true")
+	}
+}
+
 func TestAgentOptionsMapChoices(t *testing.T) {
 	opts := agentOptions()
 	if len(opts) != len(choices) {
