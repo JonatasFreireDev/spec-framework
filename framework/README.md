@@ -10,13 +10,13 @@ The `framework/` directory hosts the executable framework core. New product repo
 
 | Area | Owner | Product Repo Copies It? | Notes |
 | --- | --- | --- | --- |
-| `FRAMEWORK.md` | Framework core | Yes, into `.spec-framework/FRAMEWORK.md` | Canonical method contract. |
-| `framework/skills/` | Framework core | Yes, into `.spec-framework/skills/` and selected agent skill trees | Operational agent contracts. |
-| `framework/template/` | Framework core | Yes, into `.spec-framework/templates/` | Reusable artifact templates. |
+| `FRAMEWORK.md` | Framework core | Yes, into the versioned user cache | Canonical method contract. |
+| `framework/skills/` | Framework core | Yes, into the versioned user cache | Operational agent contracts resolved by the global dispatcher. |
+| `framework/template/` | Framework core | Yes, into the versioned user cache | Reusable artifact templates. |
 | Go CLI | Framework core | Installed as a release binary | Mechanical gates and migration tools. |
 | `framework/tests/` | Framework core | No | Tests the framework laboratory and distribution flow. |
-| `framework/decisions/FDR-*` | Framework core | Yes, into `.spec-framework/decisions/` | Framework method history, not product history. |
-| `starter/` | Product starter | Yes | Clean product-owned skeleton with `.spec-framework/` and `product/`. |
+| `framework/decisions/FDR-*` | Framework core | Yes, into the versioned user cache | Framework method history, not product history. |
+| `starter/product/` | Product starter | Yes | Clean product-owned skeleton. |
 | `examples/` | Examples | Optional | Learning material, not production source of truth. |
 
 ## Adoption Models
@@ -31,12 +31,12 @@ The `framework/` directory hosts the executable framework core. New product repo
 
 Treat the root repository as the framework laboratory and treat `starter/` as the copyable product skeleton.
 
-Do not use `examples/events/` as the canonical starter. It contains worked product history and example artifacts. New products should contain product artifacts under `product/` and method assets under `.spec-framework/`.
+Do not use `examples/events/` as the canonical starter. It contains worked product history and example artifacts. New products contain product artifacts under `product/`; method assets stay in the external user cache.
 
 ## Next Step
 
-Use `spec-framework init` to copy `starter/`, install framework assets, generate selected agent skill formats, and record the adopted version.
+Use `spec-framework init` to copy `starter/product/`, cache embedded framework assets, install namespaced user dispatchers, and record the adopted version.
 
-Use `spec-framework upgrade` to refresh `.spec-framework/` assets without touching `product/`.
+Use `spec-framework upgrade` to refresh the external runtime and manifest without overwriting adopter-owned product content.
 
 For framework development, use `go run ./cmd/spec-framework`; adopters use the precompiled release binary.

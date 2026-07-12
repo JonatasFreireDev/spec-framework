@@ -11,6 +11,8 @@ import (
 	"strings"
 
 	framework "github.com/JonatasFreireDev/spec-framework"
+	"github.com/JonatasFreireDev/spec-framework/internal/dispatcher"
+	"github.com/JonatasFreireDev/spec-framework/internal/runtimeassets"
 	"github.com/JonatasFreireDev/spec-framework/internal/sourceimport"
 )
 
@@ -22,7 +24,7 @@ const (
 	Claude Agent = "claude"
 )
 
-var agentRoots = map[Agent]string{Codex: ".agents/skills", Cursor: ".cursor/skills", Claude: ".claude/skills"}
+var agentRoots = map[Agent]string{Codex: "codex", Cursor: "cursor", Claude: "claude"}
 
 type Options struct {
 	Target, Version string
@@ -77,7 +79,7 @@ func ParseAgents(value string) ([]Agent, error) {
 }
 
 func InstalledAgents(target string) ([]Agent, error) {
-	data, err := os.ReadFile(filepath.Join(target, ".spec-framework", "manifest.json"))
+	data, err := os.ReadFile(filepath.Join(target, "product", ".product", "framework.json"))
 	if err != nil {
 		return nil, fmt.Errorf("read installed agents: %w", err)
 	}
@@ -100,10 +102,10 @@ func Init(opts Options) (Result, error) {
 	if err != nil {
 		return Result{}, err
 	}
-	if entries, err := os.ReadDir(target); err == nil && len(entries) > 0 && !opts.Force {
-		return Result{}, fmt.Errorf("target is not empty: %s", target)
+	if _, err := os.Stat(filepath.Join(target, "product")); err == nil && !opts.Force {
+		return Result{}, fmt.Errorf("target already contains product/: %s", target)
 	}
-	if err := copyTree("starter", target); err != nil {
+	if err := copyTree("starter/product", filepath.Join(target, "product")); err != nil {
 		return Result{}, err
 	}
 	point, err := ParseStartingPoint(opts.StartingPoint)
@@ -120,6 +122,11 @@ func Init(opts Options) (Result, error) {
 	}
 	if err := writeStarterGuides(target, version, opts.Agents, point); err != nil {
 		return Result{}, err
+	}
+	for _, agent := range opts.Agents {
+		if _, err := dispatcher.Install(string(agent)); err != nil {
+			return Result{}, fmt.Errorf("install %s dispatcher: %w", agent, err)
+		}
 	}
 	result.StartingPoint = point
 	if point == "existing-documents" {
@@ -143,35 +150,9 @@ func Upgrade(opts Options) (Result, error) {
 	if _, err := os.Stat(filepath.Join(target, "product")); err != nil {
 		return Result{}, fmt.Errorf("target does not contain product/: %s", target)
 	}
-	spec := filepath.Join(target, ".spec-framework")
+	productManifest := filepath.Join(target, "product", ".product", "framework.json")
 	if strings.TrimSpace(opts.StartingPoint) == "" {
-		opts.StartingPoint = installedStartingPoint(filepath.Join(spec, "manifest.json"))
-	}
-	for source, dest := range map[string]string{
-		"FRAMEWORK.md": "FRAMEWORK.md", "framework/AGENTS.framework.md": "AGENTS.framework.md",
-		"framework/delivery-closure.md": "delivery-closure.md",
-		"framework/decisions":           "decisions", "framework/skills": "skills", "framework/template": "templates",
-	} {
-		if err := copyTree(source, filepath.Join(spec, dest)); err != nil {
-			return Result{}, err
-		}
-	}
-	count := 0
-	for _, agent := range opts.Agents {
-		root := filepath.Join(target, filepath.FromSlash(agentRoots[agent]))
-		if err := os.RemoveAll(root); err != nil {
-			return Result{}, err
-		}
-		if err := copyTree("framework/skills", root); err != nil {
-			return Result{}, err
-		}
-		if agent != Codex {
-			entries, _ := os.ReadDir(root)
-			for _, skill := range entries {
-				_ = os.RemoveAll(filepath.Join(root, skill.Name(), "agents"))
-			}
-		}
-		count++
+		opts.StartingPoint = installedStartingPoint(productManifest)
 	}
 	version := opts.Version
 	if version == "" {
@@ -185,28 +166,20 @@ func Upgrade(opts Options) (Result, error) {
 	if err != nil {
 		return Result{}, err
 	}
-	manifest := map[string]any{"schema_version": 2, "version": version, "product_root": "product", "agents": agents, "starting_point": point, "installed_assets": map[string]bool{"framework_document": true, "framework_agent": true, "decisions": true, "skills": true, "templates": true}}
-	if err := writeJSON(filepath.Join(spec, "manifest.json"), manifest); err != nil {
+	manifest := map[string]any{
+		"schema_version": 3, "framework": "spec-framework", "version": version, "product_root": ".",
+		"agents": agents, "starting_point": point,
+		"activation": map[string]any{"mode": "manifest-only"},
+		"runtime":    map[string]any{"source": "user-cache", "channel": "stable"},
+	}
+	if err := writeJSON(productManifest, manifest); err != nil {
 		return Result{}, err
 	}
-	productManifest := filepath.Join(target, "product", ".product", "framework.json")
-	if data, err := os.ReadFile(productManifest); err == nil {
-		var value map[string]any
-		if json.Unmarshal(data, &value) == nil {
-			value["version"] = version
-			value["framework_assets_path"] = "../.spec-framework"
-			value["product_root"] = "."
-			value["agents"] = agents
-			value["starting_point"] = point
-			value["installed_assets"] = manifest["installed_assets"]
-			_ = writeJSON(productManifest, value)
-		}
-	}
-	workflow := productWorkflow(version)
-	if err := writeFile(filepath.Join(target, ".github", "workflows", "framework-validation.yml"), []byte(workflow), 0644); err != nil {
+	spec, err := runtimeassets.Ensure(version)
+	if err != nil {
 		return Result{}, err
 	}
-	return Result{Target: target, SpecRoot: spec, SkillCount: count, StartingPoint: point}, nil
+	return Result{Target: target, SpecRoot: spec, SkillCount: 0, StartingPoint: point}, nil
 }
 
 func installedStartingPoint(path string) string {
@@ -226,7 +199,7 @@ func installedStartingPoint(path string) string {
 }
 
 func updateImportManifest(target, runID string) error {
-	for _, path := range []string{filepath.Join(target, ".spec-framework", "manifest.json"), filepath.Join(target, "product", ".product", "framework.json")} {
+	for _, path := range []string{filepath.Join(target, "product", ".product", "framework.json")} {
 		data, err := os.ReadFile(path)
 		if err != nil {
 			return err

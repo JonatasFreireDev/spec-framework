@@ -12,40 +12,9 @@ func writeStarterGuides(target, version string, agents []Agent, startingPoint st
 		names[i] = string(agent)
 	}
 	selected := strings.Join(names, ", ")
-	flags := strings.Join(names, ",")
-	readme := fmt.Sprintf(`# Product Repository
-
-This repository was initialized with Spec Framework %s.
-
-## Start here
-
-1. Read [BOOTSTRAP.md](BOOTSTRAP.md).
-2. Replace product identity and starter placeholders under product/.
-3. Follow Problem -> Vision -> Strategy before creating the first real Domain.
-4. Run spec-framework validate after each documentation step.
-
-## Installed agent integrations
-
-%s
-
-Canonical framework assets live in .spec-framework/. Product-owned artifacts live in product/.
-
-## CLI
-
-~~~text
-spec-framework validate
-spec-framework validate --write-registry --write-report
-spec-framework upgrade --target . --agents %s --yes
-spec-framework move --from <old-path> --to <new-path> --dry-run
-~~~
-
-A successful validation means the repository is structurally coherent. It does not mean remaining TBD product decisions are complete.
-`, version, selected, flags)
 	bootstrap := bootstrapFor(startingPoint)
-	if err := writeFile(filepath.Join(target, "README.md"), []byte(readme), 0644); err != nil {
-		return err
-	}
-	return writeFile(filepath.Join(target, "BOOTSTRAP.md"), []byte(bootstrap), 0644)
+	header := fmt.Sprintf("Framework version: **%s**\n\nConfigured agents: **%s**\n\n", version, selected)
+	return writeFile(filepath.Join(target, "product", "BOOTSTRAP.md"), []byte(header+bootstrap), 0644)
 }
 
 func bootstrapFor(startingPoint string) string {
@@ -76,9 +45,9 @@ Use this checklist in order. Do not generate downstream artifacts from incomplet
 ## 1. Repository setup
 
 - [ ] Initialize Git and add the first baseline commit.
-- [ ] Install a versioned spec-framework binary on PATH.
+- [ ] Confirm the versioned spec-framework CLI is available on PATH.
 - [ ] Confirm spec-framework validate runs locally.
-- [ ] Confirm .github/workflows/framework-validation.yml uses the expected framework version.
+- [ ] Confirm product/.product/framework.json pins the expected framework version.
 
 ## 2. Product identity
 
@@ -123,48 +92,4 @@ spec-framework validate --write-registry --write-report
 
 Structural ready means paths and contracts are valid. Product readiness additionally requires relevant content, approvals, decisions, gates, and evidence.
 `, startingPoint, intro)
-}
-
-func productWorkflow(version string) string {
-	if version == "dev" || version == "local" {
-		return `name: Framework Validation
-on: [pull_request, push]
-permissions:
-  contents: read
-jobs:
-  validate:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-go@v5
-        with:
-          go-version: "1.26.x"
-      - name: Install development Spec Framework CLI
-        run: go install github.com/JonatasFreireDev/spec-framework/cmd/spec-framework@master
-      - name: Validate framework
-        run: spec-framework validate
-`
-	}
-	version = strings.TrimPrefix(version, "v")
-	return fmt.Sprintf(`name: Framework Validation
-on: [pull_request, push]
-permissions:
-  contents: read
-jobs:
-  validate:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Install pinned Spec Framework CLI
-        env:
-          SPEC_FRAMEWORK_VERSION: %q
-        run: |
-          curl -fsSLO "https://github.com/JonatasFreireDev/spec-framework/releases/download/v${SPEC_FRAMEWORK_VERSION}/spec-framework_${SPEC_FRAMEWORK_VERSION}_linux_amd64.tar.gz"
-          curl -fsSLO "https://github.com/JonatasFreireDev/spec-framework/releases/download/v${SPEC_FRAMEWORK_VERSION}/checksums.txt"
-          sha256sum --check --ignore-missing checksums.txt
-          tar -xzf "spec-framework_${SPEC_FRAMEWORK_VERSION}_linux_amd64.tar.gz"
-          sudo install spec-framework /usr/local/bin/spec-framework
-      - name: Validate framework
-        run: spec-framework validate
-`, version)
 }

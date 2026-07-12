@@ -2,20 +2,20 @@
 
 ## Goal
 
-Create a new Specification Driven Development product repository without mixing product-owned documents with framework development history.
+Create a new Specification Driven Development product repository that adds only `product/` and keeps the versioned framework runtime outside the repository.
 
 ## Recommended Path
 
 Automated bootstrap:
 
 ```bash
-spec-framework init --target ../my-product
+spec-framework init ../my-product
 ```
 
 CLI-style bootstrap from the framework repository:
 
 ```bash
-spec-framework init --target ../my-product --agents codex,cursor,claude --yes
+spec-framework init ../my-product --agents codex,cursor,claude --yes
 ```
 
 The wizard also asks for the starting point. All skills remain installed; the choice changes the generated bootstrap. For existing documents, use `--starting-point existing-documents` with `--source-dir` or `--sources`. The command inventories sources under `product/knowledge/imports/` but does not create Domains, User Goals, or Features without explicit approval.
@@ -34,19 +34,16 @@ See [delivery-closure.md](delivery-closure.md) for the complete operational flow
 
 Install a versioned release binary as described in [install.md](install.md). Go and Node.js are not runtime requirements for adopters.
 
-Manual bootstrap:
+Initialization writes `product/.product/framework.json`, materializes the pinned embedded assets in the user cache, and installs one namespaced dispatcher for each selected agent in the user's harness directory. It does not create `.spec-framework/`, local agent trees, root guides, or CI workflows.
 
-1. Create an empty product repository.
-2. Copy the contents of `starter/` into the product repository root.
-3. Install framework assets into `.spec-framework/`:
-   - `.spec-framework/FRAMEWORK.md`
-   - `.spec-framework/AGENTS.framework.md`
-   - `.spec-framework/decisions/FDR-*`
-   - `.spec-framework/skills/`
-   - `.spec-framework/templates/`
-4. Generate one or more agent skill trees: `.agents/skills/`, `.cursor/skills/`, and `.claude/skills/`.
-5. Replace `product/` starter placeholders with product-specific content.
-6. Run the validation wrapper against the product root.
+Activation is manifest-only. Mentions of Spec Framework do not activate the dispatcher when `product/.product/framework.json` is absent or invalid.
+
+Manual development bootstrap:
+
+1. Create or open the product repository.
+2. From the framework source repository, run `go run ./cmd/spec-framework init <target>`.
+3. Replace `product/` starter placeholders with product-specific content.
+4. Run validation from the repository root.
 
 ```bash
 spec-framework validate
@@ -55,7 +52,7 @@ spec-framework validate
 Direct validator form when debugging:
 
 ```bash
-spec-framework validate --product-root product --framework-root .spec-framework --write-registry --write-report
+spec-framework validate --product-root product --framework-root <framework-source-root> --write-registry --write-report
 ```
 
 Upgrade an initialized product from the framework repository:
@@ -81,11 +78,8 @@ spec-framework upgrade --target ../my-product --agents codex --yes
 
 | Framework-Owned Area | Purpose |
 | --- | --- |
-| `.spec-framework/FRAMEWORK.md` | Method contract. |
-| `.spec-framework/AGENTS.framework.md` | Agent instructions for resolving framework and product roots. |
-| `.spec-framework/decisions/FDR-*` | Framework method decisions. |
-| `.spec-framework/skills/` | Operational skills. |
-| `.spec-framework/templates/` | Reusable artifact templates. |
+| Versioned user cache | Method, decisions, skills, templates, and validation assets resolved from the product manifest. |
+| User-scoped `spec-framework` dispatcher | Manifest-gated agent integration that resolves specialized skills. |
 | Installed `spec-framework` binary | Validation, bootstrap, upgrade, and migration tooling. |
 
 ## Non-Goals For Starter Repositories
@@ -93,14 +87,14 @@ spec-framework upgrade --target ../my-product --agents codex --yes
 - Do not copy framework FDRs into `product/knowledge/decisions/`.
 - Do not inherit example domains as real product scope.
 - Do not inherit retroactive approval records from the framework lab.
-- Do not edit `.spec-framework/` internals to encode product scope.
+- Do not edit cached framework internals to encode product scope.
 
 ## Upgrade Direction
 
 Stable commands:
 
 ```bash
-spec-framework init --target ../my-product
+spec-framework init ../my-product
 spec-framework validate
 spec-framework upgrade --target ../my-product
 spec-framework dashboard --work WORK-001
@@ -109,4 +103,4 @@ spec-framework decisions migrate
 
 Use `decisions migrate` as a preview first. Existing repositories should use `--interactive` to review ambiguous inferred types and scopes before applying the metadata migration.
 
-Adoption is backed by the validator, package smoke tests, and the `.spec-framework/` / `product/` boundary.
+Adoption is backed by the validator, package smoke tests, and the external-runtime / `product/` boundary.

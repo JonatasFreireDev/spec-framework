@@ -6,7 +6,7 @@ This repository is a product repository adopting the Spec Framework. Product doc
 
 ## Source Of Truth
 
-Read `.spec-framework/FRAMEWORK.md` first when it exists. If this starter has not yet installed framework assets, follow `README.md` and install the framework before generating downstream artifacts.
+Activate only when `product/.product/framework.json` is valid, then resolve and read the pinned framework root's `FRAMEWORK.md` before generating downstream artifacts.
 
 ## Product-Owned Areas
 
@@ -20,9 +20,9 @@ Read `.spec-framework/FRAMEWORK.md` first when it exists. If this starter has no
 
 Framework-owned assets may be copied or installed into the product repository:
 
-- `.spec-framework/skills/`
-- `.spec-framework/templates/`
-- `.spec-framework/validators/`
+- the pinned framework runtime's `skills/`
+- the pinned framework runtime's `templates/`
+- the pinned framework runtime's validators
 - `.github/workflows/framework-validation.yml`
 
 Do not edit framework-owned assets to encode product scope. Put product-specific rules in `product/`.
@@ -69,4 +69,4 @@ Do not skip approval gates. A downstream artifact may remain `draft` while its p
 6. Use `spec-framework guide` and `dashboard` to inspect the current gate, blockers, decisions, Design System, graph, tasks, and next action.
 7. Do not invoke Code Runner while `spec-framework gates` reports applicable `TBD` commands.
 8. Rename template folders to stable slugs and update every `slug` field in `context.md`.
-9. Keep product scope inside `product/`; do not encode product-specific rules inside `.spec-framework/`.
+9. Keep product scope inside `product/`; do not encode product-specific rules inside the external runtime cache.

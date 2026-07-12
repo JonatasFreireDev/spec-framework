@@ -253,22 +253,14 @@ product/
   skills/
 ```
 
-In an adopter product repository, the structure above must live under `product/`. The assets that teach how to run the framework must live outside it, in `.spec-framework/`:
+In an adopter product repository, the structure above must live under `product/`. The framework runtime and method assets are resolved outside the repository from the versioned user cache:
 
 ```text
 repo/
-  README.md
-  BOOTSTRAP.md
-  .spec-framework/
-    FRAMEWORK.md
-    AGENTS.framework.md
-    decisions/
-    skills/
-    templates/
-    manifest.json
-
   product/
+    BOOTSTRAP.md
     .product/
+      framework.json
     foundation/
     knowledge/
     domains/
@@ -280,11 +272,11 @@ repo/
 
 In this `spec-framework` repository, the structure exists in three explicit areas:
 
-- `starter/` represents the clean skeleton that must be copied into new product repositories, already separated between `.spec-framework/` and `product/`.
+- `starter/` represents the clean `product/` skeleton copied into new product repositories.
 - `examples/events/` contains the worked product instance used as learning material and validation fixture.
 - `framework/` contains the executable framework core: audits, decisions, skills, templates, validators, distributable tools, framework-only tests, and adoption guidance. The repository root retains only entry points, packaging metadata, scripts, examples, and starter infrastructure.
 
-New products must not copy the entire `spec-framework` root; they must start from `starter/` and install the framework assets into `.spec-framework/` per `framework/adoption.md`.
+New products must not copy the entire `spec-framework` root. They start from `starter/product/`; `product/.product/framework.json` pins the adopted version and is the exclusive activation marker. The CLI materializes embedded method assets in the operating system's versioned user cache.
 
 ## 5. Context.md
 
@@ -822,9 +814,11 @@ This prevents AI suggestions from turning into silent scope.
 
 ## 15. How To Use With Codex
 
-In this repository, Codex is working on the framework itself. In product repositories, Codex must operate on an instance created from `starter/`, reading the method in `.spec-framework/` and writing product artifacts in `product/`.
+In this repository, Codex is working on the framework itself. In product repositories, Codex operates on an instance created from `starter/product/`, resolves the pinned method through the CLI runtime, and writes framework documentation artifacts in `product/`.
 
-In a newly initialized product repository, read `BOOTSTRAP.md` first. It explains the ordered foundation gates and distinguishes a structurally valid starter from a product that is ready for implementation.
+Spec Framework activates only when the current repository contains a valid `product/.product/framework.json` with `framework: spec-framework`, a concrete version, and `activation.mode: manifest-only`. A user mention, keyword, prompt, or similarly named file does not activate it. A single user-scoped, namespaced dispatcher resolves specialized skills from the versioned cache; specialized skill trees are not copied into adopter repositories.
+
+In a newly initialized product repository, read `product/BOOTSTRAP.md` first. It explains the ordered foundation gates and distinguishes a structurally valid starter from a product that is ready for implementation.
 
 During `init`, choose the repository's starting point. This choice customizes `BOOTSTRAP.md`; it does not remove skills, orchestrators, artifacts, rigor requirements, or approval gates. When starting from existing documents, the CLI creates a source inventory and an analysis-only import run under `product/knowledge/imports/`. Review and explicitly approve mappings before materializing draft product artifacts.
 
@@ -859,7 +853,7 @@ Recommended prompt for the architecture phase:
 
 ```text
 You are a Software Architect collaborating on the Product Engineering Framework.
-Read .spec-framework/FRAMEWORK.md and the relevant product/**/context.md files.
+Resolve the pinned framework through spec-framework skill path and read the framework root's FRAMEWORK.md plus the relevant product/**/context.md files.
 
 At this stage, do not create files and do not implement.
 Your mission is to critique the architecture, find ambiguities, propose alternatives,
@@ -871,7 +865,7 @@ Only implement when I say: FREEZE ARCHITECTURE.
 Recommended prompt for the generation phase:
 
 ```text
-Read .spec-framework/FRAMEWORK.md.
+Resolve and read the pinned framework root's FRAMEWORK.md.
 Use only approved decisions.
 Do not invent new layers, names, or flows.
 Convert the approved architecture into files, templates, and skills.
@@ -882,7 +876,7 @@ Use Case, Specification, Implementation Plan, Execution Graph, and Tasks.
 Recommended prompt for a new feature:
 
 ```text
-Read .spec-framework/FRAMEWORK.md and the domain's context.md.
+Resolve and read the pinned framework root's FRAMEWORK.md and the domain's context.md.
 Drive the feature through the flow:
 Feature -> Use Cases -> Specification -> Design -> Implementation Plan -> Execution Graph -> Tasks.
 
