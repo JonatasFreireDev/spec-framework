@@ -101,6 +101,18 @@ spec-framework design audit --product-root product --use-case <path> --write-rep
 
 Impeccable, Figma, and Penpot are optional adapters. Imported or generated assets never approve Design; independent UX Review and the existing human approval gate still apply.
 
+Inspect or install optional adapters explicitly:
+
+```bash
+spec-framework adapters list
+spec-framework adapters status impeccable
+spec-framework adapters doctor impeccable --check-latest
+spec-framework adapters install impeccable --version 2.3.2
+spec-framework adapters install impeccable --version 2.3.2 --yes
+```
+
+The first install command is a preview. `--yes` executes the official version-pinned provider command. Adapter removal is intentionally unavailable until the provider offers a documented reversible command.
+
 Initialize and inspect the shared Design System when the product has recurring foundations, tokens, components, or patterns:
 
 ```bash

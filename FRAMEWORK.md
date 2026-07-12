@@ -845,7 +845,13 @@ spec-framework impact --decision DEC-021 [--json]
 spec-framework dashboard --work WORK-001 [--json]
 spec-framework status --work WORK-001 --graph [--json]
 spec-framework decisions migrate [--dry-run | --interactive | --yes]
+spec-framework adapters list
+spec-framework adapters status impeccable
+spec-framework adapters doctor impeccable [--check-latest]
+spec-framework adapters install impeccable --version <provider-cli-version> [--yes]
 ```
+
+External adapters are optional. Read-only discovery and diagnosis may run without confirmation. Install and update must show the exact provider command, require an explicit version and `--yes`, execute with direct argv from the repository root, and never fabricate readiness after a provider failure. Removal is unsupported until the provider documents a reversible contract.
 
 Recommended prompt for the architecture phase:
 

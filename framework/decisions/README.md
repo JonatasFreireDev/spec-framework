@@ -33,6 +33,7 @@ Product decisions do not live here. Product decisions continue to live in `knowl
 | [FDR-021](FDR-021-design-sources-and-visual-artifacts.md) | Design sources and visual artifact protocol | approved | Human-approved design workflow evolution |
 | [FDR-022](FDR-022-conversational-cli-guidance.md) | Conversational CLI guidance | approved | Human-approved CLI usability evolution |
 | [FDR-023](FDR-023-canonical-product-design-system.md) | Canonical product Design System | approved | Human-approved Design System evolution |
+| [FDR-024](FDR-024-supervised-adapter-management.md) | Supervised adapter management | approved | Human-approved adapter usability evolution |
 
 ## Rule
 

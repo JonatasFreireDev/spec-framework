@@ -52,6 +52,8 @@ func (app App) Run(args []string, stdout, stderr io.Writer) int {
 		return runDesign(args[1:], stdout, stderr)
 	case "design-system":
 		return runDesignSystem(args[1:], stdout, stderr)
+	case "adapters":
+		return runAdapters(args[1:], stdout, stderr)
 	case "work":
 		return runWork(args[1:], stdout, stderr)
 	case "status", "next":
@@ -596,6 +598,7 @@ Commands:
   import     Materialize approved source mappings as drafts.
   design     Initialize, import, inspect, map, verify, migrate, or audit Design assets.
   design-system Initialize, inspect, validate, or migrate the product Design System.
+  adapters   List, diagnose, install, or update optional external adapters.
   work       Select a feature and create a concurrent workspace.
   status     Show workspace readiness and blockers.
   next       Show the next skill for a workspace.
