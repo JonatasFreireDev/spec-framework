@@ -1,6 +1,6 @@
 ---
 name: framework-guide
-description: "Framework Guide Skill. Use when Codex needs to translate a person's goal into the safest next Spec Framework CLI action, explain current workflow state and gates, choose between init/import/work/design/review/runtime/release routes, or guide someone who does not know which spec-framework command to run."
+description: "Framework Guide Skill. Use when Codex needs to translate a person's goal into the safest next Spec Framework CLI action, explain current workflow state and gates, choose between bootstrap/init/import/work/design/review/migration/upgrade/release routes, or guide someone who does not know which spec-framework command to run."
 ---
 
 # Framework Guide Skill
@@ -18,7 +18,7 @@ Act as the conversational front door to the Spec Framework CLI. Discover the per
 - explain: translate CLI output, framework concepts, gates, and next actions into plain language.
 
 ## Inputs
-Human goal; repository and product roots; `BOOTSTRAP.md`; workspace id when present; CLI help, status, guide, dashboard, review, readiness, impact, and validation output; approved decisions; current artifact statuses.
+Human goal; current working directory; canonical `product/.product/framework.json` when present; repository and product roots; the active product root's `BOOTSTRAP.md`; workspace id when present; CLI help, status, guide, dashboard, review, readiness, impact, migration, runtime, skill-resolution, and validation output; approved decisions; current artifact statuses.
 
 ## Outputs
 Intent summary; discovered state; recommended command or specialist; mutation preview; gate explanation; result summary; next safe action; explicit blocker when human authority is required.
@@ -30,12 +30,26 @@ Intent summary; discovered state; recommended command or specialist; mutation pr
 - Approved product decisions in the active product root's `knowledge/decisions/` and `.product/decisions.json`.
 - CLI help for commands whose flags or behavior are not already evidenced in the current session.
 
+## Activation boundary
+
+1. Before routing any product operation, look for `product/.product/framework.json` in the current repository.
+2. Activate only when that file is valid, identifies `framework: spec-framework`, pins a concrete version, and declares `activation.mode: manifest-only`.
+3. Never activate because the user mentions Spec Framework, a prompt contains matching keywords, or another similarly named file exists.
+4. When the canonical manifest is absent, the only permitted Spec Framework routes are explaining or running the explicit bootstrap or `init` requested by the user. Do not load specialized framework contracts first.
+5. When the manifest is invalid, stop product operations and report the exact validation problem. Do not infer or repair adoption metadata silently.
+6. After activation, resolve specialized contracts with `spec-framework skill path <skill-name>` and read the returned versioned `SKILL.md` completely.
+
 ## Intent routing
 
 | Human intent | First route |
 | --- | --- |
-| Start a product | `spec-framework init` |
+| Install and start without an existing CLI | Download and inspect `scripts/init.ps1` or `scripts/init.sh`, then run the chosen bootstrap; piping a remote script remains an explicit user choice |
+| Start a product interactively | `spec-framework init <repository-path>` |
+| Start a product headlessly | `spec-framework init <repository-path> --agents <agents> --yes` |
 | Bring existing documents | `init --starting-point existing-documents`, then reviewed `import materialize` |
+| Resolve a specialized skill | `spec-framework skill path <skill-name>` after manifest activation |
+| Upgrade the pinned external runtime | Inspect current manifest and version, then `spec-framework upgrade --yes` |
+| Migrate a legacy local runtime | `spec-framework migrate external-runtime --dry-run`, review preserved legacy paths, then rerun with `--yes` |
 | Start or resume feature work | `work`, then `dashboard` or `guide` |
 | Ask where work stands | `dashboard`, `status`, or `next` |
 | Review or approve a stage | `review` before `approve` or `approve-stage` |
@@ -51,14 +65,23 @@ Intent summary; discovered state; recommended command or specialist; mutation pr
 
 ## Workflow
 1. Restate the goal in one sentence and determine whether the request is explanation, inspection, planning, local mutation, approval, remote mutation, or release.
-2. Discover product root and starting point from local files; do not ask for information the CLI or repository can provide safely.
-3. Prefer read-only inspection first: `help`, `dashboard`, `status`, `guide`, `next`, `review`, `impact`, `task readiness`, `gates`, or `validate`.
+2. Apply the activation boundary. If active, discover the repository root, product root, pinned version, agents, and starting point from the canonical manifest; do not ask for information the CLI or repository can provide safely.
+3. Prefer read-only inspection first: `help`, `dashboard`, `status`, `guide`, `next`, `review`, `impact`, `task readiness`, `gates`, `validate`, `skill path`, or migration `--dry-run`.
 4. Resolve the active scope and read its `context.md`, parents, approvals, decisions, and staleness before recommending a mutation.
 5. Present or execute the smallest command that advances one valid gate. State what it reads, writes, and cannot authorize.
 6. Require explicit human identity and confirmation for approval commands. Never convert conversational agreement into unrelated product approval records.
 7. Route artifact authorship to the owner skill named by `guide` or `dashboard`; do not generate the artifact yourself.
 8. After a command, report exit status, changed artifacts, blockers, and the next safe command. Re-read mechanical state instead of assuming success.
 9. Stop on stale parents, missing approvals, ambiguous scope, unsafe remote/destructive action, missing gate configuration, or conflicts requiring a decision.
+
+## Runtime and repository cleanliness
+
+- `init` may add `product/` to a new or existing repository but must refuse an existing `product/` unless the user explicitly selects a supported migration or force route.
+- Framework method assets belong in the versioned user cache. Selected harnesses receive only the user-scoped, namespaced dispatcher.
+- Treat creation of `.spec-framework/`, repository-local framework skill trees, root bootstrap guides, or generated CI workflows as a regression in the manifest-only model.
+- `upgrade` updates the external runtime and pinned product manifest while preserving adopter-owned product and code content.
+- Legacy migration previews paths that remain for manual review; it does not delete `.spec-framework/`, local agent trees, product content, or approval history.
+- Documentation and bootstrap work writes only within `product/`. Implementation work outside `product/` requires the approved task `writeScope`.
 
 ## Interaction contract
 
@@ -81,6 +104,8 @@ Do not force this exact block when a one-line answer is clearer. Show exact comm
 ## Quality checklist
 - [ ] Preserves traceability to affected artifacts and the active workspace.
 - [ ] Uses CLI output rather than guessing workflow state.
+- [ ] Enforces manifest-only activation and resolves the pinned skill version.
+- [ ] Keeps framework runtime assets and dispatchers outside the adopter repository.
 - [ ] Chooses the smallest command or specialist that owns the next action.
 - [ ] Distinguishes read-only inspection, local mutation, approval, remote mutation, and release.
 - [ ] Never invents flags, approvals, decision effects, evidence, or command results.
