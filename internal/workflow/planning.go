@@ -15,7 +15,11 @@ type MaterializeResult struct {
 	Tasks []string `json:"tasks"`
 	Index string   `json:"index"`
 }
-type ReadinessCheck struct{ ID, Status, Detail string }
+type ReadinessCheck struct {
+	ID     string `json:"id"`
+	Status string `json:"status"`
+	Detail string `json:"detail"`
+}
 type TaskReadiness struct {
 	Ready  bool             `json:"ready"`
 	TaskID string           `json:"task_id"`
@@ -168,11 +172,16 @@ func CheckTaskReadiness(root, graphPath, taskID string) (TaskReadiness, error) {
 	if n == nil {
 		return r, fmt.Errorf("task %s not found", taskID)
 	}
+	var graphRaw map[string]any
+	_ = readJSON(graphPath, &graphRaw)
+	add("graph-status", isApproved(strings.ToLower(fmt.Sprint(graphRaw["status"]))), "execution graph must be approved")
 	taskPath := filepath.Join(filepath.Dir(graphPath), filepath.FromSlash(n.Path))
 	data, err := os.ReadFile(taskPath)
 	add("task-file", err == nil, n.Path)
 	text := string(data)
-	add("task-status", isApproved(extractStatus(text)), "task must be approved")
+	taskStatus := extractStatus(text)
+	add("task-status", isApproved(taskStatus), "task must be approved")
+	add("approval-record", hasCurrentApproval(root, taskPath, taskStatus), "task status must have a matching current approval record")
 	for _, d := range n.DependsOn {
 		done := false
 		for _, x := range g.Nodes {
@@ -193,6 +202,33 @@ func CheckTaskReadiness(root, graphPath, taskID string) (TaskReadiness, error) {
 		add("lease", true, "lease available")
 	}
 	return r, nil
+}
+
+func hasCurrentApproval(root, artifactPath, status string) bool {
+	if !isApproved(status) {
+		return false
+	}
+	rel, err := filepath.Rel(root, artifactPath)
+	if err != nil {
+		return false
+	}
+	rel = filepath.ToSlash(rel)
+	data, err := os.ReadFile(artifactPath)
+	if err != nil {
+		return false
+	}
+	hash := Hash(string(data))
+	entries, _ := os.ReadDir(filepath.Join(root, ".product", "history"))
+	for _, e := range entries {
+		if e.IsDir() || filepath.Ext(e.Name()) != ".json" {
+			continue
+		}
+		var a Approval
+		if readJSON(filepath.Join(root, ".product", "history", e.Name()), &a) == nil && filepath.ToSlash(a.Path) == rel && a.StatusGranted == status && a.ContentHash == hash {
+			return true
+		}
+	}
+	return false
 }
 
 func WorkspaceGuide(root, id string) (Guide, error) {
