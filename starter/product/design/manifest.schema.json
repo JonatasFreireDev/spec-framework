@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://spec-framework.dev/schemas/design-source-v1.json",
+  "title": "Spec Framework Design Source Manifest",
+  "type": "object",
+  "required": ["schemaVersion", "id", "type", "authority", "location", "version", "screens"],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "id": { "pattern": "^DSRC-[0-9]{3,}$" },
+    "type": { "enum": ["images", "figma", "figma-export", "penpot", "penpot-export", "website", "html", "design-system"] },
+    "authority": { "enum": ["visual_canonical", "reference", "inspiration"] },
+    "location": { "type": "string" },
+    "version": {
+      "type": "object",
+      "required": ["kind", "value"],
+      "properties": {
+        "kind": { "enum": ["sha256", "figma-version", "penpot-version", "external-version"] },
+        "value": { "type": "string", "minLength": 1 }
+      }
+    },
+    "screens": { "type": "array" }
+  }
+}
