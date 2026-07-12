@@ -1,0 +1,9 @@
+{
+  "schemaVersion": 1,
+  "useCase": "domains/_example-domain/goals/_example-goal/features/_example-feature/use-cases/_example-use-case",
+  "originMode": "generate",
+  "maturity": "contract",
+  "fidelityPolicy": "exploratory",
+  "sources": [],
+  "nonProduction": true
+}

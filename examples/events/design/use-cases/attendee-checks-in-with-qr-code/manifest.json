@@ -1,0 +1,9 @@
+{
+  "schemaVersion": 1,
+  "useCase": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/attendee-checks-in-with-qr-code",
+  "originMode": "generate",
+  "maturity": "contract",
+  "fidelityPolicy": "exploratory",
+  "sources": [],
+  "nonProduction": true
+}
