@@ -1,6 +1,8 @@
 package engineeringsystem
 
 import (
+	"crypto/sha256"
+	"encoding/hex"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -95,6 +97,11 @@ func Inspect(root string) (Inspection, error) {
 	if err := yaml.Unmarshal(catalogData, &catalog); err != nil {
 		return Inspection{}, fmt.Errorf("engineering-system.yaml is invalid YAML: %w", err)
 	}
+	canonicalData, err := os.ReadFile(filepath.Join(dir, "engineering-system.md"))
+	if err != nil {
+		return Inspection{}, err
+	}
+	canonical := markdownSnapshot(string(canonicalData))
 	i := Inspection{
 		ID:               context.ID,
 		Status:           context.Status,
@@ -130,6 +137,15 @@ func Inspect(root string) (Inspection, error) {
 			i.Blockers = append(i.Blockers, fmt.Sprintf("context and catalog %s do not match", field))
 		}
 	}
+	for field, values := range map[string][2]string{
+		"id":      {context.ID, canonical["id"]},
+		"status":  {context.Status, canonical["status"]},
+		"version": {context.Version, canonical["version"]},
+	} {
+		if values[1] == "" || values[0] != values[1] {
+			i.Blockers = append(i.Blockers, fmt.Sprintf("context and canonical %s do not match", field))
+		}
+	}
 	if len(catalog.Areas) == 0 {
 		i.Blockers = append(i.Blockers, "catalog areas are missing")
 	}
@@ -150,13 +166,74 @@ func Inspect(root string) (Inspection, error) {
 			i.Blockers = append(i.Blockers, fmt.Sprintf("area %s maturity %s requires evidence", name, area.Maturity))
 		}
 	}
-	if _, err := os.Stat(filepath.Join(dir, "engineering-system.md")); err != nil {
-		i.Blockers = append(i.Blockers, "engineering-system.md is missing")
-	}
 	sort.Slice(i.Areas, func(left, right int) bool { return i.Areas[left].Name < i.Areas[right].Name })
 	i.Blockers = unique(i.Blockers)
 	sort.Strings(i.Blockers)
 	return i, nil
+}
+
+func CompositeHash(root string, overrides map[string][]byte) (string, error) {
+	dir := filepath.Join(root, "engineering")
+	var paths []string
+	if err := filepath.WalkDir(dir, func(path string, entry os.DirEntry, err error) error {
+		if err != nil {
+			return err
+		}
+		if !entry.IsDir() {
+			paths = append(paths, path)
+		}
+		return nil
+	}); err != nil {
+		return "", err
+	}
+	sort.Strings(paths)
+	var content strings.Builder
+	for _, path := range paths {
+		rel, _ := filepath.Rel(root, path)
+		rel = filepath.ToSlash(rel)
+		data, exists := overrides[rel]
+		if !exists {
+			var err error
+			data, err = os.ReadFile(path)
+			if err != nil {
+				return "", err
+			}
+		}
+		content.WriteString(rel)
+		content.WriteByte('\n')
+		content.WriteString(normalize(string(data)))
+		content.WriteByte('\n')
+	}
+	sum := sha256.Sum256([]byte(content.String()))
+	return hex.EncodeToString(sum[:]), nil
+}
+
+func SynchronizeStatus(contextText string, catalogData []byte, status string) (string, []byte, error) {
+	pattern := regexp.MustCompile(`(?m)^(\s*status:\s*)[^\r\n#]+`)
+	if !pattern.MatchString(contextText) {
+		return "", nil, fmt.Errorf("engineering context has no status field")
+	}
+	updatedContext := pattern.ReplaceAllString(contextText, "${1}"+status)
+	var document yaml.Node
+	if err := yaml.Unmarshal(catalogData, &document); err != nil {
+		return "", nil, err
+	}
+	if len(document.Content) == 0 || document.Content[0].Kind != yaml.MappingNode {
+		return "", nil, fmt.Errorf("engineering catalog must be a YAML mapping")
+	}
+	mapping := document.Content[0]
+	found := false
+	for index := 0; index+1 < len(mapping.Content); index += 2 {
+		if mapping.Content[index].Value == "status" {
+			mapping.Content[index+1].Value = status
+			found = true
+		}
+	}
+	if !found {
+		return "", nil, fmt.Errorf("engineering catalog has no status field")
+	}
+	updatedCatalog, err := yaml.Marshal(&document)
+	return updatedContext, updatedCatalog, err
 }
 
 func Validate(root string) (Inspection, error) { return Inspect(root) }
@@ -251,6 +328,27 @@ func yamlPayload(text string) string {
 		}
 	}
 	return text
+}
+
+func markdownSnapshot(text string) map[string]string {
+	out := map[string]string{}
+	pattern := regexp.MustCompile(`(?m)^\|\s*([^|]+?)\s*\|\s*` + "`?" + `([^|` + "`" + `]+?)` + "`?" + `\s*\|$`)
+	for _, match := range pattern.FindAllStringSubmatch(text, -1) {
+		key := strings.ToLower(strings.TrimSpace(match[1]))
+		if key != "field" {
+			out[key] = strings.TrimSpace(match[2])
+		}
+	}
+	return out
+}
+
+func normalize(text string) string {
+	text = strings.ReplaceAll(strings.ReplaceAll(text, "\r\n", "\n"), "\r", "\n")
+	lines := strings.Split(text, "\n")
+	for index, line := range lines {
+		lines[index] = strings.TrimRight(line, " \t")
+	}
+	return strings.Join(lines, "\n")
 }
 
 func oneOf(value string, options ...string) bool {

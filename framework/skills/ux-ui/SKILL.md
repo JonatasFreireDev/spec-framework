@@ -21,7 +21,7 @@ Translate an approved specification into flows, states, interaction rules, acces
 Approved specification; source feature/use case; inherited Delivery Level and Priority; journey; design system; UX principles; platform constraints.
 
 ## Outputs
-design.md; origin mode and visual maturity; versioned source references; screen inventory and requirement coverage; UX flow; UI states; accessibility notes; empty/loading/error states; fidelity policy and deviations; design risks; Not applicable rationale when there is no UI.
+design.md; origin mode and visual maturity; versioned source references; screen inventory and requirement coverage; UX flow; UI states; accessibility notes; empty/loading/error states; fidelity policy and deviations; design risks; structured `not_applicable` status and rationale when there is no UI.
 
 ## Required reading
 - the framework root's `FRAMEWORK.md`
@@ -43,7 +43,7 @@ design.md; origin mode and visual maturity; versioned source references; screen 
 ## Quality checklist
 - [ ] Preserves traceability to affected artifacts.
 - [ ] Uses the correct template and naming conventions.
-- [ ] Produces approved design before Implementation Planner, or records `Not applicable` for non-UI work.
+- [ ] Produces approved design before Technical Discovery, or records structured `not_applicable` with rationale for non-UI work.
 - [ ] Preserves Delivery Level and Priority from the source specification.
 - [ ] Distinguishes blockers from suggestions.
 - [ ] Detects gaps, conflicts, and dependencies.

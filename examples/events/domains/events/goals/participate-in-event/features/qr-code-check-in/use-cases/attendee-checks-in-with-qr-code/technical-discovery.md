@@ -9,7 +9,7 @@ The worked example has no application codebase. Code paths, modules, tests, and 
 
 | Field | Value |
 | --- | --- |
-| Verdict | Not required for the documentation-only worked example |
+| Verdict | Not required |
 | Decision | N/A |
 | Rationale | No application architecture or code is implemented in this repository fixture. |
 

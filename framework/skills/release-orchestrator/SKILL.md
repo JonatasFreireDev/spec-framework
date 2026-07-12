@@ -36,7 +36,7 @@ release verdict; evidence; blockers; required fixes; release notes inputs.
 ## Gate checklist
 - [ ] Inputs are approved or explicitly marked as draft.
 - [ ] Parent and child artifacts are linked.
-- [ ] Required design artifacts are approved or explicitly marked Not applicable.
+- [ ] Required design artifacts are approved or use structured `not_applicable` status with rationale.
 - [ ] Delivery Level and Priority are consistent across released artifacts.
 - [ ] Decisions are recorded or queued for approval.
 - [ ] Gaps, conflicts, dependencies, and risks are visible.

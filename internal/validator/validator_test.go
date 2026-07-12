@@ -9,6 +9,8 @@ import (
 	"path/filepath"
 	"strings"
 	"testing"
+
+	"github.com/JonatasFreireDev/spec-framework/internal/engineeringsystem"
 )
 
 func TestImportValidationDetectsChangedSourceAndDuplicateTargets(t *testing.T) {
@@ -204,6 +206,21 @@ func TestUnknownEngineeringTriggerIsRejected(t *testing.T) {
 	}
 }
 
+func TestStructuredNotApplicableRequiresRationale(t *testing.T) {
+	s := Snapshot{Text: map[string]string{
+		"domains/d/use-cases/u/design.md": "| Field | Value |\n| --- | --- |\n| Status | not_applicable |\n| Rationale | TBD |\n",
+	}}
+	found := false
+	for _, diagnostic := range validateDeliveryClosure(s) {
+		if diagnostic.Check == "not-applicable" {
+			found = true
+		}
+	}
+	if !found {
+		t.Fatal("expected not_applicable rationale diagnostic")
+	}
+}
+
 func TestEventsFixtureRemainsReady(t *testing.T) {
 	frameworkRoot := filepath.Clean(filepath.Join("..", ".."))
 	productRoot := filepath.Join(frameworkRoot, "examples", "events")
@@ -278,6 +295,36 @@ func TestPassedEngineeringReviewMustMatchProposalHash(t *testing.T) {
 	}
 	if !found {
 		t.Fatal("expected stale Engineering Review diagnostic")
+	}
+}
+
+func TestEngineeringSystemCompositeHashParity(t *testing.T) {
+	root := t.TempDir()
+	for name, body := range map[string]string{
+		"engineering/context.md":              "status: approved\n",
+		"engineering/engineering-system.md":   "system\n",
+		"engineering/engineering-system.yaml": "status: approved\n",
+		"engineering/architecture/modules.md": "modules\n",
+	} {
+		path := filepath.Join(root, filepath.FromSlash(name))
+		if err := os.MkdirAll(filepath.Dir(path), 0o755); err != nil {
+			t.Fatal(err)
+		}
+		if err := os.WriteFile(path, []byte(body), 0o644); err != nil {
+			t.Fatal(err)
+		}
+	}
+	snapshot, err := Scan(context.Background(), root, root, 1)
+	if err != nil {
+		t.Fatal(err)
+	}
+	want, err := engineeringsystem.CompositeHash(root, nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	got := artifactHash(snapshot, "engineering/engineering-system.md", snapshot.Text["engineering/engineering-system.md"])
+	if got != want {
+		t.Fatalf("validator hash=%s engineering hash=%s", got, want)
 	}
 }
 

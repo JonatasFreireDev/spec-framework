@@ -29,7 +29,7 @@ func TestInspectValidatesCatalogContractsAndMaturityEvidence(t *testing.T) {
 		}
 	}
 	write("context.md", "---\nid: ENGSYS-TEST-001\nstatus: draft\nversion: 1.2.3\norigin_mode: generate\n---\n")
-	write("engineering-system.md", "# Engineering System\n")
+	write("engineering-system.md", "| Field | Value |\n| --- | --- |\n| ID | `ENGSYS-TEST-001` |\n| Status | `draft` |\n| Version | `1.2.3` |\n")
 	write("architecture/modules.md", "# Modules\n")
 	write("engineering-system.yaml", "schema_version: 1\nid: ENGSYS-TEST-001\nstatus: draft\nversion: 1.2.3\norigin_mode: generate\nscope: product\nareas:\n  modules:\n    contract: architecture/modules.md\n    maturity: verified\n    evidence: []\ndecisions: []\nstandards: []\nfitness_functions: []\n")
 	inspection, err := Inspect(root)
@@ -58,7 +58,7 @@ func TestInspectRejectsCatalogIdentityMismatch(t *testing.T) {
 	engineering := filepath.Join(root, "engineering")
 	files := map[string]string{
 		"context.md":                     "---\nid: ENGSYS-TEST-001\nstatus: draft\nversion: 1.0.0\norigin_mode: generate\n---\n",
-		"engineering-system.md":          "# Engineering System\n",
+		"engineering-system.md":          "| Field | Value |\n| --- | --- |\n| ID | `ENGSYS-TEST-001` |\n| Status | `draft` |\n| Version | `1.0.0` |\n",
 		"architecture/system-context.md": "# Context\n",
 		"engineering-system.yaml":        "schema_version: 1\nid: ENGSYS-OTHER-001\nstatus: draft\nversion: 1.0.0\norigin_mode: generate\nscope: product\nareas:\n  context:\n    contract: architecture/system-context.md\n    maturity: baseline\n    evidence: []\n",
 	}
@@ -106,5 +106,34 @@ func TestMigrateAddsSchemaVersionWithoutChangingOtherFields(t *testing.T) {
 	text := string(data)
 	if !strings.Contains(text, "schema_version: 1") || !strings.Contains(text, "custom_field: preserve-me") {
 		t.Fatalf("catalog=%s", text)
+	}
+}
+
+func TestCompositeHashChangesWithAnyEngineeringContract(t *testing.T) {
+	root := t.TempDir()
+	dir := filepath.Join(root, "engineering")
+	if err := os.MkdirAll(filepath.Join(dir, "architecture"), 0o755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(dir, "engineering-system.md"), []byte("system\n"), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	contract := filepath.Join(dir, "architecture", "modules.md")
+	if err := os.WriteFile(contract, []byte("modules-v1\n"), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	before, err := CompositeHash(root, nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(contract, []byte("modules-v2\n"), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	after, err := CompositeHash(root, nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if before == after {
+		t.Fatal("composite hash ignored engineering contract change")
 	}
 }

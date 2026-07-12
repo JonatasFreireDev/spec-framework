@@ -174,7 +174,15 @@ func PreviewApproval(root, artifactPath, grant string) (ApprovalPreview, error) 
 	if err != nil {
 		return ApprovalPreview{}, err
 	}
-	return ApprovalPreview{Artifact: a, Grant: grant, CurrentHash: Hash(updated), ParentBlockers: blockers}, nil
+	updates, err := approvalUpdates(root, artifactPath, updated, grant)
+	if err != nil {
+		return ApprovalPreview{}, err
+	}
+	currentHash, err := approvalHash(root, artifactPath, updates)
+	if err != nil {
+		return ApprovalPreview{}, err
+	}
+	return ApprovalPreview{Artifact: a, Grant: grant, CurrentHash: currentHash, ParentBlockers: blockers}, nil
 }
 
 func WorkspaceStatus(root, id string) (Status, error) {
@@ -270,12 +278,12 @@ func nextFor(root string, a Artifact, useCaseSelector string) (string, []string)
 		}
 	}
 	if !approvedDocument(root, filepath.Join(uc, "design.md")) && !notApplicableDocument(filepath.Join(uc, "design.md")) {
-		return "ux-ui", []string{"design is missing, not approved, or lacks Not applicable rationale"}
+		return "ux-ui", []string{"design is missing, not approved, or lacks structured not_applicable status and rationale"}
 	}
 	if !approvedDocument(root, filepath.Join(uc, "technical-discovery.md")) {
 		return "technical-discovery", []string{"technical discovery is missing or not approved"}
 	}
-	if !architectureResolved(filepath.Join(uc, "technical-discovery.md")) {
+	if !architectureResolved(root, filepath.Join(uc, "technical-discovery.md")) {
 		return "product-historian", []string{"Architecture Gate is unresolved"}
 	}
 	if engineeringReviewApplies(filepath.Join(uc, "context.md")) {
@@ -336,16 +344,95 @@ func notApplicableDocument(path string) bool {
 	if err != nil {
 		return false
 	}
-	text := strings.ToLower(string(data))
-	return strings.Contains(text, "not applicable") && strings.Contains(text, "rationale")
+	text := string(data)
+	if extractStatus(text) != "not_applicable" {
+		return false
+	}
+	patterns := []*regexp.Regexp{
+		regexp.MustCompile(`(?mi)^\s*Rationale:\s*(.+)$`),
+		regexp.MustCompile(`(?mi)^\|\s*Rationale\s*\|\s*` + "`?" + `([^|` + "`" + `]+)` + "`?" + `\s*\|$`),
+	}
+	for _, pattern := range patterns {
+		if match := pattern.FindStringSubmatch(text); len(match) == 2 && meaningful(match[1]) {
+			return true
+		}
+	}
+	return false
 }
-func architectureResolved(path string) bool {
+func architectureResolved(root, path string) bool {
 	data, err := os.ReadFile(path)
 	if err != nil {
 		return false
 	}
 	text := string(data)
-	return strings.Contains(text, "Not required") || regexp.MustCompile(`DEC-\d+`).MatchString(text)
+	verdict, decision, rationale := architectureGateFields(text)
+	if verdict == "Not required" {
+		return meaningful(rationale)
+	}
+	if verdict != "Decision required" {
+		return false
+	}
+	id := regexp.MustCompile(`\bDEC-\d+\b`).FindString(decision)
+	if id == "" {
+		return false
+	}
+	var index map[string]any
+	if readJSON(filepath.Join(root, ".product", "decisions.json"), &index) != nil {
+		return false
+	}
+	for _, item := range stringMapSlice(index["decisions"]) {
+		if fmt.Sprint(item["id"]) != id || fmt.Sprint(item["status"]) != "approved" {
+			continue
+		}
+		decisionPath := filepath.Join(root, filepath.FromSlash(fmt.Sprint(item["path"])))
+		if !hasCurrentApproval(root, decisionPath, "approved") || !workflowDecisionApplies(item, path) {
+			return false
+		}
+		return true
+	}
+	return false
+}
+
+func architectureGateFields(text string) (string, string, string) {
+	field := func(name string) string {
+		pattern := regexp.MustCompile(`(?mi)^\|\s*` + regexp.QuoteMeta(name) + `\s*\|\s*` + "`?" + `([^|` + "`" + `]+)` + "`?" + `\s*\|$`)
+		match := pattern.FindStringSubmatch(text)
+		if len(match) == 2 {
+			return strings.TrimSpace(match[1])
+		}
+		return ""
+	}
+	verdict, decision, rationale := field("Verdict"), field("Decision"), field("Rationale")
+	if verdict != "" {
+		return verdict, decision, rationale
+	}
+	pattern := regexp.MustCompile(`(?mi)^\|\s*(Decision required|Not required)\s*\|\s*([^|]*)\|\s*([^|]*)\|$`)
+	match := pattern.FindStringSubmatch(text)
+	if len(match) == 4 {
+		return strings.TrimSpace(match[1]), strings.TrimSpace(match[2]), strings.TrimSpace(match[3])
+	}
+	return "", "", ""
+}
+
+func workflowDecisionApplies(decision map[string]any, path string) bool {
+	path = filepath.ToSlash(path)
+	var scopes []string
+	if scope, ok := decision["scope"].(string); ok {
+		scopes = append(scopes, strings.Split(scope, "/")...)
+	}
+	scopes = append(scopes, stringAnySlice(decision["affectedArtifacts"])...)
+	for _, scope := range scopes {
+		scope = filepath.ToSlash(strings.TrimSpace(scope))
+		if scope == "architecture" || scope == "security" || scope == "data" || scope == "product" || strings.HasPrefix(path, strings.TrimSuffix(scope, "/")) || strings.HasPrefix(scope, filepath.ToSlash(filepath.Dir(path))) {
+			return true
+		}
+	}
+	return false
+}
+
+func meaningful(value string) bool {
+	value = strings.ToLower(strings.Trim(strings.TrimSpace(value), "`[]"))
+	return value != "" && value != "n/a" && value != "none" && value != "tbd" && value != "pending" && !strings.Contains(value, "placeholder")
 }
 func tierLDocument(path string) bool {
 	data, err := os.ReadFile(path)
@@ -474,16 +561,40 @@ func Approve(root, artifactPath, grant, approvedBy, notes string) (Approval, err
 	if err != nil {
 		return Approval{}, err
 	}
-	rollback := func() { _ = atomicWrite(artifactPath, data); _ = atomicWrite(registryPath, registryData) }
-	if err := atomicWrite(artifactPath, []byte(updated)); err != nil {
+	updates, err := approvalUpdates(root, artifactPath, updated, grant)
+	if err != nil {
 		return Approval{}, err
+	}
+	backups := map[string][]byte{}
+	for path := range updates {
+		backups[path], err = os.ReadFile(path)
+		if err != nil {
+			return Approval{}, err
+		}
+	}
+	rollback := func() {
+		for path, backup := range backups {
+			_ = atomicWrite(path, backup)
+		}
+		_ = atomicWrite(registryPath, registryData)
+	}
+	for path, content := range updates {
+		if err := atomicWrite(path, content); err != nil {
+			rollback()
+			return Approval{}, err
+		}
 	}
 	r.Artifacts[idx].Status = grant
 	if err := writeJSON(registryPath, r); err != nil {
 		rollback()
 		return Approval{}, err
 	}
-	rec := Approval{ArtifactID: r.Artifacts[idx].ID, Path: rel, ContentHash: Hash(updated), StatusGranted: grant, ApprovedBy: approvedBy, ApprovedAt: time.Now().UTC().Format(time.RFC3339), Notes: notes}
+	contentHash, err := approvalHash(root, artifactPath, nil)
+	if err != nil {
+		rollback()
+		return Approval{}, err
+	}
+	rec := Approval{ArtifactID: r.Artifacts[idx].ID, Path: rel, ContentHash: contentHash, StatusGranted: grant, ApprovedBy: approvedBy, ApprovedAt: time.Now().UTC().Format(time.RFC3339), Notes: notes}
 	dir := filepath.Join(root, ".product", "history")
 	if err := os.MkdirAll(dir, 0755); err != nil {
 		rollback()
@@ -495,6 +606,51 @@ func Approve(root, artifactPath, grant, approvedBy, notes string) (Approval, err
 		return Approval{}, err
 	}
 	return rec, nil
+}
+
+func approvalUpdates(root, artifactPath, updated, status string) (map[string][]byte, error) {
+	updates := map[string][]byte{artifactPath: []byte(updated)}
+	if filepath.Base(artifactPath) != "engineering-system.md" {
+		return updates, nil
+	}
+	contextPath := filepath.Join(root, "engineering", "context.md")
+	catalogPath := filepath.Join(root, "engineering", "engineering-system.yaml")
+	contextData, err := os.ReadFile(contextPath)
+	if err != nil {
+		return nil, err
+	}
+	catalogData, err := os.ReadFile(catalogPath)
+	if err != nil {
+		return nil, err
+	}
+	contextUpdated, catalogUpdated, err := engineeringsystem.SynchronizeStatus(string(contextData), catalogData, status)
+	if err != nil {
+		return nil, err
+	}
+	updates[contextPath] = []byte(contextUpdated)
+	updates[catalogPath] = catalogUpdated
+	return updates, nil
+}
+
+func approvalHash(root, artifactPath string, updates map[string][]byte) (string, error) {
+	if filepath.Base(artifactPath) != "engineering-system.md" {
+		if updates != nil {
+			if content, exists := updates[artifactPath]; exists {
+				return Hash(string(content)), nil
+			}
+		}
+		data, err := os.ReadFile(artifactPath)
+		if err != nil {
+			return "", err
+		}
+		return Hash(string(data)), nil
+	}
+	relative := map[string][]byte{}
+	for path, content := range updates {
+		rel, _ := filepath.Rel(root, path)
+		relative[filepath.ToSlash(rel)] = content
+	}
+	return engineeringsystem.CompositeHash(root, relative)
 }
 
 func GateReadiness(root string) ([]string, error) {

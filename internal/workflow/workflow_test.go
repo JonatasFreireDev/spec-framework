@@ -203,3 +203,108 @@ func TestPassedEngineeringReviewBecomesStaleAfterProposalChange(t *testing.T) {
 		t.Fatal("stale review was accepted after proposal change")
 	}
 }
+
+func TestEngineeringSystemApprovalIsAtomicAndComposite(t *testing.T) {
+	root := t.TempDir()
+	if err := os.MkdirAll(filepath.Join(root, ".product"), 0o755); err != nil {
+		t.Fatal(err)
+	}
+	engineering := filepath.Join(root, "engineering")
+	if err := os.MkdirAll(filepath.Join(engineering, "architecture"), 0o755); err != nil {
+		t.Fatal(err)
+	}
+	files := map[string]string{
+		"context.md":              "---\nid: ENGSYS-001\nstatus: draft\nversion: 1.0.0\norigin_mode: generate\n---\n",
+		"engineering-system.md":   "| Field | Value |\n| --- | --- |\n| ID | `ENGSYS-001` |\n| Status | `draft` |\n| Version | `1.0.0` |\n",
+		"engineering-system.yaml": "schema_version: 1\nid: ENGSYS-001\nstatus: draft\nversion: 1.0.0\norigin_mode: generate\nscope: product\nareas:\n  modules:\n    contract: architecture/modules.md\n    maturity: baseline\n    evidence: []\n",
+		"architecture/modules.md": "# Modules\n",
+	}
+	for name, body := range files {
+		path := filepath.Join(engineering, filepath.FromSlash(name))
+		if err := os.MkdirAll(filepath.Dir(path), 0o755); err != nil {
+			t.Fatal(err)
+		}
+		if err := os.WriteFile(path, []byte(body), 0o644); err != nil {
+			t.Fatal(err)
+		}
+	}
+	registry := Registry{Artifacts: []Artifact{{ID: "ENGSYS-001", Type: "engineering-system", Status: "draft", Path: "engineering/engineering-system.md"}}}
+	if err := writeJSON(filepath.Join(root, ".product", "artifacts.json"), registry); err != nil {
+		t.Fatal(err)
+	}
+	canonical := filepath.Join(engineering, "engineering-system.md")
+	if _, err := Approve(root, canonical, "approved", "Human", "Reviewed composite system"); err != nil {
+		t.Fatal(err)
+	}
+	for _, name := range []string{"context.md", "engineering-system.md", "engineering-system.yaml"} {
+		data, _ := os.ReadFile(filepath.Join(engineering, name))
+		if !strings.Contains(string(data), "approved") {
+			t.Fatalf("%s was not synchronized: %s", name, data)
+		}
+	}
+	if !hasCurrentApproval(root, canonical, "approved") {
+		t.Fatal("composite approval was not current")
+	}
+	if err := os.WriteFile(filepath.Join(engineering, "architecture", "modules.md"), []byte("# Changed Modules\n"), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	if hasCurrentApproval(root, canonical, "approved") {
+		t.Fatal("engineering contract change did not stale composite approval")
+	}
+}
+
+func TestStructuredNotApplicableRejectsIncidentalProse(t *testing.T) {
+	root := t.TempDir()
+	path := filepath.Join(root, "design.md")
+	if err := os.WriteFile(path, []byte("Status: draft\n\nNot applicable was rejected; rationale pending.\n"), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	if notApplicableDocument(path) {
+		t.Fatal("incidental prose bypassed Not applicable gate")
+	}
+	if err := os.WriteFile(path, []byte("Status: not_applicable\nRationale: This delivery has no user interface.\n"), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	if !notApplicableDocument(path) {
+		t.Fatal("structured Not applicable contract was rejected")
+	}
+}
+
+func TestArchitectureGateRequiresCurrentScopedDecision(t *testing.T) {
+	root := t.TempDir()
+	if err := os.MkdirAll(filepath.Join(root, ".product", "history"), 0o755); err != nil {
+		t.Fatal(err)
+	}
+	discoveryRel := "domains/events/use-cases/check-in/technical-discovery.md"
+	discoveryPath := filepath.Join(root, filepath.FromSlash(discoveryRel))
+	if err := os.MkdirAll(filepath.Dir(discoveryPath), 0o755); err != nil {
+		t.Fatal(err)
+	}
+	discovery := "## Architecture Gate\n\n| Field | Value |\n| --- | --- |\n| Verdict | Decision required |\n| Decision | DEC-001 |\n| Rationale | The delivery changes a service boundary. |\n"
+	if err := os.WriteFile(discoveryPath, []byte(discovery), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	decisionRel := "knowledge/decisions/DEC-001.md"
+	decisionPath := filepath.Join(root, filepath.FromSlash(decisionRel))
+	if err := os.MkdirAll(filepath.Dir(decisionPath), 0o755); err != nil {
+		t.Fatal(err)
+	}
+	decision := "# Decision\nstatus: approved\n"
+	if err := os.WriteFile(decisionPath, []byte(decision), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	index := map[string]any{"decisions": []any{map[string]any{"id": "DEC-001", "status": "approved", "scope": "architecture", "path": decisionRel}}}
+	if err := writeJSON(filepath.Join(root, ".product", "decisions.json"), index); err != nil {
+		t.Fatal(err)
+	}
+	if architectureResolved(root, discoveryPath) {
+		t.Fatal("decision without approval record resolved Architecture Gate")
+	}
+	record := Approval{ArtifactID: "DEC-001", Path: decisionRel, ContentHash: Hash(decision), StatusGranted: "approved", ApprovedBy: "Human"}
+	if err := writeJSON(filepath.Join(root, ".product", "history", "approval-dec-001.json"), record); err != nil {
+		t.Fatal(err)
+	}
+	if !architectureResolved(root, discoveryPath) {
+		t.Fatal("current scope-compatible decision did not resolve Architecture Gate")
+	}
+}

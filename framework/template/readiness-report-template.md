@@ -88,7 +88,7 @@ flowchart LR
 
 ### Design Readiness
 
-- [ ] `design.md` exists for UI work or explicitly says `Not applicable`.
+- [ ] `design.md` exists for UI work or uses structured `not_applicable` with rationale.
 - [ ] UI states are complete.
 - [ ] Accessibility requirements are explicit.
 - [ ] UX blockers are either fixed or carried forward.

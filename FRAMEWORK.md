@@ -102,7 +102,7 @@ Is the source of truth for implementation. It must cover product, flow, UI, APIs
 
 ### Design
 
-Translates the Specification into a verifiable user experience: visual flow, navigation, wireframes, mockups, states, accessibility, and alignment with the design system. When the feature has no interface, the artifact must explicitly record `Not applicable` and explain why.
+Translates the Specification into a verifiable user experience: visual flow, navigation, wireframes, mockups, states, accessibility, and alignment with the design system. When the feature has no interface, the artifact must use structured status `not_applicable` and a non-placeholder rationale.
 
 Design declares two independent dimensions. `origin_mode` is `generate` when the solution is created from the Specification, `evolve` when an existing interface is intentionally changed, and `adopt` when a versioned external source is authoritative. `maturity` is `contract`, `wireframe`, `mockup`, or `prototype`. Existing descriptive designs are compatible as `generate/contract`.
 
@@ -116,7 +116,7 @@ The Design System is an optional shared product artifact for products with recur
 
 The Engineering System is an optional shared product artifact for stable architecture, module and data ownership, integrations, standards, quality attributes, fitness functions, operations, and evidence. It lives under `engineering/`, declares `generate`, `evolve`, or `adopt`, and uses semantic versioning. `engineering-system.md` is the human contract and `engineering-system.yaml` is the mechanical catalog. Maturity is declared by area as `baseline`, `mapped`, `governed`, `verified`, or `operated`; it describes available evidence and never grants approval.
 
-Approved decisions and the Specification remain authoritative. The Engineering System records and links established technical constraints but does not replace `DEC-*` records or their approval evidence.
+Approved decisions and the Specification remain authoritative. The Engineering System records and links established technical constraints but does not replace `DEC-*` records or their approval evidence. Its approval is composite: context, human contract, mechanical catalog, architecture, standards, quality, runbooks, and evidence are hashed in deterministic path order, so any shared engineering contract change requires human re-approval.
 
 ### Engineering Proposal
 
@@ -371,9 +371,9 @@ Domain -> Domain Evolution -> Feature Selection -> New Feature -> Use Cases
 -> Code Review -> QA -> Commit Crafter -> PR Finalizer
 ```
 
-`specification.md` remains the root contract. Large concerns live under `contracts/` (`product`, `behavior`, `ux`, `api`, `data`, `security`, `quality`, `observability`, and `rollout`) and use stable `REQ-*` and `AC-*` identifiers. Tier S requires behavior and quality; Tier M adds product, UX, API, data, rollout, and Technical Discovery; Tier L adds security and observability. An inapplicable contract must say `Not applicable` with rationale.
+`specification.md` remains the root contract. Large concerns live under `contracts/` (`product`, `behavior`, `ux`, `api`, `data`, `security`, `quality`, `observability`, and `rollout`) and use stable `REQ-*` and `AC-*` identifiers. Tier S requires behavior and quality; Tier M adds product, UX, API, data, rollout, and Technical Discovery; Tier L adds security and observability. An inapplicable contract must use structured status `not_applicable` and a non-placeholder rationale.
 
-Design is mandatory for any use case with an interface. For deliveries without UI, `design.md` must exist as a short artifact with `Not applicable`, justification, and impacts on accessibility, observability, or operations when relevant.
+Design is mandatory for any use case with an interface. For deliveries without UI, `design.md` must exist with structured status `not_applicable`, a non-placeholder `Rationale`, and impacts on accessibility, observability, or operations when relevant. Free-text mentions of Not applicable never satisfy the gate. The same structured status and rationale contract applies to inapplicable modular Specification contracts.
 
 QA Evidence and Security Review are validation gates. QA Evidence proves that acceptance criteria, tasks, flows, edge cases, regression, accessibility, observability, and security controls were verified. Security Review evaluates authentication, authorization, privacy, abuse, sensitive data, tokens, logs, dependencies, rollout, rollback, and residual risk. Security Review must also read the product's security baseline in `knowledge/conventions/security-baseline.md` and active threats in `audits/security/threat-register.md`. An artifact must not reach `validated` or `released` when there is a QA or security blocker.
 
@@ -423,7 +423,7 @@ Open questions
 
 Security Review is not an absolute promise of risk absence. The gate's role is to ensure that all defined controls were verified with evidence, that blockers are resolved, and that residual risks are documented and approved by humans when relevant.
 
-Documentary rigor is proportional to the use case's tier. Tier S avoids heavy artifacts when design, analytics, or audit are `Not applicable`; Tier L requires Engineering Proposal, Engineering Review, QA Evidence, and Security Review by default. Tier S and M require Engineering Proposal and Engineering Review when `context.md` declares at least one structured `engineering_trigger`: `new_dependency`, `external_integration`, `data_ownership_change`, `migration`, `architecture_boundary_change`, `deployment_change`, `security_boundary_change`, or `operational_change`. Trigger automation reads this closed list and never infers applicability from prose.
+Documentary rigor is proportional to the use case's tier. Tier S avoids heavy artifacts when design, analytics, or audit use structured `not_applicable`; Tier L requires Engineering Proposal, Engineering Review, QA Evidence, and Security Review by default. Tier S and M require Engineering Proposal and Engineering Review when `context.md` declares at least one structured `engineering_trigger`: `new_dependency`, `external_integration`, `data_ownership_change`, `migration`, `architecture_boundary_change`, `deployment_change`, `security_boundary_change`, or `operational_change`. Trigger automation reads this closed list and never infers applicability from prose.
 
 ## 6.1. Delivery Prioritization
 
@@ -468,7 +468,7 @@ Outputs:
 Gates:
 
 - Without an approved Specification, do not generate design.
-- Without an approved Design, or one marked `Not applicable`, do not generate the Implementation Plan.
+- Without an approved Design, or one using structured `not_applicable` with rationale, do not continue to Technical Discovery.
 - Blocking UX findings go back to Specification or Design before proceeding.
 - Canonical visual sources must have an immutable version or content hash. Missing required states, unresolved Specification conflicts, or unreviewed strict-fidelity deviations block Design from advancing.
 - When the product declares a Design System, proposed-or-later use-case Design must pin its approved id/version and may not introduce shared tokens, components, or patterns silently.
@@ -674,7 +674,7 @@ Problem -> Vision -> Strategy -> Domains -> User Goals -> Roadmap
 Receives a candidate feature and drives:
 
 ```text
-Impact -> Feature -> Use Cases -> Specification -> Design -> Plan -> Graph -> Tasks
+Impact -> Feature -> Use Cases -> Specification -> Design -> Technical Discovery -> Architecture Gate -> Engineering Proposal -> Engineering Review -> Plan -> Graph -> Tasks
 ```
 
 ### Audit Orchestrator

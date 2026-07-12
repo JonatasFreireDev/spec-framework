@@ -38,4 +38,4 @@ A referenced DEC must be indexed, approved, covered by a current approval record
 
 ## Handoff
 
-Next: `implementation-planner` after the Architecture Gate is resolved.
+Next: `engineering-proposal` after the Architecture Gate is resolved.

@@ -27,7 +27,7 @@ Impact Analyzer -> Feature -> Use Case -> Specification -> UX/UI -> Technical Di
 4. Preserve traceability from parent artifacts to child artifacts.
 5. Keep audit findings separate from product decisions until approved.
 6. Require `Delivery Level` and `Priority` before Specification and preserve them through every downstream artifact.
-7. For UI-bearing use cases, require approved `design.md` before Technical Discovery. For non-UI use cases, require `design.md` marked `Not applicable`.
+7. For UI-bearing use cases, require approved `design.md` before Technical Discovery. For non-UI use cases, require structured `not_applicable` status and rationale.
 8. Require Engineering Proposal and a passed Engineering Review for Tier L and any delivery whose context declares a supported `engineering_trigger`.
 8. Update context and indexes only after the source artifact is approved.
 
@@ -38,7 +38,7 @@ approved feature scope; specification contracts; design; technical discovery; re
 - [ ] Inputs are approved or explicitly marked as draft.
 - [ ] Parent and child artifacts are linked.
 - [ ] Delivery Level and Priority are declared and justified.
-- [ ] Design is approved or explicitly marked Not applicable before planning.
+- [ ] Design is approved or uses structured `not_applicable` status with rationale before planning.
 - [ ] Decisions are recorded or queued for approval.
 - [ ] Gaps, conflicts, dependencies, and risks are visible.
 - [ ] Handoff names the next skill and required reading.

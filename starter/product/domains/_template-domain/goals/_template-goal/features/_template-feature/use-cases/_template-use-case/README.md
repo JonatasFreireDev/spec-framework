@@ -25,5 +25,4 @@ Copy this folder for a single verifiable product interaction.
 
 ## Next Step
 
-Replace all `TBD` values, select a real `rigor_tier`, and move the use case through Specification -> Design -> Plan -> Graph -> Tasks.
-
+Replace all `TBD` values, select a real `rigor_tier`, and move the use case through Specification -> Design -> Technical Discovery -> applicable Engineering Proposal and Engineering Review -> Plan -> Graph -> Tasks.

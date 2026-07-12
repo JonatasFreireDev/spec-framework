@@ -5,10 +5,11 @@
 | Field | Value |
 | --- | --- |
 | ID | `[DES-XXX]` |
-| Status | `[draft | proposed | approved | Not applicable]` |
+| Status | `[draft | proposed | approved | not_applicable]` |
+| Rationale | `[required when status is not_applicable]` |
 | Source specification | `[SPEC-XXX]` |
 | Owner skill | UX/UI AI |
-| Next skill | Implementation Planner AI |
+| Next skill | Technical Discovery AI |
 
 ## 🔗 Navigation
 

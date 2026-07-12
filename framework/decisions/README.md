@@ -37,6 +37,7 @@ Product decisions do not live here. Product decisions continue to live in `knowl
 | [FDR-025](FDR-025-external-runtime-and-manifest-only-activation.md) | External runtime and manifest-only activation | proposed | Governance baseline |
 | [FDR-026](FDR-026-canonical-product-engineering-system.md) | Canonical Product Engineering System | approved | Governance baseline |
 | [FDR-027](FDR-027-engineering-gate-integrity.md) | Engineering Gate Integrity | approved | Governance baseline |
+| [FDR-028](FDR-028-composite-engineering-approval-and-structured-gates.md) | Composite Engineering Approval And Structured Gates | approved | Governance baseline |
 
 ## Rule
 

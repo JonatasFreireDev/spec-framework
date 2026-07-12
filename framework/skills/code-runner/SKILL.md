@@ -37,7 +37,7 @@ Code Runner turns a task contract into code and executable evidence. It does not
 
 - Work on one task only.
 - Task status is `approved` or the user explicitly requested a draft/prototype exception.
-- Parent Specification, Design when applicable, Implementation Plan, Execution Graph, and Tasks are approved or explicitly marked `Not applicable` by the framework gate.
+- Parent Specification, applicable Design, Implementation Plan, Execution Graph, and Tasks are approved or use structured `not_applicable` where the framework permits it.
 - Task has concrete `writeScope`.
 - Task lists source sections and acceptance checks.
 - Required decisions are approved.

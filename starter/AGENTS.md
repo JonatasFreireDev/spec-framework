@@ -53,7 +53,7 @@ Do not skip approval gates. A downstream artifact may remain `draft` while its p
 
 ## Implementation Evidence
 
-- Before implementation, require approved Specification, Design or `Not applicable`, Technical Discovery, resolved Architecture Gate, applicable Engineering Proposal and passed Engineering Review, Implementation Plan, Execution Graph, Tasks, configured gates, and an active lease when graph runtime is used.
+- Before implementation, require approved Specification, approved Design or structured `not_applicable`, Technical Discovery, resolved Architecture Gate, applicable Engineering Proposal and passed Engineering Review, Implementation Plan, Execution Graph, Tasks, configured gates, and an active lease when graph runtime is used.
 - Engineering Proposal and Review apply to every Tier L delivery and to Tier S/M when `context.md` declares a supported `engineering_trigger`; never infer triggers from prose.
 - `implemented` requires immutable working-tree evidence: branch, base commit, changed paths, diff hash, tests, and applicable gate results. It does not require an early commit.
 - Code Review and task QA must approve the same current diff hash before Commit Crafter creates local commits.

@@ -80,7 +80,7 @@ Use this checklist in order. Do not generate downstream artifacts from incomplet
 - [ ] Continue Domain -> User Goal -> Domain Evolution -> selected Feature -> Use Case.
 - [ ] Use spec-framework work --feature <id-or-path>, then status/next for navigation.
 - [ ] Create modular Specification contracts according to rigor.
-- [ ] Generate Design, Technical Discovery, resolve the Architecture Gate, then Plan, Graph, and Tasks.
+- [ ] Generate Design, Technical Discovery, resolve the Architecture Gate, then applicable Engineering Proposal and Engineering Review, Plan, Graph, and Tasks.
 - [ ] Run spec-framework gates before Code Runner and claim graph tasks when coordinating agents.
 
 ## 7. Validate readiness

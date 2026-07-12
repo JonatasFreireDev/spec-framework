@@ -280,11 +280,10 @@ func hasCurrentApproval(root, artifactPath, status string) bool {
 		return false
 	}
 	rel = filepath.ToSlash(rel)
-	data, err := os.ReadFile(artifactPath)
+	hash, err := approvalHash(root, artifactPath, nil)
 	if err != nil {
 		return false
 	}
-	hash := Hash(string(data))
 	entries, _ := os.ReadDir(filepath.Join(root, ".product", "history"))
 	for _, e := range entries {
 		if e.IsDir() || filepath.Ext(e.Name()) != ".json" {

@@ -122,6 +122,16 @@ func validateImportRuns(s Snapshot) []Diagnostic {
 
 func validateDeliveryClosure(s Snapshot) []Diagnostic {
 	var out []Diagnostic
+	for rel, text := range s.Text {
+		if !strings.HasPrefix(rel, "domains/") || !strings.HasSuffix(rel, ".md") {
+			continue
+		}
+		fields, meta := tableFields(text), metadata(text)
+		status := strings.ToLower(first(fields["status"], meta["status"]))
+		if status == "not_applicable" && !validatorMeaningful(first(fields["rationale"], meta["rationale"])) {
+			out = append(out, Diagnostic{Error, "not-applicable", rel, "Structured not_applicable status requires a non-placeholder rationale.", "Add a Rationale field explaining why the artifact does not apply."})
+		}
+	}
 	known := map[string]bool{"END": true}
 	frameworkSkillTexts := map[string]string{}
 	for _, root := range []string{filepath.Join(s.FrameworkRoot, "skills"), filepath.Join(s.FrameworkRoot, "framework", "skills")} {
@@ -216,7 +226,8 @@ func validateDeliveryClosure(s Snapshot) []Diagnostic {
 			if !feeds(discoveryStatus) {
 				out = append(out, Diagnostic{Error, "approval-gates", base + "/implementation-plan.md", "Implementation Plan requires approved Technical Discovery.", "Approve Technical Discovery before advancing the plan."})
 			}
-			resolved := strings.Contains(discovery, "Not required") || regexp.MustCompile(`DEC-\d+`).MatchString(discovery)
+			verdict, _, rationale := validatorArchitectureGate(discovery)
+			resolved := (verdict == "Not required" && validatorMeaningful(rationale)) || (verdict == "Decision required" && regexp.MustCompile(`DEC-\d+`).MatchString(discovery))
 			if !resolved {
 				out = append(out, Diagnostic{Error, "architecture-gate", base + "/technical-discovery.md", "Architecture Gate is unresolved.", "Reference an approved DEC-* or record Not required with rationale."})
 			}
@@ -987,6 +998,24 @@ func normalizeDelivery(value, prefix string) string {
 		return value[:2]
 	}
 	return ""
+}
+
+func validatorArchitectureGate(text string) (string, string, string) {
+	fields := tableFields(text)
+	if fields["verdict"] != "" {
+		return fields["verdict"], fields["decision"], fields["rationale"]
+	}
+	pattern := regexp.MustCompile(`(?mi)^\|\s*(Decision required|Not required)\s*\|\s*([^|]*)\|\s*([^|]*)\|$`)
+	match := pattern.FindStringSubmatch(text)
+	if len(match) == 4 {
+		return strings.TrimSpace(match[1]), strings.TrimSpace(match[2]), strings.TrimSpace(match[3])
+	}
+	return "", "", ""
+}
+
+func validatorMeaningful(value string) bool {
+	value = strings.ToLower(strings.Trim(strings.TrimSpace(value), "`[]"))
+	return value != "" && value != "n/a" && value != "none" && value != "tbd" && value != "pending" && !strings.Contains(value, "placeholder")
 }
 
 func validateRegistryAndApprovalGates(s Snapshot) []Diagnostic {

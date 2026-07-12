@@ -250,7 +250,7 @@ func currentApproval(s Snapshot, id, path, status string) bool {
 	if !exists || !requiresApproval(status) {
 		return false
 	}
-	expected := Hash(text)
+	expected := artifactHash(s, filepath.ToSlash(path), text)
 	for rel, value := range s.JSON {
 		if !strings.HasPrefix(rel, ".product/history/approval-") {
 			continue
@@ -608,7 +608,7 @@ func validateApprovalRecords(s Snapshot) []Diagnostic {
 		if !exists {
 			continue
 		}
-		expected := Hash(text)
+		expected := artifactHash(s, filepath.ToSlash(path), text)
 		matched := false
 		for _, record := range records[id] {
 			if record["path"] == path && record["status_granted"] == status && record["content_hash"] == expected {
@@ -621,6 +621,36 @@ func validateApprovalRecords(s Snapshot) []Diagnostic {
 		}
 	}
 	return out
+}
+
+func artifactHash(s Snapshot, path, text string) string {
+	if filepath.Base(path) != "engineering-system.md" {
+		return Hash(text)
+	}
+	var paths []string
+	for candidate := range s.Text {
+		if strings.HasPrefix(candidate, "engineering/") {
+			paths = append(paths, candidate)
+		}
+	}
+	sort.Strings(paths)
+	var content strings.Builder
+	for _, candidate := range paths {
+		content.WriteString(candidate)
+		content.WriteByte('\n')
+		content.WriteString(normalizedText(s.Text[candidate]))
+		content.WriteByte('\n')
+	}
+	return Hash(content.String())
+}
+
+func normalizedText(text string) string {
+	text = strings.ReplaceAll(strings.ReplaceAll(text, "\r\n", "\n"), "\r", "\n")
+	lines := strings.Split(text, "\n")
+	for index, line := range lines {
+		lines[index] = strings.TrimRight(line, " \t")
+	}
+	return strings.Join(lines, "\n")
 }
 func requiresApproval(status string) bool {
 	switch status {
