@@ -1,0 +1,4 @@
+interface:
+  display_name: "Framework Guide"
+  short_description: "Guide users through the Spec Framework CLI and approval gates."
+  default_prompt: "Understand my goal, inspect the current Spec Framework product state, and guide me through the safest next CLI action."

@@ -606,6 +606,10 @@ Skills are specialists. They can operate in modes such as `create`, `update`, `a
 
 Orchestrators do not create primary artifacts. They control flow, order, gates, and handoffs.
 
+### Framework Guide
+
+Framework Guide is the conversational entry point to the CLI. It translates a person's goal into current mechanical state, the smallest safe command, and the correct specialist or approval handoff. It does not author canonical artifacts, approve work, or replace Command Planner and Command Executor.
+
 ### Domain Evolution Orchestrator
 
 Coordinates approved goals, journeys, opportunity gaps, candidate features, delivery slices, dependency/impact analysis, and explicit human feature selection. It hands the selected feature to New Feature Orchestrator.

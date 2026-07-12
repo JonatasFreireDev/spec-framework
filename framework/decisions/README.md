@@ -31,6 +31,7 @@ Product decisions do not live here. Product decisions continue to live in `knowl
 | [FDR-019](FDR-019-executable-product-decision-effects.md) | Executable product decision effects | approved | Governance baseline |
 | [FDR-020](FDR-020-consolidated-cli-and-guided-migrations.md) | Consolidated CLI and guided migrations | approved | Governance baseline |
 | [FDR-021](FDR-021-design-sources-and-visual-artifacts.md) | Design sources and visual artifact protocol | approved | Human-approved design workflow evolution |
+| [FDR-022](FDR-022-conversational-cli-guidance.md) | Conversational CLI guidance | approved | Human-approved CLI usability evolution |
 
 ## Rule
 
