@@ -1,0 +1,1972 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Guia visual do Spec Framework: método, skills, gates, fluxos de design, engenharia e entrega, e referência de CLI.">
+<title>Spec Framework — Guia</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📐</text></svg>">
+</head>
+<body>
+<style>
+:root{
+  --bg:#f6f4ef;
+  --bg-raised:#ffffff;
+  --ink:#1b1d1f;
+  --ink-soft:#52585f;
+  --line:#dcd8cd;
+  --accent:#2f5d8a;
+  --accent-soft:#e4edf5;
+  --amber:#a6641c;
+  --amber-soft:#f3e6d3;
+  --mono-bg:#101317;
+  --mono-ink:#d7dee6;
+  --code-bg:#eeeae0;
+  --code-fg:#2a2d30;
+  --code-muted:#8a8577;
+  --ok:#2f7a4f;
+  --warn:#a6641c;
+  --crit:#9a3b3b;
+  --radius:3px;
+  --serif: Georgia, "Iowan Old Style", "Palatino Linotype", "Book Antiqua", serif;
+  --sans: -apple-system, "Segoe UI", "Neue Haas Grotesk Text Pro", Roboto, Arial, sans-serif;
+  --mono: "JetBrains Mono", "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg:#14161a;
+    --bg-raised:#1b1e23;
+    --ink:#e9e6de;
+    --ink-soft:#a4a9b1;
+    --line:#31353c;
+    --accent:#7fb0dd;
+    --accent-soft:#20323f;
+    --amber:#d59a55;
+    --amber-soft:#3a2f1f;
+    --mono-bg:#0b0d10;
+    --mono-ink:#cfd8e2;
+    --code-bg:#0b0d10;
+    --code-fg:#cfd8e2;
+    --code-muted:#7d8a99;
+    --ok:#5fae7f;
+    --warn:#d59a55;
+    --crit:#d97a7a;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#14161a; --bg-raised:#1b1e23; --ink:#e9e6de; --ink-soft:#a4a9b1; --line:#31353c;
+  --accent:#7fb0dd; --accent-soft:#20323f; --amber:#d59a55; --amber-soft:#3a2f1f;
+  --mono-bg:#0b0d10; --mono-ink:#cfd8e2; --ok:#5fae7f; --warn:#d59a55; --crit:#d97a7a;
+  --code-bg:#0b0d10; --code-fg:#cfd8e2; --code-muted:#7d8a99;
+}
+:root[data-theme="light"]{
+  --bg:#f6f4ef; --bg-raised:#ffffff; --ink:#1b1d1f; --ink-soft:#52585f; --line:#dcd8cd;
+  --accent:#2f5d8a; --accent-soft:#e4edf5; --amber:#a6641c; --amber-soft:#f3e6d3;
+  --mono-bg:#101317; --mono-ink:#d7dee6; --ok:#2f7a4f; --warn:#a6641c; --crit:#9a3b3b;
+  --code-bg:#eeeae0; --code-fg:#2a2d30; --code-muted:#8a8577;
+}
+
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  background:var(--bg);
+  color:var(--ink);
+  font-family:var(--sans);
+  line-height:1.55;
+  -webkit-font-smoothing:antialiased;
+}
+::selection{background:var(--accent-soft);color:var(--ink);}
+a{color:var(--accent);}
+code{
+  font-family:var(--mono);
+  font-size:0.86em;
+  background:var(--bg-raised);
+  border:1px solid var(--line);
+  padding:0 5px;
+  border-radius:2px;
+  word-break:break-word;
+  overflow-wrap:anywhere;
+}
+pre code{background:none;border:none;padding:0;word-break:normal;overflow-wrap:normal;white-space:inherit;font-size:1em;}
+a:focus-visible, button:focus-visible, summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px;}
+
+.wrap{
+  max-width:1180px;
+  margin:0 auto;
+  padding:0 32px 96px;
+}
+
+/* ---------- top masthead ---------- */
+.masthead{
+  border-bottom:1px solid var(--line);
+  background:var(--bg-raised);
+}
+.masthead-inner{
+  max-width:1180px;
+  margin:0 auto;
+  padding:22px 32px;
+  display:flex;
+  align-items:baseline;
+  justify-content:space-between;
+  gap:16px;
+  flex-wrap:wrap;
+}
+.brand{
+  font-family:var(--mono);
+  font-size:13px;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  color:var(--ink-soft);
+}
+.brand b{color:var(--ink);font-weight:700;}
+.masthead nav{
+  display:flex;
+  gap:22px;
+  font-family:var(--mono);
+  font-size:12.5px;
+  letter-spacing:.03em;
+}
+.masthead nav a{color:var(--ink-soft);text-decoration:none;padding:4px 2px;border-bottom:2px solid transparent;}
+.masthead nav a:hover{color:var(--accent);}
+.masthead nav a.active{color:var(--ink);border-bottom-color:var(--accent);}
+.nav-group{
+  display:flex;
+  align-items:baseline;
+  gap:14px;
+  padding-left:18px;
+  border-left:1px solid var(--line);
+}
+.nav-label{
+  font-size:10px;
+  letter-spacing:.1em;
+  text-transform:uppercase;
+  color:var(--ink-soft);
+  opacity:.65;
+  user-select:none;
+}
+
+/* ---------- page routing ---------- */
+.page{display:none;}
+.page.active{display:block;animation:fade-in .18s ease;}
+@keyframes fade-in{from{opacity:0;transform:translateY(4px);}to{opacity:1;transform:none;}}
+@media (prefers-reduced-motion:reduce){.page.active{animation:none;}}
+
+/* ---------- hero ---------- */
+.hero{
+  padding:64px 0 40px;
+  border-bottom:1px solid var(--line);
+}
+.eyebrow{
+  font-family:var(--mono);
+  font-size:12px;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  color:var(--accent);
+  margin:0 0 14px;
+}
+h1.title{
+  font-family:var(--serif);
+  font-size:clamp(34px,4.6vw,56px);
+  line-height:1.08;
+  margin:0 0 20px;
+  max-width:16ch;
+  text-wrap:balance;
+  font-weight:600;
+}
+.lede{
+  font-size:18px;
+  color:var(--ink-soft);
+  max-width:62ch;
+  margin:0 0 28px;
+}
+.hero-chain{
+  display:flex;
+  flex-wrap:nowrap;
+  overflow-x:auto;
+  padding-bottom:10px;
+  font-family:var(--mono);
+  font-size:12.5px;
+  color:var(--ink-soft);
+  align-items:center;
+  scrollbar-width:thin;
+  -webkit-mask-image:linear-gradient(to right, #000 92%, transparent);
+  mask-image:linear-gradient(to right, #000 92%, transparent);
+}
+.hero-chain .node{
+  background:var(--bg);
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  padding:5px 10px;
+  color:var(--ink);
+  white-space:nowrap;
+}
+.hero-chain .arrow{padding:0 8px;color:var(--ink-soft);}
+
+/* ---------- toc grid (início) ---------- */
+.toc-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+  gap:14px;
+  padding:44px 0 8px;
+}
+.toc-card{
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+  background:var(--bg-raised);
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  padding:20px 20px 22px;
+  text-decoration:none;
+  color:var(--ink);
+  transition:border-color .15s ease, transform .15s ease;
+}
+.toc-card:hover{border-color:var(--accent);transform:translateY(-2px);}
+.toc-kicker{
+  font-family:var(--mono);
+  font-size:11px;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  color:var(--accent);
+}
+.toc-title{
+  font-family:var(--serif);
+  font-size:19px;
+  font-weight:600;
+}
+.toc-desc{
+  font-size:13px;
+  color:var(--ink-soft);
+  line-height:1.5;
+}
+.toc-desc code{
+  font-family:var(--mono);
+  font-size:12px;
+  background:var(--bg);
+  border:1px solid var(--line);
+  padding:0 4px;
+  border-radius:2px;
+}
+
+/* ---------- typographic scale ---------- */
+p.lead{
+  font-size:14.5px;
+  color:var(--ink-soft);
+  max-width:74ch;
+  margin:0 0 32px;
+}
+p.note{
+  font-size:12.5px;
+  color:var(--ink-soft);
+  max-width:70ch;
+  margin:14px 0 0;
+}
+p.kicker{
+  font-family:var(--mono);
+  font-size:12px;
+  text-transform:uppercase;
+  letter-spacing:.08em;
+  color:var(--ink-soft);
+  margin:0 0 12px;
+}
+p.kicker.accent{color:var(--accent);margin:0 0 6px;}
+h3.block-title, .cat-block h3.block-title{
+  font-family:var(--serif);
+  font-size:20px;
+  font-weight:600;
+  margin:0 0 16px;
+  text-transform:none;
+  letter-spacing:0;
+  border-bottom:none;
+  padding-bottom:0;
+  color:var(--ink);
+}
+
+/* ---------- in-page toc ---------- */
+.page-toc{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  margin:0 0 36px;
+}
+.page-toc a{
+  font-family:var(--mono);
+  font-size:11.5px;
+  letter-spacing:.03em;
+  color:var(--ink-soft);
+  text-decoration:none;
+  border:1px solid var(--line);
+  border-radius:99px;
+  padding:5px 13px;
+  background:var(--bg-raised);
+}
+.page-toc a:hover{color:var(--accent);border-color:var(--accent);}
+
+/* ---------- section shell ---------- */
+section{
+  padding:56px 0;
+  border-bottom:1px solid var(--line);
+}
+section:last-child{border-bottom:none;}
+.section-head{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-end;
+  gap:24px;
+  margin-bottom:28px;
+  flex-wrap:wrap;
+}
+h2.section-title{
+  font-family:var(--serif);
+  font-size:28px;
+  margin:0;
+  font-weight:600;
+}
+.section-note{
+  font-size:13.5px;
+  color:var(--ink-soft);
+  max-width:38ch;
+  text-align:right;
+}
+.tag{
+  display:inline-block;
+  font-family:var(--mono);
+  font-size:11px;
+  letter-spacing:.06em;
+  text-transform:uppercase;
+  color:var(--ink-soft);
+  border:1px solid var(--line);
+  border-radius:99px;
+  padding:2px 9px;
+}
+
+/* ---------- o que é ---------- */
+.what-grid{
+  display:grid;
+  grid-template-columns:1.1fr 1fr;
+  gap:40px;
+}
+.what-grid p{color:var(--ink-soft);font-size:15.5px;max-width:56ch;}
+.what-grid p b{color:var(--ink);font-weight:600;}
+.pillars{
+  display:grid;
+  gap:14px;
+}
+.pillar{
+  background:var(--bg-raised);
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  padding:16px 18px;
+}
+.pillar h3{
+  margin:0 0 6px;
+  font-size:14px;
+  font-family:var(--mono);
+  letter-spacing:.02em;
+  color:var(--accent);
+}
+.pillar p{margin:0;font-size:14px;color:var(--ink-soft);max-width:none;}
+
+.glossary{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(280px,1fr));
+  gap:16px 28px;
+}
+.gterm{
+  padding:14px 0;
+  border-top:1px solid var(--line);
+}
+.gname{
+  font-family:var(--serif);
+  font-weight:600;
+  font-size:15px;
+  margin-bottom:4px;
+}
+.gterm p{margin:0;font-size:13px;color:var(--ink-soft);max-width:none;}
+.gterm p b{color:var(--ink);font-weight:600;}
+.gterm code{font-family:var(--mono);font-size:12px;background:var(--bg-raised);border:1px solid var(--line);padding:0 4px;border-radius:2px;}
+
+/* ---------- ladder / pipeline ---------- */
+.ladder{
+  display:flex;
+  flex-wrap:wrap;
+  gap:0;
+  align-items:stretch;
+}
+.rung{
+  flex:1 1 110px;
+  border:1px solid var(--line);
+  background:var(--bg-raised);
+  padding:14px 12px;
+  position:relative;
+  font-size:13px;
+}
+.rung + .rung{border-left:none;}
+.rung .num{
+  font-family:var(--mono);
+  font-size:10.5px;
+  color:var(--ink-soft);
+  display:block;
+  margin-bottom:6px;
+}
+.rung .lbl{font-weight:600;}
+.rung.central{background:var(--accent-soft);border-color:var(--accent);}
+.rung.central .num{color:var(--accent);}
+
+/* ---------- delivery levels ---------- */
+.levels{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(190px,1fr));
+  gap:12px;
+}
+.level{
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  padding:14px 16px;
+  background:var(--bg-raised);
+}
+.level .lv-tag{
+  font-family:var(--mono);
+  font-size:12px;
+  color:var(--accent);
+  font-weight:700;
+  letter-spacing:.03em;
+}
+.level p{margin:6px 0 0;font-size:13px;color:var(--ink-soft);}
+
+/* ---------- skills catalog ---------- */
+.cat-block{margin-bottom:34px;}
+.cat-block:last-child{margin-bottom:0;}
+.cat-block > h3{
+  font-family:var(--mono);
+  font-size:12.5px;
+  text-transform:uppercase;
+  letter-spacing:.09em;
+  color:var(--ink-soft);
+  margin:0 0 12px;
+  padding-bottom:8px;
+  border-bottom:1px solid var(--line);
+}
+.skill-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(260px,1fr));
+  gap:12px;
+}
+.skill{
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  padding:13px 15px;
+  background:var(--bg-raised);
+}
+.skill .name{
+  font-weight:600;
+  font-size:14px;
+  margin-bottom:4px;
+}
+.skill .desc{
+  font-size:13px;
+  color:var(--ink-soft);
+}
+
+/* ---------- design page ---------- */
+.dims-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:40px;
+}
+.tree-box{
+  background:var(--code-bg);
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  padding:18px 20px;
+  align-self:start;
+}
+.tree-box pre{
+  margin:0;
+  font-family:var(--mono);
+  font-size:12.5px;
+  line-height:1.75;
+  color:var(--code-fg);
+  white-space:pre;
+}
+.tree-box .tc{color:var(--code-muted);font-style:italic;}
+.adapter-row{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+}
+.adapter-chip{
+  display:flex;
+  align-items:baseline;
+  gap:8px;
+  border:1px solid var(--line);
+  background:var(--bg-raised);
+  border-radius:99px;
+  padding:8px 16px;
+}
+.adapter-chip .aname{font-weight:600;font-size:13.5px;}
+.adapter-chip .adesc{font-size:12px;color:var(--ink-soft);}
+
+/* ---------- gates timeline ---------- */
+.gates{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  font-family:var(--mono);
+  font-size:12px;
+}
+.gate{
+  border:1px solid var(--line);
+  border-radius:99px;
+  padding:6px 13px;
+  background:var(--bg-raised);
+  color:var(--ink-soft);
+}
+.gate.ok{border-color:var(--ok);color:var(--ok);}
+.gate.mid{border-color:var(--accent);color:var(--accent);}
+.gates-sep{color:var(--ink-soft);align-self:center;}
+
+/* ---------- delivery flow ---------- */
+.flow{
+  display:grid;
+  gap:0;
+}
+.flow-row{
+  display:grid;
+  grid-template-columns:190px 24px 1fr;
+  align-items:stretch;
+}
+.flow-stage{
+  font-family:var(--mono);
+  font-size:11.5px;
+  text-transform:uppercase;
+  letter-spacing:.06em;
+  color:var(--ink-soft);
+  padding:16px 14px 16px 0;
+  text-align:right;
+}
+.flow-rail{
+  position:relative;
+  display:flex;
+  justify-content:center;
+}
+.flow-rail::before{
+  content:"";
+  position:absolute;
+  top:0;
+  bottom:0;
+  width:1px;
+  background:var(--line);
+}
+.flow-row:first-child .flow-rail::before{top:22px;}
+.flow-row:last-child .flow-rail::before{bottom:calc(100% - 22px);}
+.flow-dot{
+  position:relative;
+  z-index:1;
+  width:9px;
+  height:9px;
+  border-radius:50%;
+  background:var(--bg-raised);
+  border:2px solid var(--accent);
+  margin-top:17px;
+}
+.flow-dot.gate{border-color:var(--amber);}
+.flow-card{
+  padding:12px 0 24px 18px;
+}
+.flow-card .who{
+  font-weight:600;
+  font-size:14.5px;
+  margin-bottom:3px;
+}
+.flow-card .who .role{
+  font-family:var(--mono);
+  font-size:11px;
+  color:var(--accent);
+  text-transform:uppercase;
+  letter-spacing:.05em;
+  margin-right:8px;
+}
+.flow-card p{
+  margin:0;
+  font-size:13.5px;
+  color:var(--ink-soft);
+  max-width:60ch;
+}
+.flow-card code{
+  font-family:var(--mono);
+  font-size:12px;
+  background:var(--bg-raised);
+  border:1px solid var(--line);
+  padding:1px 5px;
+  border-radius:2px;
+}
+.flow-card.branch{
+  border-left:2px solid var(--amber);
+  padding-left:16px;
+  margin-left:2px;
+}
+
+/* ---------- example scenario ---------- */
+.scenario{
+  background:var(--bg-raised);
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  padding:26px 28px;
+}
+.scenario h3{
+  font-family:var(--serif);
+  font-size:19px;
+  margin:0 0 6px;
+}
+.scenario .ask{
+  font-size:14px;
+  color:var(--ink-soft);
+  margin-bottom:18px;
+  font-style:italic;
+}
+.steps{
+  display:grid;
+  gap:0;
+  border-top:1px solid var(--line);
+}
+.step{
+  display:grid;
+  grid-template-columns:150px 1fr;
+  gap:18px;
+  padding:13px 0;
+  border-bottom:1px solid var(--line);
+  font-size:13.5px;
+}
+.step .who{
+  font-family:var(--mono);
+  font-size:12px;
+  color:var(--accent);
+  padding-top:1px;
+}
+.step .what{color:var(--ink-soft);}
+.step .what b{color:var(--ink);font-weight:600;}
+
+/* ---------- intent list ---------- */
+.intent-list{
+  display:grid;
+  border-top:1px solid var(--line);
+}
+.intent-row{
+  display:grid;
+  grid-template-columns:1fr 20px 1.3fr;
+  align-items:center;
+  gap:14px;
+  padding:11px 0;
+  border-bottom:1px solid var(--line);
+  font-size:13.5px;
+}
+.intent-q{color:var(--ink-soft);font-style:italic;}
+.intent-arrow{color:var(--accent);text-align:center;}
+.intent-a{color:var(--ink);}
+
+/* ---------- collapsible example cards ---------- */
+.ex-grid{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:12px;
+}
+.mini-steps{
+  display:grid;
+  gap:0;
+  border-top:1px solid var(--line);
+}
+.mini-step{
+  display:grid;
+  grid-template-columns:180px 1fr;
+  gap:18px;
+  padding:13px 0;
+  border-bottom:1px solid var(--line);
+}
+.mini-step .m-label{
+  font-family:var(--mono);
+  font-size:11px;
+  text-transform:uppercase;
+  letter-spacing:.05em;
+  color:var(--accent);
+  padding-top:1px;
+}
+.mini-step p{
+  margin:0;
+  font-size:13px;
+  color:var(--ink-soft);
+  line-height:1.5;
+}
+.ex-card{
+  background:var(--bg-raised);
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  padding:18px 20px;
+}
+.ex-card summary{
+  cursor:pointer;
+  list-style:none;
+  display:flex;
+  flex-direction:column;
+  gap:5px;
+}
+.ex-card summary::-webkit-details-marker{display:none;}
+.ex-card summary{position:relative;padding-right:34px;}
+.ex-card summary::after{
+  content:"❯";
+  position:absolute;
+  right:4px;
+  top:50%;
+  font-size:14px;
+  color:var(--accent);
+  transform:translateY(-50%) rotate(90deg);
+  transition:transform .15s ease;
+}
+.ex-card[open] summary::after{transform:translateY(-50%) rotate(-90deg);}
+@media (prefers-reduced-motion:reduce){.ex-card summary::after{transition:none;}}
+.ex-title{font-family:var(--serif);font-size:16.5px;font-weight:600;}
+.ex-sub{font-size:13px;color:var(--ink-soft);font-style:italic;}
+
+/* ---------- cli ---------- */
+.cli-wrap{position:relative;}
+.copy-btn{
+  position:absolute;
+  top:8px;
+  right:8px;
+  font-family:var(--mono);
+  font-size:11px;
+  letter-spacing:.03em;
+  color:var(--ink-soft);
+  background:var(--bg-raised);
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  padding:4px 10px;
+  cursor:pointer;
+  opacity:.75;
+}
+.copy-btn:hover{color:var(--accent);border-color:var(--accent);opacity:1;}
+.copy-btn.copied{color:var(--ok);border-color:var(--ok);opacity:1;}
+.cli-wrap pre.cli{padding-right:92px;}
+.cli-scroll{overflow-x:auto;}
+pre.cli{
+  background:var(--code-bg);
+  color:var(--code-fg);
+  border:1px solid var(--line);
+  font-family:var(--mono);
+  font-size:13px;
+  line-height:1.7;
+  padding:16px 18px;
+  border-radius:var(--radius);
+  margin:0;
+  white-space:pre;
+}
+pre.cli .c{color:var(--code-muted);}
+pre.cli .cmd{color:var(--code-fg);font-weight:600;}
+pre.cli .flag{color:var(--accent);}
+
+.cli-grid{display:grid;gap:16px;}
+.cli-block .caption{
+  font-size:12.5px;
+  color:var(--ink-soft);
+  margin:0 0 8px;
+  font-family:var(--mono);
+}
+
+/* ---------- pager ---------- */
+.pager{
+  display:flex;
+  justify-content:space-between;
+  gap:16px;
+  margin-top:48px;
+  padding-top:20px;
+  border-top:1px solid var(--line);
+  font-family:var(--mono);
+  font-size:12.5px;
+}
+.pager a{color:var(--ink-soft);text-decoration:none;}
+.pager a:hover{color:var(--accent);}
+.pager-next{text-align:right;}
+.pager-pos{color:var(--ink-soft);opacity:.55;font-size:11px;align-self:center;}
+
+/* ---------- footer ---------- */
+footer{
+  padding:36px 0 8px;
+  font-size:12.5px;
+  color:var(--ink-soft);
+  display:flex;
+  justify-content:space-between;
+  flex-wrap:wrap;
+  gap:10px;
+}
+
+@media (max-width:1100px){
+  .nav-label{display:none;}
+  .nav-group{padding-left:14px;gap:12px;}
+}
+
+@media (max-width:760px){
+  .what-grid{grid-template-columns:1fr;}
+  .dims-grid{grid-template-columns:1fr;}
+  .ladder{flex-direction:column;}
+  .rung+.rung{border-left:1px solid var(--line);border-top:none;}
+  .step{grid-template-columns:1fr;gap:4px;}
+  .section-note{text-align:left;}
+  .flow-row{grid-template-columns:20px 1fr;}
+  .flow-stage{display:none;}
+  .intent-row{grid-template-columns:1fr;gap:4px;text-align:left;}
+  .intent-arrow{display:none;}
+  .mini-step{grid-template-columns:1fr;gap:4px;}
+  .masthead nav{gap:12px;}
+  .nav-group{border-left:none;padding-left:0;gap:12px;flex-wrap:wrap;}
+  .nav-label{display:none;}
+}
+
+@media (prefers-reduced-motion:no-preference){
+  .pillar,.skill,.level,.rung{transition:border-color .15s ease;}
+  .pillar:hover,.skill:hover,.level:hover{border-color:var(--accent);}
+}
+</style>
+
+<div class="masthead">
+  <div class="masthead-inner">
+    <div class="brand"><b>Spec Framework</b> · guia de leitura</div>
+    <nav id="site-nav">
+      <a href="#inicio" data-page="inicio">Início</a>
+      <span class="nav-group"><span class="nav-label">Método</span>
+        <a href="#oque" data-page="oque">O que é</a>
+        <a href="#escada" data-page="escada">Escada</a>
+        <a href="#gates" data-page="gates">Gates</a>
+      </span>
+      <span class="nav-group"><span class="nav-label">Execução</span>
+        <a href="#skills" data-page="skills">Skills</a>
+        <a href="#design" data-page="design">Design</a>
+        <a href="#engenharia" data-page="engenharia">Engenharia</a>
+        <a href="#entrega" data-page="entrega">Entrega</a>
+      </span>
+      <span class="nav-group"><span class="nav-label">Prática</span>
+        <a href="#comecar" data-page="comecar">Começar</a>
+        <a href="#exemplo" data-page="exemplo">Exemplo</a>
+        <a href="#guia" data-page="guia">Guia</a>
+        <a href="#cli" data-page="cli">CLI</a>
+      </span>
+    </nav>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <section id="inicio" class="page">
+  <div class="hero">
+    <p class="eyebrow">Framework de engenharia de produto para agentes de IA</p>
+    <h1 class="title">Documentação como infraestrutura de engenharia</h1>
+    <p class="lede">O <b>Spec Framework</b> é um método — e um CLI — que faz produto, especificação, planejamento, execução e auditoria funcionarem como um único pipeline rastreável, em vez de pedir a uma IA para "implementar uma feature" a partir de contexto solto. Cada mudança nasce de um problema real e chega ao código com rastreabilidade completa.</p>
+    <div class="hero-chain">
+      <span class="node">Problema</span><span class="arrow">→</span>
+      <span class="node">Visão</span><span class="arrow">→</span>
+      <span class="node">Estratégia</span><span class="arrow">→</span>
+      <span class="node">Domínio</span><span class="arrow">→</span>
+      <span class="node">Objetivo</span><span class="arrow">→</span>
+      <span class="node">Feature</span><span class="arrow">→</span>
+      <span class="node">Caso de uso</span><span class="arrow">→</span>
+      <span class="node">Especificação</span><span class="arrow">→</span>
+      <span class="node">Plano</span><span class="arrow">→</span>
+      <span class="node">Grafo</span><span class="arrow">→</span>
+      <span class="node">Tarefas</span><span class="arrow">→</span>
+      <span class="node">Código</span><span class="arrow">→</span>
+      <span class="node">Validação</span><span class="arrow">→</span>
+      <span class="node">Auditoria</span>
+    </div>
+  </div>
+
+  <div class="toc-grid">
+    <a class="toc-card" href="#comecar" data-page="comecar">
+      <span class="toc-kicker">Comece aqui</span>
+      <span class="toc-title">Primeiros passos</span>
+      <span class="toc-desc">Como iniciar — projeto novo do zero ou um projeto em andamento com PRDs e epics existentes.</span>
+    </a>
+    <a class="toc-card" href="#oque" data-page="oque">
+      <span class="toc-kicker">Conceitos</span>
+      <span class="toc-title">O que é</span>
+      <span class="toc-desc">Princípios do método e o modelo conceitual completo: Problema, Visão, Domínio, Rigor Tier, identidade dos artefatos.</span>
+    </a>
+    <a class="toc-card" href="#escada" data-page="escada">
+      <span class="toc-kicker">Priorização</span>
+      <span class="toc-title">A escada de entrega</span>
+      <span class="toc-desc">Os seis níveis de maturidade (L0–L5) e como Priority (P0–P3) ordena o trabalho dentro de cada nível.</span>
+    </a>
+    <a class="toc-card" href="#skills" data-page="skills">
+      <span class="toc-kicker">Catálogo</span>
+      <span class="toc-title">As skills</span>
+      <span class="toc-desc">Os 24+ especialistas e orquestradores do framework, organizados por camada — fundação, design, engenharia, auditoria.</span>
+    </a>
+    <a class="toc-card" href="#design" data-page="design">
+      <span class="toc-kicker">Experiência</span>
+      <span class="toc-title">Fluxo de Design</span>
+      <span class="toc-desc">Como uma Especificação vira <code>design.md</code> verificável — origem, maturidade, fontes visuais, Design System compartilhado e o gate de UX Review.</span>
+    </a>
+    <a class="toc-card" href="#engenharia" data-page="engenharia">
+      <span class="toc-kicker">Arquitetura</span>
+      <span class="toc-title">Fluxo de Engenharia</span>
+      <span class="toc-desc">O Engineering System compartilhado e a dupla Proposal + Review: a solução técnica é descrita e revisada antes do plano.</span>
+    </a>
+    <a class="toc-card" href="#gates" data-page="gates">
+      <span class="toc-kicker">Governança</span>
+      <span class="toc-title">Gates de aprovação</span>
+      <span class="toc-desc">Os nove estados de um artefato e as regras exatas que travam cada transição — inclusive o que exige hash e aprovação humana.</span>
+    </a>
+    <a class="toc-card" href="#entrega" data-page="entrega">
+      <span class="toc-kicker">Execução</span>
+      <span class="toc-title">Da task à entrega</span>
+      <span class="toc-desc">O caminho operacional completo: Execution Scheduler, Delivery Orchestrator, leases, integração e release.</span>
+    </a>
+    <a class="toc-card" href="#exemplo" data-page="exemplo">
+      <span class="toc-kicker">Na prática</span>
+      <span class="toc-title">Exemplo ponta a ponta</span>
+      <span class="toc-desc">Um pedido comum — "check-in por QR code" — percorrendo cada skill até virar um PR com evidência.</span>
+    </a>
+    <a class="toc-card" href="#guia" data-page="guia">
+      <span class="toc-kicker">Assistente</span>
+      <span class="toc-title">O Framework Guide</span>
+      <span class="toc-desc">A porta de entrada conversacional: descreva o objetivo em linguagem natural e receba o menor comando seguro, com exemplos reais.</span>
+    </a>
+    <a class="toc-card" href="#cli" data-page="cli">
+      <span class="toc-kicker">Referência</span>
+      <span class="toc-title">Comandos de CLI</span>
+      <span class="toc-desc">Do <code>init</code> ao <code>validate</code>: como operar o método sem depender de execução automática de agentes.</span>
+    </a>
+  </div>
+  </section>
+
+  <section id="comecar" class="page">
+    <div class="section-head">
+      <h2 class="section-title">Primeiros passos</h2>
+      <div class="section-note">Um comando instala tudo. O que muda entre projetos é só a resposta a "de onde você está partindo?".</div>
+    </div>
+
+    <div class="page-toc">
+      <a href="#comecar-instalar">Passo zero</a>
+      <a href="#comecar-ponto">Ponto de partida</a>
+      <a href="#comecar-rota-a">Rota A · do zero</a>
+      <a href="#comecar-rota-b">Rota B · projeto existente</a>
+      <a href="#comecar-upgrade">Upgrade e migração</a>
+    </div>
+
+    <div class="cat-block">
+      <h3 class="block-title" id="comecar-instalar">Passo zero — igual para todo mundo</h3>
+      <p class="lead" style="margin-bottom:20px;">
+        Um único comando baixa a release, verifica o checksum, instala o CLI no PATH do usuário e já abre o wizard do <code>init</code>:
+      </p>
+      <div class="cli-grid">
+        <div class="cli-block">
+          <p class="caption">Windows (PowerShell)</p>
+          <div class="cli-scroll"><pre class="cli"><span class="cmd">irm</span> https://raw.githubusercontent.com/JonatasFreireDev/spec-framework/master/scripts/init.ps1 | iex</pre></div>
+        </div>
+        <div class="cli-block">
+          <p class="caption">Linux / macOS</p>
+          <div class="cli-scroll"><pre class="cli"><span class="cmd">curl</span> -fsSL https://raw.githubusercontent.com/JonatasFreireDev/spec-framework/master/scripts/init.sh | sh</pre></div>
+        </div>
+      </div>
+      <p class="note">
+        O resultado no seu repositório é <b>uma única pasta: <code>product/</code></b>. O método inteiro (skills, templates, validadores) fica fora, num cache versionado do usuário; <code>product/.product/framework.json</code> pina a versão adotada e é o único marcador de ativação (FDR-025). Nada de <code>.spec-framework/</code>, árvores de skills ou arquivos de CI sujando o repo.
+      </p>
+      <div class="dims-grid" style="margin-top:22px;">
+        <div class="tree-box">
+<pre><span class="tc"># o que vai para o git</span>
+meu-produto/
+  product/
+    BOOTSTRAP.md         <span class="tc">roteiro gerado</span>
+    .product/
+      framework.json     <span class="tc">versão pinada</span>
+    foundation/
+    knowledge/
+    domains/</pre>
+        </div>
+        <div class="tree-box">
+<pre><span class="tc"># o que fica fora do repo</span>
+~ (sua máquina)
+  cache versionado/      <span class="tc">método, skills, templates</span>
+  dispatcher por agente  <span class="tc">Codex / Claude / Cursor</span>
+  spec-framework (CLI)   <span class="tc">no PATH do usuário</span></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="cat-block" style="margin-top:48px;">
+      <h3 class="block-title" id="comecar-ponto">Escolha o ponto de partida</h3>
+      <p class="lead" style="margin-bottom:20px;">
+        O wizard pergunta de onde você está partindo (ou passe <code>--starting-point</code> em modo headless). A escolha personaliza o roteiro do <code>BOOTSTRAP.md</code> — <b>não</b> remove nenhuma skill, gate ou exigência de rigor:
+      </p>
+      <div class="intent-list">
+        <div class="intent-row"><span class="intent-q"><code>new-product</code> <span style="color:var(--ink-soft);font-style:italic;">(padrão)</span></span><span class="intent-arrow">→</span><span class="intent-a">produto do zero, sem nenhuma fonte prévia — siga a <a href="#comecar-rota-a">Rota A</a></span></div>
+        <div class="intent-row"><span class="intent-q"><code>existing-documents</code></span><span class="intent-arrow">→</span><span class="intent-a">tem PRDs, epics ou pastas de documentos para importar — siga a <a href="#comecar-rota-b">Rota B</a></span></div>
+        <div class="intent-row"><span class="intent-q"><code>existing-product</code></span><span class="intent-arrow">→</span><span class="intent-a">produto já rodando em produção, sem documentação estruturada</span></div>
+        <div class="intent-row"><span class="intent-q"><code>existing-feature</code></span><span class="intent-arrow">→</span><span class="intent-a">uma feature específica já existe e precisa entrar no método</span></div>
+        <div class="intent-row"><span class="intent-q"><code>existing-implementation</code></span><span class="intent-arrow">→</span><span class="intent-a">código já implementado, documentação retroativa</span></div>
+        <div class="intent-row"><span class="intent-q"><code>audit-only</code></span><span class="intent-arrow">→</span><span class="intent-a">só quer rodar auditorias, sem gerar plano de entrega</span></div>
+      </div>
+    </div>
+
+    <div class="cat-block" style="margin-top:48px;">
+      <h3 class="block-title" id="comecar-rota-a">Rota A — projeto novo, do zero</h3>
+      <div class="flow">
+        <div class="flow-row"><div class="flow-stage">Iniciar</div><div class="flow-rail"><div class="flow-dot"></div></div><div class="flow-card"><p><code>spec-framework init ../meu-produto --agents codex --yes</code> (o wizard do passo zero já faz isso por você). O <code>init</code> interativo também oferece o adapter visual Impeccable; headless, use <code>--install-impeccable --impeccable-version latest</code> — se o provedor falhar, o produto inicializado é preservado.</p></div></div>
+        <div class="flow-row"><div class="flow-stage">Ler o roteiro</div><div class="flow-rail"><div class="flow-dot"></div></div><div class="flow-card"><p>O <code>product/BOOTSTRAP.md</code> gerado explica, em ordem, os gates de fundação — distingue um starter estruturalmente válido de um produto pronto para implementação.</p></div></div>
+        <div class="flow-row"><div class="flow-stage">Fundação</div><div class="flow-rail"><div class="flow-dot gate"></div></div><div class="flow-card"><p>Preencha <code>product/foundation/</code> nessa ordem: <b>problem</b> → <b>vision</b> → <b>strategy</b>. Nada abaixo disso faz sentido sem essa base aprovada.</p></div></div>
+        <div class="flow-row"><div class="flow-stage">Primeiro domínio</div><div class="flow-rail"><div class="flow-dot"></div></div><div class="flow-card"><p>Crie o primeiro <code>product/domains/&lt;domínio&gt;</code> com seus Objetivos de usuário — não existe pasta global de features.</p></div></div>
+        <div class="flow-row"><div class="flow-stage">Validar</div><div class="flow-rail"><div class="flow-dot gate"></div></div><div class="flow-card"><p><code>spec-framework validate</code> antes de qualquer feature — confirma que a fundação está estruturalmente correta. Daí em diante, o fluxo é o de <a href="#exemplo" data-page="exemplo">uma feature nova</a>.</p></div></div>
+      </div>
+    </div>
+
+    <div class="cat-block" style="margin-top:48px;">
+      <h3 class="block-title" id="comecar-rota-b">Rota B — projeto em andamento, com PRDs/epics</h3>
+      <div class="flow">
+        <div class="flow-row"><div class="flow-stage">Iniciar apontando a fonte</div><div class="flow-rail"><div class="flow-dot"></div></div><div class="flow-card"><p><code>spec-framework init ../meu-produto --agents codex --starting-point existing-documents --source-dir ../product-docs --yes</code></p></div></div>
+        <div class="flow-row"><div class="flow-stage">Inventário automático</div><div class="flow-rail"><div class="flow-dot"></div></div><div class="flow-card"><p>O CLI cria um run somente-análise em <code>product/knowledge/imports/runs/IMPORT-NNN/</code>: <code>inventory.json</code>, <code>import-plan.json</code>, <code>mapping.json</code>, <code>conflicts.md</code>. Nenhum Domínio, Objetivo ou Feature é criado ainda.</p></div></div>
+        <div class="flow-row"><div class="flow-stage">Revisar</div><div class="flow-rail"><div class="flow-dot gate"></div></div><div class="flow-card"><p>Leia <code>mapping.json</code> e <code>conflicts.md</code> com atenção — conflitos entre fontes nunca são resolvidos em silêncio pelo importador.</p></div></div>
+        <div class="flow-row"><div class="flow-stage">Aprovar e materializar</div><div class="flow-rail"><div class="flow-dot gate"></div></div><div class="flow-card"><p><code>spec-framework import materialize --run IMPORT-001 --approved-by "Product Owner" --yes</code> — rejeita evidência faltando, caminhos fora de <code>product/</code>, e destinos que já existem.</p></div></div>
+        <div class="flow-row"><div class="flow-stage">Mesmo roteiro daqui pra frente</div><div class="flow-rail"><div class="flow-dot"></div></div><div class="flow-card"><p>A partir daqui, siga o mesmo <code>product/BOOTSTRAP.md</code> — o starting point só mudou o texto guia, os gates de rigor continuam os mesmos.</p></div></div>
+      </div>
+    </div>
+
+    <div class="cat-block" style="margin-top:48px;">
+      <h3 class="block-title" id="comecar-upgrade">Já tem uma instalação?</h3>
+      <div class="cli-scroll"><pre class="cli"><span class="c"># atualiza o runtime externo e o manifest pinado, preservando product/</span>
+<span class="cmd">spec-framework upgrade</span> --yes
+<span class="c"># repositório antigo com .spec-framework/ local? migre para o runtime externo</span>
+<span class="cmd">spec-framework migrate external-runtime</span> --dry-run
+<span class="c"># decisões antigas (pré-DEC tipado) podem ser migradas com segurança</span>
+<span class="cmd">spec-framework decisions migrate</span> --product-root product --dry-run</pre></div>
+      <p class="note">
+        Perdido em qualquer etapa? Pergunte ao <a href="#guia" data-page="guia">Framework Guide</a> — ele lê o estado mecânico real do repositório antes de recomendar o próximo comando.
+      </p>
+    </div>
+  </section>
+
+  <section id="oque" class="page">
+    <div class="section-head">
+      <h2 class="section-title">O que é, na prática</h2>
+      <div class="section-note">Não é um gerador de arquivos. É um contrato entre produto e engenharia.</div>
+    </div>
+    <div class="what-grid">
+      <p>
+        Em vez de o agente decidir sozinho o que construir, tudo passa por uma cadeia explícita: um <b>Problema</b> justifica uma <b>Visão</b>, que orienta uma <b>Estratégia</b>, organizada em <b>Domínios</b> (ex.: eventos, pagamentos), que contêm <b>Objetivos do usuário</b>, atendidos por <b>Features</b>, detalhadas em <b>Casos de Uso</b> verificáveis.
+        <br><br>
+        Cada caso de uso vira uma <b>Especificação</b> — o contrato central que descreve fluxo, UI, API, dados, permissões, analytics e segurança — antes de qualquer linha de código. Da especificação nascem o <b>Design</b>, o <b>Plano de Implementação</b> e um <b>Grafo de Execução</b> (DAG de tarefas), que só então gera <b>Tarefas</b> executáveis, pequenas o bastante para implementar, testar e revisar.
+        <br><br>
+        Toda a árvore vive num diretório <code style="font-family:var(--mono);font-size:13px;background:var(--bg);padding:1px 5px;border-radius:2px;border:1px solid var(--line);">product/</code>, com estado, decisões e histórico versionados como um grafo de conhecimento — não só uma pasta de documentos soltos.
+      </p>
+      <div class="pillars">
+        <div class="pillar">
+          <h3>Produto primeiro</h3>
+          <p>Toda decisão técnica precisa manter rastreabilidade até uma necessidade real de produto.</p>
+        </div>
+        <div class="pillar">
+          <h3>Especificação como fonte de verdade</h3>
+          <p>Histórias de usuário servem para comunicação; quem governa a implementação é a Especificação.</p>
+        </div>
+        <div class="pillar">
+          <h3>Gates de aprovação</h3>
+          <p>Agentes propõem; mudanças de escopo, arquitetura, risco ou compromisso passam por aprovação humana explícita.</p>
+        </div>
+        <div class="pillar">
+          <h3>Grafo, não só pastas</h3>
+          <p>Cada artefato tem id, pais, filhos, dependências e consumidores — navegável por máquina, não só por humano.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="cat-block" style="margin-top:52px;">
+      <h3 class="block-title" id="oque-modelo">Modelo conceitual — do problema à tarefa</h3>
+      <div class="glossary">
+        <div class="gterm">
+          <div class="gname">Problema</div>
+          <p>Define a dor, a oportunidade e o contexto de mercado. É a raiz de justificativa do produto.</p>
+        </div>
+        <div class="gterm">
+          <div class="gname">Visão</div>
+          <p>Define o produto que se quer construir, para quem, por que agora e quais princípios guiam as decisões.</p>
+        </div>
+        <div class="gterm">
+          <div class="gname">Estratégia</div>
+          <p>Define posicionamento, segmentos, métricas, trade-offs, roadmap e critérios para avançar ou pausar.</p>
+        </div>
+        <div class="gterm">
+          <div class="gname">Domínio</div>
+          <p>Agrupa uma área coerente do negócio ou produto, como <code>users</code>, <code>events</code> ou <code>payments</code>. É o centro da documentação funcional — não existe uma pasta global de features.</p>
+        </div>
+        <div class="gterm">
+          <div class="gname">Objetivo do usuário</div>
+          <p>Substitui a noção genérica de "capacidade". Representa o objetivo estável do usuário dentro de um domínio: "entrar em um evento", "encontrar pessoas".</p>
+        </div>
+        <div class="gterm">
+          <div class="gname">Feature</div>
+          <p>É uma solução concreta que atende a um objetivo. Features podem entrar, sair, evoluir, ser fatiadas ou substituídas.</p>
+        </div>
+        <div class="gterm">
+          <div class="gname">Caso de uso</div>
+          <p>É uma interação verificável da feature — o ponto onde produto e engenharia se encontram para gerar uma Especificação implementável.</p>
+        </div>
+        <div class="gterm">
+          <div class="gname">Especificação</div>
+          <p>Fonte de verdade para implementação. Cobre produto, fluxo, UI, APIs, dados, permissões, analytics, segurança, performance, acessibilidade, erros, edge cases, observabilidade e aceite.</p>
+        </div>
+        <div class="gterm">
+          <div class="gname">Design</div>
+          <p>Traduz a Especificação em experiência verificável: fluxo visual, navegação, wireframes, estados, acessibilidade. Quando não há interface, deve usar o status estruturado <code>not_applicable</code> com justificativa real — menção em texto livre não satisfaz o gate.</p>
+        </div>
+        <div class="gterm">
+          <div class="gname">Engineering System</div>
+          <p>Artefato compartilhado e opcional em <code>engineering/</code>: arquitetura estável, ownership de módulos e dados, integrações, padrões, qualidade e runbooks. <code>engineering-system.md</code> é o contrato humano; <code>engineering-system.yaml</code>, o catálogo mecânico. Aprovação é composta: qualquer mudança em contrato compartilhado exige reaprovação humana.</p>
+        </div>
+        <div class="gterm">
+          <div class="gname">Engineering Proposal + Review</div>
+          <p>A Proposal descreve a solução técnica pretendida de uma entrega (fronteiras, dados, integrações, rollout) sem sequenciar tarefas; a Review dá um veredito independente e somente-leitura antes do Plano. A Review registra o hash da Proposal — qualquer mudança a torna obsoleta.</p>
+        </div>
+        <div class="gterm">
+          <div class="gname">Plano de Implementação</div>
+          <p>Traduz a Especificação em estratégia técnica: sequenciamento, fases, dependências, riscos, fatias, migrações, testes e rollout — sem escrever código.</p>
+        </div>
+        <div class="gterm">
+          <div class="gname">Grafo de Execução</div>
+          <p>Representa as tarefas como um DAG. Cada nó é uma unidade executável com dependências explícitas e um <code>path</code> para seu arquivo canônico em <code>tasks/&lt;task-id&gt;.md</code>.</p>
+        </div>
+        <div class="gterm">
+          <div class="gname">Tarefa</div>
+          <p>Unidade executável derivada da Especificação e do Grafo. Pequena o bastante para implementar, testar, revisar e reverter. Vive em seu próprio arquivo; <code>tasks.md</code> é só um índice gerado.</p>
+        </div>
+        <div class="gterm">
+          <div class="gname">Rigor Tier</div>
+          <p><b>S</b> — baixo risco, exige especificação, tasks e testes. <b>M</b> — fluxo normal, soma design, plano e grafo. <b>L</b> — crítico ou sensível, soma Engineering Proposal + Review, analytics, auditoria, evidência de QA e Security Review. Auth, permissões, pagamento, PII, upload ou UGC disparam Tier L automaticamente. Tiers S e M também exigem Proposal + Review quando o <code>context.md</code> declara um <code>engineering_trigger</code> estruturado (nova dependência, integração externa, migração, mudança de fronteira etc.).</p>
+        </div>
+        <div class="gterm">
+          <div class="gname">Identidade e slug</div>
+          <p>Todo artefato com pasta própria declara <code>slug</code> em <code>context.md</code>, imutável mesmo se o título humano mudar. IDs são únicos dentro do escopo do pai; mover um artefato exige <code>spec-framework move</code>.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="escada" class="page">
+    <div class="section-head">
+      <h2 class="section-title">A escada de entrega</h2>
+      <div class="section-note">Cada nível responde "quando isto precisa existir no produto" — a prioridade organiza o que vem primeiro dentro do nível.</div>
+    </div>
+    <div class="levels">
+      <div class="level"><span class="lv-tag">L0 · Foundation</span><p>Base sem a qual o produto ou o pipeline não sustentam entregas seguras.</p></div>
+      <div class="level"><span class="lv-tag">L1 · Walking Skeleton</span><p>Menor fluxo ponta a ponta que prova o valor central.</p></div>
+      <div class="level"><span class="lv-tag">L2 · Core Loop</span><p>Ciclo principal que gera valor recorrente para o usuário.</p></div>
+      <div class="level"><span class="lv-tag">L3 · Trust &amp; Quality</span><p>Confiança, segurança, privacidade, moderação, acessibilidade.</p></div>
+      <div class="level"><span class="lv-tag">L4 · Operations</span><p>Operação, suporte, observabilidade, admin e escala.</p></div>
+      <div class="level"><span class="lv-tag">L5 · Growth</span><p>Crescimento, experimentos, personalização e otimização.</p></div>
+    </div>
+
+    <div class="cat-block" style="margin-top:48px;">
+      <h3 class="block-title">Priority — ordena dentro do nível</h3>
+      <div class="levels">
+        <div class="level"><span class="lv-tag" style="color:var(--crit);">P0</span><p>Bloqueia o nível atual. Sem isso, o nível não fecha.</p></div>
+        <div class="level"><span class="lv-tag" style="color:var(--warn);">P1</span><p>Necessário para considerar o nível pronto.</p></div>
+        <div class="level"><span class="lv-tag" style="color:var(--accent);">P2</span><p>Importante, mas não bloqueia a entrega do nível.</p></div>
+        <div class="level"><span class="lv-tag" style="color:var(--ink-soft);">P3</span><p>Melhoria, polimento ou otimização.</p></div>
+      </div>
+    </div>
+
+    <div class="cat-block">
+      <h3 class="block-title">Regras que evitam roadmap por sensação</h3>
+      <div class="glossary">
+        <div class="gterm">
+          <p><b>Delivery Level não é promessa de data.</b> Ele responde apenas "quando isto precisa existir", nunca "quando será entregue".</p>
+        </div>
+        <div class="gterm">
+          <p><b>Priority só se compara dentro do mesmo nível.</b> Um <code>L3/P0</code> pode ser crítico para confiança, mas ainda não passa na frente de um <code>L1</code> que fecha o walking skeleton.</p>
+        </div>
+        <div class="gterm">
+          <p><b>Dependência pode puxar uma entrega para um nível anterior</b> — desde que a <code>rationale</code> explique o porquê, campo obrigatório em Domínio, Objetivo, Feature, Caso de Uso, Especificação, Plano, Grafo e Tarefa.</p>
+        </div>
+        <div class="gterm">
+          <p><b>Mudar level ou priority altera compromisso de entrega</b> e precisa passar por um gate de aprovação — não é um campo livre para o agente reescrever.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="skills" class="page">
+    <div class="section-head">
+      <h2 class="section-title">As skills</h2>
+      <div class="section-note">Especialistas com responsabilidade única — modos como <span class="tag">create</span> <span class="tag">audit</span> <span class="tag">evolve</span></div>
+    </div>
+
+    <div class="page-toc">
+      <a href="#sk-fundacao">Fundação</a>
+      <a href="#sk-design">Design de produto</a>
+      <a href="#sk-spec">Especificação</a>
+      <a href="#sk-eng">Engenharia</a>
+      <a href="#sk-audit">Auditoria</a>
+      <a href="#sk-orq">Orquestradores</a>
+    </div>
+
+    <p class="lead">
+      Cada skill declara uma única <b>responsibility</b> e opera em modos previsíveis — <code>create</code> produz o primeiro artefato, <code>update</code> refina preservando contratos já aprovados, <code>audit</code> detecta estado obsoleto ou inseguro, <code>explain</code> resume estado e próximo passo. Skills de camada <b>Governance</b> (como os orquestradores) só roteiam fluxo: nunca autoria artefato de especialista nem executa comando diretamente. Todas leem <code>FRAMEWORK.md</code>, os <code>context.md</code> relevantes e as decisões aprovadas antes de agir, e param diante de aprovação humana pendente, conflito ou limite de tentativas.
+    </p>
+
+    <div class="cat-block">
+      <h3 id="sk-fundacao">Fundação</h3>
+      <div class="skill-grid">
+        <div class="skill"><div class="name">Problem Discovery AI</div><div class="desc">Descobre dores, oportunidades e evidências de mercado.</div></div>
+        <div class="skill"><div class="name">Vision AI</div><div class="desc">Cria ou revisa visão, princípios e north star.</div></div>
+        <div class="skill"><div class="name">Strategy AI</div><div class="desc">Define posicionamento, segmentos, métricas e roadmap.</div></div>
+        <div class="skill"><div class="name">Domain Architect AI</div><div class="desc">Modela domínios e fronteiras do negócio.</div></div>
+        <div class="skill"><div class="name">User Goal AI</div><div class="desc">Modela objetivos estáveis do usuário dentro de um domínio.</div></div>
+      </div>
+    </div>
+
+    <div class="cat-block">
+      <h3 id="sk-design">Design de produto</h3>
+      <div class="skill-grid">
+        <div class="skill"><div class="name">Journey AI</div><div class="desc">Mapeia jornadas do usuário através de features.</div></div>
+        <div class="skill"><div class="name">Feature AI</div><div class="desc">Cria e evolui features que atendem um objetivo.</div></div>
+        <div class="skill"><div class="name">Use Case AI</div><div class="desc">Detalha interações verificáveis de uma feature.</div></div>
+        <div class="skill"><div class="name">UX/UI AI</div><div class="desc">Define fluxos, estados, wireframes e sistema de design.</div></div>
+        <div class="skill"><div class="name">UX Review AI</div><div class="desc">Revisão independente e somente-leitura do Design contra Especificação, fontes visuais, Design System e acessibilidade.</div></div>
+        <div class="skill"><div class="name">Design System AI</div><div class="desc">Cria, adota, evolui e audita o Design System compartilhado — fundações, tokens, componentes e padrões — antes de serem consumidos por um Design de caso de uso.</div></div>
+      </div>
+    </div>
+
+    <div class="cat-block">
+      <h3 id="sk-spec">Especificação e planejamento</h3>
+      <div class="skill-grid">
+        <div class="skill"><div class="name">Specification AI</div><div class="desc">Escreve o contrato central de implementação.</div></div>
+        <div class="skill"><div class="name">Engineering System AI</div><div class="desc">Mantém o Engineering System compartilhado (<code>engineering-system.md</code> + <code>.yaml</code>): arquitetura estável, ownership de módulos e dados, padrões e qualidade.</div></div>
+        <div class="skill"><div class="name">Engineering Proposal AI</div><div class="desc">Descreve a solução técnica pretendida de uma entrega — fronteiras, dados, integrações, rollout — sem sequenciar tarefas.</div></div>
+        <div class="skill"><div class="name">Implementation Planner AI</div><div class="desc">Traduz a especificação em estratégia técnica.</div></div>
+        <div class="skill"><div class="name">Execution Graph AI</div><div class="desc">Converte o plano num DAG de tarefas paralelizável.</div></div>
+        <div class="skill"><div class="name">Task AI</div><div class="desc">Gera tarefas pequenas, testáveis e rastreáveis.</div></div>
+      </div>
+    </div>
+
+    <div class="cat-block">
+      <h3 id="sk-eng">Engenharia e validação</h3>
+      <div class="skill-grid">
+        <div class="skill"><div class="name">Code Runner AI</div><div class="desc">Implementa uma tarefa aprovada por vez, em TDD, sem commitar.</div></div>
+        <div class="skill"><div class="name">QA AI</div><div class="desc">Valida comportamento, testes, edge cases e evidências.</div></div>
+        <div class="skill"><div class="name">Engineering Review AI</div><div class="desc">Veredito independente e somente-leitura sobre a Engineering Proposal, antes do Plano de Implementação. Não substitui Code Review, QA nem Security Review.</div></div>
+        <div class="skill"><div class="name">Code Review AI</div><div class="desc">Revisão somente-leitura de completude, aderência e qualidade.</div></div>
+        <div class="skill"><div class="name">Security Review AI</div><div class="desc">Avalia autenticação, privacidade, abuso e risco residual.</div></div>
+        <div class="skill"><div class="name">Threat Modeler AI</div><div class="desc">Modela ameaças e mantém o registro de segurança do produto.</div></div>
+        <div class="skill"><div class="name">Commit Crafter AI</div><div class="desc">Cria commits locais atômicos por concern, sem push.</div></div>
+        <div class="skill"><div class="name">PR Finalizer AI</div><div class="desc">Prepara ou abre PR com evidências, sem merge.</div></div>
+      </div>
+    </div>
+
+    <div class="cat-block">
+      <h3 id="sk-audit">Auditoria</h3>
+      <div class="skill-grid">
+        <div class="skill"><div class="name">Gap Finder AI</div><div class="desc">Procura o que está faltando.</div></div>
+        <div class="skill"><div class="name">Conflict AI</div><div class="desc">Procura contradições entre artefatos.</div></div>
+        <div class="skill"><div class="name">Dependency AI</div><div class="desc">Encontra dependências implícitas.</div></div>
+        <div class="skill"><div class="name">Impact Analysis AI</div><div class="desc">Mede o efeito de uma mudança na árvore.</div></div>
+        <div class="skill"><div class="name">Evolution AI</div><div class="desc">Sugere melhorias candidatas.</div></div>
+        <div class="skill"><div class="name">Documentation AI</div><div class="desc">Mantém contexts, índices e templates sincronizados.</div></div>
+        <div class="skill"><div class="name">Product Historian AI</div><div class="desc">Registra decisões relevantes do produto.</div></div>
+      </div>
+    </div>
+
+    <div class="cat-block">
+      <h3 id="sk-orq">Orquestradores — controlam fluxo, não criam artefatos</h3>
+      <div class="skill-grid">
+        <div class="skill"><div class="name">Framework Guide</div><div class="desc">Porta de entrada conversacional do CLI: traduz o objetivo da pessoa no comando seguro mais próximo, explica o gate ativo. Nunca autoria artefato nem aprova.</div></div>
+        <div class="skill"><div class="name">Domain Evolution Orchestrator</div><div class="desc">Leva metas aprovadas até a seleção humana de uma feature candidata.</div></div>
+        <div class="skill"><div class="name">New Feature Orchestrator</div><div class="desc">Impacto → Feature → Casos de Uso → Especificação → Design → Plano → Grafo → Tarefas.</div></div>
+        <div class="skill"><div class="name">Existing Product Import Orchestrator</div><div class="desc">Importa PRDs e epics existentes com aprovação humana antes de materializar.</div></div>
+        <div class="skill"><div class="name">Audit Orchestrator</div><div class="desc">Roda auditorias em lote: gap, conflito, dependência, impacto.</div></div>
+        <div class="skill"><div class="name">Evolution Orchestrator</div><div class="desc">Agrupa melhorias candidatas em um plano de evolução aprovável.</div></div>
+        <div class="skill"><div class="name">Execution Scheduler</div><div class="desc">Calcula ondas paralelas determinísticas a partir do DAG, writeScope e leases. Não executa nada.</div></div>
+        <div class="skill"><div class="name">Delivery Orchestrator</div><div class="desc">Roteia um workspace pelos orquestradores permitidos usando estado, handoffs e checkpoints; reporta tudo pelo modelo consolidado de dashboard. Nunca autoria artefatos.</div></div>
+        <div class="skill"><div class="name">Integration Orchestrator</div><div class="desc">Integra localmente, em ordem de DAG, commits de task já aprovados por Code Review e QA; exige Integrated QA.</div></div>
+        <div class="skill"><div class="name">Release Orchestrator</div><div class="desc">Checagem final: QA, review, security review e evidências antes de liberar.</div></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="design" class="page">
+    <div class="section-head">
+      <h2 class="section-title">O fluxo de Design</h2>
+      <div class="section-note">Nasce depois da Especificação aprovada. Termina num gate humano, antes do Plano de Implementação.</div>
+    </div>
+    <div class="page-toc">
+      <a href="#design-dimensoes">Dimensões</a>
+      <a href="#design-system">Design System</a>
+      <a href="#design-fluxo">O fluxo</a>
+      <a href="#design-adapters">Adapters</a>
+    </div>
+    <p class="lead">
+      Design não é "fazer uma tela bonita" — é traduzir a Especificação aprovada numa experiência verificável, com origem e maturidade explícitas, fontes rastreadas por versão, e revisão independente antes do gate humano. Quando o caso de uso não tem interface, <code>design.md</code> ainda existe: registra <code>Not applicable</code> com a justificativa.
+    </p>
+
+    <div class="cat-block">
+      <h3 class="block-title" id="design-dimensoes">Duas dimensões independentes</h3>
+      <div class="dims-grid">
+        <div>
+          <p class="note" style="margin:0 0 12px;"><b style="color:var(--ink);">origin_mode</b> — de onde vem o design</p>
+          <div class="pillars">
+            <div class="pillar"><h3>generate</h3><p>A solução é criada a partir da Especificação, do zero.</p></div>
+            <div class="pillar"><h3>evolve</h3><p>Uma interface existente é intencionalmente alterada.</p></div>
+            <div class="pillar"><h3>adopt</h3><p>Uma fonte externa versionada é autoritativa (Figma, Penpot, imagens).</p></div>
+          </div>
+        </div>
+        <div>
+          <p class="note" style="margin:0 0 12px;"><b style="color:var(--ink);">maturity</b> — quão pronto está o artefato</p>
+          <div class="pillars">
+            <div class="pillar"><h3>contract</h3><p>Descrição textual dos estados e regras — o mínimo compatível.</p></div>
+            <div class="pillar"><h3>wireframe</h3><p>Estrutura de layout sem estilo final.</p></div>
+            <div class="pillar"><h3>mockup</h3><p>Visual quase final, ainda não interativo.</p></div>
+            <div class="pillar"><h3>prototype</h3><p>Navegável, simula a experiência real.</p></div>
+          </div>
+        </div>
+      </div>
+      <p class="note">Uma fonte marcada <code>visual_canonical</code> só é autoritativa para apresentação e interação — decisões aprovadas e a Especificação continuam mandando em comportamento, segurança, privacidade e regra de negócio.</p>
+    </div>
+
+    <div class="cat-block">
+      <h3 class="block-title" id="design-system">Design System — fundação compartilhada, opcional</h3>
+      <div class="what-grid">
+        <p>
+          Produtos com telas recorrentes podem declarar um <b>Design System</b> canônico em <code>design/system/</code>: um contrato humano (<code>design-system.md</code>) e uma fonte mecânica de tokens (<code>tokens/tokens.json</code>), versionados semanticamente. Ele documenta fundações, componentes (anatomia, variantes, estados, acessibilidade) e padrões — mas <b>não substitui a Especificação nem aprova o Design de um caso de uso.</b>
+          <br><br>
+          Todo Design que consome o sistema precisa <b>pinar o id/versão aprovado</b> e registrar quais tokens, componentes, padrões e desvios usou. Mudanças que quebram compatibilidade exigem impacto, migração, depreciação e plano de rollback documentados antes de remover algo aprovado.
+        </p>
+        <div class="tree-box">
+<pre>design/
+  system/
+    context.md
+    design-system.md      <span class="tc">contrato humano</span>
+    foundations/
+    tokens/
+      tokens.json          <span class="tc">fonte mecânica</span>
+      themes.json
+    components/
+    patterns/
+    sources/
+    evidence/</pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="cat-block">
+      <h3 class="block-title" id="design-fluxo">Do gate de Especificação ao gate humano</h3>
+      <div class="flow">
+        <div class="flow-row">
+          <div class="flow-stage">Origem</div>
+          <div class="flow-rail"><div class="flow-dot"></div></div>
+          <div class="flow-card">
+            <div class="who"><span class="role">UX/UI AI</span>Fixa origin_mode e registra fontes</div>
+            <p>Escolhe <code>generate</code>, <code>evolve</code> ou <code>adopt</code> — nunca promove uma referência a canônica por inferência. Toda fonte ganha autoridade, localização e versão ou hash imutável.</p>
+          </div>
+        </div>
+        <div class="flow-row">
+          <div class="flow-stage">Cobertura</div>
+          <div class="flow-rail"><div class="flow-dot"></div></div>
+          <div class="flow-card">
+            <div class="who"><span class="role">UX/UI AI</span>Mapeia telas a REQ/AC</div>
+            <p>Compara telas e estados contra os identificadores estáveis <code>REQ-*</code>/<code>AC-*</code> da Especificação e, se houver, contra o Design System declarado.</p>
+          </div>
+        </div>
+        <div class="flow-row">
+          <div class="flow-stage">Pin</div>
+          <div class="flow-rail"><div class="flow-dot"></div></div>
+          <div class="flow-card">
+            <div class="who">Design System pinado</div>
+            <p>Se o produto declara um sistema, o Design registra id/versão aprovados e os tokens, componentes e padrões consumidos — sem introduzir nada novo em silêncio.</p>
+          </div>
+        </div>
+        <div class="flow-row">
+          <div class="flow-stage">Revisão</div>
+          <div class="flow-rail"><div class="flow-dot gate"></div></div>
+          <div class="flow-card">
+            <div class="who"><span class="role">UX Review AI</span>Verificação independente, somente leitura</div>
+            <p>Revisa identidade/autoridade/versão das fontes, cobertura de REQ/AC, estados (vazio, carregando, sucesso, erro, permissão negada), acessibilidade e fidelidade — nunca corrige nem aprova. Devolve <code>approved</code>, <code>approved_with_notes</code> ou <code>blocked</code>.</p>
+          </div>
+        </div>
+        <div class="flow-row">
+          <div class="flow-stage">Aprovação</div>
+          <div class="flow-rail"><div class="flow-dot gate"></div></div>
+          <div class="flow-card">
+            <div class="who">Gate humano de Design</div>
+            <p>Uma revisão limpa segue para aprovação humana explícita. Achados <code>blocked</code> voltam para UX/UI AI.</p>
+          </div>
+        </div>
+        <div class="flow-row">
+          <div class="flow-stage">Handoff</div>
+          <div class="flow-rail"><div class="flow-dot"></div></div>
+          <div class="flow-card">
+            <div class="who"><span class="role">Technical Discovery → Engenharia</span>Recebe o Design aprovado</div>
+            <p>Sem Design aprovado — ou com status estruturado <code>not_applicable</code> e justificativa — o fluxo não segue para Technical Discovery. Dali, quando aplicável, vêm Engineering Proposal e Engineering Review antes do Plano de Implementação.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="cat-block">
+      <h3 class="block-title" id="design-adapters">Adapters — opcionais, nunca autoritativos sozinhos</h3>
+      <div class="adapter-row">
+        <div class="adapter-chip"><span class="aname">Figma</span><span class="adesc">importa nós versionados como fonte canônica</span></div>
+        <div class="adapter-chip"><span class="aname">Penpot</span><span class="adesc">alternativa open-source ao Figma</span></div>
+        <div class="adapter-chip"><span class="aname">Impeccable</span><span class="adesc">adapter opcional de avaliação visual</span></div>
+      </div>
+      <p class="note">Ferramentas e serviços de design são adapters — eles nunca substituem <code>design.md</code> nem o aprovam. Evidência importada ou gerada não é aprovação.</p>
+      <p class="note">A gestão é supervisionada (FDR-024): <code>adapters list/status/doctor</code> são somente-leitura; <code>adapters install</code> exige versão explícita e <code>--yes</code>, mostra o comando exato do provedor antes de executar, e nunca reporta uma instalação falha como pronta. Nenhum adapter é obrigatório para a validação do framework.</p>
+    </div>
+  </section>
+
+  <section id="engenharia" class="page">
+    <div class="section-head">
+      <h2 class="section-title">O fluxo de Engenharia</h2>
+      <div class="section-note">O que o Design é para a experiência, o Engineering System é para a arquitetura: contrato compartilhado, versão pinada, revisão independente.</div>
+    </div>
+    <div class="page-toc">
+      <a href="#eng-sistema">Engineering System</a>
+      <a href="#eng-fluxo">Proposal e Review</a>
+      <a href="#eng-aplica">Quando se aplica</a>
+    </div>
+    <p class="lead">
+      Sem um contrato estável, cada entrega redescobre a arquitetura a partir do código — e agentes chegam ao plano de implementação sem ninguém revisar a solução técnica pretendida. O FDR-026 fecha esses dois buracos: um <b>Engineering System</b> compartilhado registra o conhecimento estável de como o produto é construído e operado, e cada entrega relevante passa por uma <b>Engineering Proposal</b> com <b>Engineering Review</b> independente antes do Plano de Implementação.
+    </p>
+
+    <div class="cat-block">
+      <h3 class="block-title" id="eng-sistema">Engineering System — conhecimento estável, versionado</h3>
+      <div class="what-grid">
+        <p>
+          Vive em <code>engineering/</code>, é opcional e declara <code>origin_mode</code> (<code>generate</code>/<code>evolve</code>/<code>adopt</code>) e versão semântica — o mesmo modelo do Design System. <code>engineering-system.md</code> é o contrato humano; <code>engineering-system.yaml</code>, o catálogo mecânico que os validadores leem.
+          <br><br>
+          Cada área (contexto de sistema, módulos, dados, qualidade, runbooks) declara uma <b>maturidade</b>: <code>baseline</code> → <code>mapped</code> → <code>governed</code> → <code>verified</code> → <code>operated</code>. Maturidade descreve a evidência disponível — <b>nunca concede aprovação</b>. Decisões de produto continuam sendo registros <code>DEC-*</code>; o sistema referencia, não substitui.
+          <br><br>
+          A aprovação do sistema é <b>composta</b>: contexto, contrato humano, catálogo, arquitetura, padrões, qualidade, runbooks e evidência são hasheados em ordem determinística de caminho — mudar qualquer contrato compartilhado invalida a aprovação e exige reaprovação humana (FDR-028).
+        </p>
+        <div class="tree-box">
+<pre>engineering/
+  context.md
+  engineering-system.md    <span class="tc">contrato humano</span>
+  engineering-system.yaml  <span class="tc">catálogo mecânico</span>
+  architecture/            <span class="tc">contexto, módulos</span>
+  standards/
+  quality/                 <span class="tc">modelo + fitness functions</span>
+  runbooks/
+  evidence/</pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="cat-block">
+      <h3 class="block-title" id="eng-fluxo">Da Especificação aprovada ao Plano</h3>
+      <div class="flow">
+        <div class="flow-row"><div class="flow-stage">Descoberta</div><div class="flow-rail"><div class="flow-dot"></div></div><div class="flow-card"><div class="who"><span class="role">Technical Discovery</span>Mapeia o real</div><p>Liga os requisitos aplicáveis ao codebase real e ao conhecimento estável em <code>engineering/</code>. Estado atual, não solução.</p></div></div>
+        <div class="flow-row"><div class="flow-stage">Arquitetura</div><div class="flow-rail"><div class="flow-dot gate"></div></div><div class="flow-card"><div class="who">Architecture Gate</div><p>Referencia uma decisão <code>DEC-*</code> aprovada, ou registra <code>Not required</code> com justificativa concreta.</p></div></div>
+        <div class="flow-row"><div class="flow-stage">Solução pretendida</div><div class="flow-rail"><div class="flow-dot"></div></div><div class="flow-card"><div class="who"><span class="role">Engineering Proposal AI</span>Descreve a mudança</div><p><code>engineering-proposal.md</code>: fronteiras, ownership de dados, integrações, dependências, operação, testes, rollout e desvios do sistema pinado. <b>Linka</b> o conhecimento estável em vez de duplicá-lo; não sequencia tarefas. Pina a versão do Engineering System ou declara explicitamente que não há sistema configurado.</p></div></div>
+        <div class="flow-row"><div class="flow-stage">Veredito</div><div class="flow-rail"><div class="flow-dot gate"></div></div><div class="flow-card"><div class="who"><span class="role">Engineering Review AI</span>Revisão independente, somente leitura</div><p>Avalia arquitetura, decisões, ownership, dependências, atributos de qualidade, operação e testabilidade. Não edita a Proposal, não aprova decisões de produto e não substitui Code Review, QA ou Security Review. O veredito registra o <b>hash SHA-256 da Proposal atual</b> — qualquer mudança a torna obsoleta.</p></div></div>
+        <div class="flow-row"><div class="flow-stage">Planejamento</div><div class="flow-rail"><div class="flow-dot"></div></div><div class="flow-card"><div class="who"><span class="role">Implementation Planner AI</span>Só avança com Review aplicável aprovada</div><p>Com a solução revisada, o plano sequencia fases, fatias e riscos — e o fluxo segue para Grafo, Tarefas e Code Runner.</p></div></div>
+      </div>
+    </div>
+
+    <div class="cat-block">
+      <h3 class="block-title" id="eng-aplica">Quando Proposal + Review são obrigatórias</h3>
+      <div class="intent-list">
+        <div class="intent-row"><span class="intent-q">Rigor Tier <b>L</b></span><span class="intent-arrow">→</span><span class="intent-a">sempre — junto de analytics, auditoria, QA Evidence e Security Review</span></div>
+        <div class="intent-row"><span class="intent-q">Rigor Tier <b>S</b> ou <b>M</b></span><span class="intent-arrow">→</span><span class="intent-a">quando o <code>context.md</code> declara ao menos um <code>engineering_trigger</code> estruturado</span></div>
+      </div>
+      <p class="note" style="margin-top:20px;">Lista fechada de triggers — a automação lê exatamente estes valores e <b>nunca infere aplicabilidade a partir de prosa</b>:</p>
+      <div class="adapter-row" style="margin-top:12px;">
+        <div class="adapter-chip"><span class="aname">new_dependency</span></div>
+        <div class="adapter-chip"><span class="aname">external_integration</span></div>
+        <div class="adapter-chip"><span class="aname">data_ownership_change</span></div>
+        <div class="adapter-chip"><span class="aname">migration</span></div>
+        <div class="adapter-chip"><span class="aname">architecture_boundary_change</span></div>
+        <div class="adapter-chip"><span class="aname">deployment_change</span></div>
+        <div class="adapter-chip"><span class="aname">security_boundary_change</span></div>
+        <div class="adapter-chip"><span class="aname">operational_change</span></div>
+      </div>
+      <p class="note">
+        Produtos existentes continuam válidos até um caso de uso ser migrado ou cair na regra do Tier L — o <code>upgrade</code> nunca cria registros de aprovação nem sobrescreve conteúdo de engenharia do adotante.
+      </p>
+    </div>
+  </section>
+
+  <section id="gates" class="page">
+    <div class="section-head">
+      <h2 class="section-title">Gates de aprovação</h2>
+      <div class="section-note">Nenhum artefato avança sem um estado claro e, a partir de <span class="tag">approved</span>, um registro de aprovação com hash do conteúdo.</div>
+    </div>
+    <div class="page-toc">
+      <a href="#gates-estados">Os estados</a>
+      <a href="#gates-regras">Regras de transição</a>
+    </div>
+    <div class="gates">
+      <span class="gate">draft</span>
+      <span class="gates-sep">→</span>
+      <span class="gate">proposed</span>
+      <span class="gates-sep">→</span>
+      <span class="gate mid">approved</span>
+      <span class="gates-sep">→</span>
+      <span class="gate">in_progress</span>
+      <span class="gates-sep">→</span>
+      <span class="gate">implemented</span>
+      <span class="gates-sep">→</span>
+      <span class="gate ok">validated</span>
+      <span class="gates-sep">→</span>
+      <span class="gate ok">released</span>
+    </div>
+    <p class="note">
+      <code style="font-family:var(--mono);background:var(--bg-raised);border:1px solid var(--line);padding:1px 5px;border-radius:2px;">implemented → validated</code> exige QA Evidence sem bloqueios, Code Review sem <i>blocker/required_fix</i>, e Security Review aprovado quando há código, dados, permissões ou risco de privacidade.
+      <code style="font-family:var(--mono);background:var(--bg-raised);border:1px solid var(--line);padding:1px 5px;border-radius:2px;">validated → released</code> exige o Release Orchestrator, auditoria e rollback/monitoramento definidos.
+    </p>
+
+    <div class="cat-block" style="margin-top:48px;">
+      <h3 class="block-title" id="gates-estados">O que cada estado significa</h3>
+      <div class="glossary">
+        <div class="gterm"><div class="gname">draft</div><p>Artefato criado, ainda incompleto.</p></div>
+        <div class="gterm"><div class="gname">proposed</div><p>Pronto para revisão humana ou de auditoria. Não exige registro de aprovação, mas não pode avançar se o gate do pai estiver incompleto.</p></div>
+        <div class="gterm"><div class="gname">approved</div><p>Pode alimentar a próxima etapa. A partir daqui, todo avanço exige um registro em <code>.product/history/</code> com hash do conteúdo.</p></div>
+        <div class="gterm"><div class="gname">in_progress</div><p>Sendo implementado. Exige uma tarefa aprovada ou uma exceção explícita de protótipo/rascunho.</p></div>
+        <div class="gterm"><div class="gname">implemented</div><p>Código ou artefato produzido. Exige evidência de working-tree: branch, base commit, changed paths, diff hash, testes. Não exige commit ainda.</p></div>
+        <div class="gterm"><div class="gname">validated</div><p>Passou por QA, Code Review, Security Review quando aplicável, e tem evidência suficiente e não-placeholder.</p></div>
+        <div class="gterm"><div class="gname">released</div><p>Chegou ao usuário ou ambiente alvo, via Release Orchestrator, com auditoria, rollback e monitoramento definidos.</p></div>
+        <div class="gterm"><div class="gname">deprecated</div><p>Não deve mais guiar novas implementações.</p></div>
+        <div class="gterm"><div class="gname">superseded</div><p>Substituído por outro artefato mais recente.</p></div>
+      </div>
+    </div>
+
+    <div class="cat-block">
+      <h3 class="block-title" id="gates-regras">Regras de transição que mais travam agentes</h3>
+      <div class="glossary">
+        <div class="gterm"><p>Code Runner pode produzir código e evidência técnica, mas <b>não commita, não faz push, não faz merge, não cria registro de aprovação e não aprova QA.</b></p></div>
+        <div class="gterm"><p>Para uma tarefa individual, Code Review e QA precisam aprovar <b>o mesmo diff hash atual</b> antes de <code>validated</code> — qualquer mudança no código invalida as duas aprovações.</p></div>
+        <div class="gterm"><p>Bug Fixer reproduz o defeito com um teste que falha <b>antes</b> de corrigir, corrige a causa raiz com mudança mínima e deixa um teste de regressão permanente.</p></div>
+        <div class="gterm"><p>Uma fonte visual canônica (<code>visual_canonical</code>) precisa de versão ou hash imutável; estados obrigatórios faltando, conflito não resolvido com a Especificação, ou desvio de fidelidade não revisado <b>bloqueiam o Design</b> de avançar.</p></div>
+        <div class="gterm"><p>Quando o produto declara um Design System, o Design de um caso de uso em <code>proposed</code> ou posterior precisa <b>pinar seu id/versão aprovado</b> e não pode introduzir token, componente ou padrão compartilhado silenciosamente.</p></div>
+        <div class="gterm"><p>Artefato inaplicável precisa do <b>status estruturado <code>not_applicable</code></b> com justificativa real — "Not applicable" solto no texto nunca satisfaz o gate (FDR-027).</p></div>
+        <div class="gterm"><p>Engineering Review aprovada registra o <b>hash SHA-256 da Proposal atual</b>; qualquer mudança na Proposal torna a Review obsoleta. A aprovação do Engineering System é composta: mudar qualquer contrato compartilhado exige reaprovação humana (FDR-028).</p></div>
+        <div class="gterm"><p>Entregas com superfície visual exigem evidência visual proporcional — captura local ou artefato de CI — mais verificação básica de acessibilidade (role/label, foco, alvo de toque, contraste).</p></div>
+        <div class="gterm"><p>Registros de aprovação usam hash SHA-256 do arquivo inteiro, com conteúdo normalizado — garante auditabilidade e um gate mecânico, não prova criptográfica de aprovação humana.</p></div>
+        <div class="gterm"><p><b>Staleness</b> é uma condição derivada pelo validador, não um status editável: se o artefato de origem muda, o artefato derivado fica obsoleto e não avança em nenhum gate até ser regenerado ou reaprovado.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="entrega" class="page">
+    <div class="section-head">
+      <h2 class="section-title">Da task aprovada até a entrega</h2>
+      <div class="section-note">Sim, existe um orquestrador dedicado a isso: o <b>Delivery Orchestrator</b>. Ele roteia, não implementa.</div>
+    </div>
+    <p class="lead">
+      Depois que o Grafo de Execução está <span class="tag">approved</span>, três papéis de governança tocam cada task até a entrega: o <b>Execution Scheduler</b> calcula as ondas paralelas do DAG, o <b>Delivery Orchestrator</b> roteia o workspace entre os orquestradores permitidos, e o <b>Integration Orchestrator</b> reintegra localmente os commits de task já validados antes do release.
+    </p>
+    <div class="flow">
+      <div class="flow-row">
+        <div class="flow-stage">Planejamento</div>
+        <div class="flow-rail"><div class="flow-dot"></div></div>
+        <div class="flow-card">
+          <div class="who"><span class="role">Execution Scheduler</span>Calcula as ondas</div>
+          <p>A partir do DAG aprovado, <code>writeScope</code>, <code>sharedResources</code> e leases ativas, define quais tasks podem rodar em paralelo. Não spawna agentes.</p>
+        </div>
+      </div>
+      <div class="flow-row">
+        <div class="flow-stage">Governança</div>
+        <div class="flow-rail"><div class="flow-dot gate"></div></div>
+        <div class="flow-card">
+          <div class="who"><span class="role">Delivery Orchestrator</span>Roteia o workspace</div>
+          <p>Lê estado persistido, hashes, dono e tentativas; roteia o <code>WORK-NNN</code> para o próximo especialista autorizado. Nunca autoria artefato nem executa comando.</p>
+        </div>
+      </div>
+      <div class="flow-row">
+        <div class="flow-stage">Posse da task</div>
+        <div class="flow-rail"><div class="flow-dot"></div></div>
+        <div class="flow-card">
+          <div class="who"><span class="role">Lease</span>Reivindica a task</div>
+          <p><code>spec-framework lease claim --work WORK-001 --task TK-001 --agent codex --isolate</code> — posse expirável, com heartbeat, opcionalmente em worktree Git isolado.</p>
+        </div>
+      </div>
+      <div class="flow-row">
+        <div class="flow-stage">Implementação</div>
+        <div class="flow-rail"><div class="flow-dot"></div></div>
+        <div class="flow-card">
+          <div class="who"><span class="role">Code Runner AI</span>Implementa em TDD</div>
+          <p>Uma task aprovada por vez, respeitando o <code>writeScope</code> declarado. Para se faltar gate, decisão ou especificação. Não commita.</p>
+        </div>
+      </div>
+      <div class="flow-row">
+        <div class="flow-stage">Evidência</div>
+        <div class="flow-rail"><div class="flow-dot gate"></div></div>
+        <div class="flow-card">
+          <div class="who">Status <code>implemented</code></div>
+          <p>Registra branch, base commit, changed paths, diff hash, testes e resultado dos gates &mdash; sem exigir commit ainda.</p>
+        </div>
+      </div>
+      <div class="flow-row">
+        <div class="flow-stage">Verificação dupla</div>
+        <div class="flow-rail"><div class="flow-dot"></div></div>
+        <div class="flow-card">
+          <div class="who"><span class="role">Code Review AI + QA AI</span>Aprovam o mesmo diff hash</div>
+          <p>Code Review avalia completude, aderência e qualidade (somente leitura). QA revalida critérios de aceite, edge cases e evidência. Qualquer mudança de código invalida as duas aprovações.</p>
+        </div>
+      </div>
+      <div class="flow-row">
+        <div class="flow-stage">Integração</div>
+        <div class="flow-rail"><div class="flow-dot gate"></div></div>
+        <div class="flow-card">
+          <div class="who"><span class="role">Integration Orchestrator</span>Reintegra em ordem de DAG</div>
+          <p>Monta um plano de cherry-pick ordenado dos commits de task já validados, produz um diff hash integrado e exige uma rodada de <b>Integrated QA</b>. Conflito não se resolve sozinho &mdash; para para humano.</p>
+        </div>
+      </div>
+      <div class="flow-row">
+        <div class="flow-stage">Registro</div>
+        <div class="flow-rail"><div class="flow-dot"></div></div>
+        <div class="flow-card">
+          <div class="who"><span class="role">Commit Crafter AI</span>Commits atômicos locais</div>
+          <p>Separa por concern, segue <code>knowledge/conventions/commits.md</code>. Sem push.</p>
+        </div>
+      </div>
+      <div class="flow-row">
+        <div class="flow-stage">Handoff</div>
+        <div class="flow-rail"><div class="flow-dot"></div></div>
+        <div class="flow-card">
+          <div class="who"><span class="role">PR Finalizer AI</span>Prepara ou abre o PR</div>
+          <p>Confere gates, QA Evidence, Code Review e Security Review; liga evidências ao PR. Sem merge.</p>
+        </div>
+      </div>
+      <div class="flow-row">
+        <div class="flow-stage">Liberação</div>
+        <div class="flow-rail"><div class="flow-dot gate"></div></div>
+        <div class="flow-card">
+          <div class="who"><span class="role">Release Orchestrator</span>Checagem final</div>
+          <p>Gaps, conflitos, docs, specs, design, tasks, testes, QA, review e security review antes de <code>validated → released</code>.</p>
+        </div>
+      </div>
+    </div>
+    <p class="note">
+      Falhas nesse caminho seguem roteamento fixo (FDR-006): defeito confirmado volta para <b>Bug Fixer</b>, teste ausente volta para <b>QA</b>, trabalho fora do contrato volta para <b>Code Runner</b>, e ambiguidade de regra sobe para <b>Product Historian</b> + humano. Cada gate tem um limite de três tentativas automatizadas antes de escalar.
+    </p>
+  </section>
+
+  <section id="exemplo" class="page">
+    <div class="section-head">
+      <h2 class="section-title">Exemplo: uma feature nova</h2>
+      <div class="section-note">O mesmo pedido de sempre — "adiciona check-in por QR code" — passando pelo pipeline.</div>
+    </div>
+    <div class="scenario">
+      <h3>Check-in por QR Code</h3>
+      <p class="ask">"Quero que as pessoas façam check-in num evento escaneando um QR code."</p>
+      <div class="steps">
+        <div class="step"><div class="who">Feature AI</div><div class="what">Cria <b>FT-023 · QR Code Check-in</b> dentro do domínio <b>events</b>, ligada ao objetivo "gerenciar evento".</div></div>
+        <div class="step"><div class="who">Use Case AI</div><div class="what">Detalha os casos de uso: <b>gerar QR</b>, <b>escanear e validar</b>, <b>QR expirado</b>. Define <code>rigor_tier: L</code> por lidar com dado sensível de presença.</div></div>
+        <div class="step"><div class="who">Specification AI</div><div class="what">Escreve o contrato: fluxo, estados de UI, API de validação, permissões, eventos de analytics, riscos de segurança (QR reutilizado, replay).</div></div>
+        <div class="step"><div class="who">UX/UI AI</div><div class="what">Produz <code>design.md</code> com a tela de scanner, estados de sucesso/erro e acessibilidade.</div></div>
+        <div class="step"><div class="who">Engineering Proposal + Review</div><div class="what">Por ser Tier L, a entrega exige <code>engineering-proposal.md</code> (fronteiras, dados, integrações, rollout, pinando o Engineering System) e um veredito independente em <code>engineering-review.md</code> antes do plano.</div></div>
+        <div class="step"><div class="who">Implementation Planner + Execution Graph AI</div><div class="what">Transformam a especificação num plano técnico e num DAG: <b>TK-001</b> tabelas e políticas → <b>TK-002</b> serviço de check-in → <b>TK-003</b> UI do scanner → <b>TK-004</b> analytics.</div></div>
+        <div class="step"><div class="who">Code Runner AI</div><div class="what">Implementa uma tarefa por vez, em TDD, respeitando o <code>writeScope</code> declarado — sem commitar.</div></div>
+        <div class="step"><div class="who">QA AI + Security Review AI</div><div class="what">Validam critérios de aceite, edge cases (QR expirado, duplo scan) e riscos de abuso, com evidência real.</div></div>
+        <div class="step"><div class="who">Commit Crafter + PR Finalizer</div><div class="what">Criam commits atômicos e preparam o PR com links de evidência — sem merge.</div></div>
+        <div class="step"><div class="who">Release Orchestrator</div><div class="what">Checa gaps, auditoria, security review e plano de rollback antes de liberar.</div></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="guia" class="page">
+    <div class="section-head">
+      <h2 class="section-title">O Framework Guide</h2>
+      <div class="section-note">A skill que rege o CLI: você descreve o objetivo, ela devolve o menor comando seguro.</div>
+    </div>
+
+    <div class="cat-block">
+      <p class="lead">
+        Ninguém precisa decorar os comandos da <a href="#cli" data-page="cli">referência</a>. O <b>Framework Guide</b> é a porta de entrada conversacional: você descreve o objetivo em linguagem natural, ele inspeciona o estado mecânico real (via <code>help</code>, <code>dashboard</code>, <code>status</code>, <code>guide</code>, <code>next</code>, <code>review</code>, <code>impact</code>, <code>gates</code>, <code>validate</code>) e devolve o menor comando seguro que avança um gate válido — nunca autoria artefato, nunca infere uma aprovação, nunca pula um gate.
+      </p>
+      <div class="pillars" style="grid-template-columns:repeat(auto-fit,minmax(260px,1fr));display:grid;gap:14px;margin-bottom:30px;">
+        <div class="pillar"><h3>Prioriza leitura</h3><p>Antes de qualquer mutação, prefere inspeção somente-leitura. Só recomenda escrever algo depois de ler o <code>context.md</code> do escopo ativo, seus pais, aprovações e staleness.</p></div>
+        <div class="pillar"><h3>Explica antes de agir</h3><p>Toda resposta guiada deixa claro <b>o que lê, o que escreve, e qual gate/aprovação</b> está em jogo — mostra o comando exato antes de qualquer mutação consequente.</p></div>
+        <div class="pillar"><h3>Para em autoridade humana</h3><p>Exige identidade e confirmação explícitas para comandos de aprovação. Nunca converte "concordância na conversa" em registro de aprovação de produto.</p></div>
+      </div>
+
+      <p class="note" style="margin:0 0 26px;">
+        <b style="color:var(--ink);">Fronteira de ativação (FDR-025):</b> o Framework Guide só ativa rotas de produto quando o repositório contém um <code>product/.product/framework.json</code> válido, com versão concreta pinada e <code>activation.mode: manifest-only</code>. Mencionar "spec framework" numa conversa não ativa nada; sem manifest, as únicas rotas permitidas são explicar ou rodar o bootstrap/<code>init</code> pedido explicitamente. Após ativar, skills especializadas são resolvidas do cache versionado via <code>spec-framework skill path &lt;skill&gt;</code>.
+      </p>
+
+      <p class="kicker">Roteia por intenção</p>
+      <div class="intent-list">
+        <div class="intent-row"><span class="intent-q">"Não tenho nem o CLI instalado"</span><span class="intent-arrow">→</span><span class="intent-a">inspecionar e rodar <code>scripts/init.ps1</code> / <code>init.sh</code> (pipe remoto é escolha explícita do usuário)</span></div>
+        <div class="intent-row"><span class="intent-q">"Quero começar um produto"</span><span class="intent-arrow">→</span><span class="intent-a"><code>init &lt;caminho&gt;</code></span></div>
+        <div class="intent-row"><span class="intent-q">"Onde meu trabalho está?"</span><span class="intent-arrow">→</span><span class="intent-a"><code>dashboard</code> · <code>status</code> · <code>next</code></span></div>
+        <div class="intent-row"><span class="intent-q">"Trazer épicos/PRDs existentes"</span><span class="intent-arrow">→</span><span class="intent-a"><code>init --starting-point existing-documents</code> → <code>import materialize</code></span></div>
+        <div class="intent-row"><span class="intent-q">"Revisar ou aprovar um estágio"</span><span class="intent-arrow">→</span><span class="intent-a"><code>review</code> → <code>approve</code> / <code>approve-stage</code></span></div>
+        <div class="intent-row"><span class="intent-q">"Gerar, evoluir ou adotar Design"</span><span class="intent-arrow">→</span><span class="intent-a"><code>design init/import/register</code> + UX/UI + UX Review</span></div>
+        <div class="intent-row"><span class="intent-q">"Diagnosticar ou instalar um adapter visual"</span><span class="intent-arrow">→</span><span class="intent-a"><code>adapters list/status/doctor</code> → <code>install --version ... --yes</code></span></div>
+        <div class="intent-row"><span class="intent-q">"O que muda se eu alterar essa decisão?"</span><span class="intent-arrow">→</span><span class="intent-a"><code>impact</code></span></div>
+        <div class="intent-row"><span class="intent-q">"Preparar para implementar"</span><span class="intent-arrow">→</span><span class="intent-a"><code>gates</code> → prontidão do Grafo → prontidão da Tarefa</span></div>
+        <div class="intent-row"><span class="intent-q">"Executar comandos governados"</span><span class="intent-arrow">→</span><span class="intent-a">Command Planner → Command Executor</span></div>
+        <div class="intent-row"><span class="intent-q">"Isso ainda está válido?"</span><span class="intent-arrow">→</span><span class="intent-a"><code>validate</code></span></div>
+        <div class="intent-row"><span class="intent-q">"Atualizar o framework do projeto"</span><span class="intent-arrow">→</span><span class="intent-a">inspecionar manifest e versão → <code>upgrade --yes</code></span></div>
+        <div class="intent-row"><span class="intent-q">"Meu repo antigo tem .spec-framework/ local"</span><span class="intent-arrow">→</span><span class="intent-a"><code>migrate external-runtime --dry-run</code> → revisar → <code>--yes</code></span></div>
+        <div class="intent-row"><span class="intent-q">"Preparar a entrega"</span><span class="intent-arrow">→</span><span class="intent-a">Delivery Orchestrator → Commit Crafter → PR Finalizer</span></div>
+      </div>
+
+      <div class="scenario" style="margin:34px 0 8px;">
+        <h3>Exemplo de uso</h3>
+        <p class="ask">"Não sei o que fazer agora, só sei que preciso adicionar check-in por QR code no evento."</p>
+        <div class="flow">
+          <div class="flow-row"><div class="flow-stage">Goal</div><div class="flow-rail"><div class="flow-dot"></div></div><div class="flow-card"><p>Framework Guide reformula em uma frase: <b>criar uma feature nova dentro do domínio events.</b></p></div></div>
+          <div class="flow-row"><div class="flow-stage">Current state</div><div class="flow-rail"><div class="flow-dot"></div></div><div class="flow-card"><p>Roda <code>spec-framework dashboard --work WORK-001</code> (ou descobre que não há workspace e sugere <code>work</code>) para ver o gate ativo antes de recomendar qualquer coisa.</p></div></div>
+          <div class="flow-row"><div class="flow-stage">Recommended route</div><div class="flow-rail"><div class="flow-dot"></div></div><div class="flow-card"><p>Como é uma feature nova, aponta para o <b>New Feature Orchestrator</b>: Feature AI → Use Case AI → Specification AI.</p></div></div>
+          <div class="flow-row"><div class="flow-stage">Command</div><div class="flow-rail"><div class="flow-dot gate"></div></div><div class="flow-card"><p><code>spec-framework work --feature FT-023 --domain events --goal manage-event --created-by "Product Owner"</code></p></div></div>
+          <div class="flow-row"><div class="flow-stage">Reads / Writes</div><div class="flow-rail"><div class="flow-dot"></div></div><div class="flow-card"><p>Lê <code>domains/events/context.md</code> e o registro de features existentes. Escreve o workspace <code>WORK-NNN</code> — nenhum artefato de produto ainda.</p></div></div>
+          <div class="flow-row"><div class="flow-stage">Gate</div><div class="flow-rail"><div class="flow-dot"></div></div><div class="flow-card"><p>Nenhum — é navegação, não precisa de aprovação.</p></div></div>
+          <div class="flow-row"><div class="flow-stage">Next</div><div class="flow-rail"><div class="flow-dot"></div></div><div class="flow-card"><p>Depois do comando, relê o estado real (não assume sucesso) e devolve o próximo passo seguro: <code>spec-framework next --work WORK-001</code>.</p></div></div>
+        </div>
+      </div>
+
+      <p class="kicker" style="margin-top:36px;">Mais exemplos</p>
+      <div class="ex-grid">
+        <details class="ex-card">
+          <summary><span class="ex-title">Pedido de aprovação</span><span class="ex-sub">"Já terminei a especificação, pode aprovar?"</span></summary>
+          <div class="mini-steps">
+            <div class="mini-step"><div class="m-label">Framework Guide</div><p>Não aceita a frase como aprovação. Roda <code>spec-framework review --work WORK-001 --stage specification</code> para checar se há bloqueio pendente.</p></div>
+            <div class="mini-step"><div class="m-label">Se limpo</div><p>Mostra o comando exato e pede identidade humana explícita: <code>spec-framework approve --artifact ... --grant approved --approved-by "&lt;seu nome&gt;" --yes</code>.</p></div>
+            <div class="mini-step"><div class="m-label">Se travado</div><p>Explica o bloqueio real (ex.: contrato de segurança faltando) e roteia para a skill dona — não tenta contornar o gate.</p></div>
+          </div>
+        </details>
+        <details class="ex-card">
+          <summary><span class="ex-title">Migrar decisões antigas</span><span class="ex-sub">"Tenho decisões de antes do DEC tipado, dá pra atualizar sem editar JSON na mão?"</span></summary>
+          <div class="mini-steps">
+            <div class="mini-step"><div class="m-label">Framework Guide</div><p>Reconhece a intenção de migração e recomenda inspecionar antes de mutar: <code>spec-framework decisions migrate --product-root product --dry-run</code>.</p></div>
+            <div class="mini-step"><div class="m-label">Preview</div><p>Mostra o tipo e escopo inferidos por decisão, cria backup automático e nunca muda conteúdo ou status do DEC original.</p></div>
+            <div class="mini-step"><div class="m-label">Confirmação</div><p>Só grava depois de <code>--interactive</code> ou <code>--yes</code> explícitos — valores ambíguos ficam como item de revisão manual.</p></div>
+          </div>
+        </details>
+        <details class="ex-card">
+          <summary><span class="ex-title">Trabalho travado</span><span class="ex-sub">"O QA reprovou minha task, o que eu faço agora?"</span></summary>
+          <div class="mini-steps">
+            <div class="mini-step"><div class="m-label">Framework Guide</div><p>Lê o blocker real com <code>spec-framework task readiness --graph ... --task TK-001</code> em vez de adivinhar a causa.</p></div>
+            <div class="mini-step"><div class="m-label">Roteamento</div><p>Segue FDR-006: defeito confirmado → Bug Fixer; teste faltando → volta pro dono do teste; ambiguidade de regra → Product Historian + humano.</p></div>
+            <div class="mini-step"><div class="m-label">Não faz</div><p>Não tenta corrigir o código nem aprovar QA sozinho — isso é autoridade de outra skill.</p></div>
+          </div>
+        </details>
+        <details class="ex-card">
+          <summary><span class="ex-title">Trazer PRDs de um repositório antigo</span><span class="ex-sub">"Tenho uma pasta cheia de PRDs em Markdown, dá pra importar em vez de recriar tudo do zero?"</span></summary>
+          <div class="mini-steps">
+            <div class="mini-step"><div class="m-label">Framework Guide</div><p>Reconhece intenção de bootstrap a partir de documentos e recomenda <code>spec-framework init --starting-point existing-documents --source-dir ../product-docs --yes</code>.</p></div>
+            <div class="mini-step"><div class="m-label">Resultado</div><p>Cria um inventário e um run de importação somente-análise em <code>product/knowledge/imports/</code> — nenhum artefato canônico ainda.</p></div>
+            <div class="mini-step"><div class="m-label">Aprovação humana</div><p>Conflitos nunca são resolvidos em silêncio. Só depois de revisar o mapeamento: <code>spec-framework import materialize --run IMPORT-001 --approved-by "&lt;seu nome&gt;" --yes</code>.</p></div>
+          </div>
+        </details>
+        <details class="ex-card">
+          <summary><span class="ex-title">Feature quer virar tela</span><span class="ex-sub">"A especificação foi aprovada, como eu gero o design agora?"</span></summary>
+          <div class="mini-steps">
+            <div class="mini-step"><div class="m-label">Framework Guide</div><p>Confirma que a Especificação está <code>approved</code> antes de sugerir Design — sem isso, o comando nem existe como rota válida.</p></div>
+            <div class="mini-step"><div class="m-label">Rota</div><p>Pergunta origin_mode e aponta <code>spec-framework design init --use-case &lt;path&gt; --mode generate</code>, ou <code>design register</code> se houver uma fonte Figma/Penpot autoritativa.</p></div>
+            <div class="mini-step"><div class="m-label">Próximo gate</div><p>Depois de UX/UI AI produzir <code>design.md</code>, roteia para UX Review — Design só chega ao Implementation Planner com revisão limpa e aprovação humana.</p></div>
+          </div>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <section id="cli" class="page">
+    <div class="section-head">
+      <h2 class="section-title">Referência de comandos — CLI</h2>
+      <div class="section-note">Os mesmos comandos que o <a href="#guia" data-page="guia">Framework Guide</a> recomenda por trás — para copiar direto quando você já sabe o que quer.</div>
+    </div>
+    <div class="cli-grid">
+
+      <div class="cli-block">
+        <p class="caption">1 · criar um produto novo a partir do starter</p>
+        <div class="cli-scroll"><pre class="cli"><span class="c"># adiciona apenas product/ ao repositório; o método fica no cache versionado do usuário</span>
+<span class="cmd">spec-framework init</span> ../meu-produto --agents codex --yes
+<span class="c"># bootstrap completo em um comando (instala CLI + abre o wizard)</span>
+<span class="cmd">irm</span> https://raw.githubusercontent.com/JonatasFreireDev/spec-framework/master/scripts/init.ps1 | iex</pre></div>
+      </div>
+
+      <div class="cli-block">
+        <p class="caption">2 · navegar até uma feature e avançar sem "feature ativa global"</p>
+        <div class="cli-scroll"><pre class="cli"><span class="cmd">spec-framework work</span> --feature FT-001 --domain events --goal manage-event --created-by "Product Owner"
+<span class="cmd">spec-framework status</span> --work WORK-001
+<span class="cmd">spec-framework next</span> --work WORK-001</pre></div>
+      </div>
+
+      <div class="cli-block">
+        <p class="caption">3 · aprovar um artefato explicitamente</p>
+        <div class="cli-scroll"><pre class="cli"><span class="cmd">spec-framework approve</span> --artifact domains/events/context.md --grant approved --approved-by "Product Owner" --yes
+<span class="cmd">spec-framework gates</span></pre></div>
+      </div>
+
+      <div class="cli-block">
+        <p class="caption">4 · operar o grafo de execução e checar prontidão de uma tarefa</p>
+        <div class="cli-scroll"><pre class="cli"><span class="cmd">spec-framework graph ready</span> --graph domains/events/.../execution-graph.json
+<span class="cmd">spec-framework graph materialize</span> --graph domains/events/.../execution-graph.json --yes
+<span class="cmd">spec-framework task readiness</span> --graph domains/events/.../execution-graph.json --task TK-001</pre></div>
+      </div>
+
+      <div class="cli-block">
+        <p class="caption">5 · resumir, arrendar e agendar execução governada</p>
+        <div class="cli-scroll"><pre class="cli"><span class="cmd">spec-framework resume</span> --work WORK-001
+<span class="cmd">spec-framework lease claim</span> --work WORK-001 --graph domains/events/.../execution-graph.json --task TK-001 --agent codex --isolate
+<span class="cmd">spec-framework schedule</span> --work WORK-001 --graph domains/events/.../execution-graph.json --max-parallel 4</pre></div>
+      </div>
+
+      <div class="cli-block">
+        <p class="caption">6 · revisar um estágio e medir o impacto de uma decisão</p>
+        <div class="cli-scroll"><pre class="cli"><span class="cmd">spec-framework review</span> --work WORK-001 --stage tasks
+<span class="cmd">spec-framework approve-stage</span> --work WORK-001 --stage tasks --approved-by "Product Owner" --yes
+<span class="cmd">spec-framework impact</span> --decision DEC-021</pre></div>
+      </div>
+
+      <div class="cli-block">
+        <p class="caption">7 · gerar, importar ou adotar Design; validar o Design System compartilhado</p>
+        <div class="cli-scroll"><pre class="cli"><span class="cmd">spec-framework design init</span> --product-root product --use-case &lt;path&gt; --mode generate
+<span class="cmd">spec-framework design register</span> --product-root product --use-case &lt;path&gt; --type figma --source &lt;url&gt; --version &lt;version&gt; --authority visual-canonical
+<span class="cmd">spec-framework design map</span> --product-root product --use-case &lt;path&gt; --mappings mapping.json
+<span class="cmd">spec-framework design audit</span> --product-root product --use-case &lt;path&gt; --write-report
+<span class="c">
+</span><span class="cmd">spec-framework design-system init</span> --product-root product --mode generate
+<span class="cmd">spec-framework design-system validate</span> --product-root product</pre></div>
+      </div>
+
+      <div class="cli-block">
+        <p class="caption">8 · descobrir, diagnosticar e instalar adapters visuais opcionais</p>
+        <div class="cli-scroll"><pre class="cli"><span class="cmd">spec-framework adapters list</span>
+<span class="cmd">spec-framework adapters status</span> impeccable
+<span class="cmd">spec-framework adapters doctor</span> impeccable --check-latest
+<span class="c"># sem --yes é só preview; "latest" resolve para uma versão concreta antes de executar</span>
+<span class="cmd">spec-framework adapters install</span> impeccable --version 2.3.2
+<span class="cmd">spec-framework adapters install</span> impeccable --version 2.3.2 --yes</pre></div>
+      </div>
+
+      <div class="cli-block">
+        <p class="caption">9 · ver o estado consolidado do trabalho e migrar decisões antigas</p>
+        <div class="cli-scroll"><pre class="cli"><span class="cmd">spec-framework dashboard</span> --work WORK-001
+<span class="cmd">spec-framework status</span> --work WORK-001 --graph --json
+<span class="cmd">spec-framework decisions migrate</span> --product-root product --interactive</pre></div>
+      </div>
+
+      <div class="cli-block">
+        <p class="caption">10 · planejar comandos governados por risco (R0/R1) e validar</p>
+        <div class="cli-scroll"><pre class="cli"><span class="cmd">spec-framework commands plan</span> --work WORK-001 --task TK-001 --risk R0 -- go test ./...
+<span class="cmd">spec-framework validate</span></pre></div>
+      </div>
+
+      <div class="cli-block">
+        <p class="caption">11 · bootstrap a partir de documentos existentes (epics, PRDs)</p>
+        <div class="cli-scroll"><pre class="cli"><span class="c"># cria um inventário e um run de importação, só análise</span>
+<span class="cmd">spec-framework init</span> ../meu-produto --agents codex --starting-point existing-documents --source-dir ../product-docs --yes
+<span class="c"># materializa artefatos de rascunho após aprovação humana explícita</span>
+<span class="cmd">spec-framework import materialize</span> --run IMPORT-001 --approved-by "Product Owner" --yes</pre></div>
+      </div>
+
+      <div class="cli-block">
+        <p class="caption">12 · atualizar o runtime externo e migrar repositórios legados</p>
+        <div class="cli-scroll"><pre class="cli"><span class="c"># atualiza o cache versionado e o manifest pinado, preservando product/</span>
+<span class="cmd">spec-framework upgrade</span> --yes
+<span class="c"># repositório antigo com .spec-framework/ local: preview antes de migrar</span>
+<span class="cmd">spec-framework migrate external-runtime</span> --dry-run
+<span class="c"># resolve o SKILL.md pinado de uma skill a partir do cache</span>
+<span class="cmd">spec-framework skill path</span> code-runner</pre></div>
+      </div>
+    </div>
+
+    <p class="note">
+      O CLI opera o método — cria workspaces, registra aprovações, materializa grafos, arrenda tasks — mas não invoca agentes automaticamente. Quem decide implementar continua sendo o agente (Codex, Claude, Cursor) lendo <code>FRAMEWORK.md</code> e os <code>context.md</code> relevantes.
+    </p>
+  </section>
+
+  <footer>
+    <span>Fonte: FRAMEWORK.md e framework/skills/ do repositório.</span>
+    <span>Sincronizado com <code style="font-family:var(--mono);font-size:11.5px;">master @ aa0d3aa</code> · 2026-07-12</span>
+  </footer>
+</div>
+
+<script>
+(function(){
+  var pages = Array.prototype.slice.call(document.querySelectorAll('.page'));
+  var links = Array.prototype.slice.call(document.querySelectorAll('#site-nav a'));
+  var ids = pages.map(function(p){ return p.id; });
+
+  var titles = {
+    inicio:'Início', comecar:'Primeiros passos', oque:'O que é',
+    escada:'A escada de entrega', skills:'As skills', design:'Fluxo de Design',
+    engenharia:'Fluxo de Engenharia', gates:'Gates de aprovação', entrega:'Da task à entrega',
+    exemplo:'Exemplo ponta a ponta', guia:'O Framework Guide', cli:'Referência de comandos'
+  };
+  pages.forEach(function(p, i){
+    var prev = pages[i-1], next = pages[i+1];
+    if(!prev && !next) return;
+    var pager = document.createElement('div');
+    pager.className = 'pager';
+    pager.innerHTML =
+      (prev ? '<a class="pager-prev" href="#'+prev.id+'">← '+titles[prev.id]+'</a>' : '<span></span>') +
+      '<span class="pager-pos">'+(i+1)+' / '+pages.length+'</span>' +
+      (next ? '<a class="pager-next" href="#'+next.id+'">'+titles[next.id]+' →</a>' : '<span></span>');
+    p.appendChild(pager);
+  });
+
+  function show(id, anchorEl){
+    if(ids.indexOf(id) === -1) id = 'inicio';
+    pages.forEach(function(p){ p.classList.toggle('active', p.id === id); });
+    links.forEach(function(a){ a.classList.toggle('active', a.dataset.page === id); });
+    if(anchorEl){
+      anchorEl.scrollIntoView({block:'start'});
+      window.scrollBy(0, -12);
+    } else {
+      window.scrollTo(0,0);
+    }
+  }
+
+  function route(){
+    var hash = location.hash.replace('#','') || 'inicio';
+    if(ids.indexOf(hash) !== -1){ show(hash); return; }
+    var el = document.getElementById(hash);
+    if(el){
+      var page = el.closest('.page');
+      if(page){ show(page.id, el); return; }
+    }
+    show('inicio');
+  }
+
+  window.addEventListener('hashchange', route);
+  route();
+
+  Array.prototype.slice.call(document.querySelectorAll('.cli-scroll')).forEach(function(scroll){
+    var pre = scroll.querySelector('pre.cli');
+    if(!pre) return;
+    var wrap = document.createElement('div');
+    wrap.className = 'cli-wrap';
+    scroll.parentNode.insertBefore(wrap, scroll);
+    wrap.appendChild(scroll);
+    var btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'copy-btn';
+    btn.textContent = 'copiar';
+    btn.setAttribute('aria-label', 'Copiar comandos');
+    btn.addEventListener('click', function(){
+      var clone = pre.cloneNode(true);
+      Array.prototype.slice.call(clone.querySelectorAll('.c')).forEach(function(c){ c.remove(); });
+      var text = clone.textContent.split('\n').map(function(l){ return l.replace(/\s+$/,''); }).filter(function(l){ return l.trim().length; }).join('\n');
+      function done(){
+        btn.textContent = 'copiado ✓';
+        btn.classList.add('copied');
+        setTimeout(function(){ btn.textContent = 'copiar'; btn.classList.remove('copied'); }, 1800);
+      }
+      if(navigator.clipboard && navigator.clipboard.writeText){
+        navigator.clipboard.writeText(text).then(done, function(){ fallback(); });
+      } else { fallback(); }
+      function fallback(){
+        var ta = document.createElement('textarea');
+        ta.value = text;
+        ta.style.position = 'fixed';
+        ta.style.opacity = '0';
+        document.body.appendChild(ta);
+        ta.select();
+        try{ document.execCommand('copy'); done(); }catch(e){}
+        document.body.removeChild(ta);
+      }
+    });
+    wrap.appendChild(btn);
+  });
+})();
+</script>
+</body>
+</html>
