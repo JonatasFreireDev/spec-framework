@@ -64,7 +64,7 @@ Read the generated `product/BOOTSTRAP.md`; it names the current gate and exact n
 
 ## CLI At a Glance
 
-The [Framework Guide skill](framework/skills/framework-guide/SKILL.md) is the conversational front door — describe your goal and it recommends the smallest safe command. The commands it routes to:
+The [Framework Guide skill](framework/skills/framework-guide/SKILL.md) is the default conversational front door when no verified specialist route exists — describe your goal and it recommends the smallest safe command. Current CLI guidance or an explicit human request naming both specialist and scope can route directly; persisted handoffs/checkpoints must first be revalidated with `dashboard`, `status`, `next`, or `guide`. The commands it routes to:
 
 | Intent | Commands |
 | --- | --- |

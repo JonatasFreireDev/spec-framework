@@ -54,4 +54,4 @@ Running `spec-framework init` interactively starts the Bubble Tea question
 pipeline. The CLI shows an immutable installation plan and writes only after
 confirmation.
 
-Initialization adds only `product/` to the target repository. Framework assets are materialized under the operating system's user cache, and selected harnesses receive one user-scoped `spec-framework` dispatcher. The dispatcher activates exclusively from a valid `product/.product/framework.json`.
+Initialization adds only `product/` to the target repository. Framework assets are materialized under the operating system's user cache, and selected harnesses receive one user-scoped `spec-framework` dispatcher. The dispatcher activates exclusively from a valid `product/.product/framework.json` and resolves Framework Guide first unless it has a verified specialist route with concrete scope. `upgrade --yes` refreshes the dispatcher for every agent selected in the manifest or `--agents`.

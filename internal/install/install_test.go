@@ -154,8 +154,13 @@ func TestInitKeepsRuntimeAndDispatchersOutsideRepository(t *testing.T) {
 		filepath.Join(agentHome, ".cursor", "skills", "spec-framework", "SKILL.md"),
 		filepath.Join(agentHome, ".claude", "skills", "spec-framework", "SKILL.md"),
 	} {
-		if _, err := os.Stat(path); err != nil {
+		data, err := os.ReadFile(path)
+		if err != nil {
 			t.Fatal(err)
+		}
+		contract := string(data)
+		if !strings.Contains(contract, "Resolve framework-guide first unless") || !strings.Contains(contract, "concrete artifact or workspace scope") || !strings.Contains(contract, "is not direct-route evidence by itself") {
+			t.Fatalf("dispatcher is not Guide-first: %s", path)
 		}
 	}
 }
@@ -249,6 +254,31 @@ func TestUpgradePreservesProductContent(t *testing.T) {
 		if string(got) != want {
 			t.Fatalf("upgrade overwrote %s", file)
 		}
+	}
+}
+
+func TestUpgradeRefreshesInstalledDispatcher(t *testing.T) {
+	t.Setenv("SPEC_FRAMEWORK_CACHE", filepath.Join(t.TempDir(), "cache"))
+	agentHome := filepath.Join(t.TempDir(), "agents")
+	t.Setenv("SPEC_FRAMEWORK_AGENT_HOME", agentHome)
+	target := filepath.Join(t.TempDir(), "product")
+	if _, err := Init(Options{Target: target, Agents: []Agent{Codex}}); err != nil {
+		t.Fatal(err)
+	}
+	dispatcherPath := filepath.Join(agentHome, ".codex", "skills", "spec-framework", "SKILL.md")
+	if err := os.WriteFile(dispatcherPath, []byte("legacy dispatcher"), 0644); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := Upgrade(Options{Target: target, Agents: []Agent{Codex}}); err != nil {
+		t.Fatal(err)
+	}
+	data, err := os.ReadFile(dispatcherPath)
+	if err != nil {
+		t.Fatal(err)
+	}
+	contract := string(data)
+	if strings.Contains(contract, "legacy dispatcher") || !strings.Contains(contract, "Resolve framework-guide first unless") {
+		t.Fatalf("upgrade did not refresh Guide-first dispatcher: %s", contract)
 	}
 }
 

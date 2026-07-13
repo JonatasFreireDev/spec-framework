@@ -49,7 +49,7 @@ Install a versioned release binary as described in [install.md](install.md). Go 
 
 Initialization writes `product/.product/framework.json`, materializes the pinned embedded assets in the user cache, and installs one namespaced dispatcher for each selected agent in the user's harness directory. It does not create `.spec-framework/`, local agent trees, root guides, or CI workflows.
 
-Activation is manifest-only. Mentions of Spec Framework do not activate the dispatcher when `product/.product/framework.json` is absent or invalid.
+Activation is manifest-only. Mentions of Spec Framework do not activate the dispatcher when `product/.product/framework.json` is absent or invalid. After activation, the dispatcher resolves Framework Guide first unless current CLI guidance or an explicit human request names both the specialist and concrete scope. Persisted handoffs/checkpoints require read-only CLI revalidation before direct routing, and `upgrade` refreshes dispatchers for the agents selected in the manifest or command.
 
 Manual development bootstrap:
 

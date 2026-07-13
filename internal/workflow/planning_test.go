@@ -60,7 +60,7 @@ func TestWorkspaceGuideUsesCanonicalStateMachine(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if g.RecommendedSkill != "use-case" || g.ExpectedArtifact == "" {
+	if g.RecommendedSkill != "use-case" || g.ExpectedArtifact == "" || g.FeatureScope == "" {
 		t.Fatalf("%+v", g)
 	}
 }

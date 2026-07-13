@@ -126,11 +126,6 @@ func Init(opts Options) (Result, error) {
 	if err := writeStarterGuides(target, version, opts.Agents, point); err != nil {
 		return Result{}, err
 	}
-	for _, agent := range opts.Agents {
-		if _, err := dispatcher.Install(string(agent)); err != nil {
-			return Result{}, fmt.Errorf("install %s dispatcher: %w", agent, err)
-		}
-	}
 	result.StartingPoint = point
 	if point == "existing-documents" {
 		runID, err := sourceimport.CreateRun(filepath.Join(target, "product"), opts.Sources)
@@ -410,6 +405,11 @@ func Upgrade(opts Options) (Result, error) {
 	spec, err := runtimeassets.Ensure(version)
 	if err != nil {
 		return Result{}, err
+	}
+	for _, agent := range opts.Agents {
+		if _, err := dispatcher.Install(string(agent)); err != nil {
+			return Result{}, fmt.Errorf("install %s dispatcher: %w", agent, err)
+		}
 	}
 	return Result{Target: target, SpecRoot: spec, SkillCount: 0, StartingPoint: point}, nil
 }

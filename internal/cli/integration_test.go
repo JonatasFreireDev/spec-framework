@@ -48,6 +48,19 @@ func TestGoCLIInitValidateUpgradeAndMove(t *testing.T) {
 	if code := app.Run([]string{"validate"}, &stdout, &stderr); code != 0 {
 		t.Fatalf("validate=%d stdout=%s stderr=%s", code, stdout.String(), stderr.String())
 	}
+	stdout.Reset()
+	stderr.Reset()
+	if code := app.Run([]string{"work", "--feature", "FT-TEMPLATE", "--created-by", "Test Owner"}, &stdout, &stderr); code != 0 {
+		t.Fatalf("work=%d stdout=%s stderr=%s", code, stdout.String(), stderr.String())
+	}
+	stdout.Reset()
+	stderr.Reset()
+	if code := app.Run([]string{"guide", "--work", "WORK-001"}, &stdout, &stderr); code != 1 {
+		t.Fatalf("blocked guide=%d stdout=%s stderr=%s", code, stdout.String(), stderr.String())
+	}
+	if !bytes.Contains(stdout.Bytes(), []byte("Feature scope: domains/_template-domain/goals/_template-goal/features/_template-feature/context.md")) || !bytes.Contains(stdout.Bytes(), []byte("Skill: feature")) {
+		t.Fatalf("guide omitted verified route context: %s", stdout.String())
+	}
 	moveSource := filepath.Join(target, "product", "move-source")
 	if err = os.MkdirAll(moveSource, 0755); err != nil {
 		t.Fatal(err)

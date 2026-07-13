@@ -43,7 +43,7 @@ When a skill mentions product-relative paths such as `knowledge/conventions/gate
 
 When a skill mentions framework-relative paths such as `FRAMEWORK.md`, `templates/`, `skills/`, or framework decisions, resolve them under the versioned runtime returned by the CLI. Run executable operations through the installed `spec-framework` CLI.
 
-Use `spec-framework guide` or `dashboard` when routing is unclear. Use `spec-framework adapters` for supervised optional-adapter discovery or installation; never install an external adapter silently.
+Use Framework Guide as the default route unless current CLI output or an explicit human request names both the specialist and concrete scope. Revalidate persisted handoffs/checkpoints with `dashboard`, `status`, `next`, or `guide` before routing directly. A skill name without scope is only a hint. Use `spec-framework adapters` for supervised optional-adapter discovery or installation; never install an external adapter silently.
 
 ## Gates
 

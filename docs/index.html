@@ -1917,7 +1917,7 @@ meu-produto/
       </div>
 
       <p class="note" style="margin:0 0 26px;">
-        <b style="color:var(--ink);">Fronteira de ativação (FDR-025):</b> o Framework Guide só ativa rotas de produto quando o repositório contém um <code>product/.product/framework.json</code> válido, com versão concreta pinada e <code>activation.mode: manifest-only</code>. Mencionar "spec framework" numa conversa não ativa nada; sem manifest, as únicas rotas permitidas são explicar ou rodar o bootstrap/<code>init</code> pedido explicitamente. Após ativar, skills especializadas são resolvidas do cache versionado via <code>spec-framework skill path &lt;skill&gt;</code>.
+        <b style="color:var(--ink);">Fronteira de ativação (FDR-025):</b> o Framework Guide só ativa rotas de produto quando o repositório contém um <code>product/.product/framework.json</code> válido, com versão concreta pinada e <code>activation.mode: manifest-only</code>. Mencionar "spec framework" numa conversa não ativa nada; sem manifest, as únicas rotas permitidas são explicar ou rodar o bootstrap/<code>init</code> pedido explicitamente. Após ativar, o dispatcher usa o Framework Guide por padrão e resolve skills especializadas do cache versionado via <code>spec-framework skill path &lt;skill&gt;</code>. Uma retomada por handoff ou checkpoint deve ser revalidada com <code>dashboard</code>, <code>status</code>, <code>next</code> ou <code>guide</code> antes do roteamento direto.
       </p>
 
       <p class="kicker">Roteia por intenção</p>

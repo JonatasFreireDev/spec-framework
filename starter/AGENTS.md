@@ -29,7 +29,7 @@ Do not edit framework-owned assets to encode product scope. Put product-specific
 
 ## First Handoff
 
-Start with Framework Guide when the next command or gate is unclear. For a new product, continue through Product Orchestrator, Problem Discovery, Vision, and Strategy before creating domains or features.
+Start with Framework Guide unless a current CLI result or explicit human request names both the specialist and the concrete artifact or workspace scope. Revalidate persisted handoffs/checkpoints with `dashboard`, `status`, `next`, or `guide` before routing directly. A skill name without scope is only a hint. For a new product, continue through Product Orchestrator, Problem Discovery, Vision, and Strategy before creating domains or features.
 
 ## Canonical Delivery Flow
 

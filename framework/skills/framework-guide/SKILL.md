@@ -1,6 +1,6 @@
 ---
 name: framework-guide
-description: "Framework Guide Skill. Use when Codex needs to translate a person's goal into the safest next Spec Framework CLI action, explain current workflow state and gates, choose between bootstrap/init/import/work/design/review/migration/upgrade/release routes, or guide someone who does not know which spec-framework command to run."
+description: "Framework Guide Skill. Default entry point for Spec Framework product operations when no verified specialist route exists; use it to translate a person's goal into the safest next CLI action, explain current workflow state and gates, and choose between bootstrap/init/import/work/design/review/migration/upgrade/release routes."
 ---
 
 # Framework Guide Skill
@@ -39,6 +39,18 @@ Intent summary; discovered state; recommended command or specialist; mutation pr
 5. When the manifest is invalid, stop product operations and report the exact validation problem. Do not infer or repair adoption metadata silently.
 6. After activation, resolve specialized contracts with `spec-framework skill path <skill-name>` and read the returned versioned `SKILL.md` completely.
 
+## Dispatch boundary
+
+1. Framework Guide is the default first route for framework-governed product operations.
+2. A specialist may be resolved directly only from one of these verified routes:
+   - current-session `guide`, `dashboard`, `status`, or `next` output that names the workspace, concrete feature or use-case scope, current gate, and owner skill;
+   - an explicit human request that names both the specialist and the concrete artifact or workspace scope.
+3. A persisted handoff or checkpoint identifies the workspace to resume but is not direct-route evidence by itself. Revalidate it with `dashboard`, `status`, `next`, or `guide` first.
+4. A skill name, keyword, or remembered chat instruction without concrete scope is only a hint. Resolve Framework Guide first.
+5. Before using a direct route, validate the manifest, scope, ownership, gate, and staleness against current mechanical state.
+6. If direct-route evidence is missing, stale, ambiguous, or conflicting, return to Framework Guide.
+7. This boundary does not intercept direct diagnostic CLI commands and does not grant approval or mutation authority.
+
 ## Intent routing
 
 | Human intent | First route |
@@ -70,7 +82,7 @@ Intent summary; discovered state; recommended command or specialist; mutation pr
 
 ## Workflow
 1. Restate the goal in one sentence and determine whether the request is explanation, inspection, planning, local mutation, approval, remote mutation, or release.
-2. Apply the activation boundary. If active, discover the repository root, product root, pinned version, agents, and starting point from the canonical manifest; do not ask for information the CLI or repository can provide safely.
+2. Apply the activation and dispatch boundaries. If active, discover the repository root, product root, pinned version, agents, and starting point from the canonical manifest; do not ask for information the CLI or repository can provide safely.
 3. Prefer read-only inspection first: `help`, `dashboard`, `status`, `guide`, `next`, `review`, `impact`, `task readiness`, `gates`, `validate`, `engineering-system inspect`, `engineering-system triggers`, `skill path`, or migration `--dry-run`.
 4. Resolve the active scope and read its `context.md`, parents, approvals, decisions, and staleness before recommending a mutation.
 5. Present or execute the smallest command that advances one valid gate. State what it reads, writes, and cannot authorize.
@@ -114,6 +126,7 @@ Do not force this exact block when a one-line answer is clearer. Show exact comm
 - [ ] Preserves traceability to affected artifacts and the active workspace.
 - [ ] Uses CLI output rather than guessing workflow state.
 - [ ] Enforces manifest-only activation and resolves the pinned skill version.
+- [ ] Requires Guide-first routing unless a verified direct route names the specialist and concrete scope.
 - [ ] Keeps framework runtime assets and dispatchers outside the adopter repository.
 - [ ] Chooses the smallest command or specialist that owns the next action.
 - [ ] Distinguishes read-only inspection, local mutation, approval, remote mutation, and release.

@@ -69,7 +69,11 @@ func runGuide(args []string, out, errout io.Writer) int {
 		fmt.Fprintln(errout, e)
 		return 1
 	}
-	fmt.Fprintf(out, "Workspace: %s\nCurrent step: %s\nSkill: %s\nExpected artifact: %s\n", g.WorkspaceID, g.CurrentStep, g.RecommendedSkill, g.ExpectedArtifact)
+	fmt.Fprintf(out, "Workspace: %s\nFeature scope: %s\n", g.WorkspaceID, g.FeatureScope)
+	if g.UseCaseScope != "" {
+		fmt.Fprintf(out, "Use case scope: %s\n", g.UseCaseScope)
+	}
+	fmt.Fprintf(out, "Current step: %s\nSkill: %s\nExpected artifact: %s\n", g.CurrentStep, g.RecommendedSkill, g.ExpectedArtifact)
 	for _, x := range g.RequiredReading {
 		fmt.Fprintln(out, "READ:", x)
 	}

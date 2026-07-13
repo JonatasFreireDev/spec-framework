@@ -686,6 +686,8 @@ Orchestrators do not create primary artifacts. They control flow, order, gates, 
 
 Framework Guide is the conversational entry point to the CLI. It translates a person's goal into current mechanical state, the smallest safe command, and the correct specialist or approval handoff. It does not author canonical artifacts, approve work, or replace Command Planner and Command Executor.
 
+The installed dispatcher routes framework-governed product operations through Framework Guide by default. It may route directly to a specialist only when current-session `guide`, `dashboard`, `status`, or `next` output names the workspace, concrete feature or use-case scope, current gate, and owner skill, or the human explicitly names both the specialist and the concrete scope. A persisted handoff or checkpoint identifies where to resume but must be revalidated by one of those read-only CLI commands before direct routing. A skill name or keyword without scope is not a verified route. A stale, ambiguous, or conflicting route returns to Framework Guide. This is an agent-routing rule, not a new product approval gate, and direct diagnostic CLI commands remain available.
+
 ### Domain Evolution Orchestrator
 
 Coordinates approved goals, journeys, opportunity gaps, candidate features, delivery slices, dependency/impact analysis, and explicit human feature selection. It hands the selected feature to New Feature Orchestrator.
@@ -885,7 +887,7 @@ This prevents AI suggestions from turning into silent scope.
 
 In this repository, Codex is working on the framework itself. In product repositories, Codex operates on an instance created from `starter/product/`, resolves the pinned method through the CLI runtime, and writes framework documentation artifacts in `product/`.
 
-Spec Framework activates only when the current repository contains a valid `product/.product/framework.json` with `framework: spec-framework`, a concrete version, and `activation.mode: manifest-only`. A user mention, keyword, prompt, or similarly named file does not activate it. A single user-scoped, namespaced dispatcher resolves specialized skills from the versioned cache; specialized skill trees are not copied into adopter repositories.
+Spec Framework activates only when the current repository contains a valid `product/.product/framework.json` with `framework: spec-framework`, a concrete version, and `activation.mode: manifest-only`. A user mention, keyword, prompt, or similarly named file does not activate it. A single user-scoped, namespaced dispatcher resolves skills from the versioned cache; specialized skill trees are not copied into adopter repositories. `init` and `upgrade` install or refresh that dispatcher for every selected agent. After activation, the dispatcher resolves `framework-guide` first unless it has a verified direct route from current CLI guidance or an explicit human request that names both specialist and concrete scope; persisted runtime state must first be revalidated through the CLI.
 
 In a newly initialized product repository, read `product/BOOTSTRAP.md` first. It explains the ordered foundation gates and distinguishes a structurally valid starter from a product that is ready for implementation.
 

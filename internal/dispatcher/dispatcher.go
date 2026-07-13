@@ -8,7 +8,7 @@ import (
 
 const skill = `---
 name: spec-framework
-description: Resolve the pinned Spec Framework contracts for the current repository. Activate only when product/.product/framework.json exists and is valid.
+description: Resolve the pinned Spec Framework contracts for the current repository through Guide-first dispatch. Activate only when product/.product/framework.json exists and is valid.
 ---
 
 # Spec Framework Dispatcher
@@ -21,7 +21,16 @@ Do not activate from a user mention, keyword, prompt, or similarly named file. I
 
 ## Resolution
 
-Run spec-framework skill path <skill-name> from the repository root. Read the returned versioned SKILL.md completely, then follow that contract. The CLI resolves the version pinned by the product manifest from the external user cache.
+Use Guide-first dispatch for framework-governed product operations.
+
+Resolve framework-guide first unless one of these verified direct routes exists:
+
+- current-session spec-framework guide, dashboard, status, or next output names the workspace, concrete feature or use-case scope, current gate, and owner skill;
+- the human explicitly names both the specialist and the concrete artifact or workspace scope.
+
+A persisted handoff or checkpoint identifies where to resume but is not direct-route evidence by itself. Revalidate it with spec-framework dashboard, status, next, or guide. A skill name, keyword, or remembered chat instruction without concrete scope is only a hint. Resolve framework-guide first. Before following a direct route, validate the manifest, scope, ownership, gate, and staleness against current mechanical state. Return to framework-guide when the route is missing, stale, ambiguous, or conflicting.
+
+Run spec-framework skill path <skill-name> from the repository root to resolve the selected contract. Read the returned versioned SKILL.md completely, then follow it. The CLI resolves the version pinned by the product manifest from the external user cache. Direct diagnostic CLI commands remain available; dispatch never grants approval or mutation authority.
 `
 
 func Install(agent string) (string, error) {
