@@ -419,10 +419,14 @@ func TestEngineeringSystemApprovalIsAtomicAndComposite(t *testing.T) {
 		t.Fatal(err)
 	}
 	files := map[string]string{
-		"context.md":              "---\nid: ENGSYS-001\nstatus: draft\nversion: 1.0.0\norigin_mode: generate\n---\n",
-		"engineering-system.md":   "| Field | Value |\n| --- | --- |\n| ID | `ENGSYS-001` |\n| Status | `draft` |\n| Version | `1.0.0` |\n",
-		"engineering-system.yaml": "schema_version: 1\nid: ENGSYS-001\nstatus: draft\nversion: 1.0.0\norigin_mode: generate\nscope: product\nareas:\n  modules:\n    contract: architecture/modules.md\n    maturity: baseline\n    evidence: []\n",
-		"architecture/modules.md": "# Modules\n",
+		"context.md":                  "---\nid: ENGSYS-001\nstatus: draft\nversion: 1.0.0\norigin_mode: generate\n---\n",
+		"engineering-system.md":       "| Field | Value |\n| --- | --- |\n| ID | `ENGSYS-001` |\n| Status | `draft` |\n| Version | `1.0.0` |\n",
+		"engineering-system.yaml":     "schema_version: 1\nid: ENGSYS-001\nstatus: draft\nversion: 1.0.0\norigin_mode: generate\nscope: product\nareas:\n  modules:\n    contract: architecture/modules.md\n    maturity: baseline\n    evidence: []\n  quality:\n    contract: quality/quality-system.md\n    maturity: baseline\n    evidence: []\n",
+		"architecture/modules.md":     "# Modules\n",
+		"quality/quality-system.md":   "| Field | Value |\n| --- | --- |\n| Engineering System | `ENGSYS-001 @ 1.0.0` |\n| Status | `draft` |\n\n| Area | Policy | Evidence | Maturity |\n| --- | --- | --- | --- |\n| Behavioral | strategy | none | baseline |\n| Accessibility | strategy | none | baseline |\n| Security and privacy | strategy | none | baseline |\n| Performance and reliability | model | none | baseline |\n| Observability | model | none | baseline |\n",
+		"quality/quality-system.yaml": "schema_version: 1\nengineering_system: ENGSYS-001\nversion: 1.0.0\nstatus: draft\nareas:\n  behavioral: {maturity: baseline, policy: test-strategy.md}\n  accessibility: {maturity: baseline, policy: test-strategy.md}\n  security_privacy: {maturity: baseline, policy: test-strategy.md, delegated_gate: security-review}\n  performance_reliability: {maturity: baseline, policy: quality-model.md}\n  observability: {maturity: baseline, policy: quality-model.md}\ngate_source: knowledge/conventions/gates.md\nexceptions:\n  require_owner: true\n  require_residual_risk: true\n  require_expiry_or_review: true\n",
+		"quality/test-strategy.md":    "# Strategy\n",
+		"quality/quality-model.md":    "# Model\n",
 	}
 	for name, body := range files {
 		path := filepath.Join(engineering, filepath.FromSlash(name))
@@ -438,10 +442,21 @@ func TestEngineeringSystemApprovalIsAtomicAndComposite(t *testing.T) {
 		t.Fatal(err)
 	}
 	canonical := filepath.Join(engineering, "engineering-system.md")
+	qualityCatalogPath := filepath.Join(engineering, "quality", "quality-system.yaml")
+	qualityCatalogData, _ := os.ReadFile(qualityCatalogPath)
+	if err := os.Remove(qualityCatalogPath); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := PreviewApproval(root, canonical, "approved"); err == nil {
+		t.Fatal("approval preview accepted a missing configured Quality System catalog")
+	}
+	if err := os.WriteFile(qualityCatalogPath, qualityCatalogData, 0o644); err != nil {
+		t.Fatal(err)
+	}
 	if _, err := Approve(root, canonical, "approved", "Human", "Reviewed composite system"); err != nil {
 		t.Fatal(err)
 	}
-	for _, name := range []string{"context.md", "engineering-system.md", "engineering-system.yaml"} {
+	for _, name := range []string{"context.md", "engineering-system.md", "engineering-system.yaml", "quality/quality-system.md", "quality/quality-system.yaml"} {
 		data, _ := os.ReadFile(filepath.Join(engineering, name))
 		if !strings.Contains(string(data), "approved") {
 			t.Fatalf("%s was not synchronized: %s", name, data)

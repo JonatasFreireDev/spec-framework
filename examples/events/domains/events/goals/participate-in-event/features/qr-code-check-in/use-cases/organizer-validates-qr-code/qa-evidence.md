@@ -9,6 +9,8 @@
 | Source use case | UC-002 |
 | Source specification | SPEC-002 |
 | Source tests | TEST-002 |
+| Engineering System | `ENGSYS-EVENTS-001 @ 0.1.0` |
+| Quality policy | [Engineering Quality System](../../../../../../../../engineering/quality/quality-system.md) |
 | Owner skill | QA AI |
 | Next skill | Security Review AI |
 
@@ -67,6 +69,14 @@ flowchart LR
 | CI URL | N/A until validation |
 | Screenshots | N/A until validation |
 | Environment | N/A until validation |
+
+## Quality System Conformity
+
+| Check | Evidence | Result | Notes |
+| --- | --- | --- | --- |
+| Pinned policy | [tests.md](tests.md) | passed | Draft plan pins the fixture baseline. |
+| Environment and test data policy | No executable environment | blocked | Synthetic data is planned but cannot be executed. |
+| Flaky tests and exceptions | No executable tests or accepted exceptions | not run | Missing runtime evidence remains a blocker. |
 
 ## Acceptance Evidence Matrix
 

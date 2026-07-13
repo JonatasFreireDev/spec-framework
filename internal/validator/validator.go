@@ -228,6 +228,114 @@ func validateEngineeringSystem(s Snapshot) []Diagnostic {
 			}
 		}
 	}
+	if configured && inspection.QualitySystem {
+		expected := inspection.ID + " @ " + inspection.Version
+		knownExceptions := map[string]bool{}
+		for _, id := range inspection.QualityExceptions {
+			knownExceptions[id] = true
+		}
+		knownDimensions := map[string][]string{
+			"environments": inspection.QualityEnvironments,
+			"test data":    inspection.QualityTestDataClasses,
+			"platforms":    inspection.QualityPlatforms,
+		}
+		for rel, tests := range s.Text {
+			if !strings.HasPrefix(rel, "domains/") || !strings.HasSuffix(rel, "/tests.md") {
+				continue
+			}
+			status := markdownStatus(tests)
+			if status == "draft" {
+				continue
+			}
+			fields := tableFields(tests)
+			pin := strings.TrimSpace(fields["engineering system"])
+			if pin != expected {
+				out = append(out, Diagnostic{Error, "quality-system-consumer", rel, "Tests do not pin the configured Engineering Quality System.", "Set Engineering System to " + expected + "."})
+			}
+			if !strings.Contains(strings.ToLower(tests), "deviations or exceptions") {
+				out = append(out, Diagnostic{Error, "quality-system-consumer", rel, "Tests do not declare Quality System deviations or exceptions.", "Record None or reference a governed quality exception."})
+			}
+			for _, field := range []string{"quality policy", "applicable risks"} {
+				if !validatorMeaningful(fields[field]) {
+					out = append(out, Diagnostic{Error, "quality-system-consumer", rel, "Tests have no meaningful " + field + " value.", "Apply the configured Quality System policy explicitly."})
+				}
+			}
+			if !strings.Contains(filepath.ToSlash(strings.ToLower(fields["quality policy"])), "engineering/quality/quality-system.md") {
+				out = append(out, Diagnostic{Error, "quality-system-consumer", rel, "Tests do not reference the canonical Engineering Quality System policy.", "Set Quality policy to engineering/quality/quality-system.md."})
+			}
+			for field, allowed := range knownDimensions {
+				declared := declaredValues(fields[field])
+				if len(declared) == 0 {
+					out = append(out, Diagnostic{Error, "quality-system-consumer", rel, "Tests have no declared " + field + " values.", "Select values configured by the Engineering Quality System."})
+					continue
+				}
+				allowedSet := map[string]bool{}
+				for _, value := range allowed {
+					allowedSet[value] = true
+				}
+				for _, value := range declared {
+					if !allowedSet[value] {
+						out = append(out, Diagnostic{Error, "quality-system-consumer", rel, "Tests reference unconfigured " + field + " value " + value + ".", "Use a value from quality-system.yaml."})
+					}
+				}
+			}
+			deviations := strings.ToLower(strings.Trim(strings.TrimSpace(fields["deviations or exceptions"]), "`[]"))
+			exceptions := uniqueStrings(regexp.MustCompile(`\bQEX-[A-Z0-9-]+\b`).FindAllString(fields["deviations or exceptions"], -1))
+			if deviations != "none" && len(exceptions) == 0 {
+				out = append(out, Diagnostic{Error, "quality-system-consumer", rel, "Tests must declare None or at least one QEX-* exception.", "Use None when no deviation applies."})
+			}
+			for _, exception := range exceptions {
+				if !knownExceptions[exception] {
+					out = append(out, Diagnostic{Error, "quality-system-consumer", rel, "Tests reference unavailable quality exception " + exception + ".", "Use an open, unexpired, in-scope exception or remove the reference."})
+					continue
+				}
+				scope := filepath.ToSlash(inspection.QualityExceptionScopes[exception])
+				if scope != "product" && !strings.HasPrefix(rel, strings.TrimSuffix(scope, "/")+"/") {
+					out = append(out, Diagnostic{Error, "quality-system-consumer", rel, "Quality exception " + exception + " does not apply to this use case.", "Use an exception whose scope contains this tests.md path."})
+				}
+			}
+			base := filepath.ToSlash(filepath.Dir(rel))
+			contracts := ""
+			for path, body := range s.Text {
+				if strings.HasPrefix(path, base+"/contracts/") {
+					contracts += "\n" + body
+				}
+			}
+			traceability := markdownTableRows(tests, "Acceptance Traceability")
+			for _, acceptance := range uniqueStrings(regexp.MustCompile(`\bAC-[A-Z0-9-]+\b`).FindAllString(contracts, -1)) {
+				var mapped map[string]string
+				for _, row := range traceability {
+					if containsExactID(row["acceptance criterion"], acceptance) {
+						mapped = row
+						break
+					}
+				}
+				if mapped == nil {
+					out = append(out, Diagnostic{Error, "quality-system-consumer", rel, "Tests do not structurally map acceptance criterion " + acceptance + ".", "Add it to the Acceptance Traceability table."})
+					continue
+				}
+				for _, column := range []string{"risk", "validation method", "test level", "evidence", "owner"} {
+					if !validatorMeaningful(mapped[column]) {
+						out = append(out, Diagnostic{Error, "quality-system-consumer", rel, "Acceptance criterion " + acceptance + " has no meaningful " + column + ".", "Complete every required Acceptance Traceability column."})
+					}
+				}
+			}
+		}
+		for rel, qa := range s.Text {
+			if !strings.HasPrefix(rel, "domains/") || !strings.HasSuffix(rel, "/qa-evidence.md") || !requiresApproval(markdownStatus(qa)) {
+				continue
+			}
+			fields := tableFields(qa)
+			if strings.TrimSpace(fields["engineering system"]) != expected {
+				out = append(out, Diagnostic{Error, "quality-system-qa", rel, "Approved QA evidence does not pin the configured Engineering Quality System.", "Set Engineering System to " + expected + " and re-run QA."})
+			}
+			for _, check := range []string{"Quality System conformity", "Environment and test data policy", "Flaky test and exception policy"} {
+				if !qualityCheckPassed(qa, check) {
+					out = append(out, Diagnostic{Error, "quality-system-qa", rel, "Approved QA evidence has no passed " + check + " check.", "Run and record the check against the pinned policy."})
+				}
+			}
+		}
+	}
 	for rel, review := range s.Text {
 		if !strings.HasPrefix(rel, "domains/") || !strings.HasSuffix(rel, "/engineering-review.md") {
 			continue
@@ -243,6 +351,110 @@ func validateEngineeringSystem(s Snapshot) []Diagnostic {
 		}
 	}
 	return out
+}
+
+func qualityCheckPassed(text, label string) bool {
+	pattern := regexp.MustCompile(`(?mi)^\|\s*` + regexp.QuoteMeta(label) + `\s*\|[^|]*\|\s*passed\s*\|`)
+	return pattern.MatchString(text)
+}
+
+func declaredValues(value string) []string {
+	value = strings.Trim(strings.TrimSpace(value), "`[]")
+	parts := strings.FieldsFunc(value, func(r rune) bool { return r == ',' || r == ';' })
+	seen := map[string]bool{}
+	var out []string
+	for _, part := range parts {
+		part = strings.ToLower(strings.TrimSpace(part))
+		if part != "" && !seen[part] {
+			seen[part] = true
+			out = append(out, part)
+		}
+	}
+	return out
+}
+
+func markdownTableRows(text, heading string) []map[string]string {
+	lines := strings.Split(strings.ReplaceAll(text, "\r\n", "\n"), "\n")
+	active := false
+	var headers []string
+	var rows []map[string]string
+	separatorPattern := regexp.MustCompile(`^:?-{3,}:?$`)
+	for _, line := range lines {
+		trimmed := strings.TrimSpace(line)
+		if strings.HasPrefix(trimmed, "## ") {
+			if active {
+				break
+			}
+			active = strings.EqualFold(strings.TrimSpace(strings.TrimPrefix(trimmed, "## ")), heading)
+			continue
+		}
+		if !active || !strings.HasPrefix(trimmed, "|") || !strings.HasSuffix(trimmed, "|") {
+			continue
+		}
+		cells := splitMarkdownRow(strings.Trim(trimmed, "|"))
+		for index := range cells {
+			cells[index] = strings.Trim(strings.TrimSpace(cells[index]), "`[]")
+		}
+		separator := true
+		for _, cell := range cells {
+			separator = separator && separatorPattern.MatchString(cell)
+		}
+		if separator {
+			continue
+		}
+		if headers == nil {
+			for _, cell := range cells {
+				headers = append(headers, strings.ToLower(cell))
+			}
+			continue
+		}
+		if len(cells) != len(headers) {
+			continue
+		}
+		row := map[string]string{}
+		for index, header := range headers {
+			row[header] = cells[index]
+		}
+		rows = append(rows, row)
+	}
+	return rows
+}
+
+func splitMarkdownRow(line string) []string {
+	var cells []string
+	var current strings.Builder
+	escaped := false
+	for _, r := range line {
+		if escaped {
+			current.WriteRune(r)
+			escaped = false
+			continue
+		}
+		if r == '\\' {
+			escaped = true
+			continue
+		}
+		if r == '|' {
+			cells = append(cells, current.String())
+			current.Reset()
+			continue
+		}
+		current.WriteRune(r)
+	}
+	if escaped {
+		current.WriteRune('\\')
+	}
+	cells = append(cells, current.String())
+	return cells
+}
+
+func containsExactID(value, expected string) bool {
+	for _, id := range regexp.MustCompile(`\bAC-[A-Z0-9-]+\b`).FindAllString(value, -1) {
+		if id == expected {
+			return true
+		}
+	}
+	return false
 }
 
 func currentApproval(s Snapshot, id, path, status string) bool {

@@ -9,6 +9,7 @@ import (
 	"regexp"
 	"sort"
 	"strings"
+	"time"
 
 	"go.yaml.in/yaml/v3"
 )
@@ -40,16 +41,22 @@ type Area struct {
 }
 
 type Inspection struct {
-	ID               string   `json:"id"`
-	Status           string   `json:"status"`
-	Version          string   `json:"version"`
-	OriginMode       string   `json:"originMode"`
-	Scope            string   `json:"scope"`
-	Areas            []Area   `json:"areas"`
-	Decisions        int      `json:"decisions"`
-	Standards        int      `json:"standards"`
-	FitnessFunctions int      `json:"fitnessFunctions"`
-	Blockers         []string `json:"blockers,omitempty"`
+	ID                     string            `json:"id"`
+	Status                 string            `json:"status"`
+	Version                string            `json:"version"`
+	OriginMode             string            `json:"originMode"`
+	Scope                  string            `json:"scope"`
+	Areas                  []Area            `json:"areas"`
+	Decisions              int               `json:"decisions"`
+	Standards              int               `json:"standards"`
+	FitnessFunctions       int               `json:"fitnessFunctions"`
+	QualitySystem          bool              `json:"qualitySystem"`
+	QualityExceptions      []string          `json:"qualityExceptions,omitempty"`
+	QualityExceptionScopes map[string]string `json:"qualityExceptionScopes,omitempty"`
+	QualityEnvironments    []string          `json:"qualityEnvironments,omitempty"`
+	QualityTestDataClasses []string          `json:"qualityTestDataClasses,omitempty"`
+	QualityPlatforms       []string          `json:"qualityPlatforms,omitempty"`
+	Blockers               []string          `json:"blockers,omitempty"`
 }
 
 type contextDocument struct {
@@ -77,6 +84,45 @@ type catalogArea struct {
 	Contract string   `yaml:"contract"`
 	Maturity string   `yaml:"maturity"`
 	Evidence []string `yaml:"evidence"`
+}
+
+type qualityCatalogDocument struct {
+	SchemaVersion     int                           `yaml:"schema_version"`
+	EngineeringSystem string                        `yaml:"engineering_system"`
+	Version           string                        `yaml:"version"`
+	Status            string                        `yaml:"status"`
+	Areas             map[string]qualityCatalogArea `yaml:"areas"`
+	GateSource        string                        `yaml:"gate_source"`
+	Exceptions        qualityExceptionPolicy        `yaml:"exceptions"`
+	Environments      []string                      `yaml:"environments"`
+	TestDataClasses   []string                      `yaml:"test_data_classes"`
+	Platforms         []string                      `yaml:"platforms"`
+}
+
+type qualityCatalogArea struct {
+	Maturity         string   `yaml:"maturity"`
+	Policy           string   `yaml:"policy"`
+	DelegatedGate    string   `yaml:"delegated_gate"`
+	RequiredEvidence []string `yaml:"required_evidence"`
+}
+
+type qualityExceptionPolicy struct {
+	RequireOwner          bool                     `yaml:"require_owner"`
+	RequireResidualRisk   bool                     `yaml:"require_residual_risk"`
+	RequireExpiryOrReview bool                     `yaml:"require_expiry_or_review"`
+	Records               []qualityExceptionRecord `yaml:"records"`
+}
+
+type qualityExceptionRecord struct {
+	ID             string `yaml:"id"`
+	Scope          string `yaml:"scope"`
+	Owner          string `yaml:"owner"`
+	Rationale      string `yaml:"rationale"`
+	ResidualRisk   string `yaml:"residual_risk"`
+	Mitigation     string `yaml:"mitigation"`
+	ExpiryOrReview string `yaml:"expiry_or_review"`
+	ReentryGate    string `yaml:"reentry_gate"`
+	Status         string `yaml:"status"`
 }
 
 func Inspect(root string) (Inspection, error) {
@@ -159,17 +205,255 @@ func Inspect(root string) (Inspection, error) {
 		if !allowedMaturity[area.Maturity] {
 			i.Blockers = append(i.Blockers, fmt.Sprintf("area %s has invalid maturity %s", name, area.Maturity))
 		}
-		if _, err := os.Stat(filepath.Join(dir, filepath.FromSlash(area.Contract))); err != nil {
+		contractPath := filepath.Clean(filepath.Join(dir, filepath.FromSlash(area.Contract)))
+		relative, relErr := filepath.Rel(dir, contractPath)
+		if relErr != nil || relative == ".." || strings.HasPrefix(relative, ".."+string(filepath.Separator)) || filepath.IsAbs(filepath.FromSlash(area.Contract)) {
+			i.Blockers = append(i.Blockers, fmt.Sprintf("area %s contract %s escapes engineering", name, area.Contract))
+		} else if _, err := os.Stat(contractPath); err != nil {
 			i.Blockers = append(i.Blockers, fmt.Sprintf("area %s contract %s is missing", name, area.Contract))
 		}
 		if area.Maturity != "baseline" && area.Evidence == 0 {
 			i.Blockers = append(i.Blockers, fmt.Sprintf("area %s maturity %s requires evidence", name, area.Maturity))
 		}
 	}
+	if quality, exists := catalog.Areas["quality"]; exists {
+		switch filepath.ToSlash(quality.Contract) {
+		case "quality/quality-system.md":
+			i.QualitySystem = true
+			i.Blockers = append(i.Blockers, validateQualitySystem(dir, i)...)
+			i.QualityExceptions, i.QualityExceptionScopes, i.Blockers = inspectQualityExceptions(dir, i.Blockers)
+			i.QualityEnvironments, i.QualityTestDataClasses, i.QualityPlatforms = qualityDimensions(dir)
+		case "quality/quality-model.md":
+			// Legacy contract remains valid until explicit migration.
+		default:
+			i.Blockers = append(i.Blockers, "quality area contract must be quality/quality-system.md or legacy quality/quality-model.md")
+		}
+	}
 	sort.Slice(i.Areas, func(left, right int) bool { return i.Areas[left].Name < i.Areas[right].Name })
 	i.Blockers = unique(i.Blockers)
 	sort.Strings(i.Blockers)
 	return i, nil
+}
+
+func inspectQualityExceptions(engineeringDir string, blockers []string) ([]string, map[string]string, []string) {
+	data, err := os.ReadFile(filepath.Join(engineeringDir, "quality", "quality-system.yaml"))
+	if err != nil {
+		return nil, nil, blockers
+	}
+	var catalog qualityCatalogDocument
+	if yaml.Unmarshal(data, &catalog) != nil {
+		return nil, nil, blockers
+	}
+	seen := map[string]bool{}
+	scopes := map[string]string{}
+	var ids []string
+	today := time.Now().UTC().Truncate(24 * time.Hour)
+	for _, record := range catalog.Exceptions.Records {
+		if !regexp.MustCompile(`^QEX-[A-Z0-9-]+$`).MatchString(record.ID) {
+			blockers = append(blockers, "quality exception id "+record.ID+" is invalid")
+			continue
+		}
+		if seen[record.ID] {
+			blockers = append(blockers, "quality exception "+record.ID+" is duplicated")
+			continue
+		}
+		seen[record.ID] = true
+		if strings.TrimSpace(record.Scope) == "" || strings.TrimSpace(record.Owner) == "" || strings.TrimSpace(record.Rationale) == "" || strings.TrimSpace(record.ResidualRisk) == "" || strings.TrimSpace(record.Mitigation) == "" || strings.TrimSpace(record.ExpiryOrReview) == "" || strings.TrimSpace(record.ReentryGate) == "" {
+			blockers = append(blockers, "quality exception "+record.ID+" lacks scope, owner, rationale, residual risk, mitigation, expiry/review, or re-entry gate")
+		}
+		if !validExceptionScope(record.Scope) {
+			blockers = append(blockers, "quality exception "+record.ID+" scope must be product or a safe domains/ path")
+		}
+		if !oneOf(record.Status, "open", "closed") {
+			blockers = append(blockers, "quality exception "+record.ID+" has invalid status "+record.Status)
+		}
+		expires, dateErr := time.Parse("2006-01-02", record.ExpiryOrReview)
+		if dateErr != nil {
+			blockers = append(blockers, "quality exception "+record.ID+" expiry_or_review must use YYYY-MM-DD")
+		}
+		if record.Status == "open" && dateErr == nil && !expires.After(today) {
+			blockers = append(blockers, "quality exception "+record.ID+" is open but expired or due for review")
+		}
+		if record.Status == "open" && dateErr == nil && expires.After(today) && validExceptionScope(record.Scope) {
+			ids = append(ids, record.ID)
+			scopes[record.ID] = filepath.ToSlash(strings.TrimSpace(record.Scope))
+		}
+	}
+	sort.Strings(ids)
+	return ids, scopes, blockers
+}
+
+func validExceptionScope(scope string) bool {
+	scope = filepath.ToSlash(strings.TrimSpace(scope))
+	if scope == "product" {
+		return true
+	}
+	clean := filepath.ToSlash(filepath.Clean(filepath.FromSlash(scope)))
+	return strings.HasPrefix(clean, "domains/") && clean != "domains" && !strings.Contains(clean, "../") && !filepath.IsAbs(filepath.FromSlash(scope))
+}
+
+func qualityDimensions(engineeringDir string) ([]string, []string, []string) {
+	data, err := os.ReadFile(filepath.Join(engineeringDir, "quality", "quality-system.yaml"))
+	if err != nil {
+		return nil, nil, nil
+	}
+	var catalog qualityCatalogDocument
+	if yaml.Unmarshal(data, &catalog) != nil {
+		return nil, nil, nil
+	}
+	return normalizedValues(catalog.Environments), normalizedValues(catalog.TestDataClasses), normalizedValues(catalog.Platforms)
+}
+
+func normalizedValues(values []string) []string {
+	seen := map[string]bool{}
+	var out []string
+	for _, value := range values {
+		value = strings.ToLower(strings.TrimSpace(value))
+		if value != "" && !seen[value] {
+			seen[value] = true
+			out = append(out, value)
+		}
+	}
+	sort.Strings(out)
+	return out
+}
+
+func validateQualitySystem(engineeringDir string, inspection Inspection) []string {
+	humanData, err := os.ReadFile(filepath.Join(engineeringDir, "quality", "quality-system.md"))
+	if err != nil {
+		return []string{"quality system human contract quality/quality-system.md is missing"}
+	}
+	human := markdownSnapshot(string(humanData))
+	humanMaturity := qualityHumanMaturity(string(humanData))
+	var blockers []string
+	if human["status"] != inspection.Status {
+		blockers = append(blockers, "quality system human contract status must match the Engineering System status")
+	}
+	if human["engineering system"] != inspection.ID+" @ "+inspection.Version {
+		blockers = append(blockers, "quality system human contract must pin the Engineering System id and version")
+	}
+	data, err := os.ReadFile(filepath.Join(engineeringDir, "quality", "quality-system.yaml"))
+	if err != nil {
+		return append(blockers, "quality system mechanical catalog quality/quality-system.yaml is missing")
+	}
+	var catalog qualityCatalogDocument
+	if err := yaml.Unmarshal(data, &catalog); err != nil {
+		return []string{"quality system mechanical catalog is invalid YAML"}
+	}
+	if catalog.SchemaVersion != 1 {
+		blockers = append(blockers, "quality system schema_version must be 1")
+	}
+	if catalog.EngineeringSystem != inspection.ID {
+		blockers = append(blockers, "quality system engineering_system must match the Engineering System id")
+	}
+	if catalog.Version != inspection.Version {
+		blockers = append(blockers, "quality system version must match the Engineering System version")
+	}
+	if catalog.Status != inspection.Status {
+		blockers = append(blockers, "quality system status must match the Engineering System status")
+	}
+	if filepath.ToSlash(catalog.GateSource) != "knowledge/conventions/gates.md" {
+		blockers = append(blockers, "quality system gate_source must be knowledge/conventions/gates.md")
+	}
+	for _, required := range []string{"behavioral", "accessibility", "security_privacy", "performance_reliability", "observability"} {
+		area, exists := catalog.Areas[required]
+		if !exists {
+			blockers = append(blockers, "quality system area "+required+" is missing")
+			continue
+		}
+		if !allowedMaturity[area.Maturity] {
+			blockers = append(blockers, "quality system area "+required+" has invalid maturity "+area.Maturity)
+		}
+		if humanMaturity[required] == "" {
+			blockers = append(blockers, "quality system human contract has no "+required+" maturity")
+		} else if humanMaturity[required] != area.Maturity {
+			blockers = append(blockers, "quality system human and mechanical maturity differ for "+required)
+		}
+		if area.Policy == "" {
+			blockers = append(blockers, "quality system area "+required+" has no policy")
+		} else {
+			qualityDir := filepath.Join(engineeringDir, "quality")
+			policyPath := filepath.Clean(filepath.Join(qualityDir, filepath.FromSlash(area.Policy)))
+			relative, relErr := filepath.Rel(qualityDir, policyPath)
+			if relErr != nil || relative == ".." || strings.HasPrefix(relative, ".."+string(filepath.Separator)) || filepath.IsAbs(area.Policy) {
+				blockers = append(blockers, "quality system policy "+area.Policy+" escapes engineering/quality")
+			} else if _, err := os.Stat(policyPath); err != nil {
+				blockers = append(blockers, "quality system policy "+area.Policy+" is missing")
+			}
+		}
+		if required == "security_privacy" && area.DelegatedGate != "security-review" {
+			blockers = append(blockers, "quality system security_privacy delegated_gate must be security-review")
+		}
+		if required != "security_privacy" && area.DelegatedGate != "" {
+			blockers = append(blockers, "quality system area "+required+" has unsupported delegated_gate "+area.DelegatedGate)
+		}
+		if area.Maturity != "baseline" && len(area.RequiredEvidence) == 0 {
+			blockers = append(blockers, "quality system area "+required+" maturity "+area.Maturity+" requires evidence")
+		}
+		for _, evidence := range area.RequiredEvidence {
+			if !validEvidenceReference(filepath.Dir(engineeringDir), evidence) {
+				blockers = append(blockers, "quality system area "+required+" has invalid or missing evidence "+evidence)
+			}
+		}
+	}
+	for name, values := range map[string][]string{"environments": catalog.Environments, "test_data_classes": catalog.TestDataClasses, "platforms": catalog.Platforms} {
+		seen := map[string]bool{}
+		for _, value := range values {
+			value = strings.ToLower(strings.TrimSpace(value))
+			if value == "" || seen[value] {
+				blockers = append(blockers, "quality system "+name+" contains an empty or duplicate value")
+			}
+			seen[value] = true
+		}
+	}
+	if !catalog.Exceptions.RequireOwner || !catalog.Exceptions.RequireResidualRisk || !catalog.Exceptions.RequireExpiryOrReview {
+		blockers = append(blockers, "quality system exceptions must require owner, residual risk, and expiry or review")
+	}
+	return blockers
+}
+
+func qualityHumanMaturity(text string) map[string]string {
+	aliases := map[string]string{
+		"behavioral": "behavioral", "accessibility": "accessibility", "security and privacy": "security_privacy",
+		"performance and reliability": "performance_reliability", "observability": "observability",
+	}
+	out := map[string]string{}
+	for _, line := range strings.Split(strings.ReplaceAll(text, "\r\n", "\n"), "\n") {
+		line = strings.TrimSpace(line)
+		if !strings.HasPrefix(line, "|") || !strings.HasSuffix(line, "|") {
+			continue
+		}
+		cells := strings.Split(strings.Trim(line, "|"), "|")
+		if len(cells) < 4 {
+			continue
+		}
+		name := strings.ToLower(strings.TrimSpace(cells[0]))
+		if key := aliases[name]; key != "" {
+			out[key] = strings.ToLower(strings.Trim(strings.TrimSpace(cells[len(cells)-1]), "`"))
+		}
+	}
+	return out
+}
+
+func validEvidenceReference(productRoot, evidence string) bool {
+	evidence = strings.TrimSpace(evidence)
+	if evidence == "" {
+		return false
+	}
+	lower := strings.ToLower(evidence)
+	if strings.HasPrefix(lower, "https://") || strings.HasPrefix(lower, "http://") || strings.HasPrefix(lower, "gate:") || strings.HasPrefix(lower, "ci:") || strings.HasPrefix(lower, "command:") {
+		return true
+	}
+	if filepath.IsAbs(filepath.FromSlash(evidence)) {
+		return false
+	}
+	path := filepath.Clean(filepath.Join(productRoot, filepath.FromSlash(evidence)))
+	relative, err := filepath.Rel(productRoot, path)
+	if err != nil || relative == ".." || strings.HasPrefix(relative, ".."+string(filepath.Separator)) {
+		return false
+	}
+	info, err := os.Stat(path)
+	return err == nil && !info.IsDir()
 }
 
 func CompositeHash(root string, overrides map[string][]byte) (string, error) {
@@ -236,6 +520,24 @@ func SynchronizeStatus(contextText string, catalogData []byte, status string) (s
 	return updatedContext, updatedCatalog, err
 }
 
+func SynchronizeQualityStatus(catalogData []byte, status string) ([]byte, error) {
+	var document yaml.Node
+	if err := yaml.Unmarshal(catalogData, &document); err != nil {
+		return nil, err
+	}
+	if len(document.Content) == 0 || document.Content[0].Kind != yaml.MappingNode {
+		return nil, fmt.Errorf("quality system catalog must be a YAML mapping")
+	}
+	mapping := document.Content[0]
+	for index := 0; index+1 < len(mapping.Content); index += 2 {
+		if mapping.Content[index].Value == "status" {
+			mapping.Content[index+1].Value = status
+			return yaml.Marshal(&document)
+		}
+	}
+	return nil, fmt.Errorf("quality system catalog has no status field")
+}
+
 func Validate(root string) (Inspection, error) { return Inspect(root) }
 
 func Migrate(root string, dryRun bool) ([]string, error) {
@@ -252,29 +554,140 @@ func Migrate(root string, dryRun bool) ([]string, error) {
 		return nil, fmt.Errorf("engineering-system.yaml must be a YAML mapping")
 	}
 	mapping := document.Content[0]
+	var changes []string
+	hasSchema := false
 	for index := 0; index+1 < len(mapping.Content); index += 2 {
 		if mapping.Content[index].Value == "schema_version" {
+			hasSchema = true
 			if mapping.Content[index+1].Value != "1" {
 				return nil, fmt.Errorf("unsupported schema_version %s", mapping.Content[index+1].Value)
 			}
-			return []string{"Engineering System catalog already uses schema_version 1"}, nil
 		}
 	}
-	change := "ADD engineering/engineering-system.yaml schema_version: 1"
-	if dryRun {
-		return []string{change}, nil
+	if !hasSchema {
+		key := &yaml.Node{Kind: yaml.ScalarNode, Tag: "!!str", Value: "schema_version"}
+		value := &yaml.Node{Kind: yaml.ScalarNode, Tag: "!!int", Value: "1"}
+		mapping.Content = append([]*yaml.Node{key, value}, mapping.Content...)
+		changes = append(changes, "ADD engineering/engineering-system.yaml schema_version: 1")
 	}
-	key := &yaml.Node{Kind: yaml.ScalarNode, Tag: "!!str", Value: "schema_version"}
-	value := &yaml.Node{Kind: yaml.ScalarNode, Tag: "!!int", Value: "1"}
-	mapping.Content = append([]*yaml.Node{key, value}, mapping.Content...)
+	qualityMigration := false
+	if areas := mappingNodeValue(mapping, "areas"); areas != nil {
+		if quality := mappingNodeValue(areas, "quality"); quality != nil {
+			if contract := mappingNodeValue(quality, "contract"); contract != nil && filepath.ToSlash(contract.Value) == "quality/quality-model.md" {
+				contract.Value = "quality/quality-system.md"
+				qualityMigration = true
+				changes = append(changes,
+					"UPDATE engineering/engineering-system.yaml quality contract",
+					"ADD engineering/quality/quality-system.md",
+					"ADD engineering/quality/quality-system.yaml",
+					"ADD engineering/quality/test-strategy.md",
+				)
+			}
+		}
+	}
+	if len(changes) == 0 {
+		return []string{"Engineering System catalog already uses schema_version 1 and requires no quality migration"}, nil
+	}
+	if dryRun {
+		return changes, nil
+	}
 	updated, err := yaml.Marshal(&document)
 	if err != nil {
 		return nil, err
 	}
-	if err := os.WriteFile(path, updated, 0o644); err != nil {
+	var generated map[string][]byte
+	if qualityMigration {
+		var catalog catalogDocument
+		if err := yaml.Unmarshal(updated, &catalog); err != nil {
+			return nil, err
+		}
+		generated = qualityMigrationFiles(root, catalog)
+	}
+	if err := applyMigration(path, data, updated, generated); err != nil {
 		return nil, err
 	}
-	return []string{change}, nil
+	return changes, nil
+}
+
+func mappingNodeValue(mapping *yaml.Node, key string) *yaml.Node {
+	if mapping == nil || mapping.Kind != yaml.MappingNode {
+		return nil
+	}
+	for index := 0; index+1 < len(mapping.Content); index += 2 {
+		if mapping.Content[index].Value == key {
+			return mapping.Content[index+1]
+		}
+	}
+	return nil
+}
+
+func qualityMigrationFiles(root string, catalog catalogDocument) map[string][]byte {
+	dir := filepath.Join(root, "engineering", "quality")
+	files := map[string]string{
+		"quality-system.md":   fmt.Sprintf("# Engineering Quality System\n\n## Snapshot\n\n| Field | Value |\n| --- | --- |\n| Engineering System | `%s @ %s` |\n| Status | `%s` |\n| Mechanical catalog | [quality-system.yaml](quality-system.yaml) |\n| Quality model | [quality-model.md](quality-model.md) |\n| Test strategy | [test-strategy.md](test-strategy.md) |\n\n## Scope\n\nMigrated from the legacy Engineering Quality Model. Inspect real tests, environments, data, platforms, gates, and evidence before advancing maturity.\n\n## Capability Model\n\n| Area | Policy | Evidence | Maturity |\n| --- | --- | --- | --- |\n| Behavioral | [test-strategy.md](test-strategy.md) | Not configured | `baseline` |\n| Accessibility | [test-strategy.md](test-strategy.md) | Not configured | `baseline` |\n| Security and privacy | [test-strategy.md](test-strategy.md) | Not configured | `baseline` |\n| Performance and reliability | [quality-model.md](quality-model.md) | Not configured | `baseline` |\n| Observability | [quality-model.md](quality-model.md) | Not configured | `baseline` |\n\n## Exceptions\n\nNo exceptions were migrated. New exceptions require owner, residual risk, mitigation, and expiry or review date.\n", catalog.ID, catalog.Version, catalog.Status),
+		"quality-system.yaml": fmt.Sprintf("schema_version: 1\nengineering_system: %s\nversion: %s\nstatus: %s\nareas:\n  behavioral: {maturity: baseline, policy: test-strategy.md, required_evidence: []}\n  accessibility: {maturity: baseline, policy: test-strategy.md, required_evidence: []}\n  security_privacy: {maturity: baseline, policy: test-strategy.md, delegated_gate: security-review, required_evidence: []}\n  performance_reliability: {maturity: baseline, policy: quality-model.md, required_evidence: []}\n  observability: {maturity: baseline, policy: quality-model.md, required_evidence: []}\ngate_source: knowledge/conventions/gates.md\nenvironments: []\ntest_data_classes: []\nplatforms: []\nexceptions:\n  require_owner: true\n  require_residual_risk: true\n  require_expiry_or_review: true\n  records: []\n", catalog.ID, catalog.Version, catalog.Status),
+		"test-strategy.md":    "# Engineering Test Strategy\n\n## Scope\n\nMigrated baseline. Define shared test levels, risk coverage, environments, data, platforms, flaky-test handling, and delivery application from real evidence.\n\n## Delivery Application\n\nEach `tests.md` pins the Engineering System id/version, maps every `AC-*`, and declares deviations or exceptions.\n",
+	}
+	out := map[string][]byte{}
+	for name, body := range files {
+		out[filepath.Join(dir, name)] = []byte(body)
+	}
+	return out
+}
+
+func applyMigration(catalogPath string, originalCatalog, updatedCatalog []byte, generated map[string][]byte) error {
+	var created []string
+	rollback := func() {
+		_ = os.WriteFile(catalogPath, originalCatalog, 0o644)
+		for _, path := range created {
+			_ = os.Remove(path)
+		}
+	}
+	for path, body := range generated {
+		if info, err := os.Stat(path); err == nil && info.IsDir() {
+			rollback()
+			return fmt.Errorf("migration target is a directory: %s", path)
+		} else if err == nil {
+			continue
+		} else if !os.IsNotExist(err) {
+			rollback()
+			return err
+		}
+		if err := os.MkdirAll(filepath.Dir(path), 0o755); err != nil {
+			rollback()
+			return err
+		}
+		file, err := os.OpenFile(path, os.O_WRONLY|os.O_CREATE|os.O_EXCL, 0o644)
+		if err != nil {
+			rollback()
+			return err
+		}
+		_, writeErr := file.Write(body)
+		if writeErr == nil {
+			writeErr = file.Sync()
+		}
+		closeErr := file.Close()
+		created = append(created, path)
+		if writeErr != nil {
+			rollback()
+			return writeErr
+		}
+		if closeErr != nil {
+			rollback()
+			return closeErr
+		}
+	}
+	tmp := catalogPath + ".quality-migration.tmp"
+	if err := os.WriteFile(tmp, updatedCatalog, 0o644); err != nil {
+		rollback()
+		return err
+	}
+	if err := os.Rename(tmp, catalogPath); err != nil {
+		_ = os.Remove(tmp)
+		rollback()
+		return err
+	}
+	return nil
 }
 
 func Triggers(text string) (valid, invalid []string) {

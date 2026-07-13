@@ -46,6 +46,7 @@ Product decisions do not live here. Product decisions continue to live in `knowl
 | [FDR-034](FDR-034-existing-documents-import-gate.md) | Existing Documents Import Gate | proposed | Adopter starting-point review |
 | [FDR-035](FDR-035-audit-only-mutation-guard.md) | Audit-Only Mutation Guard | proposed | Adopter starting-point review |
 | [FDR-036](FDR-036-registry-relationship-preservation.md) | Registry Relationship Preservation | proposed | Starting-point gate review |
+| [FDR-037](FDR-037-engineering-quality-system.md) | Engineering Quality System | proposed | Governance baseline |
 
 ## Rule
 

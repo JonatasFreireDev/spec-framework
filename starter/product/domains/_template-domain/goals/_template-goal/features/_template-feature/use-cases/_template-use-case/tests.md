@@ -8,6 +8,24 @@
 | Status | draft |
 | Owner skill | QA AI |
 | Source specification | [specification.md](specification.md) |
+| Engineering System | Not configured |
+| Quality policy | Not configured |
+
+## Policy Application
+
+| Field | Value |
+| --- | --- |
+| Applicable risks | TBD |
+| Environments | Not configured |
+| Test data | Not configured |
+| Platforms | N/A until scoped |
+| Deviations or exceptions | None |
+
+## Acceptance Traceability
+
+| Acceptance Criterion | Risk | Validation Method | Test Level | Evidence | Owner |
+| --- | --- | --- | --- | --- | --- |
+| AC-TBD | TBD | TBD | TBD | TBD | TBD |
 
 ## Test Matrix
 

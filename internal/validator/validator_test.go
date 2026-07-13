@@ -328,6 +328,52 @@ func TestEngineeringProposalMustPinCurrentSystem(t *testing.T) {
 	}
 }
 
+func TestProposedTestsMustPinConfiguredQualitySystem(t *testing.T) {
+	root := t.TempDir()
+	for name, body := range map[string]string{
+		"engineering/context.md":                      "---\nid: ENGSYS-001\nstatus: draft\nversion: 1.0.0\norigin_mode: generate\n---\n",
+		"engineering/engineering-system.md":           "| Field | Value |\n| --- | --- |\n| ID | ENGSYS-001 |\n| Status | draft |\n| Version | 1.0.0 |\n",
+		"engineering/engineering-system.yaml":         "schema_version: 1\nid: ENGSYS-001\nstatus: draft\nversion: 1.0.0\norigin_mode: generate\nscope: product\nareas:\n  quality:\n    contract: quality/quality-system.md\n    maturity: baseline\n    evidence: []\n",
+		"engineering/quality/quality-system.md":       "| Field | Value |\n| --- | --- |\n| Engineering System | ENGSYS-001 @ 1.0.0 |\n| Status | draft |\n\n| Area | Policy | Evidence | Maturity |\n| --- | --- | --- | --- |\n| Behavioral | strategy | none | baseline |\n| Accessibility | strategy | none | baseline |\n| Security and privacy | strategy | none | baseline |\n| Performance and reliability | model | none | baseline |\n| Observability | model | none | baseline |\n",
+		"engineering/quality/quality-model.md":        "# Model\n",
+		"engineering/quality/test-strategy.md":        "# Strategy\n",
+		"engineering/quality/quality-system.yaml":     "schema_version: 1\nengineering_system: ENGSYS-001\nversion: 1.0.0\nstatus: draft\nareas:\n  behavioral: {maturity: baseline, policy: test-strategy.md}\n  accessibility: {maturity: baseline, policy: test-strategy.md}\n  security_privacy: {maturity: baseline, policy: test-strategy.md, delegated_gate: security-review}\n  performance_reliability: {maturity: baseline, policy: quality-model.md}\n  observability: {maturity: baseline, policy: quality-model.md}\ngate_source: knowledge/conventions/gates.md\nenvironments: [ci]\ntest_data_classes: [synthetic]\nplatforms: [server]\nexceptions:\n  require_owner: true\n  require_residual_risk: true\n  require_expiry_or_review: true\n",
+		"domains/d/use-cases/u/tests.md":              "| Field | Value |\n| --- | --- |\n| Status | proposed |\n| Engineering System | ENGSYS-OLD @ 0.9.0 |\n| Quality policy | engineering/quality/quality-system.md |\n| Applicable risks | behavior |\n| Environments | CI |\n| Test data | synthetic |\n| Platforms | server |\n| Deviations or exceptions | None |\n",
+		"domains/d/use-cases/u/contracts/behavior.md": "| ID | Requirement | Acceptance criteria |\n| --- | --- | --- |\n| REQ-1 | works | AC-001 |\n",
+		"domains/d/use-cases/u/qa-evidence.md":        "| Field | Value |\n| --- | --- |\n| Status | approved |\n| Engineering System | ENGSYS-001 @ 1.0.0 |\n\n| Check | Evidence | Result | Notes |\n| --- | --- | --- | --- |\n| Quality System conformity | policy | blocked | missing |\n| Environment and test data policy | CI | blocked | missing |\n| Flaky test and exception policy | scan | blocked | missing |\n",
+	} {
+		path := filepath.Join(root, filepath.FromSlash(name))
+		if err := os.MkdirAll(filepath.Dir(path), 0o755); err != nil {
+			t.Fatal(err)
+		}
+		if err := os.WriteFile(path, []byte(body), 0o644); err != nil {
+			t.Fatal(err)
+		}
+	}
+	snapshot, err := Scan(context.Background(), root, root, 1)
+	if err != nil {
+		t.Fatal(err)
+	}
+	found := 0
+	for _, diagnostic := range validateEngineeringSystem(snapshot) {
+		if diagnostic.Check == "quality-system-consumer" {
+			found++
+		}
+	}
+	if found != 2 {
+		t.Fatalf("expected pin and structural mapping diagnostics, got %d", found)
+	}
+	qaFound := 0
+	for _, diagnostic := range validateEngineeringSystem(snapshot) {
+		if diagnostic.Check == "quality-system-qa" {
+			qaFound++
+		}
+	}
+	if qaFound != 3 {
+		t.Fatalf("expected three QA policy diagnostics, got %d", qaFound)
+	}
+}
+
 func TestPassedEngineeringReviewMustMatchProposalHash(t *testing.T) {
 	root := t.TempDir()
 	for name, body := range map[string]string{
@@ -358,6 +404,20 @@ func TestPassedEngineeringReviewMustMatchProposalHash(t *testing.T) {
 	}
 	if !found {
 		t.Fatal("expected stale Engineering Review diagnostic")
+	}
+}
+
+func TestQualityTraceabilityRequiresStructuredCompleteRows(t *testing.T) {
+	text := "## Acceptance Traceability\n\n| Acceptance Criterion | Risk | Validation Method | Test Level | Evidence | Owner |\n| --- | --- | --- | --- | --- | --- |\n| [AC-001](specification.md) | high | automated | integration | test\\|log | qa |\n"
+	rows := markdownTableRows(text, "Acceptance Traceability")
+	if len(rows) != 1 || !containsExactID(rows[0]["acceptance criterion"], "AC-001") || rows[0]["validation method"] != "automated" || rows[0]["evidence"] != "test|log" {
+		t.Fatalf("rows=%v", rows)
+	}
+	if qualityCheckPassed("| Quality System conformity | policy | N/A | none |\n", "Quality System conformity") {
+		t.Fatal("N/A satisfied a required Quality System QA check")
+	}
+	if !qualityCheckPassed("| Quality System conformity | policy | passed | verified |\n", "Quality System conformity") {
+		t.Fatal("passed result did not satisfy Quality System QA check")
 	}
 }
 

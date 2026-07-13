@@ -1,0 +1,41 @@
+schema_version: 1
+engineering_system: ENGSYS-EVENTS-001
+version: 0.1.0
+status: draft
+areas:
+  behavioral:
+    maturity: baseline
+    policy: test-strategy.md
+    required_evidence: []
+  accessibility:
+    maturity: baseline
+    policy: test-strategy.md
+    required_evidence: []
+  security_privacy:
+    maturity: baseline
+    policy: test-strategy.md
+    delegated_gate: security-review
+    required_evidence: []
+  performance_reliability:
+    maturity: baseline
+    policy: quality-model.md
+    required_evidence: []
+  observability:
+    maturity: baseline
+    policy: quality-model.md
+    required_evidence: []
+gate_source: knowledge/conventions/gates.md
+environments:
+  - documentation-fixture
+test_data_classes:
+  - synthetic-event
+  - synthetic-user
+  - synthetic-token
+platforms:
+  - web
+  - mobile-camera
+exceptions:
+  require_owner: true
+  require_residual_risk: true
+  require_expiry_or_review: true
+  records: []

@@ -7,12 +7,30 @@
 | ID | `[TEST-XXX]` |
 | Status | `[draft | proposed | approved]` |
 | Source specification | `[SPEC-XXX]` |
+| Engineering System | `[ENGSYS-XXX @ semver | Not configured]` |
+| Quality policy | `[engineering/quality/quality-system.md | Legacy quality model]` |
 | Owner skill | QA AI |
 | Next skill | QA AI for evidence or Security Review AI |
 
 ## 🎯 Test Goal
 
 [Describe what confidence this test plan must provide.]
+
+## Policy Application
+
+| Field | Value |
+| --- | --- |
+| Applicable risks | `[behavior/data/permissions/UI/integration/performance/etc.]` |
+| Environments | `[values configured in quality-system.yaml]` |
+| Test data | `[classes configured in quality-system.yaml]` |
+| Platforms | `[values configured in quality-system.yaml]` |
+| Deviations or exceptions | `None` or `[open, unexpired, in-scope QEX-* ids]` |
+
+## Acceptance Traceability
+
+| Acceptance Criterion | Risk | Validation Method | Test Level | Evidence | Owner |
+| --- | --- | --- | --- | --- | --- |
+| `[AC-001]` | `[risk]` | `[automated/manual/review]` | `[unit/integration/contract/e2e/etc.]` | `[path/log/screenshot]` | `[task/skill]` |
 
 ## 🧪 Coverage Matrix
 

@@ -6,6 +6,18 @@
 - Source tasks: TK-001..TK-006
 - Status: draft
 
+## Quality Policy
+
+| Field | Value |
+| --- | --- |
+| Engineering System | `ENGSYS-EVENTS-001 @ 0.1.0` |
+| Policy | [Engineering Quality System](../../../../../../../../engineering/quality/quality-system.md) |
+| Applicable risks | permissions, token lifecycle, data mutation, visual surface, accessibility, observability |
+| Environments | documentation-fixture |
+| Test data | synthetic-event, synthetic-user, synthetic-token |
+| Platforms | web, mobile-camera |
+| Deviations or exceptions | None; absent runtime evidence blocks validation |
+
 ## Test Matrix
 
 | ID | Scenario | Type | Source acceptance criteria | Expected result |

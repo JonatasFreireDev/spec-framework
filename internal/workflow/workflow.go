@@ -799,6 +799,13 @@ func approvalUpdates(root, artifactPath, updated, status string) (map[string][]b
 	if filepath.Base(artifactPath) != "engineering-system.md" {
 		return updates, nil
 	}
+	inspection, inspectErr := engineeringsystem.Inspect(root)
+	if inspectErr != nil {
+		return nil, inspectErr
+	}
+	if len(inspection.Blockers) > 0 {
+		return nil, fmt.Errorf("Engineering System is not approvable: %s", strings.Join(inspection.Blockers, "; "))
+	}
 	contextPath := filepath.Join(root, "engineering", "context.md")
 	catalogPath := filepath.Join(root, "engineering", "engineering-system.yaml")
 	contextData, err := os.ReadFile(contextPath)
@@ -815,6 +822,26 @@ func approvalUpdates(root, artifactPath, updated, status string) (map[string][]b
 	}
 	updates[contextPath] = []byte(contextUpdated)
 	updates[catalogPath] = catalogUpdated
+	qualityMarkdownPath := filepath.Join(root, "engineering", "quality", "quality-system.md")
+	qualityCatalogPath := filepath.Join(root, "engineering", "quality", "quality-system.yaml")
+	if qualityMarkdown, readErr := os.ReadFile(qualityMarkdownPath); readErr == nil {
+		qualityMarkdownUpdated, updateErr := setStatus(string(qualityMarkdown), status)
+		if updateErr != nil {
+			return nil, updateErr
+		}
+		qualityCatalog, readCatalogErr := os.ReadFile(qualityCatalogPath)
+		if readCatalogErr != nil {
+			return nil, readCatalogErr
+		}
+		qualityCatalogUpdated, updateCatalogErr := engineeringsystem.SynchronizeQualityStatus(qualityCatalog, status)
+		if updateCatalogErr != nil {
+			return nil, updateCatalogErr
+		}
+		updates[qualityMarkdownPath] = []byte(qualityMarkdownUpdated)
+		updates[qualityCatalogPath] = qualityCatalogUpdated
+	} else if !os.IsNotExist(readErr) {
+		return nil, readErr
+	}
 	return updates, nil
 }
 

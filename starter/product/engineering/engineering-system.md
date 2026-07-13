@@ -21,7 +21,7 @@ Not configured. Inspect the adopter's real repository before defining system bou
 | --- | --- | --- | --- |
 | System context | [architecture/system-context.md](architecture/system-context.md) | Not configured | `baseline` |
 | Modules | [architecture/modules.md](architecture/modules.md) | Not configured | `baseline` |
-| Quality | [quality/quality-model.md](quality/quality-model.md) | Not configured | `baseline` |
+| Quality | [quality/quality-system.md](quality/quality-system.md) | Not configured | `baseline` |
 
 No maturity beyond placeholder baseline is claimed.
 

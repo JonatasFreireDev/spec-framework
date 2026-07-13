@@ -29,7 +29,9 @@
 
 | Concern | Contract | Gate or evidence |
 | --- | --- | --- |
+| Quality system | [quality/quality-system.md](quality/quality-system.md) | `[policy/evidence]` |
 | Quality model | [quality/quality-model.md](quality/quality-model.md) | `[gate/evidence]` |
+| Test strategy | [quality/test-strategy.md](quality/test-strategy.md) | `[gate/evidence]` |
 | Fitness functions | `[quality/fitness-functions.yaml or Not configured]` | `[command/evidence]` |
 | Engineering standards | `[standards path or Not configured]` | `[gate/evidence]` |
 

@@ -19,6 +19,9 @@ This is a documentation-only worked fixture. It records proposed boundaries for 
 - [architecture/system-context.md](architecture/system-context.md)
 - [architecture/modules.md](architecture/modules.md)
 - [quality/quality-model.md](quality/quality-model.md)
+- [quality/quality-system.md](quality/quality-system.md)
+- [quality/quality-system.yaml](quality/quality-system.yaml)
+- [quality/test-strategy.md](quality/test-strategy.md)
 
 ## Handoff
 

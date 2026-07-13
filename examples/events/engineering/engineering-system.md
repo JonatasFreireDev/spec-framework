@@ -21,7 +21,7 @@ Documentation contracts for the Events worked fixture. This system is not implem
 | --- | --- | --- | --- |
 | System context | [architecture/system-context.md](architecture/system-context.md) | Product artifacts only | `baseline` |
 | Modules | [architecture/modules.md](architecture/modules.md) | Product artifacts only | `baseline` |
-| Quality | [quality/quality-model.md](quality/quality-model.md) | Specification requirements only | `baseline` |
+| Quality | [quality/quality-system.md](quality/quality-system.md) | Specification requirements and planned validation only | `baseline` |
 
 ## Decisions And Limitations
 

@@ -48,7 +48,7 @@
         {
           "artifact_id": "TEST-002",
           "path": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/organizer-validates-qr-code/tests.md",
-          "content_hash": "8b213ef21f10033abe2b8c6f7d314a34cab2d50de5d346cb6d7ba36106dfe9a9"
+          "content_hash": "43ffd42823e7ceaa9a14fe15a6cda64410b3d9ab2daf72012bf37ea3927ecf9d"
         }
       ],
       "updated_at": "2026-07-09T22:18:06.345Z",
@@ -151,7 +151,7 @@
         {
           "artifact_id": "TEST-002",
           "path": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/organizer-validates-qr-code/tests.md",
-          "content_hash": "8b213ef21f10033abe2b8c6f7d314a34cab2d50de5d346cb6d7ba36106dfe9a9"
+          "content_hash": "43ffd42823e7ceaa9a14fe15a6cda64410b3d9ab2daf72012bf37ea3927ecf9d"
         },
         {
           "artifact_id": "SPEC-002",
@@ -174,7 +174,7 @@
         {
           "artifact_id": "QA-002",
           "path": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/organizer-validates-qr-code/qa-evidence.md",
-          "content_hash": "d2ead27993fc1102cd037c535a3ea943005b8ead8a00af66249c77a5403e94b8"
+          "content_hash": "8970b72dc28d7c60841964d1162aa1e257af354a5a1516709c77e6578b14bce4"
         }
       ],
       "updated_at": "2026-07-09T22:18:06.345Z",
@@ -300,7 +300,7 @@
         {
           "artifact_id": "UC-001:tests",
           "path": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/attendee-checks-in-with-qr-code/tests.md",
-          "content_hash": "2994205f5a0006a5646cba0fb4eb2fe1076c1084845e1081892789913518b40b"
+          "content_hash": "364e895772bf9307866ef8f9411c3889df2e270a891dc5e0da892de697906fb1"
         }
       ],
       "updated_at": "2026-07-09T22:18:06.345Z",
@@ -418,7 +418,7 @@
         {
           "artifact_id": "UC-EXAMPLE:tests",
           "path": "domains/_example-domain/goals/_example-goal/features/_example-feature/use-cases/_example-use-case/tests.md",
-          "content_hash": "e3d0af4e995cae25e84d545200d02ade354a12a1d63a627bdf170b16b3a406a4"
+          "content_hash": "89884b0198634829220ecc1ac97e392d9851953f9a3b79f10bc64871db9ace80"
         }
       ],
       "updated_at": "2026-07-09T22:18:06.345Z",

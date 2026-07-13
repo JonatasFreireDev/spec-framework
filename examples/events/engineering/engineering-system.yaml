@@ -14,7 +14,7 @@ areas:
     maturity: baseline
     evidence: []
   quality:
-    contract: quality/quality-model.md
+    contract: quality/quality-system.md
     maturity: baseline
     evidence: []
 decisions:

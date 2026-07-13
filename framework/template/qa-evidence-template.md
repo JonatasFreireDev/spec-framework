@@ -9,6 +9,8 @@
 | Source use case | `[UC-XXX]` |
 | Source specification | `[SPEC-XXX]` |
 | Source tests | `[TEST-XXX]` |
+| Engineering System | `[ENGSYS-XXX @ semver | Not configured]` |
+| Quality policy | `[engineering/quality/quality-system.md | Legacy quality model]` |
 | Owner skill | QA AI |
 | Next skill | Security Review AI or Audit Orchestrator |
 
@@ -75,6 +77,9 @@ flowchart LR
 | Negative and permission cases | `[test/path/review notes]` | `[passed/failed/blocked/not run]` | `[notes]` |
 | Scope drift against writeScope | `[diff/path/review notes]` | `[passed/failed/blocked/not run]` | `[notes]` |
 | Specification divergence | `[spec section/evidence]` | `[passed/failed/blocked/not run]` | `[notes]` |
+| Quality System conformity | `[policy section/evidence/N/A]` | `[passed/failed/blocked/not run/N/A]` | `[deviations and exceptions]` |
+| Environment and test data policy | `[environment/data evidence/N/A]` | `[passed/failed/blocked/not run/N/A]` | `[notes]` |
+| Flaky test and exception policy | `[QEX-* or scan notes/N/A]` | `[passed/failed/blocked/not run/N/A]` | `[notes]` |
 
 ## Visual And Accessibility Evidence
 

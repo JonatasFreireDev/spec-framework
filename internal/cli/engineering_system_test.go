@@ -47,3 +47,32 @@ func TestEngineeringSystemTriggersListsCanonicalValues(t *testing.T) {
 		t.Fatalf("stdout=%s", stdout.String())
 	}
 }
+
+func TestEngineeringSystemMigratePreviewsAndMaterializesQualitySystem(t *testing.T) {
+	root := t.TempDir()
+	dir := filepath.Join(root, "engineering", "quality")
+	if err := os.MkdirAll(dir, 0o755); err != nil {
+		t.Fatal(err)
+	}
+	catalog := "schema_version: 1\nid: ENGSYS-TEST-001\nstatus: draft\nversion: 1.0.0\norigin_mode: evolve\nscope: product\nareas:\n  quality:\n    contract: quality/quality-model.md\n    maturity: baseline\n    evidence: []\n"
+	if err := os.WriteFile(filepath.Join(root, "engineering", "engineering-system.yaml"), []byte(catalog), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(dir, "quality-model.md"), []byte("owned\n"), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	var stdout, stderr bytes.Buffer
+	if code := runEngineeringSystem([]string{"migrate", "--product-root", root, "--dry-run"}, &stdout, &stderr); code != 0 {
+		t.Fatalf("code=%d stderr=%s", code, stderr.String())
+	}
+	if !strings.Contains(stdout.String(), "quality-system.md") {
+		t.Fatalf("stdout=%s", stdout.String())
+	}
+	stdout.Reset()
+	if code := runEngineeringSystem([]string{"migrate", "--product-root", root}, &stdout, &stderr); code != 0 {
+		t.Fatalf("code=%d stderr=%s", code, stderr.String())
+	}
+	if _, err := os.Stat(filepath.Join(dir, "quality-system.yaml")); err != nil {
+		t.Fatal(err)
+	}
+}

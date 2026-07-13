@@ -138,6 +138,16 @@ The Engineering System is an optional shared product artifact for stable archite
 
 Approved decisions and the Specification remain authoritative. The Engineering System records and links established technical constraints but does not replace `DEC-*` records or their approval evidence. Its approval is composite: context, human contract, mechanical catalog, architecture, standards, quality, runbooks, and evidence are hashed in deterministic path order, so any shared engineering contract change requires human re-approval.
 
+### Engineering Quality System
+
+The Engineering Quality System is the shared, versioned quality contract within the Engineering System. It lives under `engineering/quality/` and defines product-wide quality attributes, test levels, risk-based coverage, environments, test data, fitness functions, evidence policy, flaky-test handling, exceptions, and maturity. Its canonical human contract is `quality-system.md`; `quality-system.yaml` is the mechanical catalog; `quality-model.md`, `test-strategy.md`, and `fitness-functions.yaml` are supporting contracts.
+
+The Engineering Quality System defines policy and available capability; it does not grant delivery approval. A use-case `tests.md` applies the shared policy and pins the consumed Engineering System id/version. Delivery tasks implement tests. QA independently verifies the applicable policy, acceptance criteria, gates, and real evidence in `qa-evidence.md`. Security Review remains a separate specialized gate.
+
+Gate commands remain canonical in the active product root's `knowledge/conventions/gates.md`. Quality maturity records available evidence and never waives a gate, changes an acceptance criterion, or approves residual risk. Human and mechanical capability maturity must agree; maturity above `baseline` requires a safe, resolvable path, URL, gate, CI, or command evidence reference. Exceptions require scope, owner, rationale, residual risk, mitigation, a valid expiry or review date, re-entry gate, and status. Only open, unexpired exceptions scoped to `product` or the consuming `domains/...` path may authorize deviations. Engineering System approval synchronizes status atomically across its context, human and mechanical system contracts, and both Quality System contracts before hashing the complete `engineering/` tree.
+
+Legacy Engineering Systems whose quality area points to `quality/quality-model.md` remain valid until explicit migration. `spec-framework engineering-system migrate --dry-run` previews the additive Quality System migration; the applied command creates missing contracts before atomically replacing the catalog pointer, rolls back newly created files on failure, preserves adopter-owned files, and never creates approval evidence. Any previously approved system requires human re-approval because its composite hash changes.
+
 ### Engineering Proposal
 
 Translates an approved Specification, Design, Technical Discovery, and resolved Architecture Gate into the intended technical solution for one delivery. It describes boundaries, data ownership, integrations, dependencies, operations, tests, rollout, and deviations from the pinned Engineering System without sequencing implementation tasks.
@@ -291,6 +301,11 @@ product/
     architecture/
     standards/
     quality/
+      quality-system.md
+      quality-system.yaml
+      quality-model.md
+      test-strategy.md
+      fitness-functions.yaml
     runbooks/
     evidence/
   audits/
@@ -396,6 +411,8 @@ Domain -> Domain Evolution -> Feature Selection -> New Feature -> Use Cases
 Design is mandatory for any use case with an interface. For deliveries without UI, `design.md` must exist with structured status `not_applicable`, a non-placeholder `Rationale`, and impacts on accessibility, observability, or operations when relevant. Free-text mentions of Not applicable never satisfy the gate. The same structured status and rationale contract applies to inapplicable modular Specification contracts.
 
 QA Evidence and Security Review are validation gates. QA Evidence proves that acceptance criteria, tasks, flows, edge cases, regression, accessibility, observability, and security controls were verified. Security Review evaluates authentication, authorization, privacy, abuse, sensitive data, tokens, logs, dependencies, rollout, rollback, and residual risk. Security Review must also read the product's security baseline in `knowledge/conventions/security-baseline.md` and active threats in `audits/security/threat-register.md`. An artifact must not reach `validated` or `released` when there is a QA or security blocker.
+
+When an Engineering Quality System is configured, `tests.md` must pin the consumed Engineering System id/version, reference the canonical quality policy, and select only environments, test-data classes, and platforms configured by its mechanical catalog. Its `Acceptance Traceability` table must map every acceptance criterion to meaningful risk, validation method, test level, evidence, and owner values, and it must declare either `None` or open, unexpired, in-scope `QEX-*` deviations explicitly. Approved QA evidence must pin the same version and record `passed` for Quality System conformity, environment and test data, and flaky-test and exception checks; `N/A` does not satisfy these configured gates. Legacy products without the new contract remain compatible until they explicitly migrate their Engineering System.
 
 QA Evidence must bring the real evidence back to the use case: branch, commits, PR, code paths, commands or test methods, gate logs, CI URL when available, and screenshots when the delivery has a visual surface.
 

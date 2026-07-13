@@ -13,7 +13,7 @@ Framework validators and framework method decisions should be installed or refer
 | `architecture/` | Product architecture notes and ADR links. |
 | `runbooks/` | Product operational runbooks. |
 | `conventions/` | Product-specific engineering conventions. |
-| `quality/` | Product quality model and configured fitness functions. |
+| `quality/` | Versioned Quality System, test strategy, quality model, configured fitness functions, and exception policy. |
 | `evidence/` | Evidence supporting maturity and operational claims. |
 
 ## Next Step
