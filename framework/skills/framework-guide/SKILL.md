@@ -81,6 +81,10 @@ Intent summary; discovered state; recommended command or specialist; mutation pr
 | Move an artifact | `move --dry-run`, review mentions, then apply |
 | Prepare delivery | Delivery Orchestrator, Commit Crafter, PR Finalizer, and Release Publisher as applicable |
 
+## Discovery and challenge
+
+Follow the shared [Discovery And Challenge contract](../discovery-and-challenge.md) when intent, scope, starting point, route, or a meaningful human choice remains ambiguous after read-only inspection. Do not ask for state the CLI can discover.
+
 ## Workflow
 1. Restate the goal in one sentence and determine whether the request is explanation, inspection, planning, local mutation, approval, remote mutation, or release.
 2. Apply the activation and dispatch boundaries. If active, discover the repository root, product root, pinned version, agents, and starting point from the canonical manifest; do not ask for information the CLI or repository can provide safely.

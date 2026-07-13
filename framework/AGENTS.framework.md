@@ -45,6 +45,8 @@ When a skill mentions framework-relative paths such as `FRAMEWORK.md`, `template
 
 Use Framework Guide as the default route unless current CLI output or an explicit human request names both the specialist and concrete scope. Revalidate persisted handoffs/checkpoints with `dashboard`, `status`, `next`, or `guide` before routing directly. A skill name without scope is only a hint. Use `spec-framework adapters` for supervised optional-adapter discovery or installation; never install an external adapter silently.
 
+For definition and planning work, follow the pinned runtime's `skills/discovery-and-challenge.md`. Inspect evidence first and use the harness-native structured question tool whenever it is available. The canonical capability is `native_user_question`; adapters map it to the harness default. Do not silently replace an available question tool with assumptions or questions embedded in a final response.
+
 ## Gates
 
 Run the product validator from the repository root:

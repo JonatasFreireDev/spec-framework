@@ -318,6 +318,37 @@ func validateDeliveryClosure(s Snapshot) []Diagnostic {
 	return out
 }
 
+func validateSkillDiscoveryContracts(s Snapshot) []Diagnostic {
+	governed := []string{
+		"problem-discovery", "vision", "strategy", "domain-architect", "user-goal", "journey", "feature", "use-case",
+		"ux-ui", "design-system", "specification", "engineering-system", "technical-discovery", "engineering-proposal",
+		"implementation-planner", "execution-graph", "task-generator", "product-orchestrator", "domain-evolution-orchestrator",
+		"new-feature-orchestrator", "evolution", "evolution-orchestrator", "framework-guide",
+	}
+	root := filepath.Join(s.FrameworkRoot, "framework", "skills")
+	if _, err := os.Stat(root); err != nil {
+		root = filepath.Join(s.FrameworkRoot, "skills")
+	}
+	var out []Diagnostic
+	for _, name := range governed {
+		path := filepath.Join(root, name, "SKILL.md")
+		data, err := os.ReadFile(path)
+		if err != nil {
+			continue
+		}
+		text := string(data)
+		rel, _ := filepath.Rel(s.FrameworkRoot, path)
+		rel = filepath.ToSlash(rel)
+		if !strings.Contains(text, "## Discovery and challenge") {
+			out = append(out, Diagnostic{Error, "skill-discovery-contract", rel, "Definition or planning skill lacks the Discovery and challenge section.", "Add the governed section before its workflow or operating rules."})
+		}
+		if !strings.Contains(text, "../discovery-and-challenge.md") {
+			out = append(out, Diagnostic{Error, "skill-discovery-contract", rel, "Definition or planning skill does not reference the shared Discovery And Challenge contract.", "Link to ../discovery-and-challenge.md from the governed section."})
+		}
+	}
+	return out
+}
+
 func validateDomainModeling(s Snapshot) []Diagnostic {
 	var out []Diagnostic
 	product := metadata(s.Text["context.md"])

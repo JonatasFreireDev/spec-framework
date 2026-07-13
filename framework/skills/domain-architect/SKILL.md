@@ -30,6 +30,10 @@ domain.md files; domain context.md files; ubiquitous language; invariants; comma
 - The pinned framework runtime's `examples/events/domains/README.md` and `examples/events/domains/events/domain.md` before creating the first domain.
 - Approved product decisions in the active product root's `knowledge/decisions/` and `.product/decisions.json`.
 
+## Discovery and challenge
+
+Follow the shared [Discovery And Challenge contract](../discovery-and-challenge.md) before substantive creation or material revision.
+
 ## Workflow
 1. Read the parent context and confirm the artifact status.
 2. Identify missing information, assumptions, conflicts, and dependencies.

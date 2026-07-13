@@ -29,6 +29,10 @@ feature.md; feature context.md; Delivery Level; Priority; explicit delivery slic
 - Relevant templates in framework/template/.
 - Approved product decisions in the active product root's `knowledge/decisions/` and `.product/decisions.json`.
 
+## Discovery and challenge
+
+Follow the shared [Discovery And Challenge contract](../discovery-and-challenge.md) before substantive creation or material revision.
+
 ## Workflow
 1. Read the parent context and confirm the artifact status.
 2. Identify missing information, assumptions, conflicts, and dependencies.

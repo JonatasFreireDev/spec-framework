@@ -20,6 +20,10 @@ Orchestrator. Controls workflow, gates, handoffs, and approval checkpoints. It s
 ## Default sequence
 Evolution -> Impact Analyzer -> affected generative skills -> Documentation Writer
 
+## Discovery and challenge
+
+Follow the shared [Discovery And Challenge contract](../discovery-and-challenge.md) when comparing candidates or requesting human selection.
+
 ## Operating rules
 1. Identify the current artifact status before routing work.
 2. Route work to the smallest specialist skill that owns the next artifact.

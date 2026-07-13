@@ -29,6 +29,10 @@ Approved Specification; approved Design or `Not applicable`; approved Technical 
 - Relevant templates in framework/template/.
 - Approved product decisions in the active product root's `knowledge/decisions/` and `.product/decisions.json`.
 
+## Discovery and challenge
+
+Follow the shared [Discovery And Challenge contract](../discovery-and-challenge.md) before substantive creation or material revision.
+
 ## Workflow
 1. Confirm Technical Discovery is approved, its Architecture Gate is resolved, and applicability comes from Tier L or declared structured engineering triggers rather than prose inference.
 2. Pin the configured Engineering System id/version or explicitly record `Not configured`.

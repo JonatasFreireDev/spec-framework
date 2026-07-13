@@ -8,6 +8,8 @@ This folder contains repository-local skills that operationalize the framework. 
 
 Use these skills when creating, updating, auditing, explaining, routing, or handing off framework artifacts. Specialist skills own canonical artifact content. Orchestrator skills own flow, gates, sequencing, and handoff.
 
+Definition and planning skills must follow [Discovery And Challenge](discovery-and-challenge.md). They inspect evidence before asking, use the harness-native structured question tool when available, compare meaningful options, recommend a path, warn about material risks, and stop on unanswered blocking questions.
+
 ## Path Resolution
 
 Skills are written to work in both this framework repository and adopter repositories.

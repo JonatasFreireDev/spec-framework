@@ -83,6 +83,36 @@ func TestDeliveryClosureRejectsLegacyAndUnknownHandoffs(t *testing.T) {
 	}
 }
 
+func TestSkillDiscoveryContractIsMechanicallyRequired(t *testing.T) {
+	root := t.TempDir()
+	skill := filepath.Join(root, "framework", "skills", "feature", "SKILL.md")
+	if err := os.MkdirAll(filepath.Dir(skill), 0755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(skill, []byte("# Feature\n\n## Workflow\n"), 0644); err != nil {
+		t.Fatal(err)
+	}
+	diagnostics := validateSkillDiscoveryContracts(Snapshot{FrameworkRoot: root})
+	found := 0
+	for _, diagnostic := range diagnostics {
+		if diagnostic.Check == "skill-discovery-contract" && diagnostic.File == "framework/skills/feature/SKILL.md" {
+			found++
+		}
+	}
+	if found != 2 {
+		t.Fatalf("expected missing section and reference diagnostics, got %+v", diagnostics)
+	}
+	content := "# Feature\n\n## Discovery and challenge\n\nFollow [contract](../discovery-and-challenge.md).\n"
+	if err := os.WriteFile(skill, []byte(content), 0644); err != nil {
+		t.Fatal(err)
+	}
+	for _, diagnostic := range validateSkillDiscoveryContracts(Snapshot{FrameworkRoot: root}) {
+		if diagnostic.File == "framework/skills/feature/SKILL.md" {
+			t.Fatalf("valid contract rejected: %+v", diagnostic)
+		}
+	}
+}
+
 func TestValidatedTaskRequiresMatchingDiffHashes(t *testing.T) {
 	text := "# Task\n\n| Field | Value |\n| --- | --- |\n| Status | validated |\n| Branch | feature/x |\n| Base commit | abcdef1 |\n| Diff hash | hash-a |\n| Changed paths | src/x.go |\n| Test status | passed |\n| Commits | abcdef2 |\n| Code paths | src/x.go |\n| Code Review diff hash | hash-a |\n| QA diff hash | hash-b |\n"
 	s := Snapshot{Text: map[string]string{"domains/x/use-cases/u/tasks/TK-1.md": text}}

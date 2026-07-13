@@ -29,6 +29,10 @@ Evolution proposals; opportunity notes; expected impact; required approvals.
 - Relevant templates in framework/template/.
 - Approved product decisions in the active product root's `knowledge/decisions/` and `.product/decisions.json`.
 
+## Discovery and challenge
+
+Follow the shared [Discovery And Challenge contract](../discovery-and-challenge.md) before proposing or materially revising improvement candidates.
+
 ## Workflow
 1. Read the relevant context and identify artifact status.
 2. Compare the artifact against the framework, template, and approved decisions.

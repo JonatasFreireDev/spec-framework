@@ -30,6 +30,10 @@ Approved Vision and Strategy; personas; brand sources; existing interfaces or co
 - Approved product decisions in the active product root's `knowledge/decisions/` and `.product/decisions.json`.
 - FDR-021 and FDR-023.
 
+## Discovery and challenge
+
+Follow the shared [Discovery And Challenge contract](../discovery-and-challenge.md) before substantive creation or material revision.
+
 ## Workflow
 1. Confirm whether origin is `generate`, `evolve`, or `adopt`; never promote a reference to canonical authority implicitly.
 2. Inventory foundations, sources, tokens, themes, components, patterns, consumers, and implementation links.

@@ -20,6 +20,10 @@ Orchestrator. Controls workflow, gates, handoffs, and approval checkpoints. It s
 ## Default sequence
 Impact Analyzer -> Feature -> Use Case -> Specification -> UX/UI -> Technical Discovery -> Architecture Gate -> Engineering Proposal -> Engineering Review -> Implementation Planner -> Execution Graph -> Task Generator
 
+## Discovery and challenge
+
+Follow the shared [Discovery And Challenge contract](../discovery-and-challenge.md) when resolving scope, route, or approval questions.
+
 ## Operating rules
 1. Identify the current artifact status before routing work.
 2. Route work to the smallest specialist skill that owns the next artifact.

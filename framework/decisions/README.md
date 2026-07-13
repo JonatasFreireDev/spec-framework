@@ -52,6 +52,7 @@ Product decisions do not live here. Product decisions continue to live in `knowl
 | [FDR-040](FDR-040-cobra-cli-command-tree.md) | Cobra CLI Command Tree | proposed | CLI architecture evolution |
 | [FDR-041](FDR-041-declarative-initialization-contracts.md) | Declarative Initialization Contracts | proposed | CLI architecture evolution |
 | [FDR-042](FDR-042-cli-lifecycle-commands.md) | CLI Lifecycle Commands | proposed | CLI installation usability |
+| [FDR-043](FDR-043-native-discovery-and-challenge.md) | Native Discovery And Challenge | proposed | Planning skill interaction feedback |
 
 ## Rule
 

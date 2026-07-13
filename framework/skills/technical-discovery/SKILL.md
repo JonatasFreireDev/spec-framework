@@ -29,6 +29,10 @@ Approved specification contracts; approved design or `Not applicable`; stable en
 - Relevant templates in framework/template/.
 - Approved product decisions in the active product root's `knowledge/decisions/` and `.product/decisions.json`.
 
+## Discovery and challenge
+
+Follow the shared [Discovery And Challenge contract](../discovery-and-challenge.md) before substantive creation or material revision.
+
 ## Workflow
 1. Read every applicable specification contract and Design.
 2. Inspect stable architecture under the active product root's `engineering/` and the real code/test tree.

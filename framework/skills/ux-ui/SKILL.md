@@ -29,6 +29,10 @@ design.md; origin mode and visual maturity; versioned source references; screen 
 - Relevant templates in framework/template/.
 - Approved product decisions in the active product root's `knowledge/decisions/` and `.product/decisions.json`.
 
+## Discovery and challenge
+
+Follow the shared [Discovery And Challenge contract](../discovery-and-challenge.md) before substantive creation or material revision.
+
 ## Workflow
 1. Read the relevant context, the declared Design System when present, and identify artifact status.
 2. Select or preserve `generate`, `evolve`, or `adopt`; never infer that a reference is canonical.

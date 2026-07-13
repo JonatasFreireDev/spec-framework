@@ -30,6 +30,10 @@ Product context; real code and test tree; deployment and operations configuratio
 - Relevant templates in framework/template/.
 - Approved product decisions in the active product root's `knowledge/decisions/` and `.product/decisions.json`.
 
+## Discovery and challenge
+
+Follow the shared [Discovery And Challenge contract](../discovery-and-challenge.md) before substantive creation or material revision.
+
 ## Workflow
 1. Inspect the real product code, tests, configuration, environments, operations evidence, and existing engineering documents.
 2. Define the covered product and repository boundaries and choose `generate`, `evolve`, or `adopt`.

@@ -29,6 +29,10 @@ implementation-plan.md; inherited Delivery Level and Priority; phases; dependenc
 - Relevant templates in framework/template/.
 - Approved product decisions in the active product root's `knowledge/decisions/` and `.product/decisions.json`.
 
+## Discovery and challenge
+
+Follow the shared [Discovery And Challenge contract](../discovery-and-challenge.md) before substantive creation or material revision.
+
 ## Workflow
 1. Propagate every applicable DEC reference and its validated workflow effects into phases, gates, evidence, rollout, rollback, and candidate tasks; never infer commands from decision prose.
 1. Read the parent context and confirm the artifact status.
