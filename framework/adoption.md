@@ -18,7 +18,18 @@ CLI-style bootstrap from the framework repository:
 spec-framework init ../my-product --agents codex,cursor,claude --yes
 ```
 
-The wizard also asks for the starting point. All skills remain installed; the choice changes the generated bootstrap. For existing documents, use `--starting-point existing-documents` with `--source-dir` or `--sources`. The command inventories sources under `product/knowledge/imports/` but does not create Domains, User Goals, or Features without explicit approval.
+The wizard also asks for the starting point. All skills remain installed; the choice changes the generated bootstrap, active registry, and entry gate.
+
+| Starting point | Adopted path |
+| --- | --- |
+| `new-product` | Full Foundation: Problem -> Vision -> Principles/North Star -> Strategy. |
+| `existing-product` | Product Baseline -> Strategy. Escalate to full Foundation when current audience or value is uncertain. |
+| `existing-documents` | Review the latest import run -> materialize selected drafts -> route them through normal owners and gates. |
+| `existing-feature` | Feature Brief bound to one Target Feature -> workspace. |
+| `existing-implementation` | Implementation Assessment -> full Foundation -> workspace. |
+| `audit-only` | Read-only inspection. Registry, reports, approvals, workspaces, imports, and delivery mutations are blocked. |
+
+For existing documents, use `--starting-point existing-documents` with `--source-dir` or `--sources`. The command inventories sources under `product/knowledge/imports/` but does not create Domains, User Goals, or Features without explicit approval.
 
 After the Artifact Importer fills `mapping.json`, review the selected mappings and materialize them explicitly:
 
@@ -57,6 +68,8 @@ Direct validator form when debugging:
 spec-framework validate --product-root product --framework-root <framework-source-root> --write-registry --write-report
 ```
 
+For `audit-only`, omit both write flags and keep findings in terminal output.
+
 Upgrade an initialized product from the framework repository:
 
 ```bash
@@ -68,7 +81,7 @@ spec-framework upgrade --target ../my-product --agents codex --yes
 | Product-Owned Area | Purpose |
 | --- | --- |
 | `product/.product/` | Product state, registry, derivations, approval records, and adopted framework metadata. |
-| `product/foundation/` | Problem, vision, and strategy for the product. |
+| `product/foundation/` | Full Foundation and proportional Feature Brief or Product Baseline contracts selected during adoption. |
 | `product/domains/` | Product domains, goals, features, use cases, specifications, and tasks. |
 | `product/knowledge/decisions/` | Product decisions only. |
 | `product/knowledge/business-rules/` | Product business rules. |

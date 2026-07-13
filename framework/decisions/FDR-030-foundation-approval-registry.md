@@ -21,7 +21,7 @@ The starter artifact registry contained domain templates and omitted the L0 Foun
 | Initial registry | New products register Problem, Vision, Product Principles, North Star, and Strategy during initialization. |
 | Regeneration | Canonical Foundation files declare ID, type, status, and parent IDs so `validate --write-registry` preserves the same entries and relationships. |
 | Ordering | Vision requires approved Problem; Principles and North Star require approved Vision; Strategy requires approved Vision, Principles, and North Star. |
-| Proportional scope | Registration does not force a product-wide definition. An `existing-feature` adoption may approve feature-scoped Foundation contracts that justify and bound only that delivery while preserving the same parent and evidence gates. |
+| Proportional scope | New products and `existing-implementation` use the full registered Foundation ladder. Starting points specialized by later FDRs may replace that active package with their own traceable entry contracts. |
 | Status synchronization | Approving Problem, Vision, or Strategy synchronizes the canonical file and its local `context.md` status before updating the registry and history. |
 | Evidence | Foundation statuses at `approved` or later are invalid without a current hash-matching record in `.product/history/`. Manual Markdown edits never constitute approval. |
 | Compatibility | Existing products first add Foundation ID/type/parent metadata, then run `validate --write-registry`; no approval records are generated automatically. Human approval is still required. |

@@ -8,6 +8,8 @@ Framework method assets are resolved from the versioned user cache using `.produ
 
 ## Product Flow
 
+This is the default `new-product` flow. After initialization, `BOOTSTRAP.md` and `.product/framework.json` define the active path for the selected starting point; proportional modes may replace or prepend Foundation contracts.
+
 ```text
 Problem -> Vision -> Strategy -> Domain -> User Goal -> Feature -> Use Case -> Specification -> Design -> Implementation Plan -> Execution Graph -> Tasks -> Code -> Validation -> Audit
 ```
@@ -26,6 +28,8 @@ Problem -> Vision -> Strategy -> Domain -> User Goal -> Feature -> Use Case -> S
 | `releases/` | Product releases. |
 
 ## Bootstrap Sequence
+
+The diagram below applies to `new-product`. Do not use it to override the generated starting-point guidance.
 
 ```mermaid
 flowchart LR

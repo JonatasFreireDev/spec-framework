@@ -18,7 +18,7 @@ Framework assets live in the versioned user cache and are resolved from `product
 | Area | Purpose |
 | --- | --- |
 | `product/.product/` | Product state, framework adoption metadata, decisions index, roadmap, artifact registry, derivations, and approval history. |
-| `product/foundation/` | Problem, vision, and strategy documents. |
+| `product/foundation/` | Full Foundation plus proportional starting-point contracts when selected. |
 | `product/knowledge/` | Product-specific knowledge, decisions, business rules, conventions, and examples. |
 | `product/domains/` | Product domain tree. |
 | `product/audits/` | Product validation reports, readiness checks, and security/threat tracking. |
@@ -27,6 +27,8 @@ Framework assets live in the versioned user cache and are resolved from `product
 | `product/engineering/` | Product engineering notes, architecture, runbooks, and product-specific gates. |
 
 ## First Product Steps
+
+These are the default `new-product` steps. For every initialized repository, read `product/BOOTSTRAP.md` first; it names the active starting-point contract and may replace or prepend this sequence.
 
 1. Fill `product/context.md` with product identity.
 2. Fill `product/foundation/problem/context.md`, `product/foundation/problem/problem.md`, and `product/foundation/problem/opportunities.md`.

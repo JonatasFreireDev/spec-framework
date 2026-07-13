@@ -12,6 +12,8 @@ Run the framework validator from the repository root:
 spec-framework validate --write-registry --write-report
 ```
 
+When the product manifest declares `starting_point: audit-only`, run `spec-framework validate` without write flags. The CLI rejects registry and report writes in that mode.
+
 Run validator and move-tool fixture tests with:
 
 ```bash

@@ -284,11 +284,11 @@ func showImpeccableVersion(installImpeccable bool) bool {
 func startingPointDescription(startingPoint string) string {
 	descriptions := map[string]string{
 		"new-product":             "Start product discovery and engineering contracts from a clean product skeleton.",
-		"existing-product":        "Adopt an existing product and map its current scope, decisions, and delivery state.",
-		"existing-documents":      "Inventory local files or directories such as epics and PRDs; URLs are not supported yet.",
-		"existing-feature":        "Bring an existing feature into the framework and reconstruct its traceability.",
-		"existing-implementation": "Inspect an existing codebase and derive product and engineering context from evidence.",
-		"audit-only":              "Evaluate the current product and implementation without starting a delivery workflow.",
+		"existing-product":        "Build a Product Baseline from code and operating evidence, then define future Strategy.",
+		"existing-documents":      "Review and materialize selected drafts from local epics or PRDs; URLs are not supported yet.",
+		"existing-feature":        "Create one Feature Brief bound to the specific feature you intend to deliver.",
+		"existing-implementation": "Assess the codebase as evidence before deriving and approving the full Foundation.",
+		"audit-only":              "Inspect without changing registry, reports, approvals, workspaces, or delivery state.",
 	}
 	return descriptions[startingPoint]
 }

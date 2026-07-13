@@ -20,7 +20,15 @@ Prove that release archives work without Node.js or a Go toolchain on the adopte
 7. Run `spec-framework validate` and `spec-framework skill path code-runner` from the generated repository.
 8. Add a product-owned marker, run `upgrade --yes`, and confirm all product and client-owned markers are preserved.
 9. Exercise `move --dry-run` and `move` on a temporary artifact.
-10. For release archives, verify `checksums.txt` before extraction.
-11. Clean temporary artifacts.
+10. Exercise every starting point in an isolated repository:
+   - `new-product`: full Foundation remains registered.
+   - `existing-product`: Product Baseline and Strategy are active; consolidated Foundation artifacts are excluded.
+   - `existing-documents`: the pinned run blocks `work` before materialization and permits it after selected drafts are materially complete.
+   - `existing-feature`: Feature Brief approval unlocks only its declared Target Feature, and registry regeneration preserves the existing Goal parent.
+   - `existing-implementation`: Assessment approval alone still blocks `work`; full Foundation approvals unlock it.
+   - `audit-only`: read-only validation leaves the product tree unchanged and representative mutations are refused.
+11. For import smoke, confirm materialization hashes are recorded and a later legitimate draft refinement does not invalidate the entry gate.
+12. For release archives, verify `checksums.txt` before extraction.
+13. Clean temporary artifacts.
 
 Any crash, missing asset, overwritten product file, version mismatch, invalid CI pin, or checksum failure blocks release.

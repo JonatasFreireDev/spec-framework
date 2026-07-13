@@ -25,7 +25,7 @@ The full five-artifact Foundation package is proportionate for a new or uncertai
 | Approval | The brief requires an individual hash-matching approval record. Manual status edits do not satisfy the gate. |
 | Workspace gate | `spec-framework work` is blocked for `existing-feature` until the current Feature Brief is approved. |
 | Escalation | Cross-domain direction, business-model change, broad security policy, or uncertain product/audience scope routes back to the full Foundation package. |
-| Other starting points | `new-product`, `existing-product`, and `existing-documents` retain full Foundation; audit-only does not manufacture approvals. |
+| Other starting points | Their own starting-point contracts apply. This decision does not impose full Foundation on modes specialized by later FDRs. |
 
 ## Consequences
 

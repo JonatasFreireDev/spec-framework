@@ -38,7 +38,18 @@ spec-framework init ../my-product --agents codex \
   --starting-point existing-documents --source-dir ../product-docs --yes   # import PRDs/epics
 ```
 
-Read the generated `product/BOOTSTRAP.md`, fill `product/foundation/` (problem → vision → strategy), create your first domain, and run `spec-framework validate`.
+The starting point selects the active entry contract and gate:
+
+| Starting point | Entry contract | Gate before `work` |
+| --- | --- | --- |
+| `new-product` | Problem → Vision → Principles/North Star → Strategy | Full Foundation approved |
+| `existing-product` | Product Baseline → Strategy | Both individually approved |
+| `existing-documents` | Latest import run | Selected mappings materially complete; outputs remain draft |
+| `existing-feature` | Feature Brief with one `Target Feature` | Current approval matching the selected feature |
+| `existing-implementation` | Implementation Assessment → full Foundation | Assessment and Foundation approved |
+| `audit-only` | Read-only inspection | Mutations and workspace creation blocked |
+
+Read the generated `product/BOOTSTRAP.md`; it names the current gate and exact next command. The complete ladder above is the default `new-product` path, while proportional starting points rejoin it at their governed handoff.
 
 ## How It Works
 
@@ -76,7 +87,7 @@ All mutations preview before executing; approval commands require an explicit hu
 | --- | --- |
 | [FRAMEWORK.md](FRAMEWORK.md) | Canonical method and architecture. |
 | [framework/](framework/) | Executable framework core: skills, templates, validators, FDRs. |
-| [framework/skills/](framework/skills/) | 30+ specialist and orchestrator skill contracts. |
+| [framework/skills/](framework/skills/) | 50 specialist and orchestrator skill contracts. |
 | [starter/](starter/) | Clean `product/` skeleton copied into new repositories. |
 | [examples/events/](examples/events/) | Worked product instance used as learning material and validation fixture. |
 | [docs/](docs/) | Published visual guide (GitHub Pages). |

@@ -4,6 +4,8 @@
 
 Capture product problem, vision, and strategy before domain or feature work begins.
 
+This is the complete Foundation package. The generated `../BOOTSTRAP.md` determines whether the selected starting point requires it, replaces it with a proportional contract, or keeps the session read-only.
+
 ## Expected Flow
 
 ```text

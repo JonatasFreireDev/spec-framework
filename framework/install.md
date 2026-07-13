@@ -35,6 +35,15 @@ Initialize without a TTY. The target may already contain product code; only an e
 spec-framework init ../my-product --agents codex,cursor,claude --yes
 ```
 
+| Starting point | Materialized entry contract |
+| --- | --- |
+| `new-product` | Full Foundation starter |
+| `existing-product` | `foundation/product-baseline.md` plus Strategy |
+| `existing-documents` | Immutable import run pinned in the product manifest |
+| `existing-feature` | `foundation/feature-brief.md` with `Target Feature` |
+| `existing-implementation` | `knowledge/assessments/implementation-assessment.md` plus full Foundation |
+| `audit-only` | Read-only bootstrap; mutating CLI commands are refused |
+
 Use `--starting-point existing-documents` with `--source-dir` or `--sources` to bootstrap from existing product material. This creates an analysis-only import run; it never treats source prose as approved product truth.
 
 Draft materialization is a separate explicit command after the import mappings have been reviewed: `spec-framework import materialize --run IMPORT-001 --approved-by "Product Owner" --yes`.

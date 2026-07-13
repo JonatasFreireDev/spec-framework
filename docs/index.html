@@ -1035,7 +1035,7 @@ footer{
       <a class="toc-card" href="#skills" data-page="skills">
         <span class="toc-kicker">Catálogo</span>
         <span class="toc-title">As skills</span>
-        <span class="toc-desc">Os 30+ especialistas e orquestradores do framework, organizados por camada — fundação, design, engenharia, auditoria.</span>
+        <span class="toc-desc">Os 50 especialistas e orquestradores do framework, organizados por camada — fundação, design, engenharia, auditoria.</span>
       </a>
       <a class="toc-card" href="#design" data-page="design">
         <span class="toc-kicker">Experiência</span>
@@ -1139,15 +1139,15 @@ meu-produto/
     <div class="cat-block" style="margin-top:48px;">
       <h3 class="block-title" id="comecar-ponto">Escolha o ponto de partida</h3>
       <p class="lead" style="margin-bottom:20px;">
-        O wizard pergunta de onde você está partindo (ou passe <code>--starting-point</code> em modo headless). A escolha personaliza o roteiro do <code>BOOTSTRAP.md</code> — <b>não</b> remove nenhuma skill, gate ou exigência de rigor:
+        O wizard pergunta de onde você está partindo (ou passe <code>--starting-point</code> em modo headless). A escolha define o roteiro do <code>BOOTSTRAP.md</code>, o registry ativo e o primeiro gate — <b>não</b> remove nenhuma skill nem reduz a exigência de evidência:
       </p>
       <div class="intent-list">
         <div class="intent-row"><span class="intent-q"><code>new-product</code> <span style="color:var(--ink-soft);font-style:italic;">(padrão)</span></span><span class="intent-arrow">→</span><span class="intent-a">produto do zero, sem nenhuma fonte prévia — siga a <a href="#comecar-rota-a">Rota A</a></span></div>
         <div class="intent-row"><span class="intent-q"><code>existing-documents</code></span><span class="intent-arrow">→</span><span class="intent-a">tem PRDs, epics ou pastas de documentos para importar — siga a <a href="#comecar-rota-b">Rota B</a></span></div>
-        <div class="intent-row"><span class="intent-q"><code>existing-product</code></span><span class="intent-arrow">→</span><span class="intent-a">produto já rodando em produção, sem documentação estruturada</span></div>
-        <div class="intent-row"><span class="intent-q"><code>existing-feature</code></span><span class="intent-arrow">→</span><span class="intent-a">uma feature específica já existe e precisa entrar no método</span></div>
-        <div class="intent-row"><span class="intent-q"><code>existing-implementation</code></span><span class="intent-arrow">→</span><span class="intent-a">código já implementado, documentação retroativa</span></div>
-        <div class="intent-row"><span class="intent-q"><code>audit-only</code></span><span class="intent-arrow">→</span><span class="intent-a">só quer rodar auditorias, sem gerar plano de entrega</span></div>
+        <div class="intent-row"><span class="intent-q"><code>existing-product</code></span><span class="intent-arrow">→</span><span class="intent-a">produto em operação e repo code-first: Product Baseline aprovado → Strategy aprovada</span></div>
+        <div class="intent-row"><span class="intent-q"><code>existing-feature</code></span><span class="intent-arrow">→</span><span class="intent-a">entregar uma feature delimitada: Feature Brief aprovado e vinculado a um <code>Target Feature</code></span></div>
+        <div class="intent-row"><span class="intent-q"><code>existing-implementation</code></span><span class="intent-arrow">→</span><span class="intent-a">código existente como evidência: Implementation Assessment → Foundation completa</span></div>
+        <div class="intent-row"><span class="intent-q"><code>audit-only</code></span><span class="intent-arrow">→</span><span class="intent-a">inspeção somente leitura; registry, reports, approvals, workspaces e delivery não podem ser alterados</span></div>
       </div>
     </div>
 
@@ -1156,7 +1156,7 @@ meu-produto/
       <div class="flow">
         <div class="flow-row"><div class="flow-stage">Iniciar</div><div class="flow-rail"><div class="flow-dot"></div></div><div class="flow-card"><p><code>spec-framework init ../meu-produto --agents codex --yes</code> (o wizard do passo zero já faz isso por você). O <code>init</code> interativo também oferece o adapter visual Impeccable; headless, use <code>--install-impeccable --impeccable-version latest</code> — se o provedor falhar, o produto inicializado é preservado.</p></div></div>
         <div class="flow-row"><div class="flow-stage">Ler o roteiro</div><div class="flow-rail"><div class="flow-dot"></div></div><div class="flow-card"><p>O <code>product/BOOTSTRAP.md</code> gerado explica, em ordem, os gates de fundação — distingue um starter estruturalmente válido de um produto pronto para implementação.</p></div></div>
-        <div class="flow-row"><div class="flow-stage">Fundação</div><div class="flow-rail"><div class="flow-dot gate"></div></div><div class="flow-card"><p>Preencha <code>product/foundation/</code> nessa ordem: <b>problem</b> → <b>vision</b> → <b>strategy</b>. Nada abaixo disso faz sentido sem essa base aprovada.</p></div></div>
+        <div class="flow-row"><div class="flow-stage">Fundação</div><div class="flow-rail"><div class="flow-dot gate"></div></div><div class="flow-card"><p>Para <code>new-product</code>, aprove nessa ordem: <b>Problem</b> → <b>Vision</b> → <b>Product Principles + North Star</b> → <b>Strategy</b>. Cada status aprovado exige evidência atual em <code>.product/history/</code>.</p></div></div>
         <div class="flow-row"><div class="flow-stage">Primeiro domínio</div><div class="flow-rail"><div class="flow-dot"></div></div><div class="flow-card"><p>Crie o primeiro <code>product/domains/&lt;domínio&gt;</code> com seus Objetivos de usuário — não existe pasta global de features.</p></div></div>
         <div class="flow-row"><div class="flow-stage">Validar</div><div class="flow-rail"><div class="flow-dot gate"></div></div><div class="flow-card"><p><code>spec-framework validate</code> antes de qualquer feature — confirma que a fundação está estruturalmente correta. Daí em diante, o fluxo é o de <a href="#exemplo" data-page="exemplo">uma feature nova</a>.</p></div></div>
       </div>
@@ -1169,7 +1169,17 @@ meu-produto/
         <div class="flow-row"><div class="flow-stage">Inventário automático</div><div class="flow-rail"><div class="flow-dot"></div></div><div class="flow-card"><p>O CLI cria um run somente-análise em <code>product/knowledge/imports/runs/IMPORT-NNN/</code>: <code>inventory.json</code>, <code>import-plan.json</code>, <code>mapping.json</code>, <code>conflicts.md</code>. Nenhum Domínio, Objetivo ou Feature é criado ainda.</p></div></div>
         <div class="flow-row"><div class="flow-stage">Revisar</div><div class="flow-rail"><div class="flow-dot gate"></div></div><div class="flow-card"><p>Leia <code>mapping.json</code> e <code>conflicts.md</code> com atenção — conflitos entre fontes nunca são resolvidos em silêncio pelo importador.</p></div></div>
         <div class="flow-row"><div class="flow-stage">Aprovar e materializar</div><div class="flow-rail"><div class="flow-dot gate"></div></div><div class="flow-card"><p><code>spec-framework import materialize --run IMPORT-001 --approved-by "Product Owner" --yes</code> — rejeita evidência faltando, caminhos fora de <code>product/</code>, e destinos que já existem.</p></div></div>
-        <div class="flow-row"><div class="flow-stage">Mesmo roteiro daqui pra frente</div><div class="flow-rail"><div class="flow-dot"></div></div><div class="flow-card"><p>A partir daqui, siga o mesmo <code>product/BOOTSTRAP.md</code> — o starting point só mudou o texto guia, os gates de rigor continuam os mesmos.</p></div></div>
+        <div class="flow-row"><div class="flow-stage">Artefatos continuam draft</div><div class="flow-rail"><div class="flow-dot"></div></div><div class="flow-card"><p>Materializar autoriza somente os writes selecionados. O run mais recente bloqueia <code>work</code> até ficar materialmente completo; cada artefato resultante conserva owner, parents e aprovação próprios.</p></div></div>
+      </div>
+    </div>
+
+    <div class="cat-block" style="margin-top:48px;">
+      <h3 class="block-title">Rotas proporcionais e gates</h3>
+      <div class="intent-list">
+        <div class="intent-row"><span class="intent-q"><code>existing-product</code></span><span class="intent-arrow">→</span><span class="intent-a"><code>foundation/product-baseline.md</code> aprovado → <code>foundation/strategy/strategy.md</code> aprovada → <code>work</code></span></div>
+        <div class="intent-row"><span class="intent-q"><code>existing-feature</code></span><span class="intent-arrow">→</span><span class="intent-a"><code>foundation/feature-brief.md</code> aprovado; o alvo no Markdown deve coincidir com a feature selecionada</span></div>
+        <div class="intent-row"><span class="intent-q"><code>existing-implementation</code></span><span class="intent-arrow">→</span><span class="intent-a">Assessment aprovado → Problem → Vision → Principles/North Star → Strategy → <code>work</code></span></div>
+        <div class="intent-row"><span class="intent-q"><code>audit-only</code></span><span class="intent-arrow">→</span><span class="intent-a"><code>spec-framework validate</code> sem flags de escrita; mutações são recusadas pelo CLI</span></div>
       </div>
     </div>
 
@@ -1388,6 +1398,7 @@ meu-produto/
         <div class="skill"><div class="name">Strategy AI</div><div class="desc">Define posicionamento, segmentos, métricas e roadmap.</div></div>
         <div class="skill"><div class="name">Domain Architect AI</div><div class="desc">Modela domínios e fronteiras do negócio.</div></div>
         <div class="skill"><div class="name">User Goal AI</div><div class="desc">Modela objetivos estáveis do usuário dentro de um domínio.</div></div>
+        <div class="skill"><div class="name">Artifact Importer AI</div><div class="desc">Inventaria fontes, propõe mappings rastreáveis e materializa somente drafts explicitamente aprovados.</div></div>
       </div>
     </div>
 
@@ -1411,6 +1422,7 @@ meu-produto/
         <div class="skill"><div class="name">Specification AI</div><div class="desc">Escreve o contrato central de implementação.</div></div>
         <div class="skill"><div class="name">Engineering System AI</div><div class="desc">Mantém o Engineering System compartilhado (<code>engineering-system.md</code> + <code>.yaml</code>): arquitetura estável, ownership de módulos e dados, padrões e qualidade.</div></div>
         <div class="skill"><div class="name">Engineering Proposal AI</div><div class="desc">Descreve a solução técnica pretendida de uma entrega — fronteiras, dados, integrações, rollout — sem sequenciar tarefas.</div></div>
+        <div class="skill"><div class="name">Technical Discovery AI</div><div class="desc">Mapeia requisitos ao código existente, riscos, dependências e ao Architecture Gate antes da proposta técnica.</div></div>
         <div class="skill"><div class="name">Implementation Planner AI</div><div class="desc">Traduz a especificação em estratégia técnica.</div></div>
         <div class="skill"><div class="name">Execution Graph AI</div><div class="desc">Converte o plano num DAG de tarefas paralelizável.</div></div>
         <div class="skill"><div class="name">Task AI</div><div class="desc">Gera tarefas pequenas, testáveis e rastreáveis.</div></div>
@@ -1422,6 +1434,7 @@ meu-produto/
       <p class="cat-desc">Implementam e verificam — cada verificador é independente de quem produziu o que ele verifica.</p>
       <div class="skill-grid">
         <div class="skill"><div class="name">Code Runner AI</div><div class="desc">Implementa uma tarefa aprovada por vez, em TDD, sem commitar.</div></div>
+        <div class="skill"><div class="name">Bug Fixer AI</div><div class="desc">Reproduz, corrige e valida defeitos dentro do escopo e dos gates aprovados.</div></div>
         <div class="skill"><div class="name">QA AI</div><div class="desc">Valida comportamento, testes, edge cases e evidências.</div></div>
         <div class="skill"><div class="name">Engineering Review AI</div><div class="desc">Veredito independente e somente-leitura sobre a Engineering Proposal, antes do Plano de Implementação. Não substitui Code Review, QA nem Security Review.</div></div>
         <div class="skill"><div class="name">Code Review AI</div><div class="desc">Revisão somente-leitura de completude, aderência e qualidade.</div></div>
@@ -1429,6 +1442,9 @@ meu-produto/
         <div class="skill"><div class="name">Threat Modeler AI</div><div class="desc">Modela ameaças e mantém o registro de segurança do produto.</div></div>
         <div class="skill"><div class="name">Commit Crafter AI</div><div class="desc">Cria commits locais atômicos por concern, sem push.</div></div>
         <div class="skill"><div class="name">PR Finalizer AI</div><div class="desc">Prepara ou abre PR com evidências, sem merge.</div></div>
+        <div class="skill"><div class="name">Command Planner AI</div><div class="desc">Transforma comandos pretendidos em planos R0/R1 revisáveis, sem executá-los.</div></div>
+        <div class="skill"><div class="name">Command Executor AI</div><div class="desc">Executa somente planos de comando aprovados e persiste evidência de resultado.</div></div>
+        <div class="skill"><div class="name">Release Publisher AI</div><div class="desc">Publica releases aprovadas, verifica checksums e executa smoke pós-publicação.</div></div>
       </div>
     </div>
 
@@ -1451,6 +1467,8 @@ meu-produto/
       <p class="cat-desc">Camada de governança: controlam fluxo, ordem, gates e handoffs — nunca autoram artefato de especialista nem executam comando.</p>
       <div class="skill-grid">
         <div class="skill"><div class="name">Framework Guide</div><div class="desc">Porta de entrada conversacional do CLI: traduz o objetivo da pessoa no comando seguro mais próximo, explica o gate ativo. Nunca autoria artefato nem aprova.</div></div>
+        <div class="skill"><div class="name">Product Orchestrator</div><div class="desc">Coordena Foundation, contratos proporcionais de entrada e o handoff inicial para domínios e entregas.</div></div>
+        <div class="skill"><div class="name">Documentation Orchestrator</div><div class="desc">Coordena sincronização de contexts, índices, templates, relatórios e documentação pública.</div></div>
         <div class="skill"><div class="name">Domain Evolution Orchestrator</div><div class="desc">Leva metas aprovadas até a seleção humana de uma feature candidata.</div></div>
         <div class="skill"><div class="name">New Feature Orchestrator</div><div class="desc">Impacto → Feature → Casos de Uso → Especificação → Design → Plano → Grafo → Tarefas.</div></div>
         <div class="skill"><div class="name">Existing Product Import Orchestrator</div><div class="desc">Importa PRDs e epics existentes com aprovação humana antes de materializar.</div></div>
@@ -1906,6 +1924,10 @@ meu-produto/
       <div class="intent-list">
         <div class="intent-row"><span class="intent-q">"Não tenho nem o CLI instalado"</span><span class="intent-arrow">→</span><span class="intent-a">inspecionar e rodar <code>scripts/init.ps1</code> / <code>init.sh</code> (pipe remoto é escolha explícita do usuário)</span></div>
         <div class="intent-row"><span class="intent-q">"Quero começar um produto"</span><span class="intent-arrow">→</span><span class="intent-a"><code>init &lt;caminho&gt;</code></span></div>
+        <div class="intent-row"><span class="intent-q">"Tenho um produto operando, mas o código é a principal fonte"</span><span class="intent-arrow">→</span><span class="intent-a"><code>init --starting-point existing-product</code> → Product Baseline → Strategy</span></div>
+        <div class="intent-row"><span class="intent-q">"Tenho um épico e quero entregar uma feature específica"</span><span class="intent-arrow">→</span><span class="intent-a"><code>init --starting-point existing-feature</code> → Feature Brief com Target Feature → <code>work</code></span></div>
+        <div class="intent-row"><span class="intent-q">"Tenho uma implementação e preciso reconstruir o produto"</span><span class="intent-arrow">→</span><span class="intent-a"><code>init --starting-point existing-implementation</code> → Assessment → Foundation completa</span></div>
+        <div class="intent-row"><span class="intent-q">"Quero apenas auditar, sem alterar nada"</span><span class="intent-arrow">→</span><span class="intent-a"><code>init --starting-point audit-only</code> → inspeção sem flags de escrita</span></div>
         <div class="intent-row"><span class="intent-q">"Onde meu trabalho está?"</span><span class="intent-arrow">→</span><span class="intent-a"><code>dashboard</code> · <code>status</code> · <code>next</code></span></div>
         <div class="intent-row"><span class="intent-q">"Trazer épicos/PRDs existentes"</span><span class="intent-arrow">→</span><span class="intent-a"><code>init --starting-point existing-documents</code> → <code>import materialize</code></span></div>
         <div class="intent-row"><span class="intent-q">"Revisar ou aprovar um estágio"</span><span class="intent-arrow">→</span><span class="intent-a"><code>review</code> → <code>approve</code> / <code>approve-stage</code></span></div>

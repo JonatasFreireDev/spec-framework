@@ -12,6 +12,9 @@ Use these templates whenever a new canonical artifact is created or an existing 
 
 - `context-template.md`: baseline for every `context.md`.
 - `problem-template.md`, `vision-template.md`, `strategy-template.md`: foundation artifacts.
+- `feature-brief-template.md`: bounded `existing-feature` entry contract with one Target Feature.
+- `product-baseline-template.md`: code-first current-state contract for `existing-product`.
+- `implementation-assessment-template.md`: observed implementation evidence before full Foundation.
 - `persona-template.md`, `metric-template.md`, `roadmap-item-template.md`: strategy support artifacts.
 - `domain-template.md`, `goal-template.md`, `feature-template.md`, `use-case-template.md`: product hierarchy artifacts.
 - `journey-template.md`: user journey artifact.
