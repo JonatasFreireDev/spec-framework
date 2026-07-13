@@ -4,7 +4,7 @@
 
 Store examples that demonstrate how a product can use the framework.
 
-Examples are learning material. They are not copied into new product repositories by default and are not product starter scope.
+Examples are not copied into new product repositories by default and are not product starter scope. `events/` is nevertheless the canonical reference for initial domain modeling: read it before creating the first domain to learn business-area boundaries, `Does Not Own` declarations, cross-domain dependencies, and a walking skeleton.
 
 ## Current Examples
 

@@ -49,7 +49,7 @@ The starting point selects the active entry contract and gate:
 | `existing-implementation` | Implementation Assessment → full Foundation | Assessment and Foundation approved |
 | `audit-only` | Read-only inspection | Mutations and workspace creation blocked |
 
-Read the generated `product/BOOTSTRAP.md`; it names the current gate and exact next command. The complete ladder above is the default `new-product` path, while proportional starting points rejoin it at their governed handoff.
+Read the generated `product/BOOTSTRAP.md`; it names the current gate and exact next command. Every starting point that creates or revises domains uses the installed `examples/events/` reference before its first domain change to model a business area with explicit ownership, non-ownership, dependencies, and one Domain -> User Goal -> Feature -> Use Case walking skeleton; `audit-only` uses it for assessment only. The complete ladder above is the default `new-product` path, while proportional starting points rejoin it at their governed handoff.
 
 ## How It Works
 

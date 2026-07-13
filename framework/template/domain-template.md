@@ -14,11 +14,17 @@
 
 [Define the domain and the coherent product/business area it owns.]
 
-## 🧱 Boundaries
+## 🧱 Owns
 
-| Owns | Does Not Own | Depends On |
+| Concept/workflow | Why this domain owns it |
+| --- | --- |
+| `[concept/workflow]` | `[ownership rationale]` |
+
+## Does Not Own
+
+| Concept/workflow | Owning domain/system | Boundary rationale |
 | --- | --- | --- |
-| `[concept/workflow]` | `[out of scope]` | `[domain/system]` |
+| `[out of scope]` | `[domain/system]` | `[why it belongs elsewhere]` |
 
 ## 🗺️ Domain Map
 

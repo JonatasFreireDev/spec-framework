@@ -6,5 +6,5 @@ import "embed"
 // Init copies only starter/product into adopter repositories; method assets are
 // materialized in the versioned user cache so the released CLI works offline.
 //
-//go:embed FRAMEWORK.md all:starter framework/AGENTS.framework.md framework/delivery-closure.md framework/decisions framework/skills framework/template
+//go:embed FRAMEWORK.md all:starter all:examples/events framework/AGENTS.framework.md framework/delivery-closure.md framework/decisions framework/skills framework/template
 var Assets embed.FS

@@ -37,7 +37,7 @@ func TestEnsureMaterializesVersionedAssets(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	for _, name := range []string{"FRAMEWORK.md", "skills/code-runner/SKILL.md", "templates/specification-template.md", ".complete"} {
+	for _, name := range []string{"FRAMEWORK.md", "skills/code-runner/SKILL.md", "templates/specification-template.md", "examples/events/domains/events/domain.md", ".complete"} {
 		if _, err := os.Stat(filepath.Join(root, filepath.FromSlash(name))); err != nil {
 			t.Fatal(err)
 		}

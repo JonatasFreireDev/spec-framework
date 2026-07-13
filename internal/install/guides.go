@@ -92,6 +92,12 @@ Parent approvals are enforced mechanically. If a command is blocked, read the re
 
 status, next, guide, and dashboard require a WORK-NNN workspace. Not having one during Foundation is expected.
 
+## Before modeling domains
+
+For every starting point that creates or revises domains, read the pinned framework runtime's examples/events/ before the first domain change. It is the canonical modeling reference: a domain is a coherent business area, not the product name, a sidebar section, or a container for every capability. Use its domains/events/domain.md and domains/README.md to model explicit ownership, Does Not Own boundaries, cross-domain dependencies, and one walking-skeleton chain: Domain -> User Goal -> Feature -> Use Case. In audit-only mode, use the same reference to assess existing domain boundaries without changing them.
+
+Do not put authentication into an unrelated business domain; model a users/identity boundary or record why the product genuinely has one identity domain. Do not stop at domain.md: create the first goal, feature, and use case before creating a workspace.
+
 %s
 
 ## Engineering readiness
@@ -199,7 +205,7 @@ func bootstrapProfileFor(startingPoint string) bootstrapProfile {
 			nextAction:     "Complete and approve foundation/feature-brief.md for this bounded feature",
 			style:          "Lean and feature-scoped",
 			scopeRule:      "Existing-feature replaces the full product Foundation package with one Feature Brief. Escalate to full Foundation when product direction or scope is broad or uncertain.",
-			artifactAction: "Complete `product/foundation/feature-brief.md`; do not invent a product-wide strategy.",
+			artifactAction: "Complete `product/foundation/feature-brief.md`; do not invent a product-wide strategy. After approval, model only the bounded feature's domain slice using the pinned runtime's examples/events/ reference.",
 			approvalIntro:  artifactApprovalIntro,
 			approvalGuidance: `~~~text
    spec-framework approve --product-root product --artifact foundation/feature-brief.md --approved-by "Your Name"

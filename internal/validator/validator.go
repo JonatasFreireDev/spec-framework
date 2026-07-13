@@ -161,6 +161,7 @@ func Validate(ctx context.Context, root, frameworkRoot string) (Result, error) {
 	d = append(d, validateRegistryAndApprovalGates(snap)...)
 	d = append(d, validateImportRuns(snap)...)
 	d = append(d, validateDeliveryClosure(snap)...)
+	d = append(d, validateDomainModeling(snap)...)
 	d = append(d, validateDesignArtifacts(snap)...)
 	d = append(d, validateDesignSystem(snap)...)
 	d = append(d, validateEngineeringSystem(snap)...)

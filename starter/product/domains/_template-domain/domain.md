@@ -13,18 +13,23 @@
 
 TBD: describe the business area represented by this domain.
 
-## Responsibilities
+## Owns
 
-| Responsibility | In Scope? | Notes |
+| Responsibility | Notes |
 | --- | --- | --- |
-| TBD | yes | TBD |
+| TBD | TBD |
 
-## Boundaries
+## Does Not Own
 
-| Boundary | Rule |
-| --- | --- |
-| In scope | TBD |
-| Out of scope | TBD |
+| Responsibility or concept | Owning domain/system | Notes |
+| --- | --- | --- |
+| TBD | TBD | TBD |
+
+## Cross-Domain Dependencies
+
+| Domain/system | What this domain needs | Direction | Contract or constraint |
+| --- | --- | --- | --- |
+| TBD | TBD | inbound/outbound | TBD |
 
 ## Core Concepts
 
@@ -40,4 +45,4 @@ TBD: describe the business area represented by this domain.
 
 ## Next Step
 
-Create user goals under [goals/](goals/).
+Create the first user goal under [goals/](goals/), then its first feature and use case. Do not create a workspace from a domain document without this walking skeleton.

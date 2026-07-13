@@ -36,6 +36,8 @@ Delivery Orchestrator reports through the consolidated dashboard model. Product 
 
 Vision AI owns a three-artifact package with exclusive content boundaries: `vision.md` contains direction and strategic boundaries, `principles.md` contains product decision rules and trade-offs, and `north-star.md` contains the outcome metric and guardrails. The artifacts link to one another instead of duplicating canonical content.
 
+Domain Architect AI reads the pinned runtime's `examples/events/` before first-domain modeling. That worked example is the canonical reference for business-area boundaries, non-ownership, cross-domain contracts, and the first Domain -> User Goal -> Feature -> Use Case walking skeleton.
+
 ## Responsible Skill
 
 Primary owner: Documentation Orchestrator.

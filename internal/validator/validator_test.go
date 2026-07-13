@@ -470,6 +470,36 @@ func TestDiagnosticsAreDeterministic(t *testing.T) {
 	}
 }
 
+func TestDomainModelingWarnings(t *testing.T) {
+	snapshot := Snapshot{Text: map[string]string{
+		"context.md":                   "```yaml\nname: FocusFlow\nslug: focusflow\n```\n",
+		"domains/focusflow/context.md": "```yaml\nstatus: approved\n```\n",
+		"domains/focusflow/domain.md":  "## Owns\n\n- Authentication, login, and tasks.\n",
+	}}
+	diagnostics := validateDomainModeling(snapshot)
+	found := map[string]bool{}
+	for _, diagnostic := range diagnostics {
+		found[diagnostic.Check] = true
+		if diagnostic.Severity != Warning {
+			t.Fatalf("diagnostic %#v is not a warning", diagnostic)
+		}
+	}
+	for _, check := range []string{"domain-product-name", "domain-missing-boundaries", "domain-chain-incomplete", "domain-monolith"} {
+		if !found[check] {
+			t.Errorf("missing %s warning: %#v", check, diagnostics)
+		}
+	}
+}
+
+func TestDomainAuthenticationWarningOnlyUsesOwnershipSection(t *testing.T) {
+	if domainOwnsAuthentication("### Owns\n\n- Tasks.\n\n### Does Not Own\n\n- Authentication.\n") {
+		t.Fatal("authentication listed as non-ownership must not trigger domain-monolith")
+	}
+	if !domainOwnsAuthentication("## Owns\n\n- Authentication and login.\n\n## Does Not Own\n\n- Payments.\n") {
+		t.Fatal("authentication ownership must trigger domain-monolith")
+	}
+}
+
 func TestBlocksBrokenMarkdownLink(t *testing.T) {
 	root := t.TempDir()
 	_ = os.WriteFile(filepath.Join(root, "index.md"), []byte("[Missing](missing.md)\n"), 0644)

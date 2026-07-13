@@ -318,6 +318,88 @@ func validateDeliveryClosure(s Snapshot) []Diagnostic {
 	return out
 }
 
+func validateDomainModeling(s Snapshot) []Diagnostic {
+	var out []Diagnostic
+	product := metadata(s.Text["context.md"])
+	productNames := map[string]bool{}
+	for _, value := range []string{product["name"], product["slug"]} {
+		if normalized := normalizeDomainName(value); normalized != "" && normalized != "product" && normalized != "tbdproduct" {
+			productNames[normalized] = true
+		}
+	}
+	for rel, text := range s.Text {
+		parts := strings.Split(filepath.ToSlash(rel), "/")
+		if len(parts) != 3 || parts[0] != "domains" || parts[2] != "domain.md" || strings.HasPrefix(parts[1], "_") {
+			continue
+		}
+		domain := parts[1]
+		contextPath := "domains/" + domain + "/context.md"
+		context := metadata(s.Text[contextPath])
+		if productNames[normalizeDomainName(domain)] {
+			out = append(out, Diagnostic{Warning, "domain-product-name", rel, "Domain slug matches the product name; domains should name a business area rather than the product.", "Rename or split the domain around a business boundary; see examples/events."})
+		}
+		if !strings.Contains(strings.ToLower(text), "does not own") {
+			out = append(out, Diagnostic{Warning, "domain-missing-boundaries", rel, "Domain does not declare a Does Not Own boundary.", "Add explicit non-ownership and cross-domain dependencies; see examples/events/domains/events/domain.md."})
+		}
+		if strings.EqualFold(context["status"], "approved") && !domainHasGoals(s, domain) {
+			out = append(out, Diagnostic{Warning, "domain-chain-incomplete", contextPath, "Approved domain has no user goals.", "Materialize a walking skeleton: Domain -> User Goal -> Feature -> Use Case; see examples/events."})
+		}
+		if !identityDomain(domain) && domainOwnsAuthentication(text) {
+			out = append(out, Diagnostic{Warning, "domain-monolith", rel, "Non-identity domain appears to own authentication or identity behavior.", "Consider a users/identity boundary and record the cross-domain contract; see examples/events."})
+		}
+	}
+	return out
+}
+
+func domainHasGoals(s Snapshot, domain string) bool {
+	prefix := "domains/" + domain + "/goals/"
+	for rel := range s.Text {
+		parts := strings.Split(filepath.ToSlash(rel), "/")
+		if strings.HasPrefix(rel, prefix) && len(parts) == 5 && parts[4] == "context.md" && !strings.HasPrefix(parts[3], "_") {
+			return true
+		}
+	}
+	return false
+}
+
+func identityDomain(domain string) bool {
+	domain = strings.ToLower(domain)
+	return strings.Contains(domain, "user") || strings.Contains(domain, "identity") || strings.Contains(domain, "account") || strings.Contains(domain, "auth")
+}
+
+func domainOwnsAuthentication(text string) bool {
+	lines := strings.Split(text, "\n")
+	start := -1
+	for i, line := range lines {
+		heading := strings.ToLower(strings.TrimSpace(strings.TrimPrefix(strings.TrimSpace(line), "##")))
+		if strings.Contains(heading, "owns") && !strings.Contains(heading, "does not own") {
+			start = i + 1
+			break
+		}
+	}
+	if start == -1 {
+		return false
+	}
+	end := len(lines)
+	for i := start; i < len(lines); i++ {
+		if strings.HasPrefix(strings.TrimSpace(lines[i]), "#") {
+			end = i
+			break
+		}
+	}
+	content := strings.ToLower(strings.Join(lines[start:end], "\n"))
+	for _, term := range []string{"authentication", "authorization", "login", "sign-in", "sign in", "auth"} {
+		if strings.Contains(content, term) {
+			return true
+		}
+	}
+	return false
+}
+
+func normalizeDomainName(value string) string {
+	return regexp.MustCompile(`[^a-z0-9]+`).ReplaceAllString(strings.ToLower(value), "")
+}
+
 func uniqueStrings(items []string) []string {
 	seen := map[string]bool{}
 	var out []string

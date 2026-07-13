@@ -71,6 +71,7 @@ func Ensure(version string) (string, error) {
 		"framework/decisions":           "decisions",
 		"framework/skills":              "skills",
 		"framework/template":            "templates",
+		"examples/events":               "examples/events",
 	}
 	for source, dest := range assets {
 		if err := copyTree(source, filepath.Join(tmp, dest)); err != nil {

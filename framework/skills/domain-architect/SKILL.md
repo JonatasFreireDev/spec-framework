@@ -27,20 +27,27 @@ domain.md files; domain context.md files; ubiquitous language; invariants; comma
 - the framework root's `FRAMEWORK.md`
 - Relevant parent context.md files.
 - Relevant templates in framework/template/.
+- The pinned framework runtime's `examples/events/domains/README.md` and `examples/events/domains/events/domain.md` before creating the first domain.
 - Approved product decisions in the active product root's `knowledge/decisions/` and `.product/decisions.json`.
 
 ## Workflow
 1. Read the parent context and confirm the artifact status.
 2. Identify missing information, assumptions, conflicts, and dependencies.
-3. Propose the artifact or revision using the matching template.
-4. Record decision candidates for high-impact or hard-to-reverse choices.
-5. Ask for approval before moving the artifact to the next ladder step.
-6. Update context.md with new links, dependencies, questions, and status changes.
+3. Partition responsibilities into coherent business areas; do not use the product name, a UI navigation section, or a catch-all domain as the boundary.
+4. Propose the artifact or revision using the matching template, including Owns, Does Not Own, and cross-domain contracts.
+5. For the first delivery slice, materialize Domain -> User Goal -> Feature -> Use Case before routing to workspace creation.
+6. If authentication or identity is owned by a non-identity business domain, either split or explicitly justify the boundary and dependency.
+7. Record decision candidates for high-impact or hard-to-reverse choices.
+8. Ask for approval before moving the artifact to the next ladder step.
+9. Update context.md with new links, dependencies, questions, and status changes.
 
 ## Quality checklist
 - [ ] Preserves traceability to the parent artifact.
 - [ ] Uses the correct template and naming conventions.
 - [ ] States scope, non-goals, assumptions, and open questions.
+- [ ] Defines what the domain does not own and its cross-domain dependencies.
+- [ ] Does not put authentication inside an unrelated business domain without an explicit boundary decision.
+- [ ] Materializes a first goal, feature, and use case rather than stopping at `domain.md`.
 - [ ] Detects gaps, conflicts, and dependencies.
 - [ ] Records meaningful decisions or decision candidates.
 - [ ] Leaves a clear handoff for the next skill.

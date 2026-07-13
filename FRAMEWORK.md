@@ -80,7 +80,7 @@ Defines positioning, segments, metrics, trade-offs, roadmap, and criteria to adv
 
 ### Domain
 
-Groups a coherent area of the business or product, such as `users`, `groups`, `events`, `friendship`, or `payments`.
+Groups a coherent area of the business or product, such as `users`, `groups`, `events`, `friendship`, or `payments`. A domain is not the product name, a UI navigation section, or a catch-all container. It declares both what it owns and what it does not own, including cross-domain dependencies. The first modeled domain must continue through at least one User Goal, Feature, and Use Case as a walking skeleton; `domain.md` alone is not a delivery slice.
 
 ### User Goal
 
@@ -891,7 +891,7 @@ Spec Framework activates only when the current repository contains a valid `prod
 
 In a newly initialized product repository, read `product/BOOTSTRAP.md` first. It explains the ordered foundation gates and distinguishes a structurally valid starter from a product that is ready for implementation.
 
-During `init`, choose the repository's starting point. This choice customizes `BOOTSTRAP.md` and the active artifact registry; it does not remove skills, orchestrators, rigor requirements, or approval gates. The `existing-feature` starting point replaces the full product Foundation package with one individually approved `foundation/feature-brief.md` for the bounded delivery. If product direction or scope is broad or uncertain, escalate to the full Problem, Vision, Product Principles, North Star, and Strategy path. When starting from existing documents, the CLI creates a source inventory and an analysis-only import run under `product/knowledge/imports/`. Review and explicitly approve mappings before materializing draft product artifacts.
+During `init`, choose the repository's starting point. This choice customizes `BOOTSTRAP.md` and the active artifact registry; it does not remove skills, orchestrators, rigor requirements, or approval gates. The `existing-feature` starting point replaces the full product Foundation package with one individually approved `foundation/feature-brief.md` for the bounded delivery. If product direction or scope is broad or uncertain, escalate to the full Problem, Vision, Product Principles, North Star, and Strategy path. Every starting point that creates or revises domains must read the pinned runtime's `examples/events/` reference before the first domain change and model a business-area boundary, explicit non-ownership, cross-domain dependencies, and one Domain -> User Goal -> Feature -> Use Case walking skeleton. `audit-only` uses the same reference to assess existing domain boundaries without changing product artifacts. When starting from existing documents, the CLI creates a source inventory and an analysis-only import run under `product/knowledge/imports/`. Review and explicitly approve mappings before materializing draft product artifacts.
 
 The `existing-implementation` starting point first materializes and individually approves `knowledge/assessments/implementation-assessment.md`. The assessment becomes a parent of Problem, after which Problem, Vision, Product Principles, North Star, and Strategy require their normal individual approvals before workspace creation. Implementation evidence may support Foundation drafts, but it never grants product approval by itself.
 

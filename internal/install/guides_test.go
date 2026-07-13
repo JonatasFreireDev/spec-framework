@@ -31,6 +31,9 @@ func TestBootstrapExplainsFoundationBeforeWorkspace(t *testing.T) {
 		"A Markdown status edit alone is not approval.",
 		"require a WORK-NNN workspace",
 		"spec-framework work --feature <id-or-path>",
+		"## Before modeling domains",
+		"examples/events/",
+		"Domain -> User Goal -> Feature -> Use Case",
 	} {
 		if !strings.Contains(bootstrap, expected) {
 			t.Errorf("bootstrap missing %q", expected)
@@ -41,6 +44,17 @@ func TestBootstrapExplainsFoundationBeforeWorkspace(t *testing.T) {
 	}
 	if strings.Contains(bootstrap, "foundation/problem/problem.md") {
 		t.Fatal("existing-feature bootstrap must not route through full Foundation artifacts")
+	}
+}
+
+func TestEveryBootstrapIncludesDomainModelingGuidance(t *testing.T) {
+	for _, startingPoint := range []string{"new-product", "existing-product", "existing-documents", "existing-feature", "existing-implementation", "audit-only"} {
+		bootstrap := bootstrapFor(startingPoint)
+		for _, expected := range []string{"Before modeling domains", "every starting point", "examples/events/"} {
+			if !strings.Contains(bootstrap, expected) {
+				t.Errorf("%s bootstrap missing %q", startingPoint, expected)
+			}
+		}
 	}
 }
 
