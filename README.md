@@ -79,6 +79,8 @@ The [Framework Guide skill](framework/skills/framework-guide/SKILL.md) is the de
 | Inspect decisions | `impact`, `decisions migrate` |
 | Keep healthy | `validate`, `upgrade`, `migrate external-runtime`, `skill path <skill>` |
 
+The CLI uses Cobra for its command tree and generated help. It deliberately does not load ambient user configuration: product manifests and explicit flags remain the source of truth.
+
 All mutations preview before executing; approval commands require an explicit human identity and `--yes`.
 
 ## Repository Map

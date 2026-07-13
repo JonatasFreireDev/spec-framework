@@ -49,6 +49,7 @@ Product decisions do not live here. Product decisions continue to live in `knowl
 | [FDR-037](FDR-037-engineering-quality-system.md) | Engineering Quality System | proposed | Governance baseline |
 | [FDR-038](FDR-038-guide-first-dispatch.md) | Guide-First Dispatch | proposed | Governance baseline |
 | [FDR-039](FDR-039-domain-modeling-reference-and-warnings.md) | Domain Modeling Reference And Warnings | proposed | Adopter domain-modeling feedback |
+| [FDR-040](FDR-040-cobra-cli-command-tree.md) | Cobra CLI Command Tree | proposed | CLI architecture evolution |
 
 ## Rule
 

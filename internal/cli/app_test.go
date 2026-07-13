@@ -42,3 +42,21 @@ func TestUnknownCommandIsUsageError(t *testing.T) {
 		t.Fatalf("exit=%d stderr=%q", exitCode, stderr.String())
 	}
 }
+
+func TestCobraCommandTreeKeepsStableTopLevelCommands(t *testing.T) {
+	root := cli.New("test").NewCommand(&bytes.Buffer{}, &bytes.Buffer{})
+	for _, name := range []string{"init", "validate", "graph", "runtime", "upgrade", "version"} {
+		command, _, err := root.Find([]string{name})
+		if err != nil || command == root || command.Name() != name {
+			t.Errorf("Cobra command %q was not registered: command=%v err=%v", name, command, err)
+		}
+	}
+}
+
+func TestCobraLeafHelpDoesNotInvokeLegacyCommand(t *testing.T) {
+	var stdout, stderr bytes.Buffer
+	exitCode := cli.New("test").Run([]string{"graph", "--help"}, &stdout, &stderr)
+	if exitCode != 0 || !strings.Contains(stdout.String(), "Inspect and operate execution graphs.") || stderr.Len() != 0 {
+		t.Fatalf("exit=%d stdout=%q stderr=%q", exitCode, stdout.String(), stderr.String())
+	}
+}

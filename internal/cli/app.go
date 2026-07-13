@@ -32,72 +32,16 @@ func New(version string) App {
 }
 
 func (app App) Run(args []string, stdout, stderr io.Writer) int {
-	if len(args) == 0 || args[0] == "help" || args[0] == "--help" || args[0] == "-h" {
-		writeHelp(stdout)
-		return 0
-	}
-	if args[0] != "init" && args[0] != "upgrade" && args[0] != "version" {
-		if blocked, message := auditOnlyMutation(args); blocked {
-			fmt.Fprintln(stderr, message)
-			return 1
+	root := app.NewCommand(stdout, stderr)
+	root.SetArgs(args)
+	if err := root.Execute(); err != nil {
+		if exit, ok := err.(commandExitError); ok {
+			return exit.code
 		}
-	}
-
-	switch args[0] {
-	case "version":
-		fmt.Fprintf(stdout, "spec-framework %s\n", app.version)
-		return 0
-	case "move":
-		return runMove(args[1:], stdout, stderr)
-	case "init":
-		return app.runInit(args[1:], stdout, stderr)
-	case "upgrade":
-		return app.runUpgrade(args[1:], stdout, stderr)
-	case "migrate":
-		return app.runMigrate(args[1:], stdout, stderr)
-	case "validate":
-		return runValidate(args[1:], stdout, stderr)
-	case "import":
-		return runImport(args[1:], stdout, stderr)
-	case "design":
-		return runDesign(args[1:], stdout, stderr)
-	case "design-system":
-		return runDesignSystem(args[1:], stdout, stderr)
-	case "engineering-system":
-		return runEngineeringSystem(args[1:], stdout, stderr)
-	case "skill":
-		return runSkill(args[1:], stdout, stderr)
-	case "adapters":
-		return runAdapters(args[1:], stdout, stderr)
-	case "work":
-		return runWork(args[1:], stdout, stderr)
-	case "status", "next":
-		return runWorkStatus(args[0], args[1:], stdout, stderr)
-	case "approve":
-		return runApprove(args[1:], stdout, stderr)
-	case "gates":
-		return runGates(args[1:], stdout, stderr)
-	case "graph":
-		return runGraph(args[1:], stdout, stderr)
-	case "task":
-		return runTask(args[1:], stdout, stderr)
-	case "guide":
-		return runGuide(args[1:], stdout, stderr)
-	case "review", "approve-stage":
-		return runStage(args[0], args[1:], stdout, stderr)
-	case "impact":
-		return runImpact(args[1:], stdout, stderr)
-	case "dashboard":
-		return runDashboard(args[1:], stdout, stderr)
-	case "decisions":
-		return runDecisions(args[1:], stdout, stderr)
-	case "resume", "handoff", "checkpoint", "lease", "commands", "schedule", "integrate", "runtime":
-		return runRuntime(args[0], args[1:], stdout, stderr)
-	default:
-		fmt.Fprintf(stderr, "unknown command %q\n\n", args[0])
-		writeHelp(stderr)
+		fmt.Fprintln(stderr, err)
 		return 2
 	}
+	return 0
 }
 
 func runSkill(args []string, stdout, stderr io.Writer) int {
@@ -737,45 +681,4 @@ func runMove(args []string, stdout, stderr io.Writer) int {
 		fmt.Fprintf(stdout, "- %s\n", item)
 	}
 	return 0
-}
-
-func writeHelp(output io.Writer) {
-	fmt.Fprint(output, `Usage: spec-framework <command> [options]
-
-Commands:
-  init       Initialize product/ and the external versioned runtime.
-  import     Materialize approved source mappings as drafts.
-  design     Initialize, import, inspect, map, verify, migrate, or audit Design assets.
-  design-system Initialize, inspect, validate, or migrate the product Design System.
-  engineering-system Inspect, validate, or migrate the product Engineering System and list technical triggers.
-  skill      Resolve a pinned specialized skill path.
-  adapters   List, diagnose, install, or update optional external adapters.
-  work       Select a feature and create a concurrent workspace.
-  status     Show workspace readiness and blockers.
-  next       Show the next skill for a workspace.
-  approve    Review and record an explicit artifact approval.
-  gates      Check whether implementation gates are configured.
-  graph      Inspect and operate execution graph claims.
-  task       Inspect task readiness.
-  guide      Explain the current workspace gate and next action.
-  review     Preview a workspace stage approval.
-  approve-stage Approve every eligible artifact in a stage atomically.
-  impact     Inspect a decision's validity, propagation, effects, and staleness.
-  dashboard  Show one consolidated workflow, graph, runtime, and decision view.
-  decisions  Preview or run guided migration of legacy decision metadata.
-  resume     Resume a persisted runtime workspace.
-  handoff    Persist an agent/orchestrator handoff.
-  checkpoint Persist a resumable checkpoint.
-  lease      Claim, heartbeat, or recover task leases.
-  commands   Plan or execute shell-free R0/R1 commands.
-  schedule   Build deterministic parallel execution waves.
-  integrate  Plan or apply local commit integration.
-  runtime    Migrate a v1 workspace to runtime v2.
-  validate   Validate a product repository.
-  move       Move an artifact and update references.
-  upgrade    Refresh the external runtime and pinned manifest.
-  migrate    Preview or apply legacy external-runtime migration.
-  version    Print the CLI version.
-  help       Show this help.
-`)
 }
