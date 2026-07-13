@@ -38,6 +38,8 @@ Product decisions do not live here. Product decisions continue to live in `knowl
 | [FDR-026](FDR-026-canonical-product-engineering-system.md) | Canonical Product Engineering System | approved | Governance baseline |
 | [FDR-027](FDR-027-engineering-gate-integrity.md) | Engineering Gate Integrity | approved | Governance baseline |
 | [FDR-028](FDR-028-composite-engineering-approval-and-structured-gates.md) | Composite Engineering Approval And Structured Gates | approved | Governance baseline |
+| [FDR-029](FDR-029-canonical-vision-companion-contracts.md) | Canonical Vision Companion Contracts | proposed | Governance baseline |
+| [FDR-030](FDR-030-foundation-approval-registry.md) | Foundation Approval Registry | proposed | Governance baseline |
 
 ## Rule
 

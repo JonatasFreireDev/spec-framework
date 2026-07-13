@@ -4,6 +4,9 @@
 
 | Field | Value |
 | --- | --- |
+| ID | `PRINCIPLES-TBD` |
+| Type | `product-principles` |
+| Parent IDs | `VISION-TBD` |
 | Status | `draft` |
 | Owner skill | Vision AI |
 | Source | [vision.md](vision.md) |
@@ -23,4 +26,3 @@
 ## Next Step
 
 Use approved principles to guide [../strategy/strategy.md](../strategy/strategy.md), domain boundaries, and feature trade-offs.
-

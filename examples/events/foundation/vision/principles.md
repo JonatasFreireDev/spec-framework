@@ -1,8 +1,15 @@
 # Product Principles
 
-## Status
+## Snapshot
 
-Draft. Principles need human approval before they are used to reject or prioritize work.
+| Field | Value |
+| --- | --- |
+| ID | `PRINCIPLES-EVENTS` |
+| Type | `product-principles` |
+| Parent IDs | `VISION-EVENTS` |
+| Status | `draft` |
+
+Principles need human approval before they are used to reject or prioritize work.
 
 ## Purpose
 

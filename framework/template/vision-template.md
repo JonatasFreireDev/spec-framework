@@ -5,6 +5,8 @@
 | Field | Value |
 | --- | --- |
 | ID | `[VIS-XXX]` |
+| Type | `vision` |
+| Parent IDs | `[PROB-XXX]` |
 | Status | `[draft | proposed | approved]` |
 | Source problem | `[PROB-XXX/path]` |
 | Owner skill | Vision AI |
@@ -20,27 +22,20 @@
 | --- | --- | --- |
 | `[user segment]` | `[outcome]` | `[friction]` |
 
-## 🧭 Product Principles
+## 🧭 Companion Contracts
 
-| Principle | Trade-off It Guides | Example |
-| --- | --- | --- |
-| `[principle]` | `[trade-off]` | `[example]` |
-
-## ⭐ North Star
-
-| Field | Value |
+| Contract | Canonical Artifact |
 | --- | --- |
-| Outcome | `[durable user value]` |
-| Candidate metric | `[metric]` |
-| Guardrail | `[quality/safety metric]` |
+| Product principles, trade-offs, examples, and anti-principles | `principles.md` |
+| North-star outcome, metric, measurement notes, and guardrails | `north-star.md` |
 
 ## 🗺️ Vision To Strategy Flow
 
 ```mermaid
 flowchart LR
   P["Approved Problem"] --> V["Vision"]
-  V --> PR["Principles"]
-  V --> NS["North Star"]
+  V --> PR["principles.md"]
+  V --> NS["north-star.md"]
   PR --> S["Strategy"]
   NS --> S
 

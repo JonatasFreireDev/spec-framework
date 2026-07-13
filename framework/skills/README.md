@@ -34,6 +34,8 @@ Use `framework-guide` as the conversational entry point when the person does not
 
 Delivery Orchestrator reports through the consolidated dashboard model. Product Historian owns review of guided legacy decision migration; the migration tool only updates `.product/decisions.json` metadata and never edits DEC content or approvals.
 
+Vision AI owns a three-artifact package with exclusive content boundaries: `vision.md` contains direction and strategic boundaries, `principles.md` contains product decision rules and trade-offs, and `north-star.md` contains the outcome metric and guardrails. The artifacts link to one another instead of duplicating canonical content.
+
 ## Responsible Skill
 
 Primary owner: Documentation Orchestrator.

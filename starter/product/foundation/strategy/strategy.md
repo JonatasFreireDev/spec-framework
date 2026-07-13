@@ -4,6 +4,9 @@
 
 | Field | Value |
 | --- | --- |
+| ID | `STRATEGY-TBD` |
+| Type | `strategy` |
+| Parent IDs | `VISION-TBD, PRINCIPLES-TBD, NORTH-STAR-TBD` |
 | Status | `draft` |
 | Owner skill | Strategy AI |
 | Next skill | Domain Architect AI |

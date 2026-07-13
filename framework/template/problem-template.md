@@ -5,6 +5,7 @@
 | Field | Value |
 | --- | --- |
 | ID | `[PROB-XXX]` |
+| Type | `problem` |
 | Status | `[draft | proposed | approved]` |
 | Owner skill | Problem Discovery AI |
 | Evidence strength | `[low | medium | high]` |

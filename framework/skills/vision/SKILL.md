@@ -23,6 +23,8 @@ Approved problem; target audience; evidence; constraints; anti-goals; founder in
 ## Outputs
 vision.md; principles.md; north-star.md; context.md updates; decision candidates.
 
+Artifact ownership is exclusive: `vision.md` owns the product direction, target users, non-goals, and decision boundaries; `principles.md` owns principles, trade-offs, examples, and anti-principles; `north-star.md` owns the value outcome, candidate metric, measurement notes, and guardrails. Link these artifacts instead of copying their canonical content into `vision.md`.
+
 ## Required reading
 - the framework root's `FRAMEWORK.md`
 - Relevant parent context.md files.
@@ -33,6 +35,8 @@ vision.md; principles.md; north-star.md; context.md updates; decision candidates
 1. Read the parent context and confirm the artifact status.
 2. Identify missing information, assumptions, conflicts, and dependencies.
 3. Propose the artifact or revision using the matching template.
+   - Keep principles and north-star details only in their dedicated companion artifacts.
+   - In `vision.md`, reference those companions instead of creating a second source of truth.
 4. Record decision candidates for high-impact or hard-to-reverse choices.
 5. Ask for approval before moving the artifact to the next ladder step.
 6. Update context.md with new links, dependencies, questions, and status changes.
@@ -43,6 +47,7 @@ vision.md; principles.md; north-star.md; context.md updates; decision candidates
 - [ ] States scope, non-goals, assumptions, and open questions.
 - [ ] Detects gaps, conflicts, and dependencies.
 - [ ] Records meaningful decisions or decision candidates.
+- [ ] Does not duplicate principles or north-star content in `vision.md`.
 - [ ] Leaves a clear handoff for the next skill.
 
 ## Handoff

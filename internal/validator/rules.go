@@ -1024,6 +1024,15 @@ func validateRegistryAndApprovalGates(s Snapshot) []Diagnostic {
 		return []Diagnostic{{Warning, "artifacts-registry", ".product/artifacts.json", "Artifacts registry is missing or empty.", "Run validate --write-registry."}}
 	}
 	var out []Diagnostic
+	registeredPaths := map[string]bool{}
+	for _, item := range items {
+		registeredPaths[filepath.ToSlash(firstString(item["path"], ""))] = true
+	}
+	for _, path := range []string{"foundation/problem/problem.md", "foundation/vision/vision.md", "foundation/vision/principles.md", "foundation/vision/north-star.md", "foundation/strategy/strategy.md"} {
+		if _, exists := s.Text[path]; exists && !registeredPaths[path] {
+			out = append(out, Diagnostic{Error, "foundation-registry", path, "Foundation artifact is not registered for traceable approval.", "Add ID, Type, Status, and Parent IDs metadata where applicable, then run validate --write-registry."})
+		}
+	}
 	byParent := map[string]map[string]map[string]any{}
 	for _, a := range items {
 		id, _ := a["id"].(string)

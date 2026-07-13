@@ -610,6 +610,18 @@ func Approve(root, artifactPath, grant, approvedBy, notes string) (Approval, err
 
 func approvalUpdates(root, artifactPath, updated, status string) (map[string][]byte, error) {
 	updates := map[string][]byte{artifactPath: []byte(updated)}
+	if map[string]bool{"problem.md": true, "vision.md": true, "strategy.md": true}[filepath.Base(artifactPath)] {
+		contextPath := filepath.Join(filepath.Dir(artifactPath), "context.md")
+		contextData, err := os.ReadFile(contextPath)
+		if err != nil {
+			return nil, err
+		}
+		contextUpdated, err := setStatus(string(contextData), status)
+		if err != nil {
+			return nil, err
+		}
+		updates[contextPath] = []byte(contextUpdated)
+	}
 	if filepath.Base(artifactPath) != "engineering-system.md" {
 		return updates, nil
 	}

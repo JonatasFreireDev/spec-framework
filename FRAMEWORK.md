@@ -52,7 +52,15 @@ Defines the pain, the opportunity, and the market context. It is the justificati
 
 ### Vision
 
-Defines the product we want to build, for whom, why now, and which principles guide decisions.
+Defines the product we want to build, for whom, why now, and the durable outcome it should create. `vision.md` owns that direction and its boundaries; it links to, but does not duplicate, the canonical principles in `principles.md` or the canonical outcome metric and guardrails in `north-star.md`.
+
+### Product Principles
+
+Define the durable decision rules, trade-offs, examples, and anti-principles that guide product choices. They are canonical in `foundation/vision/principles.md`.
+
+### North Star
+
+Defines the durable user-value outcome, candidate metric, measurement notes, and guardrails. It is canonical in `foundation/vision/north-star.md`.
 
 ### Strategy
 
@@ -763,6 +771,7 @@ Rules:
 
 Mandatory transitions:
 
+- Foundation ladder artifacts are registered from initialization: Problem, Vision, Product Principles, North Star, and Strategy. Their parent relationships are enforced by `spec-framework approve`, and approval updates the canonical artifact, applicable context status, registry status, and `.product/history/` evidence atomically.
 - `proposed`: does not require an approval record, but must not advance from an incomplete parent gate.
 - `approved` and later states: require a corresponding approval record in `.product/history/`, with `artifact_id`, `path`, `content_hash`, `status_granted`, `approved_by`, `approved_at`, and `notes`. Validator and operational navigation both require that record to match the current artifact content; editing status prose alone never advances work.
 - `approved -> in_progress`: requires an approved task or an explicit prototype/draft exception.
@@ -850,7 +859,7 @@ Spec Framework activates only when the current repository contains a valid `prod
 
 In a newly initialized product repository, read `product/BOOTSTRAP.md` first. It explains the ordered foundation gates and distinguishes a structurally valid starter from a product that is ready for implementation.
 
-During `init`, choose the repository's starting point. This choice customizes `BOOTSTRAP.md`; it does not remove skills, orchestrators, artifacts, rigor requirements, or approval gates. When starting from existing documents, the CLI creates a source inventory and an analysis-only import run under `product/knowledge/imports/`. Review and explicitly approve mappings before materializing draft product artifacts.
+During `init`, choose the repository's starting point. This choice customizes `BOOTSTRAP.md`; it does not remove skills, orchestrators, artifacts, rigor requirements, or approval gates. It does control proportional scope: `existing-feature` may use a feature-scoped Problem, Vision, Principles, North Star, and Strategy that justify and bound that delivery without pretending to define the whole product. Parent approvals still apply to those scoped contracts. When starting from existing documents, the CLI creates a source inventory and an analysis-only import run under `product/knowledge/imports/`. Review and explicitly approve mappings before materializing draft product artifacts.
 
 Operational navigation uses concurrent workspaces rather than a global active feature:
 

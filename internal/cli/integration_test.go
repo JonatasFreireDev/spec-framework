@@ -70,6 +70,53 @@ func TestGoCLIInitValidateUpgradeAndMove(t *testing.T) {
 	}
 }
 
+func TestCLIFoundationApprovalsCreateTraceableHistory(t *testing.T) {
+	t.Setenv("SPEC_FRAMEWORK_CACHE", filepath.Join(t.TempDir(), "cache"))
+	t.Setenv("SPEC_FRAMEWORK_AGENT_HOME", filepath.Join(t.TempDir(), "agents"))
+	target := filepath.Join(t.TempDir(), "repo")
+	productRoot := filepath.Join(target, "product")
+	var stdout, stderr bytes.Buffer
+	app := cli.New("integration")
+	if code := app.Run([]string{"init", "--target", target, "--agents", "codex", "--yes"}, &stdout, &stderr); code != 0 {
+		t.Fatalf("init=%d stderr=%s", code, stderr.String())
+	}
+	stdout.Reset()
+	stderr.Reset()
+	if code := app.Run([]string{"validate", "--product-root", productRoot, "--write-registry"}, &stdout, &stderr); code != 0 {
+		t.Fatalf("registry regeneration=%d stdout=%s stderr=%s", code, stdout.String(), stderr.String())
+	}
+	artifacts := []string{
+		"foundation/problem/problem.md",
+		"foundation/vision/vision.md",
+		"foundation/vision/principles.md",
+		"foundation/vision/north-star.md",
+		"foundation/strategy/strategy.md",
+	}
+	for _, artifact := range artifacts {
+		stdout.Reset()
+		stderr.Reset()
+		code := app.Run([]string{"approve", "--product-root", productRoot, "--artifact", artifact, "--grant", "approved", "--approved-by", "Test Owner", "--yes"}, &stdout, &stderr)
+		if code != 0 {
+			t.Fatalf("approve %s=%d stdout=%s stderr=%s", artifact, code, stdout.String(), stderr.String())
+		}
+	}
+	history, err := filepath.Glob(filepath.Join(productRoot, ".product", "history", "approval-*.json"))
+	if err != nil || len(history) != len(artifacts) {
+		t.Fatalf("history=%v err=%v", history, err)
+	}
+	for _, contextPath := range []string{"foundation/problem/context.md", "foundation/vision/context.md", "foundation/strategy/context.md"} {
+		data, err := os.ReadFile(filepath.Join(productRoot, filepath.FromSlash(contextPath)))
+		if err != nil || !bytes.Contains(data, []byte("status: approved")) {
+			t.Fatalf("context %s not synchronized: %s err=%v", contextPath, data, err)
+		}
+	}
+	stdout.Reset()
+	stderr.Reset()
+	if code := app.Run([]string{"validate", "--product-root", productRoot}, &stdout, &stderr); code != 0 {
+		t.Fatalf("validate=%d stdout=%s stderr=%s", code, stdout.String(), stderr.String())
+	}
+}
+
 func TestCLIExistingDocumentsMaterialization(t *testing.T) {
 	t.Setenv("SPEC_FRAMEWORK_CACHE", filepath.Join(t.TempDir(), "cache"))
 	t.Setenv("SPEC_FRAMEWORK_AGENT_HOME", filepath.Join(t.TempDir(), "agents"))

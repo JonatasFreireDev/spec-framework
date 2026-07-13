@@ -82,7 +82,7 @@ func buildRegistry(s Snapshot) []map[string]any {
 		}
 		name := first(meta["name"], fields["name"], strings.TrimSuffix(filepath.Base(path), filepath.Ext(path)))
 		owner := first(meta["owner_skill"], fields["owner skill"], fields["reviewer skill"], fields["owner"])
-		parents := []string{}
+		parents := tableList(fields["parent ids"])
 		dir := filepath.ToSlash(filepath.Dir(path))
 		for base, parent := range useCaseIDs {
 			if strings.HasPrefix(dir, base) && id != parent {
@@ -134,7 +134,18 @@ func inferType(path string) string {
 	if strings.Contains(filepath.ToSlash(path), "/tasks/") {
 		return "task"
 	}
-	return map[string]string{"domain.md": "domain", "goal.md": "goal", "feature.md": "feature", "use-case.md": "use-case", "specification.md": "specification", "design.md": "design", "engineering-system.md": "engineering-system", "technical-discovery.md": "technical-discovery", "engineering-proposal.md": "engineering-proposal", "engineering-review.md": "engineering-review", "implementation-plan.md": "implementation-plan", "tasks.md": "taskset", "tests.md": "tests", "analytics.md": "analytics", "audit.md": "audit", "qa-evidence.md": "qa-evidence", "security-review.md": "security-review", "code-review.md": "code-review"}[base]
+	return map[string]string{"problem.md": "problem", "vision.md": "vision", "principles.md": "product-principles", "north-star.md": "north-star", "strategy.md": "strategy", "domain.md": "domain", "goal.md": "goal", "feature.md": "feature", "use-case.md": "use-case", "specification.md": "specification", "design.md": "design", "engineering-system.md": "engineering-system", "technical-discovery.md": "technical-discovery", "engineering-proposal.md": "engineering-proposal", "engineering-review.md": "engineering-review", "implementation-plan.md": "implementation-plan", "tasks.md": "taskset", "tests.md": "tests", "analytics.md": "analytics", "audit.md": "audit", "qa-evidence.md": "qa-evidence", "security-review.md": "security-review", "code-review.md": "code-review"}[base]
+}
+func tableList(value string) []string {
+	value = strings.Trim(strings.TrimSpace(value), "`[]")
+	var out []string
+	for _, item := range strings.Split(value, ",") {
+		item = strings.Trim(strings.TrimSpace(item), "`[]")
+		if item != "" && !strings.Contains(strings.ToUpper(item), "XXX") {
+			out = append(out, item)
+		}
+	}
+	return out
 }
 func first(values ...string) string {
 	for _, v := range values {

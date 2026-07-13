@@ -5,6 +5,8 @@
 | Field | Value |
 | --- | --- |
 | ID | `[STRAT-XXX]` |
+| Type | `strategy` |
+| Parent IDs | `[VIS-XXX, PRINCIPLES-XXX, NORTH-STAR-XXX]` |
 | Status | `[draft | proposed | approved]` |
 | Source vision | `[VIS-XXX/path]` |
 | Owner skill | Strategy AI |

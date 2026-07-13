@@ -155,6 +155,23 @@ func TestRegistryNormalizesInlineCodeTableValues(t *testing.T) {
 	}
 }
 
+func TestFoundationWithoutRegistryMetadataIsRejected(t *testing.T) {
+	s := Snapshot{Text: map[string]string{
+		"foundation/problem/problem.md": "# Problem\n\n## Status\n\nDraft.\n",
+	}, JSON: map[string]any{
+		".product/artifacts.json": map[string]any{"artifacts": []any{map[string]any{"id": "DOMAIN-1", "type": "domain", "status": "draft", "path": "domains/d/context.md"}}},
+	}}
+	found := false
+	for _, diagnostic := range validateRegistryAndApprovalGates(s) {
+		if diagnostic.Check == "foundation-registry" && diagnostic.File == "foundation/problem/problem.md" {
+			found = true
+		}
+	}
+	if !found {
+		t.Fatal("expected missing Foundation registry diagnostic")
+	}
+}
+
 func TestTierMRegistryDoesNotRequireEngineeringReview(t *testing.T) {
 	base := "domains/d/goals/g/features/f/use-cases/u"
 	s := Snapshot{Text: map[string]string{

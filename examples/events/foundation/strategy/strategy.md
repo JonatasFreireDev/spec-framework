@@ -1,8 +1,15 @@
 # Strategy
 
-## Status
+## Snapshot
 
-Draft. This bootstrap version defines the structure strategy should follow, not an approved market plan.
+| Field | Value |
+| --- | --- |
+| ID | `STRATEGY-EVENTS` |
+| Type | `strategy` |
+| Parent IDs | `VISION-EVENTS, PRINCIPLES-EVENTS, NORTH-STAR-EVENTS` |
+| Status | `draft` |
+
+This bootstrap version defines the structure strategy should follow, not an approved market plan.
 
 ## Strategic Focus
 

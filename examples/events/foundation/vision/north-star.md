@@ -1,8 +1,15 @@
 # North Star
 
-## Status
+## Snapshot
 
-Draft. The north-star outcome has not been approved.
+| Field | Value |
+| --- | --- |
+| ID | `NORTH-STAR-EVENTS` |
+| Type | `north-star` |
+| Parent IDs | `VISION-EVENTS` |
+| Status | `draft` |
+
+The north-star outcome has not been approved.
 
 ## Purpose
 

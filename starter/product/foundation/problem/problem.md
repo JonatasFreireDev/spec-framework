@@ -4,6 +4,8 @@
 
 | Field | Value |
 | --- | --- |
+| ID | `PROBLEM-TBD` |
+| Type | `problem` |
 | Status | `draft` |
 | Owner skill | Problem Discovery AI |
 | Next skill | Vision AI |

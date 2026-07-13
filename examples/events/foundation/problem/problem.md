@@ -1,8 +1,14 @@
 # Problem
 
-## Status
+## Snapshot
 
-Draft. This document is a bootstrap placeholder and needs human validation before it can drive product commitments.
+| Field | Value |
+| --- | --- |
+| ID | `PROBLEM-EVENTS` |
+| Type | `problem` |
+| Status | `draft` |
+
+This document is a bootstrap placeholder and needs human validation before it can drive product commitments.
 
 ## Problem Statement
 

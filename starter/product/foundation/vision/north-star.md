@@ -4,6 +4,9 @@
 
 | Field | Value |
 | --- | --- |
+| ID | `NORTH-STAR-TBD` |
+| Type | `north-star` |
+| Parent IDs | `VISION-TBD` |
 | Status | `draft` |
 | Owner skill | Vision AI |
 | Source | [vision.md](vision.md) |
@@ -28,4 +31,3 @@
 ## Next Step
 
 Translate the north star into [../strategy/metrics.md](../strategy/metrics.md).
-

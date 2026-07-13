@@ -1,8 +1,15 @@
 # Vision
 
-## Status
+## Snapshot
 
-Draft. This is a bootstrap placeholder until human-approved product vision exists.
+| Field | Value |
+| --- | --- |
+| ID | `VISION-EVENTS` |
+| Type | `vision` |
+| Parent IDs | `PROBLEM-EVENTS` |
+| Status | `draft` |
+
+This is a bootstrap placeholder until human-approved product vision exists.
 
 ## Vision Statement
 

@@ -1,6 +1,41 @@
 {
   "artifacts": [
     {
+      "id": "PROBLEM-TBD",
+      "type": "problem",
+      "status": "draft",
+      "path": "foundation/problem/problem.md",
+      "parentIds": []
+    },
+    {
+      "id": "VISION-TBD",
+      "type": "vision",
+      "status": "draft",
+      "path": "foundation/vision/vision.md",
+      "parentIds": ["PROBLEM-TBD"]
+    },
+    {
+      "id": "PRINCIPLES-TBD",
+      "type": "product-principles",
+      "status": "draft",
+      "path": "foundation/vision/principles.md",
+      "parentIds": ["VISION-TBD"]
+    },
+    {
+      "id": "NORTH-STAR-TBD",
+      "type": "north-star",
+      "status": "draft",
+      "path": "foundation/vision/north-star.md",
+      "parentIds": ["VISION-TBD"]
+    },
+    {
+      "id": "STRATEGY-TBD",
+      "type": "strategy",
+      "status": "draft",
+      "path": "foundation/strategy/strategy.md",
+      "parentIds": ["VISION-TBD", "PRINCIPLES-TBD", "NORTH-STAR-TBD"]
+    },
+    {
       "id": "DOMAIN-TEMPLATE",
       "type": "domain",
       "status": "draft",
