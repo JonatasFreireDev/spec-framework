@@ -202,12 +202,59 @@ h1.title{
 }
 .hero-chain .arrow{padding:0 8px;color:var(--ink-soft);}
 
+/* ---------- scrollbars ---------- */
+*{scrollbar-width:thin;scrollbar-color:var(--line) transparent;}
+::-webkit-scrollbar{width:10px;height:8px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{
+  background:var(--line);
+  border-radius:99px;
+  border:2px solid transparent;
+  background-clip:padding-box;
+}
+::-webkit-scrollbar-thumb:hover{background:var(--ink-soft);background-clip:padding-box;}
+::-webkit-scrollbar-corner{background:transparent;}
+
+/* ---------- hero ctas ---------- */
+.cta-row{
+  display:flex;
+  flex-wrap:wrap;
+  gap:12px;
+  margin:0 0 34px;
+}
+.btn{
+  display:inline-block;
+  font-family:var(--mono);
+  font-size:13px;
+  letter-spacing:.02em;
+  text-decoration:none;
+  color:var(--ink);
+  background:var(--bg-raised);
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  padding:10px 18px;
+  transition:border-color .15s ease, transform .15s ease;
+}
+.btn:hover{border-color:var(--accent);transform:translateY(-1px);}
+.btn.primary{
+  background:var(--accent);
+  border-color:var(--accent);
+  color:var(--bg-raised);
+  font-weight:600;
+}
+.btn.primary:hover{filter:brightness(1.08);}
+@media (prefers-reduced-motion:reduce){.btn,.btn:hover{transition:none;transform:none;}}
+
 /* ---------- toc grid (início) ---------- */
+.toc-section{margin-top:40px;}
+.toc-section > .kicker{
+  padding-bottom:10px;
+  border-bottom:1px solid var(--line);
+}
 .toc-grid{
   display:grid;
   grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
   gap:14px;
-  padding:44px 0 8px;
 }
 .toc-card{
   display:flex;
@@ -367,6 +414,42 @@ h2.section-title{
 }
 .pillar p{margin:0;font-size:14px;color:var(--ink-soft);max-width:none;}
 
+.pillars-row{
+  grid-template-columns:repeat(auto-fit,minmax(230px,1fr));
+}
+.chain-list{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(300px,1fr));
+  gap:14px;
+  counter-reset:chain;
+}
+.chain-item{
+  counter-increment:chain;
+  position:relative;
+  background:var(--bg-raised);
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  padding:16px 18px 16px 54px;
+}
+.chain-item::before{
+  content:counter(chain, decimal-leading-zero);
+  position:absolute;
+  left:16px;
+  top:17px;
+  font-family:var(--mono);
+  font-size:12px;
+  color:var(--accent);
+  font-weight:700;
+}
+.chain-item .gname{
+  font-family:var(--serif);
+  font-weight:600;
+  font-size:15px;
+  margin-bottom:4px;
+}
+.chain-item p{margin:0;font-size:13px;color:var(--ink-soft);}
+.chain-item p b{color:var(--ink);}
+
 .glossary{
   display:grid;
   grid-template-columns:repeat(auto-fill,minmax(280px,1fr));
@@ -413,6 +496,43 @@ h2.section-title{
 .rung.central{background:var(--accent-soft);border-color:var(--accent);}
 .rung.central .num{color:var(--accent);}
 
+/* ---------- staircase ---------- */
+.stairs{
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+}
+.stair{
+  display:flex;
+  align-items:baseline;
+  gap:16px;
+  background:var(--bg-raised);
+  border:1px solid var(--line);
+  border-left:3px solid var(--accent);
+  border-radius:var(--radius);
+  padding:12px 18px;
+}
+.stair .lv-tag{
+  font-family:var(--mono);
+  font-size:12.5px;
+  color:var(--accent);
+  font-weight:700;
+  letter-spacing:.03em;
+  white-space:nowrap;
+  min-width:170px;
+}
+.stair p{margin:0;font-size:13.5px;color:var(--ink-soft);}
+.stair.s5{width:62%;}
+.stair.s4{width:69.6%;}
+.stair.s3{width:77.2%;}
+.stair.s2{width:84.8%;}
+.stair.s1{width:92.4%;}
+.stair.s0{width:100%;border-left-color:var(--amber);}
+.stair.s0 .lv-tag{color:var(--amber);}
+@media (max-width:760px){
+  .stair{width:100% !important;flex-direction:column;gap:4px;}
+}
+
 /* ---------- delivery levels ---------- */
 .levels{
   display:grid;
@@ -446,6 +566,12 @@ h2.section-title{
   margin:0 0 12px;
   padding-bottom:8px;
   border-bottom:1px solid var(--line);
+}
+.cat-desc{
+  font-size:13px;
+  color:var(--ink-soft);
+  margin:-4px 0 14px;
+  max-width:70ch;
 }
 .skill-grid{
   display:grid;
@@ -860,6 +986,10 @@ footer{
     <p class="eyebrow">Framework de engenharia de produto para agentes de IA</p>
     <h1 class="title">Documentação como infraestrutura de engenharia</h1>
     <p class="lede">O <b>Spec Framework</b> é um método — e um CLI — que faz produto, especificação, planejamento, execução e auditoria funcionarem como um único pipeline rastreável, em vez de pedir a uma IA para "implementar uma feature" a partir de contexto solto. Cada mudança nasce de um problema real e chega ao código com rastreabilidade completa.</p>
+    <div class="cta-row">
+      <a class="btn primary" href="#comecar" data-page="comecar">Primeiros passos →</a>
+      <a class="btn" href="#exemplo" data-page="exemplo">Ver um exemplo ponta a ponta</a>
+    </div>
     <div class="hero-chain">
       <span class="node">Problema</span><span class="arrow">→</span>
       <span class="node">Visão</span><span class="arrow">→</span>
@@ -878,62 +1008,77 @@ footer{
     </div>
   </div>
 
-  <div class="toc-grid">
-    <a class="toc-card" href="#comecar" data-page="comecar">
-      <span class="toc-kicker">Comece aqui</span>
-      <span class="toc-title">Primeiros passos</span>
-      <span class="toc-desc">Como iniciar — projeto novo do zero ou um projeto em andamento com PRDs e epics existentes.</span>
-    </a>
-    <a class="toc-card" href="#oque" data-page="oque">
-      <span class="toc-kicker">Conceitos</span>
-      <span class="toc-title">O que é</span>
-      <span class="toc-desc">Princípios do método e o modelo conceitual completo: Problema, Visão, Domínio, Rigor Tier, identidade dos artefatos.</span>
-    </a>
-    <a class="toc-card" href="#escada" data-page="escada">
-      <span class="toc-kicker">Priorização</span>
-      <span class="toc-title">A escada de entrega</span>
-      <span class="toc-desc">Os seis níveis de maturidade (L0–L5) e como Priority (P0–P3) ordena o trabalho dentro de cada nível.</span>
-    </a>
-    <a class="toc-card" href="#skills" data-page="skills">
-      <span class="toc-kicker">Catálogo</span>
-      <span class="toc-title">As skills</span>
-      <span class="toc-desc">Os 24+ especialistas e orquestradores do framework, organizados por camada — fundação, design, engenharia, auditoria.</span>
-    </a>
-    <a class="toc-card" href="#design" data-page="design">
-      <span class="toc-kicker">Experiência</span>
-      <span class="toc-title">Fluxo de Design</span>
-      <span class="toc-desc">Como uma Especificação vira <code>design.md</code> verificável — origem, maturidade, fontes visuais, Design System compartilhado e o gate de UX Review.</span>
-    </a>
-    <a class="toc-card" href="#engenharia" data-page="engenharia">
-      <span class="toc-kicker">Arquitetura</span>
-      <span class="toc-title">Fluxo de Engenharia</span>
-      <span class="toc-desc">O Engineering System compartilhado e a dupla Proposal + Review: a solução técnica é descrita e revisada antes do plano.</span>
-    </a>
-    <a class="toc-card" href="#gates" data-page="gates">
-      <span class="toc-kicker">Governança</span>
-      <span class="toc-title">Gates de aprovação</span>
-      <span class="toc-desc">Os nove estados de um artefato e as regras exatas que travam cada transição — inclusive o que exige hash e aprovação humana.</span>
-    </a>
-    <a class="toc-card" href="#entrega" data-page="entrega">
-      <span class="toc-kicker">Execução</span>
-      <span class="toc-title">Da task à entrega</span>
-      <span class="toc-desc">O caminho operacional completo: Execution Scheduler, Delivery Orchestrator, leases, integração e release.</span>
-    </a>
-    <a class="toc-card" href="#exemplo" data-page="exemplo">
-      <span class="toc-kicker">Na prática</span>
-      <span class="toc-title">Exemplo ponta a ponta</span>
-      <span class="toc-desc">Um pedido comum — "check-in por QR code" — percorrendo cada skill até virar um PR com evidência.</span>
-    </a>
-    <a class="toc-card" href="#guia" data-page="guia">
-      <span class="toc-kicker">Assistente</span>
-      <span class="toc-title">O Framework Guide</span>
-      <span class="toc-desc">A porta de entrada conversacional: descreva o objetivo em linguagem natural e receba o menor comando seguro, com exemplos reais.</span>
-    </a>
-    <a class="toc-card" href="#cli" data-page="cli">
-      <span class="toc-kicker">Referência</span>
-      <span class="toc-title">Comandos de CLI</span>
-      <span class="toc-desc">Do <code>init</code> ao <code>validate</code>: como operar o método sem depender de execução automática de agentes.</span>
-    </a>
+  <div class="toc-section">
+    <p class="kicker">Método</p>
+    <div class="toc-grid">
+      <a class="toc-card" href="#oque" data-page="oque">
+        <span class="toc-kicker">Conceitos</span>
+        <span class="toc-title">O que é</span>
+        <span class="toc-desc">Princípios do método e o modelo conceitual completo: Problema, Visão, Domínio, Rigor Tier, identidade dos artefatos.</span>
+      </a>
+      <a class="toc-card" href="#escada" data-page="escada">
+        <span class="toc-kicker">Priorização</span>
+        <span class="toc-title">A escada de entrega</span>
+        <span class="toc-desc">Os seis níveis de maturidade (L0–L5) e como Priority (P0–P3) ordena o trabalho dentro de cada nível.</span>
+      </a>
+      <a class="toc-card" href="#gates" data-page="gates">
+        <span class="toc-kicker">Governança</span>
+        <span class="toc-title">Gates de aprovação</span>
+        <span class="toc-desc">Os nove estados de um artefato e as regras exatas que travam cada transição — inclusive o que exige hash e aprovação humana.</span>
+      </a>
+    </div>
+  </div>
+
+  <div class="toc-section">
+    <p class="kicker">Execução</p>
+    <div class="toc-grid">
+      <a class="toc-card" href="#skills" data-page="skills">
+        <span class="toc-kicker">Catálogo</span>
+        <span class="toc-title">As skills</span>
+        <span class="toc-desc">Os 30+ especialistas e orquestradores do framework, organizados por camada — fundação, design, engenharia, auditoria.</span>
+      </a>
+      <a class="toc-card" href="#design" data-page="design">
+        <span class="toc-kicker">Experiência</span>
+        <span class="toc-title">Fluxo de Design</span>
+        <span class="toc-desc">Como uma Especificação vira <code>design.md</code> verificável — origem, maturidade, fontes visuais, Design System e UX Review.</span>
+      </a>
+      <a class="toc-card" href="#engenharia" data-page="engenharia">
+        <span class="toc-kicker">Arquitetura</span>
+        <span class="toc-title">Fluxo de Engenharia</span>
+        <span class="toc-desc">O Engineering System compartilhado e a dupla Proposal + Review: a solução técnica é descrita e revisada antes do plano.</span>
+      </a>
+      <a class="toc-card" href="#entrega" data-page="entrega">
+        <span class="toc-kicker">Operação</span>
+        <span class="toc-title">Da task à entrega</span>
+        <span class="toc-desc">O caminho operacional completo: Execution Scheduler, Delivery Orchestrator, leases, integração e release.</span>
+      </a>
+    </div>
+  </div>
+
+  <div class="toc-section">
+    <p class="kicker">Prática</p>
+    <div class="toc-grid">
+      <a class="toc-card" href="#comecar" data-page="comecar">
+        <span class="toc-kicker">Comece aqui</span>
+        <span class="toc-title">Primeiros passos</span>
+        <span class="toc-desc">Um comando instala tudo — projeto novo do zero ou em andamento com PRDs e epics existentes.</span>
+      </a>
+      <a class="toc-card" href="#exemplo" data-page="exemplo">
+        <span class="toc-kicker">Na prática</span>
+        <span class="toc-title">Exemplo ponta a ponta</span>
+        <span class="toc-desc">Um pedido comum — "check-in por QR code" — percorrendo cada skill até virar um PR com evidência.</span>
+      </a>
+      <a class="toc-card" href="#guia" data-page="guia">
+        <span class="toc-kicker">Assistente</span>
+        <span class="toc-title">O Framework Guide</span>
+        <span class="toc-desc">A porta de entrada conversacional: descreva o objetivo em linguagem natural e receba o menor comando seguro.</span>
+      </a>
+      <a class="toc-card" href="#cli" data-page="cli">
+        <span class="toc-kicker">Referência</span>
+        <span class="toc-title">Comandos de CLI</span>
+        <span class="toc-desc">Do <code>init</code> ao <code>validate</code>: como operar o método sem depender de execução automática de agentes.</span>
+      </a>
+    </div>
   </div>
   </section>
 
@@ -1047,15 +1192,20 @@ meu-produto/
       <h2 class="section-title">O que é, na prática</h2>
       <div class="section-note">Não é um gerador de arquivos. É um contrato entre produto e engenharia.</div>
     </div>
-    <div class="what-grid">
-      <p>
-        Em vez de o agente decidir sozinho o que construir, tudo passa por uma cadeia explícita: um <b>Problema</b> justifica uma <b>Visão</b>, que orienta uma <b>Estratégia</b>, organizada em <b>Domínios</b> (ex.: eventos, pagamentos), que contêm <b>Objetivos do usuário</b>, atendidos por <b>Features</b>, detalhadas em <b>Casos de Uso</b> verificáveis.
-        <br><br>
-        Cada caso de uso vira uma <b>Especificação</b> — o contrato central que descreve fluxo, UI, API, dados, permissões, analytics e segurança — antes de qualquer linha de código. Da especificação nascem o <b>Design</b>, o <b>Plano de Implementação</b> e um <b>Grafo de Execução</b> (DAG de tarefas), que só então gera <b>Tarefas</b> executáveis, pequenas o bastante para implementar, testar e revisar.
-        <br><br>
-        Toda a árvore vive num diretório <code style="font-family:var(--mono);font-size:13px;background:var(--bg);padding:1px 5px;border-radius:2px;border:1px solid var(--line);">product/</code>, com estado, decisões e histórico versionados como um grafo de conhecimento — não só uma pasta de documentos soltos.
-      </p>
-      <div class="pillars">
+
+    <div class="page-toc">
+      <a href="#oque-principios">Princípios</a>
+      <a href="#oque-modelo">Modelo conceitual</a>
+      <a href="#oque-mecanica">Mecânica do método</a>
+    </div>
+
+    <p class="lead">
+      Em vez de o agente decidir sozinho o que construir, tudo passa por uma cadeia explícita — do <b>Problema</b> à <b>Tarefa</b> — onde cada elo só existe porque o anterior o justifica. Cada caso de uso vira uma <b>Especificação</b> antes de qualquer linha de código, e toda a árvore vive num diretório <code>product/</code> versionado como um grafo de conhecimento: estado, decisões e histórico navegáveis por máquina, não só uma pasta de documentos soltos.
+    </p>
+
+    <div class="cat-block">
+      <h3 class="block-title" id="oque-principios">Quatro princípios sustentam tudo</h3>
+      <div class="pillars pillars-row">
         <div class="pillar">
           <h3>Produto primeiro</h3>
           <p>Toda decisão técnica precisa manter rastreabilidade até uma necessidade real de produto.</p>
@@ -1077,70 +1227,81 @@ meu-produto/
 
     <div class="cat-block" style="margin-top:52px;">
       <h3 class="block-title" id="oque-modelo">Modelo conceitual — do problema à tarefa</h3>
-      <div class="glossary">
-        <div class="gterm">
+      <p class="note" style="margin:0 0 22px;">Os treze elos da cadeia, na ordem em que um deriva do outro. Nenhum nasce sem o anterior.</p>
+      <div class="chain-list">
+        <div class="chain-item">
           <div class="gname">Problema</div>
           <p>Define a dor, a oportunidade e o contexto de mercado. É a raiz de justificativa do produto.</p>
         </div>
-        <div class="gterm">
+        <div class="chain-item">
           <div class="gname">Visão</div>
           <p>Define o produto que se quer construir, para quem, por que agora e quais princípios guiam as decisões.</p>
         </div>
-        <div class="gterm">
+        <div class="chain-item">
           <div class="gname">Estratégia</div>
           <p>Define posicionamento, segmentos, métricas, trade-offs, roadmap e critérios para avançar ou pausar.</p>
         </div>
-        <div class="gterm">
+        <div class="chain-item">
           <div class="gname">Domínio</div>
-          <p>Agrupa uma área coerente do negócio ou produto, como <code>users</code>, <code>events</code> ou <code>payments</code>. É o centro da documentação funcional — não existe uma pasta global de features.</p>
+          <p>Agrupa uma área coerente do negócio, como <code>users</code>, <code>events</code> ou <code>payments</code>. É o centro da documentação funcional — não existe pasta global de features.</p>
         </div>
-        <div class="gterm">
+        <div class="chain-item">
           <div class="gname">Objetivo do usuário</div>
-          <p>Substitui a noção genérica de "capacidade". Representa o objetivo estável do usuário dentro de um domínio: "entrar em um evento", "encontrar pessoas".</p>
+          <p>O objetivo estável do usuário dentro de um domínio: "entrar em um evento", "encontrar pessoas". Substitui a noção genérica de "capacidade".</p>
         </div>
-        <div class="gterm">
+        <div class="chain-item">
           <div class="gname">Feature</div>
-          <p>É uma solução concreta que atende a um objetivo. Features podem entrar, sair, evoluir, ser fatiadas ou substituídas.</p>
+          <p>Solução concreta que atende a um objetivo. Features podem entrar, sair, evoluir, ser fatiadas ou substituídas.</p>
         </div>
-        <div class="gterm">
+        <div class="chain-item">
           <div class="gname">Caso de uso</div>
-          <p>É uma interação verificável da feature — o ponto onde produto e engenharia se encontram para gerar uma Especificação implementável.</p>
+          <p>Interação verificável da feature — o ponto onde produto e engenharia se encontram para gerar uma Especificação implementável.</p>
         </div>
-        <div class="gterm">
+        <div class="chain-item">
           <div class="gname">Especificação</div>
-          <p>Fonte de verdade para implementação. Cobre produto, fluxo, UI, APIs, dados, permissões, analytics, segurança, performance, acessibilidade, erros, edge cases, observabilidade e aceite.</p>
+          <p>Fonte de verdade para implementação: produto, fluxo, UI, APIs, dados, permissões, analytics, segurança, acessibilidade, erros, edge cases, observabilidade e aceite.</p>
         </div>
-        <div class="gterm">
+        <div class="chain-item">
           <div class="gname">Design</div>
-          <p>Traduz a Especificação em experiência verificável: fluxo visual, navegação, wireframes, estados, acessibilidade. Quando não há interface, deve usar o status estruturado <code>not_applicable</code> com justificativa real — menção em texto livre não satisfaz o gate.</p>
+          <p>Traduz a Especificação em experiência verificável. Sem interface, usa o status estruturado <code>not_applicable</code> com justificativa real. <a href="#design" data-page="design">Página própria →</a></p>
         </div>
-        <div class="gterm">
-          <div class="gname">Engineering System</div>
-          <p>Artefato compartilhado e opcional em <code>engineering/</code>: arquitetura estável, ownership de módulos e dados, integrações, padrões, qualidade e runbooks. <code>engineering-system.md</code> é o contrato humano; <code>engineering-system.yaml</code>, o catálogo mecânico. Aprovação é composta: qualquer mudança em contrato compartilhado exige reaprovação humana.</p>
-        </div>
-        <div class="gterm">
+        <div class="chain-item">
           <div class="gname">Engineering Proposal + Review</div>
-          <p>A Proposal descreve a solução técnica pretendida de uma entrega (fronteiras, dados, integrações, rollout) sem sequenciar tarefas; a Review dá um veredito independente e somente-leitura antes do Plano. A Review registra o hash da Proposal — qualquer mudança a torna obsoleta.</p>
+          <p>A solução técnica pretendida, descrita e revisada de forma independente antes do plano — obrigatória em Tier L. <a href="#engenharia" data-page="engenharia">Página própria →</a></p>
         </div>
-        <div class="gterm">
+        <div class="chain-item">
           <div class="gname">Plano de Implementação</div>
-          <p>Traduz a Especificação em estratégia técnica: sequenciamento, fases, dependências, riscos, fatias, migrações, testes e rollout — sem escrever código.</p>
+          <p>Estratégia técnica: sequenciamento, fases, dependências, riscos, fatias, migrações, testes e rollout — sem escrever código.</p>
         </div>
-        <div class="gterm">
+        <div class="chain-item">
           <div class="gname">Grafo de Execução</div>
-          <p>Representa as tarefas como um DAG. Cada nó é uma unidade executável com dependências explícitas e um <code>path</code> para seu arquivo canônico em <code>tasks/&lt;task-id&gt;.md</code>.</p>
+          <p>As tarefas como um DAG: cada nó é uma unidade executável com dependências explícitas e um <code>path</code> para seu arquivo canônico.</p>
         </div>
-        <div class="gterm">
+        <div class="chain-item">
           <div class="gname">Tarefa</div>
-          <p>Unidade executável derivada da Especificação e do Grafo. Pequena o bastante para implementar, testar, revisar e reverter. Vive em seu próprio arquivo; <code>tasks.md</code> é só um índice gerado.</p>
+          <p>Unidade executável derivada da Especificação e do Grafo — pequena o bastante para implementar, testar, revisar e reverter. Vive em arquivo próprio; <code>tasks.md</code> é só índice.</p>
         </div>
+      </div>
+    </div>
+
+    <div class="cat-block" style="margin-top:52px;">
+      <h3 class="block-title" id="oque-mecanica">Mecânica do método</h3>
+      <div class="glossary">
         <div class="gterm">
           <div class="gname">Rigor Tier</div>
-          <p><b>S</b> — baixo risco, exige especificação, tasks e testes. <b>M</b> — fluxo normal, soma design, plano e grafo. <b>L</b> — crítico ou sensível, soma Engineering Proposal + Review, analytics, auditoria, evidência de QA e Security Review. Auth, permissões, pagamento, PII, upload ou UGC disparam Tier L automaticamente. Tiers S e M também exigem Proposal + Review quando o <code>context.md</code> declara um <code>engineering_trigger</code> estruturado (nova dependência, integração externa, migração, mudança de fronteira etc.).</p>
+          <p><b>S</b> — baixo risco: especificação, tasks e testes. <b>M</b> — fluxo normal: soma design, plano e grafo. <b>L</b> — crítico: soma Engineering Proposal + Review, analytics, auditoria, QA Evidence e Security Review. Auth, permissões, pagamento, PII, upload ou UGC disparam Tier L automaticamente; S e M sobem de exigência quando há um <code>engineering_trigger</code> estruturado.</p>
         </div>
         <div class="gterm">
           <div class="gname">Identidade e slug</div>
-          <p>Todo artefato com pasta própria declara <code>slug</code> em <code>context.md</code>, imutável mesmo se o título humano mudar. IDs são únicos dentro do escopo do pai; mover um artefato exige <code>spec-framework move</code>.</p>
+          <p>Todo artefato com pasta própria declara <code>slug</code> imutável em <code>context.md</code>. IDs são únicos dentro do escopo do pai; mover um artefato exige <code>spec-framework move</code>, que reescreve links mecânicos e reporta menções em texto livre.</p>
+        </div>
+        <div class="gterm">
+          <div class="gname">Sistemas compartilhados</div>
+          <p>Produtos com fundações recorrentes podem declarar um <a href="#design-system">Design System</a> (tokens, componentes, padrões) e um <a href="#eng-sistema">Engineering System</a> (arquitetura, ownership, qualidade) — ambos versionados, pinados por entrega e incapazes de aprovar qualquer coisa sozinhos.</p>
+        </div>
+        <div class="gterm">
+          <div class="gname">Decisões (DEC-*)</div>
+          <p>Mudanças de arquitetura, regra de negócio, segurança, permissões ou estratégia difícil de reverter viram registros <code>DEC-*</code> em <code>knowledge/decisions/</code>, indexados e com efeitos estruturados que constrangem Grafo, Tasks e gates — prosa de decisão nunca é executável.</p>
         </div>
       </div>
     </div>
@@ -1151,26 +1312,30 @@ meu-produto/
       <h2 class="section-title">A escada de entrega</h2>
       <div class="section-note">Cada nível responde "quando isto precisa existir no produto" — a prioridade organiza o que vem primeiro dentro do nível.</div>
     </div>
-    <div class="levels">
-      <div class="level"><span class="lv-tag">L0 · Foundation</span><p>Base sem a qual o produto ou o pipeline não sustentam entregas seguras.</p></div>
-      <div class="level"><span class="lv-tag">L1 · Walking Skeleton</span><p>Menor fluxo ponta a ponta que prova o valor central.</p></div>
-      <div class="level"><span class="lv-tag">L2 · Core Loop</span><p>Ciclo principal que gera valor recorrente para o usuário.</p></div>
-      <div class="level"><span class="lv-tag">L3 · Trust &amp; Quality</span><p>Confiança, segurança, privacidade, moderação, acessibilidade.</p></div>
-      <div class="level"><span class="lv-tag">L4 · Operations</span><p>Operação, suporte, observabilidade, admin e escala.</p></div>
-      <div class="level"><span class="lv-tag">L5 · Growth</span><p>Crescimento, experimentos, personalização e otimização.</p></div>
+    <p class="lead">
+      Um produto amadurece subindo degraus: cada nível só faz sentido apoiado no anterior. Um <code>L5</code> brilhante em cima de um <code>L1</code> que não fecha é um produto que não existe.
+    </p>
+
+    <div class="stairs">
+      <div class="stair s5"><span class="lv-tag">L5 · Growth</span><p>Crescimento, experimentos, personalização e otimização.</p></div>
+      <div class="stair s4"><span class="lv-tag">L4 · Operations</span><p>Operação, suporte, observabilidade, admin e escala.</p></div>
+      <div class="stair s3"><span class="lv-tag">L3 · Trust &amp; Quality</span><p>Confiança, segurança, privacidade, moderação, acessibilidade.</p></div>
+      <div class="stair s2"><span class="lv-tag">L2 · Core Loop</span><p>Ciclo principal que gera valor recorrente para o usuário.</p></div>
+      <div class="stair s1"><span class="lv-tag">L1 · Walking Skeleton</span><p>Menor fluxo ponta a ponta que prova o valor central.</p></div>
+      <div class="stair s0"><span class="lv-tag">L0 · Foundation</span><p>Base sem a qual o produto ou o pipeline não sustentam entregas seguras.</p></div>
     </div>
 
     <div class="cat-block" style="margin-top:48px;">
       <h3 class="block-title">Priority — ordena dentro do nível</h3>
-      <div class="levels">
-        <div class="level"><span class="lv-tag" style="color:var(--crit);">P0</span><p>Bloqueia o nível atual. Sem isso, o nível não fecha.</p></div>
-        <div class="level"><span class="lv-tag" style="color:var(--warn);">P1</span><p>Necessário para considerar o nível pronto.</p></div>
-        <div class="level"><span class="lv-tag" style="color:var(--accent);">P2</span><p>Importante, mas não bloqueia a entrega do nível.</p></div>
-        <div class="level"><span class="lv-tag" style="color:var(--ink-soft);">P3</span><p>Melhoria, polimento ou otimização.</p></div>
+      <div class="intent-list">
+        <div class="intent-row"><span class="intent-q"><b style="color:var(--crit);font-family:var(--mono);">P0</b></span><span class="intent-arrow">→</span><span class="intent-a">bloqueia o nível atual — sem isso, o nível não fecha</span></div>
+        <div class="intent-row"><span class="intent-q"><b style="color:var(--warn);font-family:var(--mono);">P1</b></span><span class="intent-arrow">→</span><span class="intent-a">necessário para considerar o nível pronto</span></div>
+        <div class="intent-row"><span class="intent-q"><b style="color:var(--accent);font-family:var(--mono);">P2</b></span><span class="intent-arrow">→</span><span class="intent-a">importante, mas não bloqueia a entrega do nível</span></div>
+        <div class="intent-row"><span class="intent-q"><b style="color:var(--ink-soft);font-family:var(--mono);">P3</b></span><span class="intent-arrow">→</span><span class="intent-a">melhoria, polimento ou otimização</span></div>
       </div>
     </div>
 
-    <div class="cat-block">
+    <div class="cat-block" style="margin-top:48px;">
       <h3 class="block-title">Regras que evitam roadmap por sensação</h3>
       <div class="glossary">
         <div class="gterm">
@@ -1205,11 +1370,18 @@ meu-produto/
     </div>
 
     <p class="lead">
-      Cada skill declara uma única <b>responsibility</b> e opera em modos previsíveis — <code>create</code> produz o primeiro artefato, <code>update</code> refina preservando contratos já aprovados, <code>audit</code> detecta estado obsoleto ou inseguro, <code>explain</code> resume estado e próximo passo. Skills de camada <b>Governance</b> (como os orquestradores) só roteiam fluxo: nunca autoria artefato de especialista nem executa comando diretamente. Todas leem <code>FRAMEWORK.md</code>, os <code>context.md</code> relevantes e as decisões aprovadas antes de agir, e param diante de aprovação humana pendente, conflito ou limite de tentativas.
+      Cada skill declara uma única <b>responsibility</b>, lê <code>FRAMEWORK.md</code>, os <code>context.md</code> relevantes e as decisões aprovadas antes de agir, e para diante de aprovação humana pendente, conflito ou limite de tentativas. Todas operam nos mesmos quatro modos:
     </p>
+    <div class="adapter-row" style="margin:-14px 0 44px;">
+      <div class="adapter-chip"><span class="aname">create</span><span class="adesc">produz o primeiro artefato</span></div>
+      <div class="adapter-chip"><span class="aname">update</span><span class="adesc">refina preservando contratos aprovados</span></div>
+      <div class="adapter-chip"><span class="aname">audit</span><span class="adesc">detecta estado obsoleto ou inseguro</span></div>
+      <div class="adapter-chip"><span class="aname">explain</span><span class="adesc">resume estado e próximo passo</span></div>
+    </div>
 
     <div class="cat-block">
       <h3 id="sk-fundacao">Fundação</h3>
+      <p class="cat-desc">Estabelecem por que o produto existe — antes de qualquer domínio ou feature.</p>
       <div class="skill-grid">
         <div class="skill"><div class="name">Problem Discovery AI</div><div class="desc">Descobre dores, oportunidades e evidências de mercado.</div></div>
         <div class="skill"><div class="name">Vision AI</div><div class="desc">Cria ou revisa visão, princípios e north star.</div></div>
@@ -1221,6 +1393,7 @@ meu-produto/
 
     <div class="cat-block">
       <h3 id="sk-design">Design de produto</h3>
+      <p class="cat-desc">Transformam objetivos de usuário em features, casos de uso e experiência verificável.</p>
       <div class="skill-grid">
         <div class="skill"><div class="name">Journey AI</div><div class="desc">Mapeia jornadas do usuário através de features.</div></div>
         <div class="skill"><div class="name">Feature AI</div><div class="desc">Cria e evolui features que atendem um objetivo.</div></div>
@@ -1233,6 +1406,7 @@ meu-produto/
 
     <div class="cat-block">
       <h3 id="sk-spec">Especificação e planejamento</h3>
+      <p class="cat-desc">Convertem intenção em contratos: especificação, solução técnica, plano e DAG de tarefas.</p>
       <div class="skill-grid">
         <div class="skill"><div class="name">Specification AI</div><div class="desc">Escreve o contrato central de implementação.</div></div>
         <div class="skill"><div class="name">Engineering System AI</div><div class="desc">Mantém o Engineering System compartilhado (<code>engineering-system.md</code> + <code>.yaml</code>): arquitetura estável, ownership de módulos e dados, padrões e qualidade.</div></div>
@@ -1245,6 +1419,7 @@ meu-produto/
 
     <div class="cat-block">
       <h3 id="sk-eng">Engenharia e validação</h3>
+      <p class="cat-desc">Implementam e verificam — cada verificador é independente de quem produziu o que ele verifica.</p>
       <div class="skill-grid">
         <div class="skill"><div class="name">Code Runner AI</div><div class="desc">Implementa uma tarefa aprovada por vez, em TDD, sem commitar.</div></div>
         <div class="skill"><div class="name">QA AI</div><div class="desc">Valida comportamento, testes, edge cases e evidências.</div></div>
@@ -1259,6 +1434,7 @@ meu-produto/
 
     <div class="cat-block">
       <h3 id="sk-audit">Auditoria</h3>
+      <p class="cat-desc">Analisam e reportam; não criam conteúdo de produto por padrão.</p>
       <div class="skill-grid">
         <div class="skill"><div class="name">Gap Finder AI</div><div class="desc">Procura o que está faltando.</div></div>
         <div class="skill"><div class="name">Conflict AI</div><div class="desc">Procura contradições entre artefatos.</div></div>
@@ -1271,7 +1447,8 @@ meu-produto/
     </div>
 
     <div class="cat-block">
-      <h3 id="sk-orq">Orquestradores — controlam fluxo, não criam artefatos</h3>
+      <h3 id="sk-orq">Orquestradores</h3>
+      <p class="cat-desc">Camada de governança: controlam fluxo, ordem, gates e handoffs — nunca autoram artefato de especialista nem executam comando.</p>
       <div class="skill-grid">
         <div class="skill"><div class="name">Framework Guide</div><div class="desc">Porta de entrada conversacional do CLI: traduz o objetivo da pessoa no comando seguro mais próximo, explica o gate ativo. Nunca autoria artefato nem aprova.</div></div>
         <div class="skill"><div class="name">Domain Evolution Orchestrator</div><div class="desc">Leva metas aprovadas até a seleção humana de uma feature candidata.</div></div>
@@ -1306,24 +1483,24 @@ meu-produto/
       <h3 class="block-title" id="design-dimensoes">Duas dimensões independentes</h3>
       <div class="dims-grid">
         <div>
-          <p class="note" style="margin:0 0 12px;"><b style="color:var(--ink);">origin_mode</b> — de onde vem o design</p>
-          <div class="pillars">
-            <div class="pillar"><h3>generate</h3><p>A solução é criada a partir da Especificação, do zero.</p></div>
-            <div class="pillar"><h3>evolve</h3><p>Uma interface existente é intencionalmente alterada.</p></div>
-            <div class="pillar"><h3>adopt</h3><p>Uma fonte externa versionada é autoritativa (Figma, Penpot, imagens).</p></div>
+          <p class="kicker"><code>origin_mode</code> — de onde vem</p>
+          <div class="intent-list">
+            <div class="intent-row"><span class="intent-q"><code>generate</code></span><span class="intent-arrow">→</span><span class="intent-a">criada do zero a partir da Especificação</span></div>
+            <div class="intent-row"><span class="intent-q"><code>evolve</code></span><span class="intent-arrow">→</span><span class="intent-a">uma interface existente é intencionalmente alterada</span></div>
+            <div class="intent-row"><span class="intent-q"><code>adopt</code></span><span class="intent-arrow">→</span><span class="intent-a">fonte externa versionada é autoritativa (Figma, Penpot, imagens)</span></div>
           </div>
         </div>
         <div>
-          <p class="note" style="margin:0 0 12px;"><b style="color:var(--ink);">maturity</b> — quão pronto está o artefato</p>
-          <div class="pillars">
-            <div class="pillar"><h3>contract</h3><p>Descrição textual dos estados e regras — o mínimo compatível.</p></div>
-            <div class="pillar"><h3>wireframe</h3><p>Estrutura de layout sem estilo final.</p></div>
-            <div class="pillar"><h3>mockup</h3><p>Visual quase final, ainda não interativo.</p></div>
-            <div class="pillar"><h3>prototype</h3><p>Navegável, simula a experiência real.</p></div>
+          <p class="kicker"><code>maturity</code> — quão pronto está</p>
+          <div class="intent-list">
+            <div class="intent-row"><span class="intent-q"><code>contract</code></span><span class="intent-arrow">→</span><span class="intent-a">descrição textual dos estados e regras — o mínimo compatível</span></div>
+            <div class="intent-row"><span class="intent-q"><code>wireframe</code></span><span class="intent-arrow">→</span><span class="intent-a">estrutura de layout sem estilo final</span></div>
+            <div class="intent-row"><span class="intent-q"><code>mockup</code></span><span class="intent-arrow">→</span><span class="intent-a">visual quase final, ainda não interativo</span></div>
+            <div class="intent-row"><span class="intent-q"><code>prototype</code></span><span class="intent-arrow">→</span><span class="intent-a">navegável, simula a experiência real</span></div>
           </div>
         </div>
       </div>
-      <p class="note">Uma fonte marcada <code>visual_canonical</code> só é autoritativa para apresentação e interação — decisões aprovadas e a Especificação continuam mandando em comportamento, segurança, privacidade e regra de negócio.</p>
+      <p class="note">Uma fonte marcada <code>visual_canonical</code> só é autoritativa para apresentação e interação — decisões aprovadas e a Especificação continuam mandando em comportamento, segurança, privacidade e regra de negócio. O <a href="#engenharia" data-page="engenharia">fluxo de Engenharia</a> é o espelho técnico deste: mesmo modelo de origem, versão pinada e revisão independente.</p>
     </div>
 
     <div class="cat-block">
@@ -1437,7 +1614,7 @@ meu-produto/
         <p>
           Vive em <code>engineering/</code>, é opcional e declara <code>origin_mode</code> (<code>generate</code>/<code>evolve</code>/<code>adopt</code>) e versão semântica — o mesmo modelo do Design System. <code>engineering-system.md</code> é o contrato humano; <code>engineering-system.yaml</code>, o catálogo mecânico que os validadores leem.
           <br><br>
-          Cada área (contexto de sistema, módulos, dados, qualidade, runbooks) declara uma <b>maturidade</b>: <code>baseline</code> → <code>mapped</code> → <code>governed</code> → <code>verified</code> → <code>operated</code>. Maturidade descreve a evidência disponível — <b>nunca concede aprovação</b>. Decisões de produto continuam sendo registros <code>DEC-*</code>; o sistema referencia, não substitui.
+          Cada área (contexto de sistema, módulos, dados, qualidade, runbooks) declara uma <b>maturidade</b> que descreve a evidência disponível — <b>nunca concede aprovação</b>. Decisões de produto continuam sendo registros <code>DEC-*</code>; o sistema referencia, não substitui. É o espelho técnico do <a href="#design" data-page="design">fluxo de Design</a>: mesmo modelo de origem, versão pinada e revisão independente.
           <br><br>
           A aprovação do sistema é <b>composta</b>: contexto, contrato humano, catálogo, arquitetura, padrões, qualidade, runbooks e evidência são hasheados em ordem determinística de caminho — mudar qualquer contrato compartilhado invalida a aprovação e exige reaprovação humana (FDR-028).
         </p>
@@ -1452,6 +1629,14 @@ meu-produto/
   runbooks/
   evidence/</pre>
         </div>
+      </div>
+      <p class="kicker" style="margin-top:24px;">Escala de maturidade por área — evidência, não aprovação</p>
+      <div class="adapter-row">
+        <div class="adapter-chip"><span class="aname">baseline</span><span class="adesc">só artefatos de produto</span></div>
+        <div class="adapter-chip"><span class="aname">mapped</span><span class="adesc">mapeada ao código real</span></div>
+        <div class="adapter-chip"><span class="aname">governed</span><span class="adesc">com decisões e padrões</span></div>
+        <div class="adapter-chip"><span class="aname">verified</span><span class="adesc">verificada por gates</span></div>
+        <div class="adapter-chip"><span class="aname">operated</span><span class="adesc">operada com runbooks</span></div>
       </div>
     </div>
 
@@ -1513,23 +1698,18 @@ meu-produto/
       <span class="gates-sep">→</span>
       <span class="gate ok">released</span>
     </div>
-    <p class="note">
-      <code style="font-family:var(--mono);background:var(--bg-raised);border:1px solid var(--line);padding:1px 5px;border-radius:2px;">implemented → validated</code> exige QA Evidence sem bloqueios, Code Review sem <i>blocker/required_fix</i>, e Security Review aprovado quando há código, dados, permissões ou risco de privacidade.
-      <code style="font-family:var(--mono);background:var(--bg-raised);border:1px solid var(--line);padding:1px 5px;border-radius:2px;">validated → released</code> exige o Release Orchestrator, auditoria e rollback/monitoramento definidos.
-    </p>
 
-    <div class="cat-block" style="margin-top:48px;">
-      <h3 class="block-title" id="gates-estados">O que cada estado significa</h3>
-      <div class="glossary">
-        <div class="gterm"><div class="gname">draft</div><p>Artefato criado, ainda incompleto.</p></div>
-        <div class="gterm"><div class="gname">proposed</div><p>Pronto para revisão humana ou de auditoria. Não exige registro de aprovação, mas não pode avançar se o gate do pai estiver incompleto.</p></div>
-        <div class="gterm"><div class="gname">approved</div><p>Pode alimentar a próxima etapa. A partir daqui, todo avanço exige um registro em <code>.product/history/</code> com hash do conteúdo.</p></div>
-        <div class="gterm"><div class="gname">in_progress</div><p>Sendo implementado. Exige uma tarefa aprovada ou uma exceção explícita de protótipo/rascunho.</p></div>
-        <div class="gterm"><div class="gname">implemented</div><p>Código ou artefato produzido. Exige evidência de working-tree: branch, base commit, changed paths, diff hash, testes. Não exige commit ainda.</p></div>
-        <div class="gterm"><div class="gname">validated</div><p>Passou por QA, Code Review, Security Review quando aplicável, e tem evidência suficiente e não-placeholder.</p></div>
-        <div class="gterm"><div class="gname">released</div><p>Chegou ao usuário ou ambiente alvo, via Release Orchestrator, com auditoria, rollback e monitoramento definidos.</p></div>
-        <div class="gterm"><div class="gname">deprecated</div><p>Não deve mais guiar novas implementações.</p></div>
-        <div class="gterm"><div class="gname">superseded</div><p>Substituído por outro artefato mais recente.</p></div>
+    <div class="cat-block" style="margin-top:44px;">
+      <h3 class="block-title" id="gates-estados">Cada transição tem um preço</h3>
+      <p class="note" style="margin:0 0 22px;">O estado diz o que o artefato é; o que interessa é o que ele <b>exige para avançar</b>. Marcadores âmbar são os gates que mais bloqueiam.</p>
+      <div class="flow">
+        <div class="flow-row"><div class="flow-stage">draft</div><div class="flow-rail"><div class="flow-dot"></div></div><div class="flow-card"><div class="who">Artefato criado, ainda incompleto</div><p>Para virar <code>proposed</code>: estar completo o bastante para revisão. Não exige registro de aprovação, mas não avança se o gate do pai estiver incompleto.</p></div></div>
+        <div class="flow-row"><div class="flow-stage">proposed</div><div class="flow-rail"><div class="flow-dot gate"></div></div><div class="flow-card"><div class="who">Pronto para revisão humana ou de auditoria</div><p>Para virar <code>approved</code>: um humano aprova explicitamente — nasce um registro em <code>.product/history/</code> com <code>artifact_id</code>, <code>content_hash</code>, <code>approved_by</code> e data. Daqui em diante, todo avanço exige registro.</p></div></div>
+        <div class="flow-row"><div class="flow-stage">approved</div><div class="flow-rail"><div class="flow-dot"></div></div><div class="flow-card"><div class="who">Pode alimentar a próxima etapa</div><p>Para virar <code>in_progress</code>: uma tarefa aprovada — ou uma exceção explícita de protótipo/rascunho.</p></div></div>
+        <div class="flow-row"><div class="flow-stage">in_progress</div><div class="flow-rail"><div class="flow-dot"></div></div><div class="flow-card"><div class="who">Sendo implementado</div><p>Para virar <code>implemented</code>: evidência estruturada de working-tree — branch, base commit, changed paths, diff hash, testes e resultado dos gates. Commit ainda não é exigido.</p></div></div>
+        <div class="flow-row"><div class="flow-stage">implemented</div><div class="flow-rail"><div class="flow-dot gate"></div></div><div class="flow-card"><div class="who">Código ou artefato produzido</div><p>Para virar <code>validated</code>: QA Evidence sem bloqueios, Code Review sem <i>blocker/required_fix</i> — ambos sobre <b>o mesmo diff hash</b> — e Security Review aprovado quando há código, dados, permissões ou risco de privacidade. Depois, Commit Crafter registra os commits.</p></div></div>
+        <div class="flow-row"><div class="flow-stage">validated</div><div class="flow-rail"><div class="flow-dot gate"></div></div><div class="flow-card"><div class="who">Verificado com evidência real, não-placeholder</div><p>Para virar <code>released</code>: Release Orchestrator, auditoria sem bloqueios, riscos residuais aceitos, e rollback/monitoramento definidos.</p></div></div>
+        <div class="flow-row"><div class="flow-stage">released</div><div class="flow-rail"><div class="flow-dot"></div></div><div class="flow-card"><div class="who">Chegou ao usuário ou ambiente alvo</div><p>Fim de linha feliz. Os outros dois destinos possíveis: <code>deprecated</code> (não deve mais guiar implementações) e <code>superseded</code> (substituído por artefato mais recente).</p></div></div>
       </div>
     </div>
 
@@ -1555,9 +1735,34 @@ meu-produto/
       <h2 class="section-title">Da task aprovada até a entrega</h2>
       <div class="section-note">Sim, existe um orquestrador dedicado a isso: o <b>Delivery Orchestrator</b>. Ele roteia, não implementa.</div>
     </div>
-    <p class="lead">
-      Depois que o Grafo de Execução está <span class="tag">approved</span>, três papéis de governança tocam cada task até a entrega: o <b>Execution Scheduler</b> calcula as ondas paralelas do DAG, o <b>Delivery Orchestrator</b> roteia o workspace entre os orquestradores permitidos, e o <b>Integration Orchestrator</b> reintegra localmente os commits de task já validados antes do release.
-    </p>
+
+    <div class="page-toc">
+      <a href="#entrega-papeis">Os três papéis</a>
+      <a href="#entrega-fluxo">O fluxo</a>
+      <a href="#entrega-falhas">Quando algo falha</a>
+    </div>
+
+    <div class="cat-block">
+      <h3 class="block-title" id="entrega-papeis">Três papéis de governança</h3>
+      <p class="note" style="margin:0 0 18px;">Depois que o Grafo de Execução está <span class="tag">approved</span>, quem toca cada task até a entrega:</p>
+      <div class="pillars pillars-row">
+        <div class="pillar">
+          <h3>Execution Scheduler</h3>
+          <p>Calcula ondas paralelas determinísticas a partir do DAG, <code>writeScope</code>, <code>sharedResources</code> e leases ativas. Planeja; não spawna agentes.</p>
+        </div>
+        <div class="pillar">
+          <h3>Delivery Orchestrator</h3>
+          <p>Roteia o <code>WORK-NNN</code> entre os orquestradores permitidos usando estado persistido, handoffs e checkpoints. Nunca autoria artefato nem executa comando.</p>
+        </div>
+        <div class="pillar">
+          <h3>Integration Orchestrator</h3>
+          <p>Reintegra localmente, em ordem de DAG, os commits de task já validados — e exige Integrated QA antes do release. Conflito para para humano.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="cat-block" style="margin-top:48px;">
+    <h3 class="block-title" id="entrega-fluxo">O fluxo, task a task</h3>
     <div class="flow">
       <div class="flow-row">
         <div class="flow-stage">Planejamento</div>
@@ -1640,9 +1845,18 @@ meu-produto/
         </div>
       </div>
     </div>
-    <p class="note">
-      Falhas nesse caminho seguem roteamento fixo (FDR-006): defeito confirmado volta para <b>Bug Fixer</b>, teste ausente volta para <b>QA</b>, trabalho fora do contrato volta para <b>Code Runner</b>, e ambiguidade de regra sobe para <b>Product Historian</b> + humano. Cada gate tem um limite de três tentativas automatizadas antes de escalar.
-    </p>
+    </div>
+
+    <div class="cat-block" style="margin-top:48px;">
+      <h3 class="block-title" id="entrega-falhas">Quando algo falha — roteamento fixo (FDR-006)</h3>
+      <div class="intent-list">
+        <div class="intent-row"><span class="intent-q">Defeito confirmado, regressão ou vulnerabilidade</span><span class="intent-arrow">→</span><span class="intent-a"><b>Bug Fixer</b> — reproduz com teste que falha antes de corrigir</span></div>
+        <div class="intent-row"><span class="intent-q">Teste ausente, oco ou sem cobertura negativa</span><span class="intent-arrow">→</span><span class="intent-a"><b>QA</b> ou o dono do teste</span></div>
+        <div class="intent-row"><span class="intent-q">Implementação incompleta ou fora do contrato</span><span class="intent-arrow">→</span><span class="intent-a"><b>Code Runner</b></span></div>
+        <div class="intent-row"><span class="intent-q">Lacuna de decisão ou regra ambígua</span><span class="intent-arrow">→</span><span class="intent-a"><b>Product Historian</b> + humano</span></div>
+      </div>
+      <p class="note">Depois de qualquer mudança de código, o fluxo reentra no QA — gate vermelho não se pula. Cada gate ou finding tem um teto de <b>três tentativas automatizadas</b> antes de escalar para um humano.</p>
+    </div>
   </section>
 
   <section id="exemplo" class="page">
