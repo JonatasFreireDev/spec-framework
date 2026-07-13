@@ -414,6 +414,42 @@ h2.section-title{
 }
 .pillar p{margin:0;font-size:14px;color:var(--ink-soft);max-width:none;}
 
+.pillars-row{
+  grid-template-columns:repeat(auto-fit,minmax(230px,1fr));
+}
+.chain-list{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(300px,1fr));
+  gap:14px;
+  counter-reset:chain;
+}
+.chain-item{
+  counter-increment:chain;
+  position:relative;
+  background:var(--bg-raised);
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  padding:16px 18px 16px 54px;
+}
+.chain-item::before{
+  content:counter(chain, decimal-leading-zero);
+  position:absolute;
+  left:16px;
+  top:17px;
+  font-family:var(--mono);
+  font-size:12px;
+  color:var(--accent);
+  font-weight:700;
+}
+.chain-item .gname{
+  font-family:var(--serif);
+  font-weight:600;
+  font-size:15px;
+  margin-bottom:4px;
+}
+.chain-item p{margin:0;font-size:13px;color:var(--ink-soft);}
+.chain-item p b{color:var(--ink);}
+
 .glossary{
   display:grid;
   grid-template-columns:repeat(auto-fill,minmax(280px,1fr));
@@ -459,6 +495,43 @@ h2.section-title{
 .rung .lbl{font-weight:600;}
 .rung.central{background:var(--accent-soft);border-color:var(--accent);}
 .rung.central .num{color:var(--accent);}
+
+/* ---------- staircase ---------- */
+.stairs{
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+}
+.stair{
+  display:flex;
+  align-items:baseline;
+  gap:16px;
+  background:var(--bg-raised);
+  border:1px solid var(--line);
+  border-left:3px solid var(--accent);
+  border-radius:var(--radius);
+  padding:12px 18px;
+}
+.stair .lv-tag{
+  font-family:var(--mono);
+  font-size:12.5px;
+  color:var(--accent);
+  font-weight:700;
+  letter-spacing:.03em;
+  white-space:nowrap;
+  min-width:170px;
+}
+.stair p{margin:0;font-size:13.5px;color:var(--ink-soft);}
+.stair.s5{width:62%;}
+.stair.s4{width:69.6%;}
+.stair.s3{width:77.2%;}
+.stair.s2{width:84.8%;}
+.stair.s1{width:92.4%;}
+.stair.s0{width:100%;border-left-color:var(--amber);}
+.stair.s0 .lv-tag{color:var(--amber);}
+@media (max-width:760px){
+  .stair{width:100% !important;flex-direction:column;gap:4px;}
+}
 
 /* ---------- delivery levels ---------- */
 .levels{
@@ -1113,15 +1186,20 @@ meu-produto/
       <h2 class="section-title">O que é, na prática</h2>
       <div class="section-note">Não é um gerador de arquivos. É um contrato entre produto e engenharia.</div>
     </div>
-    <div class="what-grid">
-      <p>
-        Em vez de o agente decidir sozinho o que construir, tudo passa por uma cadeia explícita: um <b>Problema</b> justifica uma <b>Visão</b>, que orienta uma <b>Estratégia</b>, organizada em <b>Domínios</b> (ex.: eventos, pagamentos), que contêm <b>Objetivos do usuário</b>, atendidos por <b>Features</b>, detalhadas em <b>Casos de Uso</b> verificáveis.
-        <br><br>
-        Cada caso de uso vira uma <b>Especificação</b> — o contrato central que descreve fluxo, UI, API, dados, permissões, analytics e segurança — antes de qualquer linha de código. Da especificação nascem o <b>Design</b>, o <b>Plano de Implementação</b> e um <b>Grafo de Execução</b> (DAG de tarefas), que só então gera <b>Tarefas</b> executáveis, pequenas o bastante para implementar, testar e revisar.
-        <br><br>
-        Toda a árvore vive num diretório <code style="font-family:var(--mono);font-size:13px;background:var(--bg);padding:1px 5px;border-radius:2px;border:1px solid var(--line);">product/</code>, com estado, decisões e histórico versionados como um grafo de conhecimento — não só uma pasta de documentos soltos.
-      </p>
-      <div class="pillars">
+
+    <div class="page-toc">
+      <a href="#oque-principios">Princípios</a>
+      <a href="#oque-modelo">Modelo conceitual</a>
+      <a href="#oque-mecanica">Mecânica do método</a>
+    </div>
+
+    <p class="lead">
+      Em vez de o agente decidir sozinho o que construir, tudo passa por uma cadeia explícita — do <b>Problema</b> à <b>Tarefa</b> — onde cada elo só existe porque o anterior o justifica. Cada caso de uso vira uma <b>Especificação</b> antes de qualquer linha de código, e toda a árvore vive num diretório <code>product/</code> versionado como um grafo de conhecimento: estado, decisões e histórico navegáveis por máquina, não só uma pasta de documentos soltos.
+    </p>
+
+    <div class="cat-block">
+      <h3 class="block-title" id="oque-principios">Quatro princípios sustentam tudo</h3>
+      <div class="pillars pillars-row">
         <div class="pillar">
           <h3>Produto primeiro</h3>
           <p>Toda decisão técnica precisa manter rastreabilidade até uma necessidade real de produto.</p>
@@ -1143,70 +1221,81 @@ meu-produto/
 
     <div class="cat-block" style="margin-top:52px;">
       <h3 class="block-title" id="oque-modelo">Modelo conceitual — do problema à tarefa</h3>
-      <div class="glossary">
-        <div class="gterm">
+      <p class="note" style="margin:0 0 22px;">Os treze elos da cadeia, na ordem em que um deriva do outro. Nenhum nasce sem o anterior.</p>
+      <div class="chain-list">
+        <div class="chain-item">
           <div class="gname">Problema</div>
           <p>Define a dor, a oportunidade e o contexto de mercado. É a raiz de justificativa do produto.</p>
         </div>
-        <div class="gterm">
+        <div class="chain-item">
           <div class="gname">Visão</div>
           <p>Define o produto que se quer construir, para quem, por que agora e quais princípios guiam as decisões.</p>
         </div>
-        <div class="gterm">
+        <div class="chain-item">
           <div class="gname">Estratégia</div>
           <p>Define posicionamento, segmentos, métricas, trade-offs, roadmap e critérios para avançar ou pausar.</p>
         </div>
-        <div class="gterm">
+        <div class="chain-item">
           <div class="gname">Domínio</div>
-          <p>Agrupa uma área coerente do negócio ou produto, como <code>users</code>, <code>events</code> ou <code>payments</code>. É o centro da documentação funcional — não existe uma pasta global de features.</p>
+          <p>Agrupa uma área coerente do negócio, como <code>users</code>, <code>events</code> ou <code>payments</code>. É o centro da documentação funcional — não existe pasta global de features.</p>
         </div>
-        <div class="gterm">
+        <div class="chain-item">
           <div class="gname">Objetivo do usuário</div>
-          <p>Substitui a noção genérica de "capacidade". Representa o objetivo estável do usuário dentro de um domínio: "entrar em um evento", "encontrar pessoas".</p>
+          <p>O objetivo estável do usuário dentro de um domínio: "entrar em um evento", "encontrar pessoas". Substitui a noção genérica de "capacidade".</p>
         </div>
-        <div class="gterm">
+        <div class="chain-item">
           <div class="gname">Feature</div>
-          <p>É uma solução concreta que atende a um objetivo. Features podem entrar, sair, evoluir, ser fatiadas ou substituídas.</p>
+          <p>Solução concreta que atende a um objetivo. Features podem entrar, sair, evoluir, ser fatiadas ou substituídas.</p>
         </div>
-        <div class="gterm">
+        <div class="chain-item">
           <div class="gname">Caso de uso</div>
-          <p>É uma interação verificável da feature — o ponto onde produto e engenharia se encontram para gerar uma Especificação implementável.</p>
+          <p>Interação verificável da feature — o ponto onde produto e engenharia se encontram para gerar uma Especificação implementável.</p>
         </div>
-        <div class="gterm">
+        <div class="chain-item">
           <div class="gname">Especificação</div>
-          <p>Fonte de verdade para implementação. Cobre produto, fluxo, UI, APIs, dados, permissões, analytics, segurança, performance, acessibilidade, erros, edge cases, observabilidade e aceite.</p>
+          <p>Fonte de verdade para implementação: produto, fluxo, UI, APIs, dados, permissões, analytics, segurança, acessibilidade, erros, edge cases, observabilidade e aceite.</p>
         </div>
-        <div class="gterm">
+        <div class="chain-item">
           <div class="gname">Design</div>
-          <p>Traduz a Especificação em experiência verificável: fluxo visual, navegação, wireframes, estados, acessibilidade. Quando não há interface, deve usar o status estruturado <code>not_applicable</code> com justificativa real — menção em texto livre não satisfaz o gate.</p>
+          <p>Traduz a Especificação em experiência verificável. Sem interface, usa o status estruturado <code>not_applicable</code> com justificativa real. <a href="#design" data-page="design">Página própria →</a></p>
         </div>
-        <div class="gterm">
-          <div class="gname">Engineering System</div>
-          <p>Artefato compartilhado e opcional em <code>engineering/</code>: arquitetura estável, ownership de módulos e dados, integrações, padrões, qualidade e runbooks. <code>engineering-system.md</code> é o contrato humano; <code>engineering-system.yaml</code>, o catálogo mecânico. Aprovação é composta: qualquer mudança em contrato compartilhado exige reaprovação humana.</p>
-        </div>
-        <div class="gterm">
+        <div class="chain-item">
           <div class="gname">Engineering Proposal + Review</div>
-          <p>A Proposal descreve a solução técnica pretendida de uma entrega (fronteiras, dados, integrações, rollout) sem sequenciar tarefas; a Review dá um veredito independente e somente-leitura antes do Plano. A Review registra o hash da Proposal — qualquer mudança a torna obsoleta.</p>
+          <p>A solução técnica pretendida, descrita e revisada de forma independente antes do plano — obrigatória em Tier L. <a href="#engenharia" data-page="engenharia">Página própria →</a></p>
         </div>
-        <div class="gterm">
+        <div class="chain-item">
           <div class="gname">Plano de Implementação</div>
-          <p>Traduz a Especificação em estratégia técnica: sequenciamento, fases, dependências, riscos, fatias, migrações, testes e rollout — sem escrever código.</p>
+          <p>Estratégia técnica: sequenciamento, fases, dependências, riscos, fatias, migrações, testes e rollout — sem escrever código.</p>
         </div>
-        <div class="gterm">
+        <div class="chain-item">
           <div class="gname">Grafo de Execução</div>
-          <p>Representa as tarefas como um DAG. Cada nó é uma unidade executável com dependências explícitas e um <code>path</code> para seu arquivo canônico em <code>tasks/&lt;task-id&gt;.md</code>.</p>
+          <p>As tarefas como um DAG: cada nó é uma unidade executável com dependências explícitas e um <code>path</code> para seu arquivo canônico.</p>
         </div>
-        <div class="gterm">
+        <div class="chain-item">
           <div class="gname">Tarefa</div>
-          <p>Unidade executável derivada da Especificação e do Grafo. Pequena o bastante para implementar, testar, revisar e reverter. Vive em seu próprio arquivo; <code>tasks.md</code> é só um índice gerado.</p>
+          <p>Unidade executável derivada da Especificação e do Grafo — pequena o bastante para implementar, testar, revisar e reverter. Vive em arquivo próprio; <code>tasks.md</code> é só índice.</p>
         </div>
+      </div>
+    </div>
+
+    <div class="cat-block" style="margin-top:52px;">
+      <h3 class="block-title" id="oque-mecanica">Mecânica do método</h3>
+      <div class="glossary">
         <div class="gterm">
           <div class="gname">Rigor Tier</div>
-          <p><b>S</b> — baixo risco, exige especificação, tasks e testes. <b>M</b> — fluxo normal, soma design, plano e grafo. <b>L</b> — crítico ou sensível, soma Engineering Proposal + Review, analytics, auditoria, evidência de QA e Security Review. Auth, permissões, pagamento, PII, upload ou UGC disparam Tier L automaticamente. Tiers S e M também exigem Proposal + Review quando o <code>context.md</code> declara um <code>engineering_trigger</code> estruturado (nova dependência, integração externa, migração, mudança de fronteira etc.).</p>
+          <p><b>S</b> — baixo risco: especificação, tasks e testes. <b>M</b> — fluxo normal: soma design, plano e grafo. <b>L</b> — crítico: soma Engineering Proposal + Review, analytics, auditoria, QA Evidence e Security Review. Auth, permissões, pagamento, PII, upload ou UGC disparam Tier L automaticamente; S e M sobem de exigência quando há um <code>engineering_trigger</code> estruturado.</p>
         </div>
         <div class="gterm">
           <div class="gname">Identidade e slug</div>
-          <p>Todo artefato com pasta própria declara <code>slug</code> em <code>context.md</code>, imutável mesmo se o título humano mudar. IDs são únicos dentro do escopo do pai; mover um artefato exige <code>spec-framework move</code>.</p>
+          <p>Todo artefato com pasta própria declara <code>slug</code> imutável em <code>context.md</code>. IDs são únicos dentro do escopo do pai; mover um artefato exige <code>spec-framework move</code>, que reescreve links mecânicos e reporta menções em texto livre.</p>
+        </div>
+        <div class="gterm">
+          <div class="gname">Sistemas compartilhados</div>
+          <p>Produtos com fundações recorrentes podem declarar um <a href="#design-system">Design System</a> (tokens, componentes, padrões) e um <a href="#eng-sistema">Engineering System</a> (arquitetura, ownership, qualidade) — ambos versionados, pinados por entrega e incapazes de aprovar qualquer coisa sozinhos.</p>
+        </div>
+        <div class="gterm">
+          <div class="gname">Decisões (DEC-*)</div>
+          <p>Mudanças de arquitetura, regra de negócio, segurança, permissões ou estratégia difícil de reverter viram registros <code>DEC-*</code> em <code>knowledge/decisions/</code>, indexados e com efeitos estruturados que constrangem Grafo, Tasks e gates — prosa de decisão nunca é executável.</p>
         </div>
       </div>
     </div>
@@ -1217,26 +1306,30 @@ meu-produto/
       <h2 class="section-title">A escada de entrega</h2>
       <div class="section-note">Cada nível responde "quando isto precisa existir no produto" — a prioridade organiza o que vem primeiro dentro do nível.</div>
     </div>
-    <div class="levels">
-      <div class="level"><span class="lv-tag">L0 · Foundation</span><p>Base sem a qual o produto ou o pipeline não sustentam entregas seguras.</p></div>
-      <div class="level"><span class="lv-tag">L1 · Walking Skeleton</span><p>Menor fluxo ponta a ponta que prova o valor central.</p></div>
-      <div class="level"><span class="lv-tag">L2 · Core Loop</span><p>Ciclo principal que gera valor recorrente para o usuário.</p></div>
-      <div class="level"><span class="lv-tag">L3 · Trust &amp; Quality</span><p>Confiança, segurança, privacidade, moderação, acessibilidade.</p></div>
-      <div class="level"><span class="lv-tag">L4 · Operations</span><p>Operação, suporte, observabilidade, admin e escala.</p></div>
-      <div class="level"><span class="lv-tag">L5 · Growth</span><p>Crescimento, experimentos, personalização e otimização.</p></div>
+    <p class="lead">
+      Um produto amadurece subindo degraus: cada nível só faz sentido apoiado no anterior. Um <code>L5</code> brilhante em cima de um <code>L1</code> que não fecha é um produto que não existe.
+    </p>
+
+    <div class="stairs">
+      <div class="stair s5"><span class="lv-tag">L5 · Growth</span><p>Crescimento, experimentos, personalização e otimização.</p></div>
+      <div class="stair s4"><span class="lv-tag">L4 · Operations</span><p>Operação, suporte, observabilidade, admin e escala.</p></div>
+      <div class="stair s3"><span class="lv-tag">L3 · Trust &amp; Quality</span><p>Confiança, segurança, privacidade, moderação, acessibilidade.</p></div>
+      <div class="stair s2"><span class="lv-tag">L2 · Core Loop</span><p>Ciclo principal que gera valor recorrente para o usuário.</p></div>
+      <div class="stair s1"><span class="lv-tag">L1 · Walking Skeleton</span><p>Menor fluxo ponta a ponta que prova o valor central.</p></div>
+      <div class="stair s0"><span class="lv-tag">L0 · Foundation</span><p>Base sem a qual o produto ou o pipeline não sustentam entregas seguras.</p></div>
     </div>
 
     <div class="cat-block" style="margin-top:48px;">
       <h3 class="block-title">Priority — ordena dentro do nível</h3>
-      <div class="levels">
-        <div class="level"><span class="lv-tag" style="color:var(--crit);">P0</span><p>Bloqueia o nível atual. Sem isso, o nível não fecha.</p></div>
-        <div class="level"><span class="lv-tag" style="color:var(--warn);">P1</span><p>Necessário para considerar o nível pronto.</p></div>
-        <div class="level"><span class="lv-tag" style="color:var(--accent);">P2</span><p>Importante, mas não bloqueia a entrega do nível.</p></div>
-        <div class="level"><span class="lv-tag" style="color:var(--ink-soft);">P3</span><p>Melhoria, polimento ou otimização.</p></div>
+      <div class="intent-list">
+        <div class="intent-row"><span class="intent-q"><b style="color:var(--crit);font-family:var(--mono);">P0</b></span><span class="intent-arrow">→</span><span class="intent-a">bloqueia o nível atual — sem isso, o nível não fecha</span></div>
+        <div class="intent-row"><span class="intent-q"><b style="color:var(--warn);font-family:var(--mono);">P1</b></span><span class="intent-arrow">→</span><span class="intent-a">necessário para considerar o nível pronto</span></div>
+        <div class="intent-row"><span class="intent-q"><b style="color:var(--accent);font-family:var(--mono);">P2</b></span><span class="intent-arrow">→</span><span class="intent-a">importante, mas não bloqueia a entrega do nível</span></div>
+        <div class="intent-row"><span class="intent-q"><b style="color:var(--ink-soft);font-family:var(--mono);">P3</b></span><span class="intent-arrow">→</span><span class="intent-a">melhoria, polimento ou otimização</span></div>
       </div>
     </div>
 
-    <div class="cat-block">
+    <div class="cat-block" style="margin-top:48px;">
       <h3 class="block-title">Regras que evitam roadmap por sensação</h3>
       <div class="glossary">
         <div class="gterm">
@@ -1579,23 +1672,18 @@ meu-produto/
       <span class="gates-sep">→</span>
       <span class="gate ok">released</span>
     </div>
-    <p class="note">
-      <code style="font-family:var(--mono);background:var(--bg-raised);border:1px solid var(--line);padding:1px 5px;border-radius:2px;">implemented → validated</code> exige QA Evidence sem bloqueios, Code Review sem <i>blocker/required_fix</i>, e Security Review aprovado quando há código, dados, permissões ou risco de privacidade.
-      <code style="font-family:var(--mono);background:var(--bg-raised);border:1px solid var(--line);padding:1px 5px;border-radius:2px;">validated → released</code> exige o Release Orchestrator, auditoria e rollback/monitoramento definidos.
-    </p>
 
-    <div class="cat-block" style="margin-top:48px;">
-      <h3 class="block-title" id="gates-estados">O que cada estado significa</h3>
-      <div class="glossary">
-        <div class="gterm"><div class="gname">draft</div><p>Artefato criado, ainda incompleto.</p></div>
-        <div class="gterm"><div class="gname">proposed</div><p>Pronto para revisão humana ou de auditoria. Não exige registro de aprovação, mas não pode avançar se o gate do pai estiver incompleto.</p></div>
-        <div class="gterm"><div class="gname">approved</div><p>Pode alimentar a próxima etapa. A partir daqui, todo avanço exige um registro em <code>.product/history/</code> com hash do conteúdo.</p></div>
-        <div class="gterm"><div class="gname">in_progress</div><p>Sendo implementado. Exige uma tarefa aprovada ou uma exceção explícita de protótipo/rascunho.</p></div>
-        <div class="gterm"><div class="gname">implemented</div><p>Código ou artefato produzido. Exige evidência de working-tree: branch, base commit, changed paths, diff hash, testes. Não exige commit ainda.</p></div>
-        <div class="gterm"><div class="gname">validated</div><p>Passou por QA, Code Review, Security Review quando aplicável, e tem evidência suficiente e não-placeholder.</p></div>
-        <div class="gterm"><div class="gname">released</div><p>Chegou ao usuário ou ambiente alvo, via Release Orchestrator, com auditoria, rollback e monitoramento definidos.</p></div>
-        <div class="gterm"><div class="gname">deprecated</div><p>Não deve mais guiar novas implementações.</p></div>
-        <div class="gterm"><div class="gname">superseded</div><p>Substituído por outro artefato mais recente.</p></div>
+    <div class="cat-block" style="margin-top:44px;">
+      <h3 class="block-title" id="gates-estados">Cada transição tem um preço</h3>
+      <p class="note" style="margin:0 0 22px;">O estado diz o que o artefato é; o que interessa é o que ele <b>exige para avançar</b>. Marcadores âmbar são os gates que mais bloqueiam.</p>
+      <div class="flow">
+        <div class="flow-row"><div class="flow-stage">draft</div><div class="flow-rail"><div class="flow-dot"></div></div><div class="flow-card"><div class="who">Artefato criado, ainda incompleto</div><p>Para virar <code>proposed</code>: estar completo o bastante para revisão. Não exige registro de aprovação, mas não avança se o gate do pai estiver incompleto.</p></div></div>
+        <div class="flow-row"><div class="flow-stage">proposed</div><div class="flow-rail"><div class="flow-dot gate"></div></div><div class="flow-card"><div class="who">Pronto para revisão humana ou de auditoria</div><p>Para virar <code>approved</code>: um humano aprova explicitamente — nasce um registro em <code>.product/history/</code> com <code>artifact_id</code>, <code>content_hash</code>, <code>approved_by</code> e data. Daqui em diante, todo avanço exige registro.</p></div></div>
+        <div class="flow-row"><div class="flow-stage">approved</div><div class="flow-rail"><div class="flow-dot"></div></div><div class="flow-card"><div class="who">Pode alimentar a próxima etapa</div><p>Para virar <code>in_progress</code>: uma tarefa aprovada — ou uma exceção explícita de protótipo/rascunho.</p></div></div>
+        <div class="flow-row"><div class="flow-stage">in_progress</div><div class="flow-rail"><div class="flow-dot"></div></div><div class="flow-card"><div class="who">Sendo implementado</div><p>Para virar <code>implemented</code>: evidência estruturada de working-tree — branch, base commit, changed paths, diff hash, testes e resultado dos gates. Commit ainda não é exigido.</p></div></div>
+        <div class="flow-row"><div class="flow-stage">implemented</div><div class="flow-rail"><div class="flow-dot gate"></div></div><div class="flow-card"><div class="who">Código ou artefato produzido</div><p>Para virar <code>validated</code>: QA Evidence sem bloqueios, Code Review sem <i>blocker/required_fix</i> — ambos sobre <b>o mesmo diff hash</b> — e Security Review aprovado quando há código, dados, permissões ou risco de privacidade. Depois, Commit Crafter registra os commits.</p></div></div>
+        <div class="flow-row"><div class="flow-stage">validated</div><div class="flow-rail"><div class="flow-dot gate"></div></div><div class="flow-card"><div class="who">Verificado com evidência real, não-placeholder</div><p>Para virar <code>released</code>: Release Orchestrator, auditoria sem bloqueios, riscos residuais aceitos, e rollback/monitoramento definidos.</p></div></div>
+        <div class="flow-row"><div class="flow-stage">released</div><div class="flow-rail"><div class="flow-dot"></div></div><div class="flow-card"><div class="who">Chegou ao usuário ou ambiente alvo</div><p>Fim de linha feliz. Os outros dois destinos possíveis: <code>deprecated</code> (não deve mais guiar implementações) e <code>superseded</code> (substituído por artefato mais recente).</p></div></div>
       </div>
     </div>
 
