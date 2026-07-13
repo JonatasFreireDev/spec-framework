@@ -26,6 +26,8 @@ After the Artifact Importer fills `mapping.json`, review the selected mappings a
 spec-framework import materialize --run IMPORT-001 --approved-by "Product Owner" --yes
 ```
 
+For `existing-documents`, the latest run pinned in `product/.product/framework.json` must be materially complete before `spec-framework work` can create a workspace. Materialization authorizes selected draft writes only; review and approve each resulting product artifact through its normal owner and parent gates.
+
 The command rejects missing evidence, paths outside `product/`, duplicate targets, non-draft content, and existing destination files.
 
 Use `spec-framework work --feature <path-or-id>` to create an independent workspace, then `status` and `next` to see blockers and the canonical next skill. Use `approve` for human-reviewed status grants, `gates` before Code Runner, and `graph ready/claim/release/complete` to coordinate task ownership.

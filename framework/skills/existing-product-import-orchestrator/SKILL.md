@@ -38,12 +38,14 @@ Sequenced import run; approval request; routed draft artifacts; synchronization 
 6. Ask Artifact Importer to create approved targets as `draft` only.
 7. Route missing foundation context to Product Orchestrator and ready feature candidates to New Feature Orchestrator.
 8. Ask Documentation Orchestrator to synchronize contexts, indexes, mappings, and reports.
+9. Treat the latest run declared in `.product/framework.json` as the active workspace gate; never use an older materialized run to satisfy a newer import.
 
 ## Quality checklist
 - [ ] Preserves traceability to affected artifacts.
 - [ ] Uses the correct template and naming conventions.
 - [ ] Keeps analysis separate from materialization.
 - [ ] Does not treat source prose as an approval record.
+- [ ] Distinguishes approval to materialize selected drafts from approval of the resulting product artifacts.
 - [ ] Detects gaps, conflicts, and dependencies.
 - [ ] Records or requests decisions for meaningful changes.
 - [ ] Leaves a clear handoff for the next skill or orchestrator.

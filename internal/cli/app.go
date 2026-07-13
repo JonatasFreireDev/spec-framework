@@ -36,6 +36,12 @@ func (app App) Run(args []string, stdout, stderr io.Writer) int {
 		writeHelp(stdout)
 		return 0
 	}
+	if args[0] != "init" && args[0] != "upgrade" && args[0] != "version" {
+		if blocked, message := auditOnlyMutation(args); blocked {
+			fmt.Fprintln(stderr, message)
+			return 1
+		}
+	}
 
 	switch args[0] {
 	case "version":

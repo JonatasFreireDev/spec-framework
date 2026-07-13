@@ -14,6 +14,9 @@ func setupProduct(t *testing.T) string {
 	t.Helper()
 	root := t.TempDir()
 	_ = os.MkdirAll(filepath.Join(root, ".product"), 0755)
+	if err := writeJSON(filepath.Join(root, ".product", "framework.json"), map[string]any{"starting_point": "new-product"}); err != nil {
+		t.Fatal(err)
+	}
 	r := Registry{Artifacts: []Artifact{{ID: "DOMAIN-1", Type: "domain", Status: "approved", Path: "domains/events/context.md"}, {ID: "GOAL-1", Type: "user-goal", Status: "approved", Path: "domains/events/goals/manage/context.md", ParentIDs: []string{"DOMAIN-1"}}, {ID: "FT-1", Type: "feature", Status: "approved", Path: "domains/events/goals/manage/features/invites/context.md", ParentIDs: []string{"GOAL-1"}}}}
 	if err := writeJSON(filepath.Join(root, ".product", "artifacts.json"), r); err != nil {
 		t.Fatal(err)
@@ -27,6 +30,208 @@ func setupProduct(t *testing.T) string {
 		_ = writeJSON(filepath.Join(root, ".product", "history", "approval-"+strings.ToLower(a.ID)+".json"), Approval{ArtifactID: a.ID, Path: a.Path, ContentHash: Hash(text), StatusGranted: a.Status, ApprovedBy: "Test Owner"})
 	}
 	return root
+}
+
+func TestExistingFeatureWorkspaceRequiresCurrentFeatureBriefApproval(t *testing.T) {
+	root := setupProduct(t)
+	if err := writeJSON(filepath.Join(root, ".product", "framework.json"), map[string]any{"starting_point": "existing-feature"}); err != nil {
+		t.Fatal(err)
+	}
+	brief := Artifact{ID: "FEATURE-BRIEF-1", Type: "feature-brief", Status: "draft", Path: "foundation/feature-brief.md", TargetFeature: "FT-1"}
+	registry, err := LoadRegistry(root)
+	if err != nil {
+		t.Fatal(err)
+	}
+	registry.Artifacts = append([]Artifact{brief}, registry.Artifacts...)
+	if err := writeJSON(filepath.Join(root, ".product", "artifacts.json"), registry); err != nil {
+		t.Fatal(err)
+	}
+	path := filepath.Join(root, filepath.FromSlash(brief.Path))
+	if err := os.MkdirAll(filepath.Dir(path), 0755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(path, []byte("| ID | FEATURE-BRIEF-1 |\n| Type | feature-brief |\n| Status | draft |\n| Target Feature | FT-1 |\n"), 0644); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := CreateWorkspace(root, "FT-1", "", "", "", "tester"); err == nil || !strings.Contains(err.Error(), "lacks current approval evidence") {
+		t.Fatalf("expected Feature Brief approval blocker, got %v", err)
+	}
+	if _, err := Approve(root, path, "approved", "Product Owner", "bounded feature approved"); err != nil {
+		t.Fatal(err)
+	}
+	registry, err = LoadRegistry(root)
+	if err != nil {
+		t.Fatal(err)
+	}
+	registry.Artifacts[0].TargetFeature = "FT-OTHER"
+	if err := writeJSON(filepath.Join(root, ".product", "artifacts.json"), registry); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := CreateWorkspace(root, "FT-1", "", "", "", "tester"); err == nil || !strings.Contains(err.Error(), "registry target") {
+		t.Fatalf("expected Feature Brief registry tampering blocker, got %v", err)
+	}
+	registry.Artifacts[0].TargetFeature = "FT-1"
+	if err := writeJSON(filepath.Join(root, ".product", "artifacts.json"), registry); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := CreateWorkspace(root, "FT-1", "", "", "", "tester"); err != nil {
+		t.Fatalf("workspace remained blocked after approval: %v", err)
+	}
+}
+
+func TestFeatureTargetMatchesCanonicalAndContextPaths(t *testing.T) {
+	feature := Artifact{ID: "FT-1", Path: "domains/d/goals/g/features/f/context.md"}
+	for _, target := range []string{"FT-1", "domains/d/goals/g/features/f/context.md", "domains/d/goals/g/features/f/feature.md"} {
+		if !featureTargetMatches(target, feature) {
+			t.Errorf("target %q should match", target)
+		}
+	}
+	if featureTargetMatches("FT-OTHER", feature) {
+		t.Fatal("unrelated feature target matched")
+	}
+}
+
+func TestExistingImplementationWorkspaceRequiresCurrentAssessmentApproval(t *testing.T) {
+	root := setupProduct(t)
+	if err := writeJSON(filepath.Join(root, ".product", "framework.json"), map[string]any{"starting_point": "existing-implementation"}); err != nil {
+		t.Fatal(err)
+	}
+	artifacts := []Artifact{
+		{ID: "IMPL-ASSESS-1", Type: "implementation-assessment", Status: "draft", Path: "knowledge/assessments/implementation-assessment.md"},
+		{ID: "PROBLEM-1", Type: "problem", Status: "draft", Path: "foundation/problem/problem.md", ParentIDs: []string{"IMPL-ASSESS-1"}},
+		{ID: "VISION-1", Type: "vision", Status: "draft", Path: "foundation/vision/vision.md", ParentIDs: []string{"PROBLEM-1"}},
+		{ID: "PRINCIPLES-1", Type: "product-principles", Status: "draft", Path: "foundation/vision/principles.md", ParentIDs: []string{"VISION-1"}},
+		{ID: "NORTH-STAR-1", Type: "north-star", Status: "draft", Path: "foundation/vision/north-star.md", ParentIDs: []string{"VISION-1"}},
+		{ID: "STRATEGY-1", Type: "strategy", Status: "draft", Path: "foundation/strategy/strategy.md", ParentIDs: []string{"VISION-1", "PRINCIPLES-1", "NORTH-STAR-1"}},
+	}
+	registry, err := LoadRegistry(root)
+	if err != nil {
+		t.Fatal(err)
+	}
+	registry.Artifacts = append(artifacts, registry.Artifacts...)
+	if err := writeJSON(filepath.Join(root, ".product", "artifacts.json"), registry); err != nil {
+		t.Fatal(err)
+	}
+	for _, artifact := range artifacts {
+		path := filepath.Join(root, filepath.FromSlash(artifact.Path))
+		if err := os.MkdirAll(filepath.Dir(path), 0755); err != nil {
+			t.Fatal(err)
+		}
+		if err := os.WriteFile(path, []byte("| ID | "+artifact.ID+" |\n| Type | "+artifact.Type+" |\n| Status | draft |\n"), 0644); err != nil {
+			t.Fatal(err)
+		}
+		if map[string]bool{"problem": true, "vision": true, "strategy": true}[artifact.Type] {
+			if err := os.WriteFile(filepath.Join(filepath.Dir(path), "context.md"), []byte("status: draft\n"), 0644); err != nil {
+				t.Fatal(err)
+			}
+		}
+	}
+	if _, err := CreateWorkspace(root, "FT-1", "", "", "", "tester"); err == nil || !strings.Contains(err.Error(), "implementation assessment lacks current approval evidence") {
+		t.Fatalf("expected assessment approval blocker, got %v", err)
+	}
+	if _, err := Approve(root, filepath.Join(root, filepath.FromSlash(artifacts[0].Path)), "approved", "Product Owner", "implementation evidence reviewed"); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := CreateWorkspace(root, "FT-1", "", "", "", "tester"); err == nil || !strings.Contains(err.Error(), "problem lacks current approval evidence") {
+		t.Fatalf("expected full Foundation blocker after assessment, got %v", err)
+	}
+	for _, artifact := range artifacts[1:] {
+		if _, err := Approve(root, filepath.Join(root, filepath.FromSlash(artifact.Path)), "approved", "Product Owner", "Foundation reviewed"); err != nil {
+			t.Fatalf("approve %s: %v", artifact.Type, err)
+		}
+	}
+	if _, err := CreateWorkspace(root, "FT-1", "", "", "", "tester"); err != nil {
+		t.Fatalf("workspace remained blocked after full Foundation approval: %v", err)
+	}
+}
+
+func TestExistingProductWorkspaceRequiresBaselineAndStrategyApprovals(t *testing.T) {
+	root := setupProduct(t)
+	if err := writeJSON(filepath.Join(root, ".product", "framework.json"), map[string]any{"starting_point": "existing-product"}); err != nil {
+		t.Fatal(err)
+	}
+	baseline := Artifact{ID: "PRODUCT-BASELINE-1", Type: "product-baseline", Status: "draft", Path: "foundation/product-baseline.md"}
+	strategy := Artifact{ID: "STRATEGY-1", Type: "strategy", Status: "draft", Path: "foundation/strategy/strategy.md", ParentIDs: []string{baseline.ID}}
+	registry, err := LoadRegistry(root)
+	if err != nil {
+		t.Fatal(err)
+	}
+	registry.Artifacts = append([]Artifact{baseline, strategy}, registry.Artifacts...)
+	if err := writeJSON(filepath.Join(root, ".product", "artifacts.json"), registry); err != nil {
+		t.Fatal(err)
+	}
+	for _, artifact := range []Artifact{baseline, strategy} {
+		path := filepath.Join(root, filepath.FromSlash(artifact.Path))
+		if err := os.MkdirAll(filepath.Dir(path), 0755); err != nil {
+			t.Fatal(err)
+		}
+		if err := os.WriteFile(path, []byte("| ID | "+artifact.ID+" |\n| Type | "+artifact.Type+" |\n| Status | draft |\n"), 0644); err != nil {
+			t.Fatal(err)
+		}
+		if artifact.Type == "strategy" {
+			if err := os.WriteFile(filepath.Join(filepath.Dir(path), "context.md"), []byte("status: draft\n"), 0644); err != nil {
+				t.Fatal(err)
+			}
+		}
+	}
+	if _, err := CreateWorkspace(root, "FT-1", "", "", "", "tester"); err == nil || !strings.Contains(err.Error(), "product baseline lacks current approval evidence") {
+		t.Fatalf("expected baseline blocker, got %v", err)
+	}
+	if _, err := Approve(root, filepath.Join(root, filepath.FromSlash(baseline.Path)), "approved", "Product Owner", "current product reviewed"); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := CreateWorkspace(root, "FT-1", "", "", "", "tester"); err == nil || !strings.Contains(err.Error(), "strategy lacks current approval evidence") {
+		t.Fatalf("expected Strategy blocker, got %v", err)
+	}
+	if _, err := Approve(root, filepath.Join(root, filepath.FromSlash(strategy.Path)), "approved", "Product Owner", "future direction approved"); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := CreateWorkspace(root, "FT-1", "", "", "", "tester"); err != nil {
+		t.Fatalf("workspace remained blocked after baseline and Strategy approvals: %v", err)
+	}
+}
+
+func TestExistingDocumentsWorkspaceRequiresLatestRunMaterialization(t *testing.T) {
+	root := setupProduct(t)
+	manifest := map[string]any{"starting_point": "existing-documents", "import": map[string]any{"latest_run": "IMPORT-002"}}
+	if err := writeJSON(filepath.Join(root, ".product", "framework.json"), manifest); err != nil {
+		t.Fatal(err)
+	}
+	planPath := filepath.Join(root, "knowledge", "imports", "runs", "IMPORT-002", "import-plan.json")
+	if err := writeJSON(planPath, map[string]any{"status": "draft", "materialization_approved": false}); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := CreateWorkspace(root, "FT-1", "", "", "", "tester"); err == nil || !strings.Contains(err.Error(), "latest import run IMPORT-002 is not materially complete") {
+		t.Fatalf("expected latest import blocker, got %v", err)
+	}
+	materialized := map[string]any{
+		"status": "materialized", "materialization_approved": true,
+		"materialization_approved_by": "Product Owner", "materialization_approved_at": "2026-07-12T12:00:00Z",
+		"materialized_paths": []string{"domains/payments/domain.md"},
+	}
+	if err := writeJSON(planPath, materialized); err != nil {
+		t.Fatal(err)
+	}
+	mappingPath := filepath.Join(filepath.Dir(planPath), "mapping.json")
+	if err := writeJSON(mappingPath, map[string]any{"mappings": []any{map[string]any{"target": "domains/payments/domain.md", "selected": true, "draft_content": "# Payments\n"}}}); err != nil {
+		t.Fatal(err)
+	}
+	targetPath := filepath.Join(root, "domains", "payments", "domain.md")
+	if err := os.MkdirAll(filepath.Dir(targetPath), 0755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(targetPath, []byte("tampered\n"), 0644); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := CreateWorkspace(root, "FT-1", "", "", "", "tester"); err == nil || !strings.Contains(err.Error(), "differs from the approved draft") {
+		t.Fatalf("expected tampered import blocker, got %v", err)
+	}
+	if err := os.WriteFile(targetPath, []byte("# Payments\n"), 0644); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := CreateWorkspace(root, "FT-1", "", "", "", "tester"); err != nil {
+		t.Fatalf("workspace remained blocked after latest import materialization: %v", err)
+	}
 }
 func TestWorkspaceSelectionAndStatus(t *testing.T) {
 	root := setupProduct(t)

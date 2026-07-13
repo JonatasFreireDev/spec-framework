@@ -39,6 +39,8 @@ Use `--starting-point existing-documents` with `--source-dir` or `--sources` to 
 
 Draft materialization is a separate explicit command after the import mappings have been reviewed: `spec-framework import materialize --run IMPORT-001 --approved-by "Product Owner" --yes`.
 
+The generated `product/BOOTSTRAP.md` pins the active import run id. `spec-framework work` remains blocked until that latest run records explicit materialization approval and at least one materialized draft path. This gate does not approve the resulting product artifacts.
+
 Running `spec-framework init` interactively starts the Bubble Tea question
 pipeline. The CLI shows an immutable installation plan and writes only after
 confirmation.

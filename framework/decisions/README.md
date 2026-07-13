@@ -40,6 +40,12 @@ Product decisions do not live here. Product decisions continue to live in `knowl
 | [FDR-028](FDR-028-composite-engineering-approval-and-structured-gates.md) | Composite Engineering Approval And Structured Gates | approved | Governance baseline |
 | [FDR-029](FDR-029-canonical-vision-companion-contracts.md) | Canonical Vision Companion Contracts | proposed | Governance baseline |
 | [FDR-030](FDR-030-foundation-approval-registry.md) | Foundation Approval Registry | proposed | Governance baseline |
+| [FDR-031](FDR-031-feature-scoped-bootstrap.md) | Feature-Scoped Bootstrap | proposed | Adopter first-run feedback |
+| [FDR-032](FDR-032-existing-implementation-assessment.md) | Existing Implementation Assessment | proposed | Adopter first-run review |
+| [FDR-033](FDR-033-code-first-existing-product-baseline.md) | Code-First Existing Product Baseline | proposed | Adopter starting-point review |
+| [FDR-034](FDR-034-existing-documents-import-gate.md) | Existing Documents Import Gate | proposed | Adopter starting-point review |
+| [FDR-035](FDR-035-audit-only-mutation-guard.md) | Audit-Only Mutation Guard | proposed | Adopter starting-point review |
+| [FDR-036](FDR-036-registry-relationship-preservation.md) | Registry Relationship Preservation | proposed | Starting-point gate review |
 
 ## Rule
 

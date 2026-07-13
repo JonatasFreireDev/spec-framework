@@ -77,6 +77,18 @@ func TestMaterializeRequiresExplicitApprovalAndCreatesDraft(t *testing.T) {
 	if _, err := os.Stat(filepath.Join(root, "domains", "payments", "domain.md")); err != nil {
 		t.Fatal(err)
 	}
+	planData, err := os.ReadFile(filepath.Join(root, "knowledge", "imports", "runs", runID, "import-plan.json"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	var plan map[string]any
+	if err := json.Unmarshal(planData, &plan); err != nil {
+		t.Fatal(err)
+	}
+	hashes, _ := plan["materialized_hashes"].(map[string]any)
+	if hashes["domains/payments/domain.md"] == "" {
+		t.Fatalf("materialized draft hash missing: %v", plan)
+	}
 	if _, err := Materialize(root, runID, "Jonatas"); err == nil {
 		t.Fatal("expected overwrite protection")
 	}

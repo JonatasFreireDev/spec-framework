@@ -1028,9 +1028,23 @@ func validateRegistryAndApprovalGates(s Snapshot) []Diagnostic {
 	for _, item := range items {
 		registeredPaths[filepath.ToSlash(firstString(item["path"], ""))] = true
 	}
-	for _, path := range []string{"foundation/problem/problem.md", "foundation/vision/vision.md", "foundation/vision/principles.md", "foundation/vision/north-star.md", "foundation/strategy/strategy.md"} {
+	requiredFoundation := []string{"foundation/problem/problem.md", "foundation/vision/vision.md", "foundation/vision/principles.md", "foundation/vision/north-star.md", "foundation/strategy/strategy.md"}
+	if featureScopedFoundation(s) {
+		requiredFoundation = []string{"foundation/feature-brief.md"}
+	}
+	if existingProduct(s) {
+		requiredFoundation = []string{"foundation/product-baseline.md", "foundation/strategy/strategy.md"}
+	}
+	if existingImplementation(s) {
+		requiredFoundation = append([]string{"knowledge/assessments/implementation-assessment.md"}, requiredFoundation...)
+	}
+	for _, path := range requiredFoundation {
 		if _, exists := s.Text[path]; exists && !registeredPaths[path] {
-			out = append(out, Diagnostic{Error, "foundation-registry", path, "Foundation artifact is not registered for traceable approval.", "Add ID, Type, Status, and Parent IDs metadata where applicable, then run validate --write-registry."})
+			check, subject := "foundation-registry", "Foundation artifact"
+			if !strings.HasPrefix(path, "foundation/") {
+				check, subject = "starting-point-registry", "Starting-point artifact"
+			}
+			out = append(out, Diagnostic{Error, check, path, subject + " is not registered for traceable approval.", "Add ID, Type, Status, and Parent IDs metadata where applicable, then run validate --write-registry."})
 		}
 	}
 	byParent := map[string]map[string]map[string]any{}

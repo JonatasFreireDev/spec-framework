@@ -62,6 +62,18 @@ Define the durable decision rules, trade-offs, examples, and anti-principles tha
 
 Defines the durable user-value outcome, candidate metric, measurement notes, and guardrails. It is canonical in `foundation/vision/north-star.md`.
 
+### Feature Brief
+
+Provides the proportional entry contract for the `existing-feature` starting point. `foundation/feature-brief.md` combines the evidenced problem, desired outcome, scope, non-goals, constraints, success signal, and delivery strategy for one bounded feature. It replaces full Foundation approval only for that starting point; broad or uncertain product direction still requires Problem, Vision, Product Principles, North Star, and Strategy.
+
+### Implementation Assessment
+
+Provides the evidence boundary for the `existing-implementation` starting point. `knowledge/assessments/implementation-assessment.md` records observed behavior, architecture, data, integrations, tests, operational constraints, risks, and candidate product claims. Its individual approval confirms the assessment of current evidence; it does not approve inferred product intent. The full Foundation path remains required before workspace creation.
+
+### Product Baseline
+
+Provides the current-state contract for the `existing-product` starting point when code and operational evidence are more complete than product documentation. `foundation/product-baseline.md` consolidates the active audience, evidenced needs, delivered value, capabilities, operating model, current signals, decision rules, constraints, risks, and unknowns. It replaces separate Problem, Vision, Product Principles, and North Star approvals only for this starting point. Strategy remains separate and owns future direction.
+
 ### Strategy
 
 Defines positioning, segments, metrics, trade-offs, roadmap, and criteria to advance or pause.
@@ -772,6 +784,7 @@ Rules:
 Mandatory transitions:
 
 - Foundation ladder artifacts are registered from initialization: Problem, Vision, Product Principles, North Star, and Strategy. Their parent relationships are enforced by `spec-framework approve`, and approval updates the canonical artifact, applicable context status, registry status, and `.product/history/` evidence atomically.
+- `validate --write-registry` preserves `parents`, `children`, `depends_on`, decisions, and delivery dependencies from structured companion `context.md` YAML. Starting-point-specific parents are additive and must not erase the existing product graph.
 - `proposed`: does not require an approval record, but must not advance from an incomplete parent gate.
 - `approved` and later states: require a corresponding approval record in `.product/history/`, with `artifact_id`, `path`, `content_hash`, `status_granted`, `approved_by`, `approved_at`, and `notes`. Validator and operational navigation both require that record to match the current artifact content; editing status prose alone never advances work.
 - `approved -> in_progress`: requires an approved task or an explicit prototype/draft exception.
@@ -859,7 +872,15 @@ Spec Framework activates only when the current repository contains a valid `prod
 
 In a newly initialized product repository, read `product/BOOTSTRAP.md` first. It explains the ordered foundation gates and distinguishes a structurally valid starter from a product that is ready for implementation.
 
-During `init`, choose the repository's starting point. This choice customizes `BOOTSTRAP.md`; it does not remove skills, orchestrators, artifacts, rigor requirements, or approval gates. It does control proportional scope: `existing-feature` may use a feature-scoped Problem, Vision, Principles, North Star, and Strategy that justify and bound that delivery without pretending to define the whole product. Parent approvals still apply to those scoped contracts. When starting from existing documents, the CLI creates a source inventory and an analysis-only import run under `product/knowledge/imports/`. Review and explicitly approve mappings before materializing draft product artifacts.
+During `init`, choose the repository's starting point. This choice customizes `BOOTSTRAP.md` and the active artifact registry; it does not remove skills, orchestrators, rigor requirements, or approval gates. The `existing-feature` starting point replaces the full product Foundation package with one individually approved `foundation/feature-brief.md` for the bounded delivery. If product direction or scope is broad or uncertain, escalate to the full Problem, Vision, Product Principles, North Star, and Strategy path. When starting from existing documents, the CLI creates a source inventory and an analysis-only import run under `product/knowledge/imports/`. Review and explicitly approve mappings before materializing draft product artifacts.
+
+The `existing-implementation` starting point first materializes and individually approves `knowledge/assessments/implementation-assessment.md`. The assessment becomes a parent of Problem, after which Problem, Vision, Product Principles, North Star, and Strategy require their normal individual approvals before workspace creation. Implementation evidence may support Foundation drafts, but it never grants product approval by itself.
+
+The `existing-product` starting point may treat code, tests, releases, telemetry, and operational history as primary evidence for one individually approved `foundation/product-baseline.md`. It then requires a separate individually approved Strategy whose parent is that baseline. Unknown audience, unclear delivered value, or material repositioning escalates to the full Foundation path.
+
+For `existing-documents`, the latest import run declared in the canonical manifest is the entry gate. Review its inventory, conflicts, and selected mappings, then run `spec-framework import materialize` with explicit human identity. Materialization authorizes only the selected draft writes; each resulting product artifact retains its normal owner, parent, validation, and individual approval gates. Workspace creation remains blocked until that latest run is materially complete and approved for materialization.
+
+When the canonical manifest declares `audit-only`, the CLI permits read-only validation, inspection, status, readiness, review, impact, and navigation, but blocks writes to product artifacts, registry, reports, approvals, workspaces, imports, migrations, design state, and delivery runtime state. `init` may establish the audit manifest and `upgrade` may maintain its pinned framework runtime. Turning findings into product work requires an explicit supported starting-point transition; agents must not bypass the guard by editing statuses or metadata manually.
 
 Operational navigation uses concurrent workspaces rather than a global active feature:
 

@@ -172,6 +172,52 @@ func TestFoundationWithoutRegistryMetadataIsRejected(t *testing.T) {
 	}
 }
 
+func TestExistingFeatureBriefWithoutRegistryMetadataIsRejected(t *testing.T) {
+	s := Snapshot{Text: map[string]string{
+		"foundation/feature-brief.md": "# Feature Brief\n",
+	}, JSON: map[string]any{
+		".product/framework.json": map[string]any{"starting_point": "existing-feature"},
+		".product/artifacts.json": map[string]any{"artifacts": []any{map[string]any{"id": "DOMAIN-1", "type": "domain", "status": "draft", "path": "domains/d/context.md"}}},
+	}}
+	for _, diagnostic := range validateRegistryAndApprovalGates(s) {
+		if diagnostic.Check == "foundation-registry" && diagnostic.File == "foundation/feature-brief.md" {
+			return
+		}
+	}
+	t.Fatal("expected missing Feature Brief registry diagnostic")
+}
+
+func TestExistingImplementationAssessmentWithoutRegistryMetadataIsRejected(t *testing.T) {
+	s := Snapshot{Text: map[string]string{
+		"knowledge/assessments/implementation-assessment.md": "# Implementation Assessment\n",
+	}, JSON: map[string]any{
+		".product/framework.json": map[string]any{"starting_point": "existing-implementation"},
+		".product/artifacts.json": map[string]any{"artifacts": []any{map[string]any{"id": "DOMAIN-1", "type": "domain", "status": "draft", "path": "domains/d/context.md"}}},
+	}}
+	for _, diagnostic := range validateRegistryAndApprovalGates(s) {
+		if diagnostic.Check == "starting-point-registry" && diagnostic.File == "knowledge/assessments/implementation-assessment.md" {
+			return
+		}
+	}
+	t.Fatal("expected missing Implementation Assessment registry diagnostic")
+}
+
+func TestExistingProductBaselineWithoutRegistryMetadataIsRejected(t *testing.T) {
+	s := Snapshot{Text: map[string]string{
+		"foundation/product-baseline.md":  "# Product Baseline\n",
+		"foundation/strategy/strategy.md": "| ID | STRATEGY-1 |\n| Type | strategy |\n| Status | draft |\n",
+	}, JSON: map[string]any{
+		".product/framework.json": map[string]any{"starting_point": "existing-product"},
+		".product/artifacts.json": map[string]any{"artifacts": []any{map[string]any{"id": "STRATEGY-1", "type": "strategy", "status": "draft", "path": "foundation/strategy/strategy.md"}}},
+	}}
+	for _, diagnostic := range validateRegistryAndApprovalGates(s) {
+		if diagnostic.Check == "foundation-registry" && diagnostic.File == "foundation/product-baseline.md" {
+			return
+		}
+	}
+	t.Fatal("expected missing Product Baseline registry diagnostic")
+}
+
 func TestTierMRegistryDoesNotRequireEngineeringReview(t *testing.T) {
 	base := "domains/d/goals/g/features/f/use-cases/u"
 	s := Snapshot{Text: map[string]string{

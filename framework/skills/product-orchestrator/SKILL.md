@@ -20,6 +20,12 @@ Orchestrator. Controls workflow, gates, handoffs, and approval checkpoints. It s
 ## Default sequence
 Problem Discovery -> Vision -> Strategy -> Domain Architect -> User Goal -> Roadmap alignment
 
+For a repository whose canonical manifest declares `starting_point: existing-feature`, replace that sequence with Feature Brief -> explicit individual approval -> existing Feature selection -> workspace. Escalate to the default sequence when the feature cannot be bounded without product-wide decisions.
+
+For `starting_point: existing-implementation`, prepend Implementation Assessment -> explicit individual approval to the default Foundation sequence. Use its observations as evidence and keep inferred product claims unapproved until the owning Foundation specialist resolves them.
+
+For `starting_point: existing-product`, use Product Baseline -> explicit individual approval -> Strategy -> explicit individual approval -> Domain and delivery. Code and operational evidence may establish current state; Strategy remains the explicit future-facing decision contract.
+
 ## Operating rules
 1. Identify the current artifact status before routing work.
 2. Route work to the smallest specialist skill that owns the next artifact.
@@ -27,6 +33,9 @@ Problem Discovery -> Vision -> Strategy -> Domain Architect -> User Goal -> Road
 4. Preserve traceability from parent artifacts to child artifacts.
 5. Keep audit findings separate from product decisions until approved.
 6. Update context and indexes only after the source artifact is approved.
+7. Do not require or synthesize full Foundation artifacts for a bounded `existing-feature` route; own `foundation/feature-brief.md` as the proportional entry contract.
+8. For `existing-implementation`, own `knowledge/assessments/implementation-assessment.md`, do not modify application code during assessment, and retain the full Foundation sequence before workspace creation.
+9. For `existing-product`, own `foundation/product-baseline.md`, keep uncertain intent visible, and promote to the full Foundation sequence when the baseline cannot establish audience and delivered value confidently.
 
 ## Outputs
 foundation artifacts; domain map; initial goal catalog; roadmap with Delivery Levels and Priorities; open decisions; next recommended feature slices.

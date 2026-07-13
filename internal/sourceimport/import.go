@@ -207,6 +207,12 @@ func Materialize(productRoot, runID, approvedBy string) ([]string, error) {
 	plan["materialization_approved_by"] = approvedBy
 	plan["materialization_approved_at"] = time.Now().UTC().Format(time.RFC3339)
 	plan["materialized_paths"] = created
+	hashes := map[string]string{}
+	for _, mapping := range selected {
+		sum := sha256.Sum256([]byte(mapping.DraftContent))
+		hashes[filepath.ToSlash(mapping.Target)] = hex.EncodeToString(sum[:])
+	}
+	plan["materialized_hashes"] = hashes
 	plan["status"] = "materialized"
 	if err := writeJSON(planPath, plan); err != nil {
 		rollback()

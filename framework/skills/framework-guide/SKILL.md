@@ -46,7 +46,10 @@ Intent summary; discovered state; recommended command or specialist; mutation pr
 | Install and start without an existing CLI | Download and inspect `scripts/init.ps1` or `scripts/init.sh`, then run the chosen bootstrap; piping a remote script remains an explicit user choice |
 | Start a product interactively | `spec-framework init <repository-path>` |
 | Start a product headlessly | `spec-framework init <repository-path> --agents <agents> --yes` |
-| Bring existing documents | `init --starting-point existing-documents`, then reviewed `import materialize` |
+| Bring existing documents | `init --starting-point existing-documents`, review the latest run, then `import materialize`; resulting artifacts remain draft |
+| Adopt a code-first operating product | `init --starting-point existing-product`, approve `foundation/product-baseline.md`, then approve Strategy |
+| Deliver one bounded existing feature | `init --starting-point existing-feature`, complete and individually approve `foundation/feature-brief.md`, then `work` |
+| Adopt an existing implementation | `init --starting-point existing-implementation`, approve `knowledge/assessments/implementation-assessment.md`, then derive and approve the full Foundation |
 | Resolve a specialized skill | `spec-framework skill path <skill-name>` after manifest activation |
 | Upgrade the pinned external runtime | Inspect current manifest and version, then `spec-framework upgrade --yes` |
 | Migrate a legacy local runtime | `spec-framework migrate external-runtime --dry-run`, review preserved legacy paths, then rerun with `--yes` |
@@ -71,10 +74,14 @@ Intent summary; discovered state; recommended command or specialist; mutation pr
 3. Prefer read-only inspection first: `help`, `dashboard`, `status`, `guide`, `next`, `review`, `impact`, `task readiness`, `gates`, `validate`, `engineering-system inspect`, `engineering-system triggers`, `skill path`, or migration `--dry-run`.
 4. Resolve the active scope and read its `context.md`, parents, approvals, decisions, and staleness before recommending a mutation.
 5. Present or execute the smallest command that advances one valid gate. State what it reads, writes, and cannot authorize.
-6. Require explicit human identity and confirmation for approval commands. Never convert conversational agreement into unrelated product approval records.
-7. Route artifact authorship to the owner skill named by `guide` or `dashboard`; do not generate the artifact yourself.
-8. After a command, report exit status, changed artifacts, blockers, and the next safe command. Re-read mechanical state instead of assuming success.
-9. Stop on stale parents, missing approvals, ambiguous scope, unsafe remote/destructive action, missing gate configuration, or conflicts requiring a decision.
+6. For `existing-feature`, route through the registered Feature Brief instead of the full product Foundation. Escalate to Problem, Vision, Product Principles, North Star, and Strategy when the requested work reveals broad or uncertain product direction.
+7. For `existing-implementation`, route through the registered Implementation Assessment before full Foundation. Treat code, tests, configuration, and history as evidence rather than approved product intent.
+8. For `existing-product`, consolidate evidenced current state in Product Baseline and keep future Strategy separate. Escalate to full Foundation when current audience, value, or direction is uncertain.
+9. For `audit-only`, use terminal-output inspection commands without write flags. Do not create reports, registry changes, approvals, workspaces, migrations, or delivery state; request an explicit starting-point transition before product work.
+10. Require explicit human identity and confirmation for approval commands. Never convert conversational agreement into unrelated product approval records.
+11. Route artifact authorship to the owner skill named by `guide` or `dashboard`; do not generate the artifact yourself.
+12. After a command, report exit status, changed artifacts, blockers, and the next safe command. Re-read mechanical state instead of assuming success.
+13. Stop on stale parents, missing approvals, ambiguous scope, unsafe remote/destructive action, missing gate configuration, or conflicts requiring a decision.
 
 ## Runtime and repository cleanliness
 

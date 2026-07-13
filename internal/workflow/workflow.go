@@ -17,11 +17,12 @@ import (
 )
 
 type Artifact struct {
-	ID        string   `json:"id"`
-	Type      string   `json:"type"`
-	Status    string   `json:"status"`
-	Path      string   `json:"path"`
-	ParentIDs []string `json:"parentIds"`
+	ID            string   `json:"id"`
+	Type          string   `json:"type"`
+	Status        string   `json:"status"`
+	Path          string   `json:"path"`
+	ParentIDs     []string `json:"parentIds"`
+	TargetFeature string   `json:"targetFeature,omitempty"`
 }
 type Registry struct {
 	Artifacts []Artifact `json:"artifacts"`
@@ -81,6 +82,9 @@ func CreateWorkspace(root, selector, domain, goal, useCase, createdBy string) (W
 	if err != nil {
 		return Workspace{}, err
 	}
+	if err := requireStartingPointApproval(root, r, a); err != nil {
+		return Workspace{}, err
+	}
 	dir := filepath.Join(root, ".product", "workspaces")
 	if err := os.MkdirAll(dir, 0755); err != nil {
 		return Workspace{}, err
@@ -119,6 +123,176 @@ func CreateWorkspace(root, selector, domain, goal, useCase, createdBy string) (W
 	}
 	_ = writeJSON(filepath.Join(wd, "state.json"), RuntimeState{Version: RuntimeVersion, WorkspaceID: id, Phase: next, Status: "active", UpdatedAt: time.Now().UTC().Format(time.RFC3339), Blockers: blockers})
 	return w, nil
+}
+
+func requireStartingPointApproval(root string, registry Registry, selectedFeature Artifact) error {
+	var manifest map[string]any
+	if err := readJSON(filepath.Join(root, ".product", "framework.json"), &manifest); err != nil {
+		return err
+	}
+	point, _ := manifest["starting_point"].(string)
+	if point == "existing-documents" {
+		return requireLatestImportMaterialized(root, manifest)
+	}
+	type requirement struct{ artifactType, path string }
+	var requirements []requirement
+	switch point {
+	case "existing-feature":
+		requirements = []requirement{{"feature-brief", "foundation/feature-brief.md"}}
+	case "existing-product":
+		requirements = []requirement{{"product-baseline", "foundation/product-baseline.md"}, {"strategy", "foundation/strategy/strategy.md"}}
+	case "existing-implementation":
+		requirements = []requirement{
+			{"implementation-assessment", "knowledge/assessments/implementation-assessment.md"},
+			{"problem", "foundation/problem/problem.md"},
+			{"vision", "foundation/vision/vision.md"},
+			{"product-principles", "foundation/vision/principles.md"},
+			{"north-star", "foundation/vision/north-star.md"},
+			{"strategy", "foundation/strategy/strategy.md"},
+		}
+	default:
+		return nil
+	}
+	for _, required := range requirements {
+		found := false
+		for _, artifact := range registry.Artifacts {
+			if artifact.Type != required.artifactType {
+				continue
+			}
+			found = true
+			path := filepath.Join(root, filepath.FromSlash(artifact.Path))
+			if !isApproved(artifact.Status) || !hasCurrentApproval(root, path, artifact.Status) {
+				return fmt.Errorf("%s lacks current approval evidence: %s", strings.ReplaceAll(required.artifactType, "-", " "), artifact.Path)
+			}
+			if required.artifactType == "feature-brief" {
+				target, err := featureBriefTarget(path)
+				if err != nil {
+					return err
+				}
+				if artifact.TargetFeature != target {
+					return fmt.Errorf("feature brief registry target %q differs from approved artifact target %q; rebuild the registry", artifact.TargetFeature, target)
+				}
+				if !featureTargetMatches(target, selectedFeature) {
+					return fmt.Errorf("feature brief target %q does not match selected feature %s (%s)", target, selectedFeature.ID, selectedFeature.Path)
+				}
+			}
+			break
+		}
+		if !found {
+			return fmt.Errorf("%s requires a registered %s", point, required.path)
+		}
+	}
+	return nil
+}
+
+func featureBriefTarget(path string) (string, error) {
+	data, err := os.ReadFile(path)
+	if err != nil {
+		return "", err
+	}
+	for _, line := range strings.Split(string(data), "\n") {
+		parts := strings.Split(line, "|")
+		if len(parts) < 3 || !strings.EqualFold(strings.TrimSpace(parts[1]), "Target Feature") {
+			continue
+		}
+		return strings.Trim(strings.TrimSpace(parts[2]), "`"), nil
+	}
+	return "", errors.New("feature brief requires a Target Feature field")
+}
+
+func featureTargetMatches(target string, feature Artifact) bool {
+	target = filepath.ToSlash(strings.TrimSpace(strings.Trim(target, "`")))
+	if target == "" || strings.Contains(strings.ToUpper(target), "TBD") || strings.Contains(target, "[") {
+		return false
+	}
+	path := filepath.ToSlash(feature.Path)
+	if strings.EqualFold(target, feature.ID) || strings.EqualFold(target, path) {
+		return true
+	}
+	if strings.HasSuffix(path, "/context.md") {
+		return strings.EqualFold(target, strings.TrimSuffix(path, "/context.md")+"/feature.md")
+	}
+	if strings.HasSuffix(path, "/feature.md") {
+		return strings.EqualFold(target, strings.TrimSuffix(path, "/feature.md")+"/context.md")
+	}
+	return false
+}
+
+func requireLatestImportMaterialized(root string, manifest map[string]any) error {
+	importConfig, _ := manifest["import"].(map[string]any)
+	runID, _ := importConfig["latest_run"].(string)
+	if strings.TrimSpace(runID) == "" {
+		return errors.New("existing-documents requires a latest import run in .product/framework.json")
+	}
+	planPath := filepath.Join(root, "knowledge", "imports", "runs", runID, "import-plan.json")
+	var plan map[string]any
+	if err := readJSON(planPath, &plan); err != nil {
+		return fmt.Errorf("read latest import plan %s: %w", runID, err)
+	}
+	status, _ := plan["status"].(string)
+	approved, _ := plan["materialization_approved"].(bool)
+	approvedBy, _ := plan["materialization_approved_by"].(string)
+	approvedAt, _ := plan["materialization_approved_at"].(string)
+	paths, _ := plan["materialized_paths"].([]any)
+	if status != "materialized" || !approved || strings.TrimSpace(approvedBy) == "" || strings.TrimSpace(approvedAt) == "" || len(paths) == 0 {
+		return fmt.Errorf("latest import run %s is not materially complete; review mappings and run spec-framework import materialize", runID)
+	}
+	var mapping struct {
+		Mappings []struct {
+			Target       string `json:"target"`
+			Selected     bool   `json:"selected"`
+			DraftContent string `json:"draft_content"`
+		} `json:"mappings"`
+	}
+	if err := readJSON(filepath.Join(root, "knowledge", "imports", "runs", runID, "mapping.json"), &mapping); err != nil {
+		return fmt.Errorf("read latest import mapping %s: %w", runID, err)
+	}
+	reported := map[string]bool{}
+	for _, raw := range paths {
+		path, _ := raw.(string)
+		if path == "" {
+			return fmt.Errorf("latest import run %s has an invalid materialized path", runID)
+		}
+		reported[filepath.ToSlash(filepath.Clean(filepath.FromSlash(path)))] = true
+	}
+	selected := map[string]string{}
+	for _, item := range mapping.Mappings {
+		if !item.Selected {
+			continue
+		}
+		clean := filepath.ToSlash(filepath.Clean(filepath.FromSlash(item.Target)))
+		if clean == ".." || strings.HasPrefix(clean, "../") || filepath.IsAbs(filepath.FromSlash(item.Target)) {
+			return fmt.Errorf("latest import run %s selected target escapes product root: %s", runID, item.Target)
+		}
+		selected[clean] = item.DraftContent
+	}
+	if len(selected) == 0 || len(selected) != len(reported) {
+		return fmt.Errorf("latest import run %s materialized paths do not match selected mappings", runID)
+	}
+	recordedHashes := map[string]string{}
+	if raw, ok := plan["materialized_hashes"].(map[string]any); ok {
+		for path, value := range raw {
+			recordedHashes[filepath.ToSlash(filepath.Clean(filepath.FromSlash(path)))] = fmt.Sprint(value)
+		}
+	}
+	for path, expected := range selected {
+		if !reported[path] {
+			return fmt.Errorf("latest import run %s did not report selected target %s", runID, path)
+		}
+		data, err := os.ReadFile(filepath.Join(root, filepath.FromSlash(path)))
+		if err != nil {
+			return fmt.Errorf("latest import run %s materialized target %s is missing: %w", runID, path, err)
+		}
+		expectedHash := Hash(expected)
+		if recorded, exists := recordedHashes[path]; exists {
+			if recorded != expectedHash {
+				return fmt.Errorf("latest import run %s recorded hash for %s does not match the approved draft", runID, path)
+			}
+		} else if string(data) != expected {
+			return fmt.Errorf("latest import run %s legacy target %s differs from the approved draft", runID, path)
+		}
+	}
+	return nil
 }
 func Features(root string) ([]Artifact, error) {
 	r, err := LoadRegistry(root)

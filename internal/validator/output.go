@@ -9,6 +9,8 @@ import (
 	"sort"
 	"strings"
 	"time"
+
+	"go.yaml.in/yaml/v3"
 )
 
 func WriteReport(root string, result Result) ([]string, error) {
@@ -56,6 +58,21 @@ func WriteRegistry(root string) (string, error) {
 func buildRegistry(s Snapshot) []map[string]any {
 	byPath := map[string]map[string]any{}
 	useCaseIDs := map[string]string{}
+	featureBriefID := ""
+	if featureScopedFoundation(s) {
+		text := s.Text["foundation/feature-brief.md"]
+		featureBriefID = first(metadata(text)["id"], tableFields(text)["id"])
+	}
+	implementationAssessmentID := ""
+	if existingImplementation(s) {
+		text := s.Text["knowledge/assessments/implementation-assessment.md"]
+		implementationAssessmentID = first(metadata(text)["id"], tableFields(text)["id"])
+	}
+	productBaselineID := ""
+	if existingProduct(s) {
+		text := s.Text["foundation/product-baseline.md"]
+		productBaselineID = first(metadata(text)["id"], tableFields(text)["id"])
+	}
 	for path, text := range s.Text {
 		if strings.HasSuffix(path, "/context.md") && strings.Contains(path, "/use-cases/") {
 			if id := metadata(text)["id"]; id != "" {
@@ -67,6 +84,12 @@ func buildRegistry(s Snapshot) []map[string]any {
 		if !strings.HasSuffix(path, ".md") {
 			continue
 		}
+		if featureScopedFoundation(s) && fullFoundationPath(path) {
+			continue
+		}
+		if existingProduct(s) && consolidatedProductFoundationPath(path) {
+			continue
+		}
 		if filepath.Base(path) == "context.md" {
 			continue
 		}
@@ -74,6 +97,7 @@ func buildRegistry(s Snapshot) []map[string]any {
 		fields := tableFields(text)
 		companionPath := path[:strings.LastIndex(path, "/")+1] + "context.md"
 		companion := metadata(s.Text[companionPath])
+		companionLists := contextLists(s.Text[companionPath])
 		id := first(meta["id"], fields["id"])
 		kind := first(meta["type"], fields["type"], inferType(path))
 		status := first(meta["status"], fields["status"])
@@ -83,6 +107,18 @@ func buildRegistry(s Snapshot) []map[string]any {
 		name := first(meta["name"], fields["name"], strings.TrimSuffix(filepath.Base(path), filepath.Ext(path)))
 		owner := first(meta["owner_skill"], fields["owner skill"], fields["reviewer skill"], fields["owner"])
 		parents := tableList(fields["parent ids"])
+		if len(parents) == 0 {
+			parents = companionLists["parents"]
+		}
+		if strings.ReplaceAll(kind, "_", "-") == "feature" && featureBriefID != "" && !containsString(parents, featureBriefID) {
+			parents = append(parents, featureBriefID)
+		}
+		if strings.ReplaceAll(kind, "_", "-") == "problem" && implementationAssessmentID != "" && !containsString(parents, implementationAssessmentID) {
+			parents = append(parents, implementationAssessmentID)
+		}
+		if strings.ReplaceAll(kind, "_", "-") == "strategy" && productBaselineID != "" {
+			parents = []string{productBaselineID}
+		}
 		dir := filepath.ToSlash(filepath.Dir(path))
 		for base, parent := range useCaseIDs {
 			if strings.HasPrefix(dir, base) && id != parent {
@@ -93,7 +129,11 @@ func buildRegistry(s Snapshot) []map[string]any {
 		level := first(fields["delivery level"], fields["level"], meta["level"], companion["level"])
 		priority := first(fields["priority"], meta["priority"], companion["priority"])
 		rationale := first(fields["rationale"], meta["rationale"], companion["rationale"])
-		byPath[path] = map[string]any{"id": id, "type": strings.ReplaceAll(kind, "_", "-"), "name": name, "status": status, "ownerSkill": owner, "path": path, "parentIds": parents, "childIds": []string{}, "dependsOn": []string{}, "decisions": []string{}, "delivery": map[string]any{"level": level, "priority": priority, "depends_on": []string{}, "rationale": rationale}, "documents": map[string]string{"canonical": path}}
+		artifact := map[string]any{"id": id, "type": strings.ReplaceAll(kind, "_", "-"), "name": name, "status": status, "ownerSkill": owner, "path": path, "parentIds": parents, "childIds": companionLists["children"], "dependsOn": companionLists["depends_on"], "decisions": companionLists["decisions"], "delivery": map[string]any{"level": level, "priority": priority, "depends_on": companionLists["delivery_depends_on"], "rationale": rationale}, "documents": map[string]string{"canonical": path}}
+		if target := fields["target feature"]; strings.ReplaceAll(kind, "_", "-") == "feature-brief" && target != "" {
+			artifact["targetFeature"] = target
+		}
+		byPath[path] = artifact
 	}
 	for path, value := range s.JSON {
 		if !strings.HasSuffix(path, "execution-graph.json") {
@@ -128,6 +168,82 @@ func buildRegistry(s Snapshot) []map[string]any {
 		return left < right
 	})
 	return out
+}
+
+func contextLists(text string) map[string][]string {
+	out := map[string][]string{}
+	start := strings.Index(text, "```yaml")
+	if start < 0 {
+		return out
+	}
+	body := text[start+len("```yaml"):]
+	if end := strings.Index(body, "```"); end >= 0 {
+		body = body[:end]
+	}
+	var value struct {
+		Parents   []string `yaml:"parents"`
+		Children  []string `yaml:"children"`
+		DependsOn []string `yaml:"depends_on"`
+		Decisions []string `yaml:"decisions"`
+		Delivery  struct {
+			DependsOn []string `yaml:"depends_on"`
+		} `yaml:"delivery"`
+	}
+	if yaml.Unmarshal([]byte(body), &value) != nil {
+		return out
+	}
+	out["parents"] = value.Parents
+	out["children"] = value.Children
+	out["depends_on"] = value.DependsOn
+	out["decisions"] = value.Decisions
+	out["delivery_depends_on"] = value.Delivery.DependsOn
+	return out
+}
+
+func containsString(values []string, target string) bool {
+	for _, value := range values {
+		if value == target {
+			return true
+		}
+	}
+	return false
+}
+
+func featureScopedFoundation(s Snapshot) bool {
+	manifest, _ := s.JSON[".product/framework.json"].(map[string]any)
+	point, _ := manifest["starting_point"].(string)
+	return point == "existing-feature"
+}
+
+func existingImplementation(s Snapshot) bool {
+	manifest, _ := s.JSON[".product/framework.json"].(map[string]any)
+	point, _ := manifest["starting_point"].(string)
+	return point == "existing-implementation"
+}
+
+func existingProduct(s Snapshot) bool {
+	manifest, _ := s.JSON[".product/framework.json"].(map[string]any)
+	point, _ := manifest["starting_point"].(string)
+	return point == "existing-product"
+}
+
+func consolidatedProductFoundationPath(path string) bool {
+	return map[string]bool{
+		"foundation/problem/problem.md":   true,
+		"foundation/vision/vision.md":     true,
+		"foundation/vision/principles.md": true,
+		"foundation/vision/north-star.md": true,
+	}[filepath.ToSlash(path)]
+}
+
+func fullFoundationPath(path string) bool {
+	return map[string]bool{
+		"foundation/problem/problem.md":   true,
+		"foundation/vision/vision.md":     true,
+		"foundation/vision/principles.md": true,
+		"foundation/vision/north-star.md": true,
+		"foundation/strategy/strategy.md": true,
+	}[filepath.ToSlash(path)]
 }
 func inferType(path string) string {
 	base := filepath.Base(path)

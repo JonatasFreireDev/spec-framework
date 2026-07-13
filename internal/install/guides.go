@@ -18,78 +18,224 @@ func writeStarterGuides(target, version string, agents []Agent, startingPoint st
 }
 
 func bootstrapFor(startingPoint string) string {
-	intro := "Begin with the product foundation and follow the canonical gates in order."
-	if startingPoint == "existing-documents" {
-		intro = "Begin by reviewing the generated import inventory and plan. Source documents are evidence, not approved product artifacts."
-	}
-	if startingPoint == "existing-product" {
-		intro = "Begin by mapping existing product context and decisions into the canonical structure before creating downstream artifacts."
-	}
-	if startingPoint == "existing-feature" {
-		intro = "Begin by validating the feature's Domain, User Goal, scope, and parent approvals before generating Use Cases."
-	}
-	if startingPoint == "existing-implementation" {
-		intro = "Begin with a reverse audit of code, tests, decisions, and documentary gaps. Do not infer approval from implementation."
-	}
+	profile := bootstrapProfileFor(startingPoint)
+	validationCommand := "spec-framework validate --product-root product --write-registry --write-report"
+	workspaceGuidance := `After a stable Domain, User Goal, and Feature exist in the registry:
+
+~~~text
+spec-framework work --feature <id-or-path> --created-by "Your Name"
+spec-framework guide --work WORK-001
+spec-framework dashboard --work WORK-001
+~~~`
 	if startingPoint == "audit-only" {
-		intro = "Begin with read-only gap, conflict, dependency, impact, and consistency audits."
+		validationCommand = "spec-framework validate --product-root product"
+		workspaceGuidance = "Audit-only does not create a WORK-NNN workspace. Inspect existing state and report findings in terminal output."
 	}
 	return fmt.Sprintf(`# Product Bootstrap
 
 Starting point: **%s**
 
+## Start here
+
+| Question | Answer |
+| --- | --- |
+| Where am I? | **%s** |
+| What is ready? | The framework structure and runtime are installed. Product content is still draft. |
+| What should I do next? | **%s** |
+| Recommended working style | **%s** |
+
+> spec-framework validate can pass while the product is still empty. Structural validity means files and contracts are well-formed; it does not mean product decisions are approved or implementation-ready.
+
+## First session
+
+1. Confirm the repository baseline and framework pin.
+
+   ~~~text
+   git status
+   spec-framework version
+   %s
+   ~~~
+
+2. Read the current evidence before writing product truth.
+
+   - product/context.md
+   - product/.product/framework.json
+   - product/audits/framework-validation-report.md
+   - For imported documents: the latest run under product/knowledge/imports/runs/
+
+3. Choose the amount of discovery, not a weaker approval standard.
+
+   | Style | Use when | Expected depth |
+   | --- | --- | --- |
+   | **Lean** | A brief, feature, or implementation already makes the intended outcome clear. | Concise, scoped Foundation contracts with evidence and explicit boundaries. |
+   | **Full** | The product, audience, problem, or strategic bet is still uncertain. | Research, alternatives, personas, metrics, roadmap, and broader discovery. |
+
+   %s
+
+4. Complete only the next artifact. Do not change its status by hand.
+
+   %s
+
+5. %s
+
+   %s
+
+   %s
+
+## Foundation path
+
 %s
 
-Use this checklist in order. Do not generate downstream artifacts from incomplete or unapproved parents.
+Parent approvals are enforced mechanically. If a command is blocked, read the reported parent instead of editing statuses manually.
 
-## 1. Repository setup
+## Before the first workspace
 
-- [ ] Initialize Git and add the first baseline commit.
-- [ ] Confirm the versioned spec-framework CLI is available on PATH.
-- [ ] Confirm spec-framework validate runs locally.
-- [ ] Confirm product/.product/framework.json pins the expected framework version.
+status, next, guide, and dashboard require a WORK-NNN workspace. Not having one during Foundation is expected.
 
-## 2. Product identity
+%s
 
-- [ ] Replace PRODUCT-TBD and TBD Product in product/context.md.
-- [ ] Update product/.product/state.json with the product name and date.
-- [ ] Record the intended audience and product owner.
+## Engineering readiness
 
-## 3. Problem
+- Replace TBD commands in product/knowledge/conventions/gates.md before implementation.
+- Complete the security baseline for the chosen stack.
+- Keep downstream artifacts draft until their parent gates have current approval evidence.
+- Run spec-framework gates before Code Runner.
 
-- [ ] Complete product/foundation/problem/problem.md with a specific user pain.
-- [ ] Add evidence, research, interviews, and opportunities where available.
-- [ ] Review the Problem before proceeding to Vision.
-
-## 4. Vision and strategy
-
-- [ ] Complete Vision, principles, north star, and their context.
-- [ ] Complete positioning, personas, metrics, roadmap, and Strategy context.
-- [ ] Keep downstream artifacts draft until their parent gate is approved.
-
-## 5. Engineering gates
-
-- [ ] Replace commands marked TBD by product adopter in product/knowledge/conventions/gates.md.
-- [ ] Complete the security baseline for the chosen stack.
-- [ ] Remove gates that do not apply and explain why.
-
-## 6. First product slice
-
-- [ ] Copy product/domains/_template-domain/ to a stable domain slug.
-- [ ] Replace template IDs, names, slugs, parents, delivery metadata, and handoffs.
-- [ ] Continue Domain -> User Goal -> Domain Evolution -> selected Feature -> Use Case.
-- [ ] Use spec-framework work --feature <id-or-path>, then status/next for navigation.
-- [ ] Create modular Specification contracts according to rigor.
-- [ ] Generate Design, Technical Discovery, resolve the Architecture Gate, then applicable Engineering Proposal and Engineering Review, Plan, Graph, and Tasks.
-- [ ] Run spec-framework gates before Code Runner and claim graph tasks when coordinating agents.
-
-## 7. Validate readiness
+## Check progress
 
 ~~~text
-spec-framework validate
-spec-framework validate --write-registry --write-report
+%s
 ~~~
 
-Structural ready means paths and contracts are valid. Product readiness additionally requires relevant content, approvals, decisions, gates, and evidence.
-`, startingPoint, intro)
+Then ask:
+
+1. Which artifacts are still draft or proposed?
+2. Which approved statuses have matching current history records?
+3. What is the first blocked parent?
+4. Is the chosen Foundation scope lean, full, or feature-scoped?
+`, startingPoint, profile.location, profile.nextAction, profile.style, validationCommand, profile.scopeRule, profile.artifactAction, profile.approvalIntro, profile.approvalGuidance, profile.approvalRule, profile.foundationPath, workspaceGuidance, validationCommand)
+}
+
+type bootstrapProfile struct {
+	location         string
+	nextAction       string
+	style            string
+	scopeRule        string
+	artifactAction   string
+	approvalIntro    string
+	approvalGuidance string
+	approvalRule     string
+	foundationPath   string
+}
+
+const fullFoundationScope = "Lean keeps Problem, Vision, Principles, North Star, and Strategy proportional to the available evidence. It reduces depth, not approval integrity."
+
+const fullFoundationApproval = `~~~text
+   spec-framework approve --product-root product --artifact foundation/problem/problem.md --approved-by "Your Name"
+   spec-framework approve --product-root product --artifact foundation/problem/problem.md --approved-by "Your Name" --yes
+   ~~~`
+
+const artifactApprovalIntro = "Preview the approval, review the exact artifact and hash, then apply it explicitly."
+
+const artifactApprovalRule = "Approval is valid only when the CLI writes a matching record under product/.product/history/. A Markdown status edit alone is not approval."
+
+const fullFoundationPath = `Approve one artifact at a time in this order:
+
+| Step | Artifact | What it establishes |
+| --- | --- | --- |
+| 1 | foundation/problem/problem.md | The evidenced pain or opportunity. |
+| 2 | foundation/vision/vision.md | The intended outcome and boundaries. |
+| 3 | foundation/vision/principles.md | Rules and trade-offs for decisions. |
+| 4 | foundation/vision/north-star.md | Value signal and guardrails. |
+| 5 | foundation/strategy/strategy.md | The scoped delivery bet. |`
+
+func bootstrapProfileFor(startingPoint string) bootstrapProfile {
+	profiles := map[string]bootstrapProfile{
+		"new-product": {
+			location:         "L0 Foundation: product identity, then Problem",
+			nextAction:       "Replace PRODUCT-TBD in product/context.md, then complete foundation/problem/problem.md",
+			style:            "Full until the problem and audience are clear",
+			scopeRule:        fullFoundationScope,
+			artifactAction:   "Start with `product/context.md`, then write an evidence-based `product/foundation/problem/problem.md`.",
+			approvalIntro:    artifactApprovalIntro,
+			approvalGuidance: fullFoundationApproval,
+			approvalRule:     artifactApprovalRule,
+			foundationPath:   fullFoundationPath,
+		},
+		"existing-product": {
+			location:       "Product Baseline, before future Strategy",
+			nextAction:     "Complete foundation/product-baseline.md from repository, runtime, user, and operational evidence",
+			style:          "Lean when existing evidence is reliable; Full where decisions are unclear",
+			scopeRule:      "Existing-product consolidates current Problem, Vision, Principles, and North Star evidence into Product Baseline, while keeping future Strategy separate. Escalate to full Foundation when audience, value, or direction is uncertain.",
+			artifactAction: "Complete `product/foundation/product-baseline.md` from code and operating evidence; label inferred intent and unknowns explicitly.",
+			approvalIntro:  artifactApprovalIntro,
+			approvalGuidance: `~~~text
+   spec-framework approve --product-root product --artifact foundation/product-baseline.md --approved-by "Your Name"
+   spec-framework approve --product-root product --artifact foundation/product-baseline.md --approved-by "Your Name" --yes
+			   ~~~`,
+			approvalRule: artifactApprovalRule,
+			foundationPath: `Approve the two artifacts individually in this order:
+
+| Step | Artifact | What it establishes |
+| --- | --- | --- |
+| 1 | foundation/product-baseline.md | The evidenced product that exists today. |
+| 2 | foundation/strategy/strategy.md | The future bets, trade-offs, priorities, and metrics. |`,
+		},
+		"existing-documents": {
+			location:       "Latest import run, before canonical product artifacts",
+			nextAction:     "Review inventory, conflicts, and selected mappings, then explicitly materialize them as drafts",
+			style:          "Lean when the sources already contain a coherent brief",
+			scopeRule:      "Existing-documents uses the latest import run as its entry contract. Materialization approves selected draft writes, not the resulting product artifacts.",
+			artifactAction: "Review `product/knowledge/imports/runs/<latest-run>/inventory.json`, `conflicts.md`, and `mapping.json`. Sources are evidence, not approved product truth.",
+			approvalIntro:  "Review every selected mapping, target, source reference, conflict, and draft body; then authorize draft materialization explicitly.",
+			approvalGuidance: `~~~text
+   spec-framework import materialize --product-root product --run <IMPORT-NNN> --approved-by "Your Name" --yes
+   ~~~`,
+			approvalRule:   "Materialization records who authorized the selected draft writes in import-plan.json. It does not create product approval history.",
+			foundationPath: "After materialization, route each draft through its normal owner and parent gates. Use the full Foundation path unless the human explicitly selects another supported starting-point contract.",
+		},
+		"existing-feature": {
+			location:       "Feature Brief, before the first workspace",
+			nextAction:     "Complete and approve foundation/feature-brief.md for this bounded feature",
+			style:          "Lean and feature-scoped",
+			scopeRule:      "Existing-feature replaces the full product Foundation package with one Feature Brief. Escalate to full Foundation when product direction or scope is broad or uncertain.",
+			artifactAction: "Complete `product/foundation/feature-brief.md`; do not invent a product-wide strategy.",
+			approvalIntro:  artifactApprovalIntro,
+			approvalGuidance: `~~~text
+   spec-framework approve --product-root product --artifact foundation/feature-brief.md --approved-by "Your Name"
+   spec-framework approve --product-root product --artifact foundation/feature-brief.md --approved-by "Your Name" --yes
+			   ~~~`,
+			approvalRule:   artifactApprovalRule,
+			foundationPath: "Approve foundation/feature-brief.md before creating the first WORK-NNN workspace. Its approval covers only the bounded feature described there.",
+		},
+		"existing-implementation": {
+			location:       "Implementation Assessment, before canonical Foundation",
+			nextAction:     "Complete and approve knowledge/assessments/implementation-assessment.md from observed evidence",
+			style:          "Lean where implementation evidence is strong",
+			scopeRule:      "Existing-implementation adds an Implementation Assessment before the full Foundation path. Observed code is evidence, not approved product intent.",
+			artifactAction: "Complete `product/knowledge/assessments/implementation-assessment.md` without changing application code or inventing product decisions.",
+			approvalIntro:  artifactApprovalIntro,
+			approvalGuidance: `~~~text
+   spec-framework approve --product-root product --artifact knowledge/assessments/implementation-assessment.md --approved-by "Your Name"
+   spec-framework approve --product-root product --artifact knowledge/assessments/implementation-assessment.md --approved-by "Your Name" --yes
+			   ~~~`,
+			approvalRule:   artifactApprovalRule,
+			foundationPath: "Approve knowledge/assessments/implementation-assessment.md first. Then continue with the full Foundation path:\n\n" + fullFoundationPath,
+		},
+		"audit-only": {
+			location:         "Read-only audit entry point",
+			nextAction:       "Run validation and inspect gaps without advancing artifact statuses",
+			style:            "Audit only; do not manufacture Foundation approvals",
+			scopeRule:        "Audit-only inspects structural and evidentiary gaps without creating or approving product truth.",
+			artifactAction:   "Keep product artifacts unchanged unless the human explicitly converts an audit finding into scoped Foundation work.",
+			approvalIntro:    "Keep this session read-only.",
+			approvalGuidance: "Do not run approval commands in audit-only mode.",
+			approvalRule:     "Audit findings are evidence and do not alter product approval history.",
+			foundationPath:   "No Foundation path advances during an audit-only session. Report gaps and stop before product mutation.",
+		},
+	}
+	if profile, ok := profiles[startingPoint]; ok {
+		return profile
+	}
+	return profiles["new-product"]
 }
