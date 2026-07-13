@@ -24,7 +24,7 @@ func (app App) NewCommand(stdout, stderr io.Writer) *cobra.Command {
 			return cmd.Help()
 		},
 		PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
-			if cmd.Name() == "init" || cmd.Name() == "upgrade" || cmd.Name() == "version" {
+			if cmd.Name() == "init" || cmd.Name() == "upgrade" || cmd.Name() == "update" || cmd.Name() == "uninstall" || cmd.Name() == "version" {
 				return nil
 			}
 			if blocked, message := auditOnlyMutation(append([]string{cmd.Name()}, args...)); blocked {
@@ -38,6 +38,8 @@ func (app App) NewCommand(stdout, stderr io.Writer) *cobra.Command {
 	root.SetErr(stderr)
 	root.AddCommand(
 		app.versionCommand(stdout),
+		app.updateCommand(stdout, stderr),
+		app.uninstallCommand(stdout, stderr),
 		app.legacyCommand("init", "Initialize product and the versioned runtime.", app.runInit, stdout, stderr),
 		app.legacyCommand("upgrade", "Refresh the external runtime and pinned manifest.", app.runUpgrade, stdout, stderr),
 		app.legacyCommand("migrate", "Preview or apply legacy runtime migration.", app.runMigrate, stdout, stderr),

@@ -1,0 +1,44 @@
+{
+  "schema_version": 1,
+  "id": "existing-implementation",
+  "asset_sets": ["product-core", "foundation-full", "knowledge", "delivery-scaffold", "governance"],
+  "directories": [],
+  "files": [
+    {
+      "source": "framework/template/implementation-assessment-template.md",
+      "target": "knowledge/assessments/implementation-assessment.md",
+      "replacements": {
+        "[IMPL-ASSESS-XXX]": "IMPL-ASSESS-TBD",
+        "[draft | proposed | approved]": "draft"
+      }
+    }
+  ],
+  "patches": [
+    {
+      "target": "context.md",
+      "find": "Do not create domains or features until `foundation/problem/problem.md`, `foundation/vision/vision.md`, and `foundation/strategy/strategy.md` contain product-specific content.",
+      "replace": "For `existing-implementation`, approve `knowledge/assessments/implementation-assessment.md`, then complete the full Foundation path before creating delivery work. Observed code is evidence, not approved product intent."
+    },
+    {
+      "target": "foundation/README.md",
+      "find": "Fill `problem/problem.md`, then `vision/vision.md`, then `strategy/strategy.md`.",
+      "replace": "For `existing-implementation`, first approve `../knowledge/assessments/implementation-assessment.md`. Then fill `problem/problem.md`, `vision/vision.md`, and `strategy/strategy.md` from reviewed evidence without treating observed behavior as intent."
+    }
+  ],
+  "registry": {
+    "prepend_artifacts": [
+      {
+        "id": "IMPL-ASSESS-TBD",
+        "type": "implementation-assessment",
+        "status": "draft",
+        "path": "knowledge/assessments/implementation-assessment.md",
+        "parentIds": []
+      }
+    ],
+    "append_parents_by_type": {
+      "problem": ["IMPL-ASSESS-TBD"]
+    }
+  },
+  "bootstrap_profile": "existing-implementation",
+  "actions": []
+}

@@ -791,6 +791,30 @@ h2.section-title{
 .intent-arrow{color:var(--accent);text-align:center;}
 .intent-a{color:var(--ink);}
 
+/* ---------- starting point accordions ---------- */
+.starting-point-list{display:grid;gap:12px;}
+.starting-point-card{border:1px solid var(--line);background:var(--panel);}
+.starting-point-card summary{
+  display:grid;
+  grid-template-columns:minmax(190px,.7fr) 1.6fr auto;
+  gap:18px;
+  align-items:center;
+  padding:18px 20px;
+  cursor:pointer;
+  list-style:none;
+}
+.starting-point-card summary::-webkit-details-marker{display:none;}
+.starting-point-card summary::after{content:'+';font:18px var(--mono);color:var(--accent);}
+.starting-point-card[open] summary::after{content:'−';}
+.starting-point-name{font-family:var(--mono);color:var(--accent);font-size:13px;}
+.starting-point-summary{color:var(--ink);font-size:14px;}
+.starting-point-body{border-top:1px solid var(--line);padding:20px;}
+.starting-point-body p{max-width:760px;margin:0 0 14px;color:var(--ink-soft);}
+.starting-point-body p:last-child{margin-bottom:0;}
+.starting-point-meta{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin:18px 0;}
+.starting-point-meta > div{border-left:2px solid var(--line);padding-left:12px;}
+.starting-point-meta b{display:block;margin-bottom:5px;font:11px var(--mono);text-transform:uppercase;letter-spacing:.05em;color:var(--accent);}
+
 /* ---------- collapsible example cards ---------- */
 .ex-grid{
   display:grid;
@@ -940,6 +964,9 @@ footer{
   .flow-row{grid-template-columns:20px 1fr;}
   .flow-stage{display:none;}
   .intent-row{grid-template-columns:1fr;gap:4px;text-align:left;}
+  .starting-point-card summary{grid-template-columns:1fr auto;gap:8px;}
+  .starting-point-summary{grid-column:1/-1;grid-row:2;}
+  .starting-point-meta{grid-template-columns:1fr;}
   .intent-arrow{display:none;}
   .mini-step{grid-template-columns:1fr;gap:4px;}
   .masthead nav{gap:12px;}
@@ -1085,112 +1112,78 @@ footer{
   <section id="comecar" class="page">
     <div class="section-head">
       <h2 class="section-title">Primeiros passos</h2>
-      <div class="section-note">Um comando instala tudo. O que muda entre projetos é só a resposta a "de onde você está partindo?".</div>
+      <div class="section-note">Instale a CLI, escolha sua situação atual e siga o caminho indicado.</div>
     </div>
 
     <div class="page-toc">
-      <a href="#comecar-instalar">Passo zero</a>
+      <a href="#comecar-instalar">Instalar a CLI</a>
       <a href="#comecar-ponto">Ponto de partida</a>
-      <a href="#comecar-rota-a">Rota A · do zero</a>
-      <a href="#comecar-rota-b">Rota B · projeto existente</a>
-      <a href="#comecar-upgrade">Upgrade e migração</a>
+      <a href="#comecar-upgrade">Gerenciar a instalação</a>
     </div>
 
     <div class="cat-block">
-      <h3 class="block-title" id="comecar-instalar">Passo zero — igual para todo mundo</h3>
+      <h3 class="block-title" id="comecar-instalar">1. Instale a CLI</h3>
       <p class="lead" style="margin-bottom:20px;">
-        Um único comando baixa a release, verifica o checksum, instala o CLI no PATH do usuário e já abre o wizard do <code>init</code>:
+        Escolha o comando do seu sistema operacional. Ele baixa e verifica a versão mais recente da CLI. Nenhum projeto será criado durante a instalação.
       </p>
       <div class="cli-grid">
         <div class="cli-block">
           <p class="caption">Windows (PowerShell)</p>
-          <div class="cli-scroll"><pre class="cli"><span class="cmd">irm</span> https://raw.githubusercontent.com/JonatasFreireDev/spec-framework/master/scripts/init.ps1 | iex</pre></div>
+          <div class="cli-scroll"><pre class="cli"><span class="cmd">irm</span> https://raw.githubusercontent.com/JonatasFreireDev/spec-framework/master/scripts/install.ps1 | iex</pre></div>
         </div>
         <div class="cli-block">
           <p class="caption">Linux / macOS</p>
-          <div class="cli-scroll"><pre class="cli"><span class="cmd">curl</span> -fsSL https://raw.githubusercontent.com/JonatasFreireDev/spec-framework/master/scripts/init.sh | sh</pre></div>
+          <div class="cli-scroll"><pre class="cli"><span class="cmd">curl</span> -fsSL https://raw.githubusercontent.com/JonatasFreireDev/spec-framework/master/scripts/install.sh | sh</pre></div>
         </div>
       </div>
-      <p class="note">
-        O resultado no seu repositório é <b>uma única pasta: <code>product/</code></b>. O método inteiro (skills, templates, validadores) fica fora, num cache versionado do usuário; <code>product/.product/framework.json</code> pina a versão adotada e é o único marcador de ativação (FDR-025). Nada de <code>.spec-framework/</code>, árvores de skills ou arquivos de CI sujando o repo.
-      </p>
-      <div class="dims-grid" style="margin-top:22px;">
-        <div class="tree-box">
-<pre><span class="tc"># o que vai para o git</span>
-meu-produto/
-  product/
-    BOOTSTRAP.md         <span class="tc">roteiro gerado</span>
-    .product/
-      framework.json     <span class="tc">versão pinada</span>
-    foundation/
-    knowledge/
-    domains/</pre>
-        </div>
-        <div class="tree-box">
-<pre><span class="tc"># o que fica fora do repo</span>
-~ (sua máquina)
-  cache versionado/      <span class="tc">método, skills, templates</span>
-  dispatcher por agente  <span class="tc">Codex / Claude / Cursor</span>
-  spec-framework (CLI)   <span class="tc">no PATH do usuário</span></pre>
-        </div>
+      <p class="note">Depois de instalar, execute <code>spec-framework init</code> somente no projeto que deseja preparar.</p>
+    </div>
+
+    <div class="cat-block" style="margin-top:48px;">
+      <h3 class="block-title" id="comecar-ponto">2. Escolha seu ponto de partida</h3>
+      <p class="lead" style="margin-bottom:20px;">Execute o comando abaixo e responda às perguntas do wizard. Ele ajudará você a escolher a opção que melhor representa o que existe hoje.</p>
+      <div class="cli-scroll" style="margin-bottom:22px;"><pre class="cli"><span class="cmd">spec-framework init</span> ../meu-produto</pre></div>
+      <p class="note" style="margin-bottom:22px;">O ponto de partida define como o produto entra no framework. Ele não aprova documentos automaticamente e não remove validações das etapas seguintes.</p>
+      <div class="starting-point-list">
+        <details class="starting-point-card" open>
+          <summary><span class="starting-point-name">new-product · padrão</span><span class="starting-point-summary">Tenho uma ideia, mas o produto ainda precisa ser definido.</span></summary>
+          <div class="starting-point-body"><p>Use quando ainda não existe um produto operando nem uma entrega bem delimitada. Você começará esclarecendo o problema, a visão e a estratégia antes de criar features.</p><p><b>Exemplo:</b> uma equipe quer criar uma plataforma para nutricionistas e pacientes, mas ainda precisa definir o público, o problema principal, a experiência e as métricas de sucesso.</p><div class="starting-point-meta"><div><b>Primeiro caminho</b>Problem → Vision → Product Principles → North Star → Strategy → Domain</div><div><b>Primeiro gate</b>Problem revisado e aprovado.</div></div><p><b>Atenção:</b> uma ideia, pesquisa ou oportunidade inicial ajuda a escrever a fundação, mas não substitui sua revisão e aprovação.</p></div>
+        </details>
+        <details class="starting-point-card">
+          <summary><span class="starting-point-name">existing-product</span><span class="starting-point-summary">Já existe um produto real, com usuários ou operação.</span></summary>
+          <div class="starting-point-body"><p>Use quando o produto está em produção e há evidências como releases, métricas, suporte ou clientes. Primeiro registre a realidade atual; depois defina a direção futura.</p><p><b>Exemplo:</b> um SaaS com clientes e releases frequentes, mas sem uma descrição confiável do público atual, das capacidades existentes e da estratégia.</p><div class="starting-point-meta"><div><b>Primeiro caminho</b>Product Baseline → Strategy → Domain</div><div><b>Primeiro gate</b>Product Baseline aprovado com evidências operacionais.</div></div><p><b>Atenção:</b> escolha esta opção pela existência de um produto em operação, não apenas porque existe um repositório com código.</p></div>
+        </details>
+        <details class="starting-point-card">
+          <summary><span class="starting-point-name">existing-implementation</span><span class="starting-point-summary">Tenho código, mas não sei exatamente qual produto ele representa.</span></summary>
+          <div class="starting-point-body"><p>Use para protótipos, projetos legados ou repositórios herdados sem evidência clara de operação. O código será analisado como evidência, não como verdade aprovada.</p><p><b>Exemplo:</b> um repositório com backend, telas e banco de dados, mas sem certeza de lançamento, público ou comportamentos intencionais.</p><div class="starting-point-meta"><div><b>Primeiro caminho</b>Implementation Assessment → Problem → Vision → Principles e North Star → Strategy</div><div><b>Primeiro gate</b>Implementation Assessment revisado e aprovado.</div></div><p><b>Atenção:</b> o assessment registra o que o código demonstra e também o que não pode ser concluído a partir dele.</p></div>
+        </details>
+        <details class="starting-point-card">
+          <summary><span class="starting-point-name">existing-documents</span><span class="starting-point-summary">Tenho PRDs, Jira, Confluence ou outros documentos para importar.</span></summary>
+          <div class="starting-point-body"><p>Use quando os documentos são a principal fonte disponível. A CLI cria um inventário e um mapeamento para revisão. Nada vira verdade do produto automaticamente.</p><p><b>Exemplo:</b> visão e estratégia no Confluence, epics e critérios de aceitação no Jira, ou uma pasta com PRDs e documentos de arquitetura.</p><div class="starting-point-meta"><div><b>Primeiro caminho</b>Inventário → Mapeamento → Revisão de conflitos → Materialização como draft</div><div><b>Primeiro gate</b>Revisar <code>mapping.json</code> e <code>conflicts.md</code> antes de materializar.</div></div><p><b>Atenção:</b> uma epic nem sempre representa uma Feature e uma story nem sempre representa um Use Case. O mapeamento precisa de revisão humana.</p></div>
+        </details>
+        <details class="starting-point-card">
+          <summary><span class="starting-point-name">existing-feature</span><span class="starting-point-summary">Quero entregar uma única feature, pequena e bem definida.</span></summary>
+          <div class="starting-point-body"><p>Use quando o problema, o resultado esperado e os limites da entrega já estão claros. Esse caminho evita reconstruir toda a estratégia para uma mudança realmente proporcional.</p><p><b>Exemplo:</b> adicionar pagamento via PIX ao checkout, com escopo, integração e métrica de sucesso conhecidos.</p><div class="starting-point-meta"><div><b>Primeiro caminho</b>Feature Brief → Domain → User Goal → Feature → Use Case → Specification</div><div><b>Primeiro gate</b>Feature Brief aprovado e vinculado à feature alvo.</div></div><p><b>Atenção:</b> não use quando a mudança envolve vários domínios, novo modelo de negócio ou uma alteração ampla de público e estratégia.</p></div>
+        </details>
+        <details class="starting-point-card">
+          <summary><span class="starting-point-name">audit-only</span><span class="starting-point-summary">Quero encontrar gaps sem alterar o produto.</span></summary>
+          <div class="starting-point-body"><p>Use para diagnóstico ou consultoria sem autorização de escrita. Aprovações, imports, workspaces, movimentos e outras alterações ficam bloqueados.</p><p><b>Exemplo:</b> uma avaliação de documentação, decisões, segurança e evidências de QA antes de autorizar qualquer mudança no produto.</p><div class="starting-point-meta"><div><b>Primeiro caminho</b>Inspecionar → Validar → Reportar gaps → Encerrar</div><div><b>Primeiro gate</b>Não há gate de escrita; o modo permanece somente leitura.</div></div><p><b>Atenção:</b> continuar dos achados para trabalho de produto exige uma mudança explícita do ponto de partida.</p></div>
+        </details>
       </div>
     </div>
 
     <div class="cat-block" style="margin-top:48px;">
-      <h3 class="block-title" id="comecar-ponto">Escolha o ponto de partida</h3>
-      <p class="lead" style="margin-bottom:20px;">
-        O wizard pergunta de onde você está partindo (ou passe <code>--starting-point</code> em modo headless). A escolha define o roteiro do <code>BOOTSTRAP.md</code>, o registry ativo e o primeiro gate — <b>não</b> remove nenhuma skill nem reduz a exigência de evidência:
-      </p>
-      <div class="intent-list">
-        <div class="intent-row"><span class="intent-q"><code>new-product</code> <span style="color:var(--ink-soft);font-style:italic;">(padrão)</span></span><span class="intent-arrow">→</span><span class="intent-a">produto do zero, sem nenhuma fonte prévia — siga a <a href="#comecar-rota-a">Rota A</a></span></div>
-        <div class="intent-row"><span class="intent-q"><code>existing-documents</code></span><span class="intent-arrow">→</span><span class="intent-a">tem PRDs, epics ou pastas de documentos para importar — siga a <a href="#comecar-rota-b">Rota B</a></span></div>
-        <div class="intent-row"><span class="intent-q"><code>existing-product</code></span><span class="intent-arrow">→</span><span class="intent-a">produto em operação e repo code-first: Product Baseline aprovado → Strategy aprovada</span></div>
-        <div class="intent-row"><span class="intent-q"><code>existing-feature</code></span><span class="intent-arrow">→</span><span class="intent-a">entregar uma feature delimitada: Feature Brief aprovado e vinculado a um <code>Target Feature</code></span></div>
-        <div class="intent-row"><span class="intent-q"><code>existing-implementation</code></span><span class="intent-arrow">→</span><span class="intent-a">código existente como evidência: Implementation Assessment → Foundation completa</span></div>
-        <div class="intent-row"><span class="intent-q"><code>audit-only</code></span><span class="intent-arrow">→</span><span class="intent-a">inspeção somente leitura; registry, reports, approvals, workspaces e delivery não podem ser alterados</span></div>
+      <h3 class="block-title" id="comecar-upgrade">3. Gerencie sua instalação</h3>
+      <p class="lead" style="margin-bottom:20px;">CLI e produto são atualizados separadamente. Escolha somente a ação que você precisa.</p>
+      <div class="cli-grid">
+        <div class="cli-block"><p class="caption">Verificar se existe uma nova versão do CLI</p><div class="cli-scroll"><pre class="cli"><span class="cmd">spec-framework update</span> --check</pre></div></div>
+        <div class="cli-block"><p class="caption">Atualizar o CLI</p><div class="cli-scroll"><pre class="cli"><span class="cmd">spec-framework update</span> --yes</pre></div></div>
+        <div class="cli-block"><p class="caption">Atualizar o framework usado por este produto</p><div class="cli-scroll"><pre class="cli"><span class="cmd">spec-framework upgrade</span> --yes</pre></div></div>
+        <div class="cli-block"><p class="caption">Ver o que seria removido</p><div class="cli-scroll"><pre class="cli"><span class="cmd">spec-framework uninstall</span></pre></div></div>
+        <div class="cli-block"><p class="caption">Remover CLI, cache e dispatchers gerenciados</p><div class="cli-scroll"><pre class="cli"><span class="cmd">spec-framework uninstall</span> --purge --yes</pre></div></div>
+        <div class="cli-block"><p class="caption">Inspecionar a migração de um runtime antigo</p><div class="cli-scroll"><pre class="cli"><span class="cmd">spec-framework migrate external-runtime</span> --dry-run</pre></div></div>
+        <div class="cli-block"><p class="caption">Inspecionar a migração de decisões antigas</p><div class="cli-scroll"><pre class="cli"><span class="cmd">spec-framework decisions migrate</span> --product-root product --dry-run</pre></div></div>
       </div>
-    </div>
-
-    <div class="cat-block" style="margin-top:48px;">
-      <h3 class="block-title" id="comecar-rota-a">Rota A — projeto novo, do zero</h3>
-      <div class="flow">
-        <div class="flow-row"><div class="flow-stage">Iniciar</div><div class="flow-rail"><div class="flow-dot"></div></div><div class="flow-card"><p><code>spec-framework init ../meu-produto --agents codex --yes</code> (o wizard do passo zero já faz isso por você). O <code>init</code> interativo também oferece o adapter visual Impeccable; headless, use <code>--install-impeccable --impeccable-version latest</code> — se o provedor falhar, o produto inicializado é preservado.</p></div></div>
-        <div class="flow-row"><div class="flow-stage">Ler o roteiro</div><div class="flow-rail"><div class="flow-dot"></div></div><div class="flow-card"><p>O <code>product/BOOTSTRAP.md</code> gerado explica, em ordem, os gates de fundação — distingue um starter estruturalmente válido de um produto pronto para implementação.</p></div></div>
-        <div class="flow-row"><div class="flow-stage">Fundação</div><div class="flow-rail"><div class="flow-dot gate"></div></div><div class="flow-card"><p>Para <code>new-product</code>, aprove nessa ordem: <b>Problem</b> → <b>Vision</b> → <b>Product Principles + North Star</b> → <b>Strategy</b>. Cada status aprovado exige evidência atual em <code>.product/history/</code>.</p></div></div>
-        <div class="flow-row"><div class="flow-stage">Primeiro domínio</div><div class="flow-rail"><div class="flow-dot"></div></div><div class="flow-card"><p>Crie o primeiro <code>product/domains/&lt;domínio&gt;</code> com seus Objetivos de usuário — não existe pasta global de features.</p></div></div>
-        <div class="flow-row"><div class="flow-stage">Validar</div><div class="flow-rail"><div class="flow-dot gate"></div></div><div class="flow-card"><p><code>spec-framework validate</code> antes de qualquer feature — confirma que a fundação está estruturalmente correta. Daí em diante, o fluxo é o de <a href="#exemplo" data-page="exemplo">uma feature nova</a>.</p></div></div>
-      </div>
-    </div>
-
-    <div class="cat-block" style="margin-top:48px;">
-      <h3 class="block-title" id="comecar-rota-b">Rota B — projeto em andamento, com PRDs/epics</h3>
-      <div class="flow">
-        <div class="flow-row"><div class="flow-stage">Iniciar apontando a fonte</div><div class="flow-rail"><div class="flow-dot"></div></div><div class="flow-card"><p><code>spec-framework init ../meu-produto --agents codex --starting-point existing-documents --source-dir ../product-docs --yes</code></p></div></div>
-        <div class="flow-row"><div class="flow-stage">Inventário automático</div><div class="flow-rail"><div class="flow-dot"></div></div><div class="flow-card"><p>O CLI cria um run somente-análise em <code>product/knowledge/imports/runs/IMPORT-NNN/</code>: <code>inventory.json</code>, <code>import-plan.json</code>, <code>mapping.json</code>, <code>conflicts.md</code>. Nenhum Domínio, Objetivo ou Feature é criado ainda.</p></div></div>
-        <div class="flow-row"><div class="flow-stage">Revisar</div><div class="flow-rail"><div class="flow-dot gate"></div></div><div class="flow-card"><p>Leia <code>mapping.json</code> e <code>conflicts.md</code> com atenção — conflitos entre fontes nunca são resolvidos em silêncio pelo importador.</p></div></div>
-        <div class="flow-row"><div class="flow-stage">Aprovar e materializar</div><div class="flow-rail"><div class="flow-dot gate"></div></div><div class="flow-card"><p><code>spec-framework import materialize --run IMPORT-001 --approved-by "Product Owner" --yes</code> — rejeita evidência faltando, caminhos fora de <code>product/</code>, e destinos que já existem.</p></div></div>
-        <div class="flow-row"><div class="flow-stage">Artefatos continuam draft</div><div class="flow-rail"><div class="flow-dot"></div></div><div class="flow-card"><p>Materializar autoriza somente os writes selecionados. O run mais recente bloqueia <code>work</code> até ficar materialmente completo; cada artefato resultante conserva owner, parents e aprovação próprios.</p></div></div>
-      </div>
-    </div>
-
-    <div class="cat-block" style="margin-top:48px;">
-      <h3 class="block-title">Rotas proporcionais e gates</h3>
-      <div class="intent-list">
-        <div class="intent-row"><span class="intent-q"><code>existing-product</code></span><span class="intent-arrow">→</span><span class="intent-a"><code>foundation/product-baseline.md</code> aprovado → <code>foundation/strategy/strategy.md</code> aprovada → <code>work</code></span></div>
-        <div class="intent-row"><span class="intent-q"><code>existing-feature</code></span><span class="intent-arrow">→</span><span class="intent-a"><code>foundation/feature-brief.md</code> aprovado; o alvo no Markdown deve coincidir com a feature selecionada</span></div>
-        <div class="intent-row"><span class="intent-q"><code>existing-implementation</code></span><span class="intent-arrow">→</span><span class="intent-a">Assessment aprovado → Problem → Vision → Principles/North Star → Strategy → <code>work</code></span></div>
-        <div class="intent-row"><span class="intent-q"><code>audit-only</code></span><span class="intent-arrow">→</span><span class="intent-a"><code>spec-framework validate</code> sem flags de escrita; mutações são recusadas pelo CLI</span></div>
-      </div>
-    </div>
-
-    <div class="cat-block" style="margin-top:48px;">
-      <h3 class="block-title" id="comecar-upgrade">Já tem uma instalação?</h3>
-      <div class="cli-scroll"><pre class="cli"><span class="c"># atualiza o runtime externo e o manifest pinado, preservando product/</span>
-<span class="cmd">spec-framework upgrade</span> --yes
-<span class="c"># repositório antigo com .spec-framework/ local? migre para o runtime externo</span>
-<span class="cmd">spec-framework migrate external-runtime</span> --dry-run
-<span class="c"># decisões antigas (pré-DEC tipado) podem ser migradas com segurança</span>
-<span class="cmd">spec-framework decisions migrate</span> --product-root product --dry-run</pre></div>
       <p class="note">
         Perdido em qualquer etapa? Pergunte ao <a href="#guia" data-page="guia">Framework Guide</a> — ele lê o estado mecânico real do repositório antes de recomendar o próximo comando.
       </p>
@@ -1922,7 +1915,7 @@ meu-produto/
 
       <p class="kicker">Roteia por intenção</p>
       <div class="intent-list">
-        <div class="intent-row"><span class="intent-q">"Não tenho nem o CLI instalado"</span><span class="intent-arrow">→</span><span class="intent-a">inspecionar e rodar <code>scripts/init.ps1</code> / <code>init.sh</code> (pipe remoto é escolha explícita do usuário)</span></div>
+        <div class="intent-row"><span class="intent-q">"Não tenho nem o CLI instalado"</span><span class="intent-arrow">→</span><span class="intent-a">inspecionar e rodar <code>scripts/install.ps1</code> / <code>install.sh</code> (pipe remoto é escolha explícita do usuário)</span></div>
         <div class="intent-row"><span class="intent-q">"Quero começar um produto"</span><span class="intent-arrow">→</span><span class="intent-a"><code>init &lt;caminho&gt;</code></span></div>
         <div class="intent-row"><span class="intent-q">"Tenho um produto operando, mas o código é a principal fonte"</span><span class="intent-arrow">→</span><span class="intent-a"><code>init --starting-point existing-product</code> → Product Baseline → Strategy</span></div>
         <div class="intent-row"><span class="intent-q">"Tenho um épico e quero entregar uma feature específica"</span><span class="intent-arrow">→</span><span class="intent-a"><code>init --starting-point existing-feature</code> → Feature Brief com Target Feature → <code>work</code></span></div>
@@ -1938,6 +1931,7 @@ meu-produto/
         <div class="intent-row"><span class="intent-q">"Executar comandos governados"</span><span class="intent-arrow">→</span><span class="intent-a">Command Planner → Command Executor</span></div>
         <div class="intent-row"><span class="intent-q">"Isso ainda está válido?"</span><span class="intent-arrow">→</span><span class="intent-a"><code>validate</code></span></div>
         <div class="intent-row"><span class="intent-q">"Atualizar o framework do projeto"</span><span class="intent-arrow">→</span><span class="intent-a">inspecionar manifest e versão → <code>upgrade --yes</code></span></div>
+        <div class="intent-row"><span class="intent-q">"Atualizar ou remover o CLI"</span><span class="intent-arrow">→</span><span class="intent-a"><code>update --check</code> / <code>update --yes</code> · <code>uninstall</code> / <code>uninstall --purge --yes</code></span></div>
         <div class="intent-row"><span class="intent-q">"Meu repo antigo tem .spec-framework/ local"</span><span class="intent-arrow">→</span><span class="intent-a"><code>migrate external-runtime --dry-run</code> → revisar → <code>--yes</code></span></div>
         <div class="intent-row"><span class="intent-q">"Preparar a entrega"</span><span class="intent-arrow">→</span><span class="intent-a">Delivery Orchestrator → Commit Crafter → PR Finalizer</span></div>
       </div>
@@ -2013,8 +2007,8 @@ meu-produto/
         <p class="caption">1 · criar um produto novo a partir do starter</p>
         <div class="cli-scroll"><pre class="cli"><span class="c"># adiciona apenas product/ ao repositório; o método fica no cache versionado do usuário</span>
 <span class="cmd">spec-framework init</span> ../meu-produto --agents codex --yes
-<span class="c"># bootstrap completo em um comando (instala CLI + abre o wizard)</span>
-<span class="cmd">irm</span> https://raw.githubusercontent.com/JonatasFreireDev/spec-framework/master/scripts/init.ps1 | iex</pre></div>
+<span class="c"># a instalação do CLI é separada e não abre o wizard</span>
+<span class="cmd">irm</span> https://raw.githubusercontent.com/JonatasFreireDev/spec-framework/master/scripts/install.ps1 | iex</pre></div>
       </div>
 
       <div class="cli-block">

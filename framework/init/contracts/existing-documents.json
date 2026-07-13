@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "id": "existing-documents",
+  "asset_sets": ["product-core", "foundation-full", "knowledge", "delivery-scaffold", "governance"],
+  "directories": ["knowledge/imports/sources", "knowledge/imports/runs"],
+  "files": [],
+  "patches": [],
+  "registry": {},
+  "bootstrap_profile": "existing-documents",
+  "actions": ["create-import-run"]
+}

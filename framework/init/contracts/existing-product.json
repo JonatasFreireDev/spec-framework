@@ -1,0 +1,45 @@
+{
+  "schema_version": 1,
+  "id": "existing-product",
+  "asset_sets": ["product-core", "foundation-full", "knowledge", "delivery-scaffold", "governance"],
+  "directories": [],
+  "files": [
+    {
+      "source": "framework/template/product-baseline-template.md",
+      "target": "foundation/product-baseline.md",
+      "replacements": {
+        "[PRODUCT-BASELINE-XXX]": "PRODUCT-BASELINE-TBD",
+        "[draft | proposed | approved]": "draft"
+      }
+    }
+  ],
+  "patches": [
+    {
+      "target": "context.md",
+      "find": "Do not create domains or features until `foundation/problem/problem.md`, `foundation/vision/vision.md`, and `foundation/strategy/strategy.md` contain product-specific content.",
+      "replace": "For `existing-product`, approve `foundation/product-baseline.md` from repository and operational evidence, then approve `foundation/strategy/strategy.md` before creating delivery work."
+    },
+    {
+      "target": "foundation/README.md",
+      "find": "Fill `problem/problem.md`, then `vision/vision.md`, then `strategy/strategy.md`.",
+      "replace": "For `existing-product`, complete and individually approve `product-baseline.md`, then `strategy/strategy.md`. Escalate to the full Foundation path when audience, delivered value, or product direction is uncertain."
+    }
+  ],
+  "registry": {
+    "exclude_types": ["problem", "vision", "product-principles", "north-star"],
+    "prepend_artifacts": [
+      {
+        "id": "PRODUCT-BASELINE-TBD",
+        "type": "product-baseline",
+        "status": "draft",
+        "path": "foundation/product-baseline.md",
+        "parentIds": []
+      }
+    ],
+    "replace_parents_by_type": {
+      "strategy": ["PRODUCT-BASELINE-TBD"]
+    }
+  },
+  "bootstrap_profile": "existing-product",
+  "actions": []
+}

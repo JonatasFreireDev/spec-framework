@@ -24,10 +24,23 @@ spec-framework help
 Alternatively, use the checksum-verifying interactive bootstrap:
 
 ```powershell
-irm https://raw.githubusercontent.com/JonatasFreireDev/spec-framework/master/scripts/init.ps1 | iex
+irm https://raw.githubusercontent.com/JonatasFreireDev/spec-framework/master/scripts/install.ps1 | iex
 ```
 
-Linux and macOS users can download and inspect `scripts/init.sh`, then execute it locally. Piping a remote shell script is not required.
+Linux and macOS users can download and inspect `scripts/install.sh`, then execute it locally. Piping a remote shell script is not required. Installation verifies the release checksum and prints the installed version; it does not run product initialization.
+
+Manage the installed CLI independently from adopter products:
+
+```bash
+spec-framework update --check
+spec-framework update --yes
+spec-framework update --version 0.4.0 --yes
+spec-framework uninstall
+spec-framework uninstall --yes
+spec-framework uninstall --purge --yes
+```
+
+The installer writes `install.json` beside the binary so lifecycle commands can identify installer-owned paths. `update` verifies the checksum and the candidate binary before changing the CLI. Set `GITHUB_TOKEN` when authenticated GitHub API access is required. `upgrade` changes only a product's pinned runtime, manifest, and dispatchers. `uninstall` never searches for or removes `product/`; `--purge` additionally removes framework caches and the namespaced Spec Framework dispatchers while preserving other agent skills.
 
 Initialize without a TTY. The target may already contain product code; only an existing `product/` blocks initialization:
 
@@ -54,4 +67,6 @@ Running `spec-framework init` interactively starts the Bubble Tea question
 pipeline. The CLI shows an immutable installation plan and writes only after
 confirmation.
 
-Initialization adds only `product/` to the target repository. Framework assets are materialized under the operating system's user cache, including the `examples/events/` domain-modeling reference, and selected harnesses receive one user-scoped `spec-framework` dispatcher. Every starting point that creates or revises domains must read that reference before its first domain change for business-area boundaries, explicit non-ownership, cross-domain dependencies, and a Domain -> User Goal -> Feature -> Use Case walking skeleton; `audit-only` uses it to assess existing boundaries without mutation. The dispatcher activates exclusively from a valid `product/.product/framework.json` and resolves Framework Guide first unless it has a verified specialist route with concrete scope. `upgrade --yes` refreshes the dispatcher for every agent selected in the manifest or `--agents`.
+Initialization adds only `product/` to the target repository. The selected versioned JSON contract composes reusable starter asset sets, entry-specific files, registry transformations, and typed initialization actions; invalid sources, targets, patches, profiles, or actions fail before initialization completes. Framework assets are materialized under the operating system's user cache, including the initialization contracts and the `examples/events/` domain-modeling reference, and selected harnesses receive one user-scoped `spec-framework` dispatcher. Every starting point that creates or revises domains must read that reference before its first domain change for business-area boundaries, explicit non-ownership, cross-domain dependencies, and a Domain -> User Goal -> Feature -> Use Case walking skeleton; `audit-only` uses it to assess existing boundaries without mutation. The dispatcher activates exclusively from a valid `product/.product/framework.json` and resolves Framework Guide first unless it has a verified specialist route with concrete scope. `upgrade --yes` refreshes the dispatcher for every agent selected in the manifest or `--agents`; it never replays initialization contracts over adopter-owned product files.
+
+The CLI expands and validates the selected contract in memory, including explicit empty directories, writes the complete product to staging inside the target repository, and publishes `product/` atomically only after guides, manifest, runtime preparation, dispatchers, and starting-point actions succeed. File/directory collisions or unsafe directory paths fail during planning. Failed initialization removes staging and leaves no partial `product/`. An existing `product/` always blocks `init`; the compatibility `--force` flag never authorizes overwriting adopter-owned product content.

@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "id": "audit-only",
+  "asset_sets": ["product-core", "foundation-full", "knowledge", "delivery-scaffold", "governance"],
+  "directories": [],
+  "files": [],
+  "patches": [],
+  "registry": {},
+  "bootstrap_profile": "audit-only",
+  "actions": []
+}

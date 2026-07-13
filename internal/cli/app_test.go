@@ -15,7 +15,7 @@ func TestHelpListsStableCommands(t *testing.T) {
 	if exitCode != 0 {
 		t.Fatalf("exit code = %d, want 0; stderr=%q", exitCode, stderr.String())
 	}
-	for _, command := range []string{"init", "validate", "move", "upgrade", "version"} {
+	for _, command := range []string{"init", "validate", "move", "update", "uninstall", "upgrade", "version"} {
 		if !strings.Contains(stdout.String(), "  "+command) {
 			t.Errorf("help does not list %q:\n%s", command, stdout.String())
 		}
@@ -45,7 +45,7 @@ func TestUnknownCommandIsUsageError(t *testing.T) {
 
 func TestCobraCommandTreeKeepsStableTopLevelCommands(t *testing.T) {
 	root := cli.New("test").NewCommand(&bytes.Buffer{}, &bytes.Buffer{})
-	for _, name := range []string{"init", "validate", "graph", "runtime", "upgrade", "version"} {
+	for _, name := range []string{"init", "validate", "graph", "runtime", "update", "uninstall", "upgrade", "version"} {
 		command, _, err := root.Find([]string{name})
 		if err != nil || command == root || command.Name() != name {
 			t.Errorf("Cobra command %q was not registered: command=%v err=%v", name, command, err)

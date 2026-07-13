@@ -1,0 +1,38 @@
+{
+  "new-product": {
+    "artifact_ids": ["PROBLEM-TBD", "VISION-TBD", "PRINCIPLES-TBD", "NORTH-STAR-TBD", "STRATEGY-TBD", "DOMAIN-TEMPLATE", "GOAL-TEMPLATE", "FT-TEMPLATE", "UC-TEMPLATE"],
+    "special_files": [],
+    "directories": [],
+    "actions": []
+  },
+  "existing-product": {
+    "artifact_ids": ["PRODUCT-BASELINE-TBD", "STRATEGY-TBD", "DOMAIN-TEMPLATE", "GOAL-TEMPLATE", "FT-TEMPLATE", "UC-TEMPLATE"],
+    "special_files": ["foundation/product-baseline.md"],
+    "directories": [],
+    "actions": []
+  },
+  "existing-documents": {
+    "artifact_ids": ["PROBLEM-TBD", "VISION-TBD", "PRINCIPLES-TBD", "NORTH-STAR-TBD", "STRATEGY-TBD", "DOMAIN-TEMPLATE", "GOAL-TEMPLATE", "FT-TEMPLATE", "UC-TEMPLATE"],
+    "special_files": [],
+    "directories": ["knowledge/imports/runs", "knowledge/imports/sources"],
+    "actions": ["create-import-run"]
+  },
+  "existing-feature": {
+    "artifact_ids": ["FEATURE-BRIEF-TBD", "DOMAIN-TEMPLATE", "GOAL-TEMPLATE", "FT-TEMPLATE", "UC-TEMPLATE"],
+    "special_files": ["foundation/feature-brief.md"],
+    "directories": [],
+    "actions": []
+  },
+  "existing-implementation": {
+    "artifact_ids": ["IMPL-ASSESS-TBD", "PROBLEM-TBD", "VISION-TBD", "PRINCIPLES-TBD", "NORTH-STAR-TBD", "STRATEGY-TBD", "DOMAIN-TEMPLATE", "GOAL-TEMPLATE", "FT-TEMPLATE", "UC-TEMPLATE"],
+    "special_files": ["knowledge/assessments/implementation-assessment.md"],
+    "directories": [],
+    "actions": []
+  },
+  "audit-only": {
+    "artifact_ids": ["PROBLEM-TBD", "VISION-TBD", "PRINCIPLES-TBD", "NORTH-STAR-TBD", "STRATEGY-TBD", "DOMAIN-TEMPLATE", "GOAL-TEMPLATE", "FT-TEMPLATE", "UC-TEMPLATE"],
+    "special_files": [],
+    "directories": [],
+    "actions": []
+  }
+}

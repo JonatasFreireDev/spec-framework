@@ -19,16 +19,16 @@ One command installs the CLI (checksum-verified) and opens the interactive `init
 **Windows (PowerShell)**
 
 ```powershell
-irm https://raw.githubusercontent.com/JonatasFreireDev/spec-framework/master/scripts/init.ps1 | iex
+irm https://raw.githubusercontent.com/JonatasFreireDev/spec-framework/master/scripts/install.ps1 | iex
 ```
 
 **Linux / macOS**
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/JonatasFreireDev/spec-framework/master/scripts/init.sh | sh
+curl -fsSL https://raw.githubusercontent.com/JonatasFreireDev/spec-framework/master/scripts/install.sh | sh
 ```
 
-The initialized repository receives **only `product/`** — the method (skills, templates, validators) lives in a versioned user cache, pinned by `product/.product/framework.json`. No `.spec-framework/`, no generated skill trees, no CI files polluting your repo.
+Installation only installs the CLI; run `spec-framework init` explicitly when you want to initialize a product. The initialized repository receives **only `product/`** — the method (skills, templates, validators) lives in a versioned user cache, pinned by `product/.product/framework.json`. No `.spec-framework/`, no generated skill trees, no CI files polluting your repo.
 
 Already have the CLI? Then:
 
@@ -77,7 +77,7 @@ The [Framework Guide skill](framework/skills/framework-guide/SKILL.md) is the de
 | Governed execution | `resume`, `lease claim`, `schedule`, `commands plan` |
 | Visual adapters (optional) | `adapters list/status/doctor/install` — version-pinned, preview first |
 | Inspect decisions | `impact`, `decisions migrate` |
-| Keep healthy | `validate`, `upgrade`, `migrate external-runtime`, `skill path <skill>` |
+| Keep healthy | `validate`, `update`, `upgrade`, `migrate external-runtime`, `skill path <skill>` |
 
 The CLI uses Cobra for its command tree and generated help. It deliberately does not load ambient user configuration: product manifests and explicit flags remain the source of truth.
 

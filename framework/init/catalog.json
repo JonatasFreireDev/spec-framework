@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "sets": {
+    "product-core": [
+      { "source": "starter/product/.product", "target": ".product" },
+      { "source": "starter/product/context.md", "target": "context.md" },
+      { "source": "starter/product/README.md", "target": "README.md" },
+      { "source": "starter/product/foundation/README.md", "target": "foundation/README.md" }
+    ],
+    "foundation-full": [
+      { "source": "starter/product/foundation/problem", "target": "foundation/problem" },
+      { "source": "starter/product/foundation/vision", "target": "foundation/vision" },
+      { "source": "starter/product/foundation/strategy", "target": "foundation/strategy" }
+    ],
+    "knowledge": [
+      { "source": "starter/product/knowledge", "target": "knowledge" }
+    ],
+    "delivery-scaffold": [
+      { "source": "starter/product/domains", "target": "domains" },
+      { "source": "starter/product/design", "target": "design" },
+      { "source": "starter/product/engineering", "target": "engineering" }
+    ],
+    "governance": [
+      { "source": "starter/product/audits", "target": "audits" },
+      { "source": "starter/product/releases", "target": "releases" }
+    ]
+  }
+}

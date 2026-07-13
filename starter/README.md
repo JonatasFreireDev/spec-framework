@@ -4,7 +4,7 @@
 
 This folder is the clean skeleton for a new product repository using Specification Driven Development.
 
-The CLI copies `starter/product/` into a new or existing product repository. The adopter repository receives:
+The CLI composes product-owned assets from `starter/product/` according to the selected versioned contract under `framework/init/contracts/`. The adopter repository receives:
 
 ```text
 product/

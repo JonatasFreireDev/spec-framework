@@ -6,6 +6,12 @@ Create a new Specification Driven Development product repository that adds only 
 
 ## Recommended Path
 
+Install the released CLI first; installation does not initialize a product:
+
+```bash
+spec-framework version
+```
+
 Automated bootstrap:
 
 ```bash
@@ -18,7 +24,9 @@ CLI-style bootstrap from the framework repository:
 spec-framework init ../my-product --agents codex,cursor,claude --yes
 ```
 
-The wizard also asks for the starting point. All skills remain installed; the choice changes the generated bootstrap, active registry, and entry gate.
+The wizard also asks for the starting point. All skills remain installed; the choice selects a versioned initialization contract that composes the product tree and changes the generated bootstrap, active registry, and entry gate. Contracts are framework-owned data and can select only validated assets and typed CLI actions; they are not adopter-executable configuration.
+
+Initialization plans the complete tree, explicit empty directories, and artifact registry in memory, rejects file/directory collisions and invalid relationships, and publishes a staged `product/` atomically. A failure leaves no partial product tree, and an existing `product/` is never overwritten by `init` or `--force`.
 
 | Starting point | Adopted path |
 | --- | --- |

@@ -55,7 +55,8 @@ Intent summary; discovered state; recommended command or specialist; mutation pr
 
 | Human intent | First route |
 | --- | --- |
-| Install and start without an existing CLI | Download and inspect `scripts/init.ps1` or `scripts/init.sh`, then run the chosen bootstrap; piping a remote script remains an explicit user choice |
+| Install without an existing CLI | Download and inspect `scripts/install.ps1` or `scripts/install.sh`, then run the chosen bootstrap; installation does not initialize a product, and piping a remote script remains an explicit user choice |
+| Update or remove the installed CLI | Use `spec-framework update [--check | --version <version>]` or preview `spec-framework uninstall [--purge]`; mutations require `--yes` and never remove product repositories |
 | Start a product interactively | `spec-framework init <repository-path>` |
 | Start a product headlessly | `spec-framework init <repository-path> --agents <agents> --yes` |
 | Bring existing documents | `init --starting-point existing-documents`, review the latest run, then `import materialize`; resulting artifacts remain draft |

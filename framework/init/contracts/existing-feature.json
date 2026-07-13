@@ -1,0 +1,48 @@
+{
+  "schema_version": 1,
+  "id": "existing-feature",
+  "asset_sets": ["product-core", "foundation-full", "knowledge", "delivery-scaffold", "governance"],
+  "directories": [],
+  "files": [
+    {
+      "source": "framework/template/feature-brief-template.md",
+      "target": "foundation/feature-brief.md",
+      "replacements": {
+        "# Feature Brief: [feature name]": "# Feature Brief",
+        "[FBR-XXX]": "FEATURE-BRIEF-TBD",
+        "[draft | proposed | approved]": "draft",
+        "[FT-XXX or product-relative feature path]": "FT-TEMPLATE"
+      }
+    }
+  ],
+  "patches": [
+    {
+      "target": "context.md",
+      "find": "Do not create domains or features until `foundation/problem/problem.md`, `foundation/vision/vision.md`, and `foundation/strategy/strategy.md` contain product-specific content.",
+      "replace": "For `existing-feature`, complete and approve `foundation/feature-brief.md` before creating a workspace. Escalate to full Foundation when the work requires product-wide direction."
+    },
+    {
+      "target": "foundation/README.md",
+      "find": "Fill `problem/problem.md`, then `vision/vision.md`, then `strategy/strategy.md`.",
+      "replace": "For `existing-feature`, complete and individually approve `feature-brief.md`. Use the full Problem -> Vision -> Strategy path only when the scope is broad or uncertain."
+    }
+  ],
+  "registry": {
+    "exclude_types": ["problem", "vision", "product-principles", "north-star", "strategy"],
+    "prepend_artifacts": [
+      {
+        "id": "FEATURE-BRIEF-TBD",
+        "type": "feature-brief",
+        "status": "draft",
+        "path": "foundation/feature-brief.md",
+        "parentIds": [],
+        "targetFeature": "FT-TEMPLATE"
+      }
+    ],
+    "append_parents_by_type": {
+      "feature": ["FEATURE-BRIEF-TBD"]
+    }
+  },
+  "bootstrap_profile": "existing-feature",
+  "actions": []
+}

@@ -455,7 +455,7 @@ func (app App) runInit(args []string, stdout, stderr io.Writer) int {
 	startingPoint := flags.String("starting-point", "new-product", "new-product, existing-product, existing-documents, existing-feature, existing-implementation, or audit-only")
 	sourcesValue := flags.String("sources", "", "comma-separated source files or directories for existing-documents")
 	sourceDir := flags.String("source-dir", "", "source directory for existing-documents")
-	force := flags.Bool("force", false, "allow non-empty target")
+	force := flags.Bool("force", false, "compatibility flag; never overwrites an existing product directory")
 	installImpeccable := flags.Bool("install-impeccable", false, "install the optional Impeccable adapter after init")
 	impeccableVersion := flags.String("impeccable-version", "", "explicit Impeccable CLI version")
 	yes := flags.Bool("yes", false, "run headlessly")
