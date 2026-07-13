@@ -14,7 +14,7 @@ Every artifact carries an id, parents, dependencies, and an approval state. Agen
 
 ## Quick Start
 
-One command installs the CLI (checksum-verified) and opens the interactive `init` wizard:
+Install the checksum-verified CLI for your operating system. Installation does not create or modify a product repository.
 
 **Windows (PowerShell)**
 
@@ -28,28 +28,46 @@ irm https://raw.githubusercontent.com/JonatasFreireDev/spec-framework/master/scr
 curl -fsSL https://raw.githubusercontent.com/JonatasFreireDev/spec-framework/master/scripts/install.sh | sh
 ```
 
-Installation only installs the CLI; run `spec-framework init` explicitly when you want to initialize a product. The initialized repository receives **only `product/`** — the method (skills, templates, validators) lives in a versioned user cache, pinned by `product/.product/framework.json`. No `.spec-framework/`, no generated skill trees, no CI files polluting your repo.
-
-Already have the CLI? Then:
+When you are ready to prepare a product, run:
 
 ```bash
-spec-framework init ../my-product --agents codex --yes   # new product
-spec-framework init ../my-product --agents codex \
-  --starting-point existing-documents --source-dir ../product-docs --yes   # import PRDs/epics
+spec-framework init ../my-product
 ```
 
-The starting point selects the active entry contract and gate:
+The interactive wizard asks what already exists and selects the appropriate starting point. The initialized repository receives **only `product/`** — the method (skills, templates, validators) lives in a versioned user cache, pinned by `product/.product/framework.json`. No `.spec-framework/`, generated skill trees, or CI files are added to the adopter repository.
 
-| Starting point | Entry contract | Gate before `work` |
+For automation, the same choices are available through explicit flags. Run `spec-framework init --help` for the current options.
+
+### Choose the right starting point
+
+A starting point describes the evidence available today and the first contract that must be reviewed. It does not represent the application's technical entrypoint, approve existing material, or remove later gates.
+
+Each choice resolves a versioned declarative contract that selects the required directories, files, registry entries, deterministic patches, and typed actions:
+
+| Starting point | Use when | First path |
 | --- | --- | --- |
-| `new-product` | Problem → Vision → Principles/North Star → Strategy | Full Foundation approved |
-| `existing-product` | Product Baseline → Strategy | Both individually approved |
-| `existing-documents` | Latest import run | Selected mappings materially complete; outputs remain draft |
-| `existing-feature` | Feature Brief with one `Target Feature` | Current approval matching the selected feature |
-| `existing-implementation` | Implementation Assessment → full Foundation | Assessment and Foundation approved |
-| `audit-only` | Read-only inspection | Mutations and workspace creation blocked |
+| `new-product` | There is an idea or opportunity, but the product still needs definition | Problem → Vision → Principles/North Star → Strategy |
+| `existing-product` | A real product is operating with users, releases, metrics, or support evidence | Product Baseline → Strategy |
+| `existing-implementation` | Code exists, but its product intent or operating history is unclear | Implementation Assessment → full Foundation |
+| `existing-documents` | PRDs, Jira, Confluence, wikis, or other documents are the main source | Inventory → mapping → conflict review → draft materialization |
+| `existing-feature` | One small, well-bounded delivery is already understood | Feature Brief → target Feature |
+| `audit-only` | The goal is to identify gaps without changing product state | Inspect → validate → report gaps |
 
-Read the generated `product/BOOTSTRAP.md`; it names the current gate and exact next command. Every starting point that creates or revises domains uses the installed `examples/events/` reference before its first domain change to model a business area with explicit ownership, non-ownership, dependencies, and one Domain -> User Goal -> Feature -> Use Case walking skeleton; `audit-only` uses it for assessment only. The complete ladder above is the default `new-product` path, while proportional starting points rejoin it at their governed handoff.
+Read the generated `product/BOOTSTRAP.md`; it names the current gate and next action. See the [starting-point guide](docs/starting-points.md) for examples, comparisons, and selection guidance.
+
+### Manage the CLI
+
+CLI lifecycle and product lifecycle are separate:
+
+```bash
+spec-framework update --check        # check for a CLI release
+spec-framework update --yes          # update the CLI binary
+spec-framework upgrade --yes         # update this product's pinned runtime
+spec-framework uninstall             # preview local CLI removal
+spec-framework uninstall --purge --yes
+```
+
+`uninstall` never searches for or removes product repositories. `--purge` additionally removes only the versioned runtime cache and namespaced Spec Framework dispatchers.
 
 ## How It Works
 
@@ -78,6 +96,7 @@ The [Framework Guide skill](framework/skills/framework-guide/SKILL.md) is the de
 | Visual adapters (optional) | `adapters list/status/doctor/install` — version-pinned, preview first |
 | Inspect decisions | `impact`, `decisions migrate` |
 | Keep healthy | `validate`, `update`, `upgrade`, `migrate external-runtime`, `skill path <skill>` |
+| Manage the local CLI | `update --check`, `update --yes`, `uninstall`, `uninstall --purge --yes` |
 
 The CLI uses Cobra for its command tree and generated help. It deliberately does not load ambient user configuration: product manifests and explicit flags remain the source of truth.
 
@@ -90,7 +109,7 @@ All mutations preview before executing; approval commands require an explicit hu
 | [FRAMEWORK.md](FRAMEWORK.md) | Canonical method and architecture. |
 | [framework/](framework/) | Executable framework core: skills, templates, validators, FDRs. |
 | [framework/skills/](framework/skills/) | 50 specialist and orchestrator skill contracts. |
-| [starter/](starter/) | Clean `product/` skeleton copied into new repositories. |
+| [starter/](starter/) | Canonical source assets selected by declarative initialization contracts. |
 | [examples/events/](examples/events/) | Worked product instance used as learning material and validation fixture. |
 | [docs/](docs/) | Published visual guide (GitHub Pages). |
 | [cmd/](cmd/) · [internal/](internal/) | The Go CLI. |
