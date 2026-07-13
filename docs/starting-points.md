@@ -63,6 +63,32 @@ Use esta sequência de perguntas:
 
 Quando mais de uma situação parecer aplicável, escolha a fonte de evidência mais confiável para o primeiro gate. Por exemplo, um repositório pode ter código e documentos, mas, se o produto está comprovadamente em operação, `existing-product` representa melhor o estado inicial do que `existing-implementation`.
 
+### Árvore de decisão simples
+
+```mermaid
+flowchart TD
+    A["O que existe hoje?"] --> B{"Existe um produto real operando?"}
+    B -- "Sim" --> EP["existing-product"]
+    B -- "Não" --> C{"Existe principalmente código?"}
+    C -- "Sim" --> EI["existing-implementation"]
+    C -- "Não" --> D{"Existem documentos para importar?"}
+    D -- "Sim" --> ED["existing-documents"]
+    D -- "Não" --> E{"Existe uma feature pequena e delimitada?"}
+    E -- "Sim" --> EF["existing-feature"]
+    E -- "Não" --> F{"A intenção é somente inspecionar?"}
+    F -- "Sim" --> AO["audit-only"]
+    F -- "Não" --> NP["new-product"]
+```
+
+Leitura resumida:
+
+- produto comprovadamente em operação: `existing-product`;
+- apenas uma implementação ou base de código: `existing-implementation`;
+- documentação como principal fonte inicial: `existing-documents`;
+- uma única entrega proporcional e delimitada: `existing-feature`;
+- inspeção sem alterações: `audit-only`;
+- nenhuma das situações anteriores: `new-product`.
+
 ## `new-product`
 
 ### Quando usar
@@ -372,4 +398,3 @@ Em uma frase:
 | `existing-documents` | Como transformar documentos existentes em drafts rastreáveis? |
 | `existing-feature` | Como entregar esta feature delimitada sem modelar o produto inteiro? |
 | `audit-only` | Quais gaps existem sem alterar nada? |
-
