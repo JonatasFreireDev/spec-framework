@@ -1118,7 +1118,7 @@ footer{
     <div class="page-toc">
       <a href="#comecar-instalar">Instalar a CLI</a>
       <a href="#comecar-ponto">Ponto de partida</a>
-      <a href="#comecar-upgrade">Gerenciar a instalação</a>
+      <a href="#comecar-bootstrap">Ler o Bootstrap</a>
     </div>
 
     <div class="cat-block">
@@ -1173,20 +1173,14 @@ footer{
     </div>
 
     <div class="cat-block" style="margin-top:48px;">
-      <h3 class="block-title" id="comecar-upgrade">3. Gerencie sua instalação</h3>
-      <p class="lead" style="margin-bottom:20px;">CLI e produto são atualizados separadamente. Escolha somente a ação que você precisa.</p>
-      <div class="cli-grid">
-        <div class="cli-block"><p class="caption">Verificar se existe uma nova versão do CLI</p><div class="cli-scroll"><pre class="cli"><span class="cmd">spec-framework update</span> --check</pre></div></div>
-        <div class="cli-block"><p class="caption">Atualizar o CLI</p><div class="cli-scroll"><pre class="cli"><span class="cmd">spec-framework update</span> --yes</pre></div></div>
-        <div class="cli-block"><p class="caption">Atualizar o framework usado por este produto</p><div class="cli-scroll"><pre class="cli"><span class="cmd">spec-framework upgrade</span> --yes</pre></div></div>
-        <div class="cli-block"><p class="caption">Ver o que seria removido</p><div class="cli-scroll"><pre class="cli"><span class="cmd">spec-framework uninstall</span></pre></div></div>
-        <div class="cli-block"><p class="caption">Remover CLI, cache e dispatchers gerenciados</p><div class="cli-scroll"><pre class="cli"><span class="cmd">spec-framework uninstall</span> --purge --yes</pre></div></div>
-        <div class="cli-block"><p class="caption">Inspecionar a migração de um runtime antigo</p><div class="cli-scroll"><pre class="cli"><span class="cmd">spec-framework migrate external-runtime</span> --dry-run</pre></div></div>
-        <div class="cli-block"><p class="caption">Inspecionar a migração de decisões antigas</p><div class="cli-scroll"><pre class="cli"><span class="cmd">spec-framework decisions migrate</span> --product-root product --dry-run</pre></div></div>
+      <h3 class="block-title" id="comecar-bootstrap">3. Leia o Bootstrap e peça ajuda ao agente</h3>
+      <p class="lead" style="margin-bottom:20px;">Depois do <code>init</code>, o arquivo <code>product/BOOTSTRAP.md</code> explica o caminho escolhido para o seu produto. Leia esse arquivo antes de preencher documentos ou executar outros comandos.</p>
+      <div class="starting-point-meta">
+        <div><b>O Bootstrap mostra</b>o que o seu ponto de partida significa, qual é o próximo passo, quais arquivos o agente deve ler e qual gate depende da sua decisão.</div>
+        <div><b>Peça ao agente</b>“Leia <code>product/BOOTSTRAP.md</code> e me conduza pelo próximo passo. Faça as perguntas necessárias, leia os arquivos indicados e proponha o conteúdo antes de escrever.”</div>
+        <div><b>Regra simples</b>o agente ajuda a entender e preencher drafts; aprovações e materializações continuam dependendo de uma confirmação humana explícita.</div>
       </div>
-      <p class="note">
-        Perdido em qualquer etapa? Pergunte ao <a href="#guia" data-page="guia">Framework Guide</a> — ele lê o estado mecânico real do repositório antes de recomendar o próximo comando.
-      </p>
+      <p class="note">Se você não souber qual é o próximo passo, pergunte ao <a href="#guia" data-page="guia">Framework Guide</a> depois de ler o Bootstrap. Ele consulta o estado real do repositório antes de orientar.</p>
     </div>
   </section>
 
@@ -2004,7 +1998,21 @@ footer{
     <div class="cli-grid">
 
       <div class="cli-block">
-        <p class="caption">1 · criar um produto novo a partir do starter</p>
+        <p class="caption">1 · gerenciar a instalação e o runtime</p>
+        <div class="cli-scroll"><pre class="cli"><span class="c"># verificar e atualizar o CLI</span>
+<span class="cmd">spec-framework update</span> --check
+<span class="cmd">spec-framework update</span> --yes
+<span class="c"># atualizar o framework usado por este produto</span>
+<span class="cmd">spec-framework upgrade</span> --yes
+<span class="c"># inspecionar remoção e migrações antes de executar</span>
+<span class="cmd">spec-framework uninstall</span>
+<span class="cmd">spec-framework uninstall</span> --purge --yes
+<span class="cmd">spec-framework migrate external-runtime</span> --dry-run
+<span class="cmd">spec-framework decisions migrate</span> --product-root product --dry-run</pre></div>
+      </div>
+
+      <div class="cli-block">
+        <p class="caption">2 · criar um produto novo a partir do starter</p>
         <div class="cli-scroll"><pre class="cli"><span class="c"># adiciona apenas product/ ao repositório; o método fica no cache versionado do usuário</span>
 <span class="cmd">spec-framework init</span> ../meu-produto --agents codex --yes
 <span class="c"># a instalação do CLI é separada e não abre o wizard</span>
@@ -2012,41 +2020,41 @@ footer{
       </div>
 
       <div class="cli-block">
-        <p class="caption">2 · navegar até uma feature e avançar sem "feature ativa global"</p>
+        <p class="caption">3 · navegar até uma feature e avançar sem "feature ativa global"</p>
         <div class="cli-scroll"><pre class="cli"><span class="cmd">spec-framework work</span> --feature FT-001 --domain events --goal manage-event --created-by "Product Owner"
 <span class="cmd">spec-framework status</span> --work WORK-001
 <span class="cmd">spec-framework next</span> --work WORK-001</pre></div>
       </div>
 
       <div class="cli-block">
-        <p class="caption">3 · aprovar um artefato explicitamente</p>
+        <p class="caption">4 · aprovar um artefato explicitamente</p>
         <div class="cli-scroll"><pre class="cli"><span class="cmd">spec-framework approve</span> --artifact domains/events/context.md --grant approved --approved-by "Product Owner" --yes
 <span class="cmd">spec-framework gates</span></pre></div>
       </div>
 
       <div class="cli-block">
-        <p class="caption">4 · operar o grafo de execução e checar prontidão de uma tarefa</p>
+        <p class="caption">5 · operar o grafo de execução e checar prontidão de uma tarefa</p>
         <div class="cli-scroll"><pre class="cli"><span class="cmd">spec-framework graph ready</span> --graph domains/events/.../execution-graph.json
 <span class="cmd">spec-framework graph materialize</span> --graph domains/events/.../execution-graph.json --yes
 <span class="cmd">spec-framework task readiness</span> --graph domains/events/.../execution-graph.json --task TK-001</pre></div>
       </div>
 
       <div class="cli-block">
-        <p class="caption">5 · resumir, arrendar e agendar execução governada</p>
+        <p class="caption">6 · resumir, arrendar e agendar execução governada</p>
         <div class="cli-scroll"><pre class="cli"><span class="cmd">spec-framework resume</span> --work WORK-001
 <span class="cmd">spec-framework lease claim</span> --work WORK-001 --graph domains/events/.../execution-graph.json --task TK-001 --agent codex --isolate
 <span class="cmd">spec-framework schedule</span> --work WORK-001 --graph domains/events/.../execution-graph.json --max-parallel 4</pre></div>
       </div>
 
       <div class="cli-block">
-        <p class="caption">6 · revisar um estágio e medir o impacto de uma decisão</p>
+        <p class="caption">7 · revisar um estágio e medir o impacto de uma decisão</p>
         <div class="cli-scroll"><pre class="cli"><span class="cmd">spec-framework review</span> --work WORK-001 --stage tasks
 <span class="cmd">spec-framework approve-stage</span> --work WORK-001 --stage tasks --approved-by "Product Owner" --yes
 <span class="cmd">spec-framework impact</span> --decision DEC-021</pre></div>
       </div>
 
       <div class="cli-block">
-        <p class="caption">7 · gerar, importar ou adotar Design; validar o Design System compartilhado</p>
+        <p class="caption">8 · gerar, importar ou adotar Design; validar o Design System compartilhado</p>
         <div class="cli-scroll"><pre class="cli"><span class="cmd">spec-framework design init</span> --product-root product --use-case &lt;path&gt; --mode generate
 <span class="cmd">spec-framework design register</span> --product-root product --use-case &lt;path&gt; --type figma --source &lt;url&gt; --version &lt;version&gt; --authority visual-canonical
 <span class="cmd">spec-framework design map</span> --product-root product --use-case &lt;path&gt; --mappings mapping.json
@@ -2057,7 +2065,7 @@ footer{
       </div>
 
       <div class="cli-block">
-        <p class="caption">8 · descobrir, diagnosticar e instalar adapters visuais opcionais</p>
+        <p class="caption">9 · descobrir, diagnosticar e instalar adapters visuais opcionais</p>
         <div class="cli-scroll"><pre class="cli"><span class="cmd">spec-framework adapters list</span>
 <span class="cmd">spec-framework adapters status</span> impeccable
 <span class="cmd">spec-framework adapters doctor</span> impeccable --check-latest
@@ -2067,20 +2075,20 @@ footer{
       </div>
 
       <div class="cli-block">
-        <p class="caption">9 · ver o estado consolidado do trabalho e migrar decisões antigas</p>
+        <p class="caption">10 · ver o estado consolidado do trabalho e migrar decisões antigas</p>
         <div class="cli-scroll"><pre class="cli"><span class="cmd">spec-framework dashboard</span> --work WORK-001
 <span class="cmd">spec-framework status</span> --work WORK-001 --graph --json
 <span class="cmd">spec-framework decisions migrate</span> --product-root product --interactive</pre></div>
       </div>
 
       <div class="cli-block">
-        <p class="caption">10 · planejar comandos governados por risco (R0/R1) e validar</p>
+        <p class="caption">11 · planejar comandos governados por risco (R0/R1) e validar</p>
         <div class="cli-scroll"><pre class="cli"><span class="cmd">spec-framework commands plan</span> --work WORK-001 --task TK-001 --risk R0 -- go test ./...
 <span class="cmd">spec-framework validate</span></pre></div>
       </div>
 
       <div class="cli-block">
-        <p class="caption">11 · bootstrap a partir de documentos existentes (epics, PRDs)</p>
+        <p class="caption">12 · bootstrap a partir de documentos existentes (epics, PRDs)</p>
         <div class="cli-scroll"><pre class="cli"><span class="c"># cria um inventário e um run de importação, só análise</span>
 <span class="cmd">spec-framework init</span> ../meu-produto --agents codex --starting-point existing-documents --source-dir ../product-docs --yes
 <span class="c"># materializa artefatos de rascunho após aprovação humana explícita</span>
@@ -2088,7 +2096,7 @@ footer{
       </div>
 
       <div class="cli-block">
-        <p class="caption">12 · atualizar o runtime externo e migrar repositórios legados</p>
+        <p class="caption">13 · atualizar o runtime externo e migrar repositórios legados</p>
         <div class="cli-scroll"><pre class="cli"><span class="c"># atualiza o cache versionado e o manifest pinado, preservando product/</span>
 <span class="cmd">spec-framework upgrade</span> --yes
 <span class="c"># repositório antigo com .spec-framework/ local: preview antes de migrar</span>
