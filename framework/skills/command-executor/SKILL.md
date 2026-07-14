@@ -24,6 +24,7 @@ Approved non-stale command plan; active lease; isolated worktree; policy.
 Command evidence JSON; stdout/stderr digest or safe log reference; result; routed failure.
 
 ## Required reading
+- [`execution-runtime.md`](../../docs/execution-runtime.md) for command execution limits, stale inputs, and scope controls.
 - the framework root's `FRAMEWORK.md`
 - Relevant parent context.md files.
 - Relevant templates in framework/template/.

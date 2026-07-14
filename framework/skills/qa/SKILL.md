@@ -28,6 +28,7 @@ Specification; pinned Engineering Quality System when configured; delivery `test
 QA verdict; test evidence; blocking findings; residual risks; required fixes.
 
 ## Required reading
+- [`engineering-systems.md`](../../docs/engineering-systems.md) and [`lifecycle-and-approvals.md`](../../docs/lifecycle-and-approvals.md).
 - the framework root's `FRAMEWORK.md`
 - Relevant parent context.md files.
 - the active product root's `knowledge/conventions/gates.md`.

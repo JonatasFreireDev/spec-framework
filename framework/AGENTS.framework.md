@@ -6,6 +6,10 @@ This file describes how agents should use the installed Spec Framework assets in
 
 The framework teaches the process. Product artifacts remain owned by the adopter product.
 
+## Activation Boundary
+
+Activate these instructions only when the current repository contains a valid `product/.product/framework.json` that identifies `framework: spec-framework`, pins a concrete version, and declares `activation.mode: manifest-only`. If the manifest is absent or invalid, do not load specialized framework contracts or change product files; only explain the state or perform an explicitly requested bootstrap or `init` route.
+
 ## Repository Boundary
 
 Use these roots:
@@ -25,10 +29,10 @@ Operational boundaries:
 
 - Use `.product/workspaces/WORK-NNN/` for concurrent focus; never invent a global active feature.
 - Resume from `state.json`, the latest checkpoint, and the latest handoff. Legacy `WORK-NNN.json` is read-only until explicit migration.
-- Before implementation, require the rigor-appropriate Specification contracts, approved Design or structured `not_applicable`, Technical Discovery, resolved Architecture Gate, applicable Engineering Proposal and current passed Engineering Review, configured gates, Graph, Tasks, and an active lease when used.
-- Record working-tree evidence and diff hash at `implemented`. Commit only after Code Review and task QA approve that same hash; require Integrated QA after task integration.
+- Follow the detailed implementation prerequisites, evidence, status, and approval gates in `FRAMEWORK.md` and the owning skills; this file defines only their cross-agent boundaries.
+- Do not write outside the current skill's declared scope. Record working-tree evidence, diff hashes, commits, and integrated QA only when the applicable delivery contract requires them.
 
-When the product declares `product/design/system/`, use the Design System skill for shared foundations, tokens, components, patterns, versions, and sources. UX/UI owns use-case Design and must pin the approved Design System version before proposed-or-later use. External visual tools are optional adapters; their installation, output, and availability never grant product approval or replace framework contracts.
+When the product declares `product/design/system/`, route shared foundations, tokens, components, patterns, versions, and sources to the Design System skill. Detailed Design System and UX/UI gates remain in `FRAMEWORK.md` and their owning skills. External visual tools are optional adapters; their installation, output, and availability never grant product approval or replace framework contracts.
 
 ## Required Reading
 
@@ -38,7 +42,20 @@ Authority order:
 FRAMEWORK.md → owning skill → matching template → product context and decisions → current CLI evidence
 ```
 
-Later sources specialize earlier ones within their scope but cannot weaken framework gates or human approval requirements.
+`FRAMEWORK.md` defines the method and gates. This file defines cross-agent behavior. The owning skill defines specialized responsibility and write scope. The template defines artifact shape. Product context and approved decisions define product intent. CLI output defines current mechanical state. Later sources specialize earlier sources within their scope but cannot weaken framework gates, human authority, or approval requirements.
+
+## Common Agent Rules
+
+These rules apply to every agent and every skill. Read and apply them before following a specialized `SKILL.md`.
+
+- Inspect the current repository and CLI evidence before asking for facts that can be discovered safely.
+- Ask the human whenever uncertainty could change scope, architecture, compatibility, migration, or a consequential decision. Do not invent requirements, decisions, data, approvals, or evidence.
+- Keep references to existing artifacts, documents, sections, code, and evidence navigable with relative Markdown links or the repository's canonical link format. External references and not-yet-materialized artifacts must declare their type and state. Treat an unlinked or broken repository reference as a gap.
+- After an implementation, review the complete change for blockers, functional, technical, documentation, testing, compatibility, CI, installation, upgrade, and distribution gaps. Fix findings only when the current skill has write authority and the correction is within scope; otherwise route the finding to its owner. Repeat the review after each correction until no known blocker or gap remains.
+- Preserve product scope, history, approval records, delivery evidence, and adopter-owned content. Never repair approval records without an explicitly authorized migration.
+- When a change has variants, optional integrations, endpoints, starting points, or configuration modes, evaluate a modular and configurable design. Define optional modules, activation parameters, dependencies, default behavior, safe plug-in/plug-out behavior, compatibility expectations, and combination tests. For changes without meaningful variation, record that modularity was evaluated and is not applicable. Keep optional capabilities decoupled from the core when practical.
+- Revalidate mechanical state after commands. Do not assume a command, write, test, approval, or migration succeeded without checking its result.
+- For implementations, audits, and configuration changes, report the summary, decisions, validations, blockers and gaps found, corrections applied, pending questions, and residual risks. Explicitly state when no known blockers or gaps remain. If a finding cannot be resolved, report its reason, impact, and recommended action. For explanations and read-only diagnostics, report evidence, current state, risks, and next action without inventing a mutation report.
 
 Before creating or updating framework-governed work:
 
@@ -46,6 +63,8 @@ Before creating or updating framework-governed work:
 2. Read the relevant `product/**/context.md` files.
 3. Read the matching template in the pinned framework root's `templates/` when creating or normalizing an artifact.
 4. Read approved product decisions in `product/knowledge/decisions/` and `product/.product/decisions.json` when relevant.
+
+Before writing, confirm the owning skill, artifact scope, and allowed write scope. Do not edit artifacts owned by another skill without an explicit handoff or route.
 
 ## Active Product Root
 
@@ -69,8 +88,19 @@ spec-framework validate
 
 If a product artifact is `approved` or later and its approval record is missing or inconsistent, report the blocker and stop. Agents must not create, edit, or repair approval records unless a human explicitly approves that migration.
 
+## Stop Conditions
+
+Stop and ask for human direction when any of the following applies:
+
+- a blocking question could change scope, architecture, compatibility, migration, or a consequential decision;
+- an approval is missing, inconsistent, stale, or required for the requested mutation;
+- the requested scope or owning skill is ambiguous or conflicting;
+- a finding requires a decision, approval-record migration, destructive action, remote mutation, or authority outside the current skill;
+- required gate configuration, parent evidence, or source traceability is missing;
+- a command result conflicts with the expected mechanical state.
+
 ## Reports
 
-Save product reports under `product/audits/`.
+Save product reports under `product/audits/` when the operation is authorized to create a product report. `audit-only` and read-only diagnostics must not create reports unless explicitly requested and permitted by their contract.
 
 Keep framework-upgrade or installation diagnostics in the external cache only when they are framework metadata, not product evidence.

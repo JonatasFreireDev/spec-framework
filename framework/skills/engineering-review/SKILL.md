@@ -24,6 +24,7 @@ Approved Specification; Design; approved Technical Discovery; `engineering-propo
 `engineering-review.md`; proposal hash; `passed`, `required_fix`, `blocked`, or `not_reviewed` verdict; routed findings; planning handoff.
 
 ## Required reading
+- [`engineering-systems.md`](../../docs/engineering-systems.md) for shared contract versioning, hashes, and review boundaries.
 - the framework root's `FRAMEWORK.md`
 - Relevant parent context.md files.
 - Relevant templates in framework/template/.

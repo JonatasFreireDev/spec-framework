@@ -22,6 +22,7 @@ Code Review verifies that implementation matches the Specification, tasks, archi
 - `explain`: summarize review findings and routing.
 
 ## Required Reading
+- [`lifecycle-and-approvals.md`](../../docs/lifecycle-and-approvals.md) for diff-hash, authority, and failure-routing boundaries.
 
 - the framework root's `FRAMEWORK.md`.
 - Relevant `context.md`.

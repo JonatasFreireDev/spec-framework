@@ -30,7 +30,7 @@ Resolve framework-guide first unless one of these verified direct routes exists:
 
 A persisted handoff or checkpoint identifies where to resume but is not direct-route evidence by itself. Revalidate it with spec-framework dashboard, status, next, or guide. A skill name, keyword, or remembered chat instruction without concrete scope is only a hint. Resolve framework-guide first. Before following a direct route, validate the manifest, scope, ownership, gate, and staleness against current mechanical state. Return to framework-guide when the route is missing, stale, ambiguous, or conflicting.
 
-Run spec-framework skill path <skill-name> from the repository root to resolve the selected contract. Read the returned versioned SKILL.md completely, then follow it. The CLI resolves the version pinned by the product manifest from the external user cache. Direct diagnostic CLI commands remain available; dispatch never grants approval or mutation authority.
+Before resolving a specialized skill, read the runtime's AGENTS.framework.md common agent rules. Then run spec-framework skill path <skill-name> from the repository root to resolve the selected contract. Read the returned versioned SKILL.md completely, then follow it. The CLI resolves the version pinned by the product manifest from the external user cache. Direct diagnostic CLI commands remain available; dispatch never grants approval or mutation authority.
 
 ## Native questions
 

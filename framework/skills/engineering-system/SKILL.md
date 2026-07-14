@@ -25,6 +25,7 @@ Product context; real code and test tree; deployment and operations configuratio
 `engineering/engineering-system.md`; `engineering/engineering-system.yaml`; architecture, standards, quality, runbook, and evidence links; decision candidates; version and compatibility notes.
 
 ## Required reading
+- [`engineering-systems.md`](../../docs/engineering-systems.md) for shared Engineering System and Quality System versioning, migration, and approval boundaries.
 - the framework root's `FRAMEWORK.md`
 - Relevant parent context.md files.
 - Relevant templates in framework/template/.

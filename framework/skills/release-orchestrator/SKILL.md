@@ -12,6 +12,7 @@ Verify readiness before a release or merge milestone.
 Orchestrator. Controls workflow, gates, handoffs, and approval checkpoints. It should not invent canonical product content when a specialist skill owns that content.
 
 ## Required reading
+- [`lifecycle-and-approvals.md`](../../docs/lifecycle-and-approvals.md) for lifecycle, residual-risk, and release gates.
 - the framework root's `FRAMEWORK.md`
 - Relevant context.md files for the requested scope.
 - the active product root's `.product/state.json`, `.product/roadmap.json`, and `.product/decisions.json` when present.

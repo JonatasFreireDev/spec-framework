@@ -56,6 +56,8 @@ Framework specialist and orchestrator skills live under `framework/skills/`. Whe
 
 After every implementation, review the complete change set for blockers, functional, technical, and documentation gaps, inconsistencies with repository patterns, missing or insufficient tests, and compatibility impacts across CI, installation, upgrade, and distribution. Fix findings that are within the implementation scope, then repeat the review after each correction until no known blocker or gap remains.
 
+The cross-agent rule candidates and their proposed runtime boundaries are mapped in [`docs/cross-agent-rules-map.md`](docs/cross-agent-rules-map.md).
+
 When planning an implementation, prefer modular and configurable designs. Evaluate whether the behavior can be split into plug-in or plug-out modules controlled by explicit parameters or configuration, as with optional endpoint capabilities. For each modular design, document the modules, activation parameters, dependencies, default behavior, safe addition and removal of modules, and the relevant combination tests. Keep optional capabilities decoupled from the core when practical and preserve existing flows by default.
 
 Ask the human whenever an uncertainty could change the solution, scope, architecture, compatibility, or migration. Do not invent requirements, data, approvals, or decisions. Do not stop at reporting a correctable gap.

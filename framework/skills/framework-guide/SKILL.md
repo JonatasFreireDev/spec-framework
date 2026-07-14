@@ -24,6 +24,8 @@ Human goal; current working directory; canonical `product/.product/framework.jso
 Intent summary; discovered state; recommended command or specialist; mutation preview; gate explanation; result summary; next safe action; explicit blocker when human authority is required.
 
 ## Required reading
+- The pinned runtime contracts: [`execution-runtime.md`](../../docs/execution-runtime.md), [`engineering-systems.md`](../../docs/engineering-systems.md), and [`lifecycle-and-approvals.md`](../../docs/lifecycle-and-approvals.md).
+- The pinned runtime's `AGENTS.framework.md` common agent rules.
 - the framework root's `FRAMEWORK.md`
 - The active product root's `BOOTSTRAP.md` when it exists.
 - Relevant parent and local `context.md` files after the scope is known.

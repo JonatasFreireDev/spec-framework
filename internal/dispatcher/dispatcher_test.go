@@ -24,7 +24,7 @@ func TestInstallMapsNativeQuestionToolPerHarness(t *testing.T) {
 			t.Fatalf("%s path=%s want=%s", test.agent, path, wantPath)
 		}
 		data, err := os.ReadFile(path)
-		if err != nil || !strings.Contains(string(data), test.tool) || !strings.Contains(string(data), "native_user_question") {
+		if err != nil || !strings.Contains(string(data), test.tool) || !strings.Contains(string(data), "native_user_question") || !strings.Contains(string(data), "AGENTS.framework.md") {
 			t.Fatalf("%s dispatcher mapping missing: %v %s", test.agent, err, data)
 		}
 	}

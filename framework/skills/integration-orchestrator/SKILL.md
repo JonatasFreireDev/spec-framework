@@ -24,6 +24,7 @@ Workspace; DAG; validated task commits; task QA; integration base; rollback poin
 INTEGRATION-NNN.json; ordered cherry-pick plan; integrated diff hash; conflict report; Integrated QA handoff.
 
 ## Required reading
+- [`execution-runtime.md`](../../docs/execution-runtime.md) and [`lifecycle-and-approvals.md`](../../docs/lifecycle-and-approvals.md).
 - the framework root's `FRAMEWORK.md`
 - Relevant parent context.md files.
 - Relevant templates in framework/template/.

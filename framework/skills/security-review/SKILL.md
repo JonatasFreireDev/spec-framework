@@ -26,6 +26,7 @@ Specification; design; implementation plan; execution graph; tasks; tests; QA ev
 Security verdict; threat model summary; control checklist; blocking findings; residual risks; required fixes; approval or release-blocking recommendation.
 
 ## Required Reading
+- [`lifecycle-and-approvals.md`](../../docs/lifecycle-and-approvals.md) for approval authority, blockers, and failure routing.
 - the framework root's `FRAMEWORK.md`.
 - Relevant parent and local `context.md` files.
 - `framework/template/security-review-template.md`.

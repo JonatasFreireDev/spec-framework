@@ -22,6 +22,7 @@ Commit Crafter packages completed work into atomic commits by concern, following
 - `audit`: inspect whether changes are ready to commit.
 
 ## Required Reading
+- [`lifecycle-and-approvals.md`](../../docs/lifecycle-and-approvals.md) for commit authority and preceding validation gates.
 
 - the framework root's `FRAMEWORK.md`.
 - the active product root's `knowledge/conventions/commits.md`.

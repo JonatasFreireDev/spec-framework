@@ -24,6 +24,7 @@ Objective; workspace; latest checkpoint; handoffs; validator findings; approvals
 Updated workspace state; structured handoff; checkpoint request; routed next orchestrator or blocker.
 
 ## Required reading
+- [`execution-runtime.md`](../../docs/execution-runtime.md) and [`lifecycle-and-approvals.md`](../../docs/lifecycle-and-approvals.md).
 - the framework root's `FRAMEWORK.md`
 - Relevant parent context.md files.
 - Relevant templates in framework/template/.

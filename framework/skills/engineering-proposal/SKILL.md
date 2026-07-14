@@ -24,6 +24,7 @@ Approved Specification; approved Design or `Not applicable`; approved Technical 
 `engineering-proposal.md`; intended boundaries and ownership; dependency and integration changes; quality and operations contract; deviations; decision candidates; review handoff.
 
 ## Required reading
+- [`engineering-systems.md`](../../docs/engineering-systems.md) for the pinned Engineering System and Quality System contracts.
 - the framework root's `FRAMEWORK.md`
 - Relevant parent context.md files.
 - Relevant templates in framework/template/.

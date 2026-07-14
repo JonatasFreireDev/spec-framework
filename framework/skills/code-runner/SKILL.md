@@ -22,6 +22,7 @@ Code Runner turns a task contract into code and executable evidence. It does not
 - `audit`: check whether a task has enough information to start.
 
 ## Required Reading
+- [`lifecycle-and-approvals.md`](../../docs/lifecycle-and-approvals.md) for implementation evidence, authority, and stop conditions.
 
 - the framework root's `FRAMEWORK.md`.
 - the active product root's `knowledge/conventions/gates.md`.

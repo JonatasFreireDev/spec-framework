@@ -24,6 +24,7 @@ Approved specification contracts; approved design or `Not applicable`; stable en
 `technical-discovery.md`; requirement-to-module map; probable change surface; architecture gate verdict; risks and plan inputs.
 
 ## Required reading
+- [`engineering-systems.md`](../../docs/engineering-systems.md) for the stable engineering baseline and migration boundaries.
 - the framework root's `FRAMEWORK.md`
 - Relevant parent context.md files.
 - Relevant templates in framework/template/.

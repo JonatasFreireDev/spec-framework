@@ -3,6 +3,7 @@ package runtimeassets
 import (
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 )
 
@@ -37,10 +38,14 @@ func TestEnsureMaterializesVersionedAssets(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	for _, name := range []string{"FRAMEWORK.md", "docs/artifact-registry-modules.md", "init/schema.json", "init/catalog.json", "init/bootstrap.json", "init/contracts/new-product.json", "skills/code-runner/SKILL.md", "skills/discovery-and-challenge.md", "templates/interview-note-template.md", "templates/research-summary-template.md", "templates/specification-template.md", "examples/events/domains/events/domain.md", ".complete"} {
+	for _, name := range []string{"FRAMEWORK.md", "AGENTS.framework.md", "docs/execution-runtime.md", "docs/engineering-systems.md", "docs/lifecycle-and-approvals.md", "docs/artifact-registry-modules.md", "init/schema.json", "init/catalog.json", "init/bootstrap.json", "init/contracts/new-product.json", "skills/code-runner/SKILL.md", "skills/discovery-and-challenge.md", "templates/interview-note-template.md", "templates/research-summary-template.md", "templates/specification-template.md", "examples/events/domains/events/domain.md", ".complete"} {
 		if _, err := os.Stat(filepath.Join(root, filepath.FromSlash(name))); err != nil {
 			t.Fatal(err)
 		}
+	}
+	data, err := os.ReadFile(filepath.Join(root, "AGENTS.framework.md"))
+	if err != nil || !strings.Contains(string(data), "Common Agent Rules") {
+		t.Fatalf("runtime common agent rules missing: %v", err)
 	}
 	if _, err := os.Stat(filepath.Join(root, "decisions")); !os.IsNotExist(err) {
 		t.Fatalf("obsolete framework archive must not be materialized: %v", err)

@@ -22,6 +22,7 @@ PR Finalizer verifies hard preconditions, links evidence, writes PR metadata bac
 - `audit`: inspect whether a branch is ready for PR.
 
 ## Required Reading
+- [`lifecycle-and-approvals.md`](../../docs/lifecycle-and-approvals.md) for release-boundary authority and preceding gates.
 
 - the framework root's `FRAMEWORK.md`.
 - the active product root's `knowledge/conventions/pull-requests.md`.

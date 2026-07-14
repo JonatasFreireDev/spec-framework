@@ -67,6 +67,9 @@ func Ensure(version string) (string, error) {
 	assets := map[string]string{
 		"FRAMEWORK.md":                      "FRAMEWORK.md",
 		"docs/artifact-registry-modules.md": "docs/artifact-registry-modules.md",
+		"docs/execution-runtime.md":         "docs/execution-runtime.md",
+		"docs/engineering-systems.md":       "docs/engineering-systems.md",
+		"docs/lifecycle-and-approvals.md":   "docs/lifecycle-and-approvals.md",
 		"framework/AGENTS.framework.md":     "AGENTS.framework.md",
 		"framework/delivery-closure.md":     "delivery-closure.md",
 		"framework/init":                    "init",

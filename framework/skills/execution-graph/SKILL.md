@@ -24,6 +24,7 @@ Approved implementation plan; Delivery Level; Priority; candidate tasks; depende
 execution-graph.json; ordered DAG; Delivery Level/Priority on graph and nodes; parallel lanes; blocked nodes; graph risks.
 
 ## Required reading
+- [`execution-runtime.md`](../../docs/execution-runtime.md) for graph lifecycle, write scopes, shared resources, and runtime boundaries.
 - the framework root's `FRAMEWORK.md`
 - Relevant parent context.md files.
 - Relevant templates in framework/template/.

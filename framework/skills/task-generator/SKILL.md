@@ -26,6 +26,7 @@ Approved execution graph; implementation plan; specification; design artifact wh
 tasks.md; task files or task records with Delivery Level/Priority; acceptance checks; handoff notes for implementers.
 
 ## Required reading
+- [`execution-runtime.md`](../../docs/execution-runtime.md) for canonical task paths, graph materialization, write scopes, and shared resources.
 - the framework root's `FRAMEWORK.md`
 - Relevant parent context.md files.
 - Relevant templates in framework/template/.

@@ -24,6 +24,7 @@ Approved execution graph; workspace; active leases; resource capacities; paralle
 Versioned wave plan; ready/serialized tasks; conflict rationale; capability gaps.
 
 ## Required reading
+- [`execution-runtime.md`](../../docs/execution-runtime.md) for leases, scheduling, conflict detection, and non-execution boundaries.
 - the framework root's `FRAMEWORK.md`
 - Relevant parent context.md files.
 - Relevant templates in framework/template/.

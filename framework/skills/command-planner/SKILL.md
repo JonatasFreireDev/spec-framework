@@ -24,6 +24,7 @@ Approved task; gates; runbooks; base commit; worktree; allowed write scope.
 CMDPLAN-NNN.json with argv, cwd, source, risk, timeout, expected exit code, hashes, and evidence contract.
 
 ## Required reading
+- [`execution-runtime.md`](../../docs/execution-runtime.md) for command-plan risk levels, scope, and approval boundaries.
 - the framework root's `FRAMEWORK.md`
 - Relevant parent context.md files.
 - Relevant templates in framework/template/.

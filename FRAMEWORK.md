@@ -134,15 +134,11 @@ The Design System is an optional shared product artifact for products with recur
 
 ### Engineering System
 
-The optional Engineering System versions stable architecture, module and data ownership, integrations, standards, quality attributes, operations, and evidence under `engineering/`. `engineering-system.md` is the human contract and `engineering-system.yaml` the mechanical catalog; origin is `generate`, `evolve`, or `adopt`, and maturity by area is `baseline`, `mapped`, `governed`, `verified`, or `operated`. Maturity records evidence and never grants approval.
-
-Specification and approved `DEC-*` records remain authoritative. Engineering System approval hashes its complete contract surface deterministically, so a shared engineering change requires human re-approval.
+The optional Engineering System versions stable architecture, module and data ownership, integrations, standards, quality attributes, operations, and evidence under `engineering/`. Its detailed versioning, maturity, hashing, migration, and approval contract lives in [`docs/engineering-systems.md`](docs/engineering-systems.md). Specification and approved `DEC-*` records remain authoritative when contracts conflict.
 
 ### Engineering Quality System
 
-The Engineering Quality System is the shared contract under `engineering/quality/` for quality attributes, test levels, risk-based coverage, environments, data, fitness functions, evidence, flaky tests, exceptions, and maturity. `quality-system.md` is human-readable, `quality-system.yaml` is mechanical, and supporting contracts define the quality model, test strategy, and fitness functions.
-
-It defines policy and capability, not delivery approval. Use-case tests pin and apply it; tasks implement coverage; QA verifies acceptance criteria, configured gates, and real evidence; Security Review remains separate. Gate commands are canonical in `knowledge/conventions/gates.md`. Maturity cannot waive gates or residual risk. Exceptions require scope, owner, rationale, mitigation, expiry or review date, re-entry gate, and open status. Migration is additive, previewable, rollback-safe, preserves adopter content, creates no approval evidence, and requires re-approval when the composite Engineering System hash changes.
+The Engineering Quality System is the shared contract under `engineering/quality/` for quality attributes, test levels, risk-based coverage, environments, data, fitness functions, evidence, flaky tests, exceptions, and maturity. Its detailed policy, evidence, migration, compatibility, and approval contract lives in [`docs/engineering-systems.md`](docs/engineering-systems.md). It defines policy and capability, not delivery approval.
 
 ### Engineering Proposal
 
@@ -449,7 +445,7 @@ Example phases:
 
 ## 8. Execution Graph
 
-The Execution Graph is a DAG. It defines dependencies between tasks and enables parallel execution by agents. Each node references the task's canonical file by `path`.
+The Execution Graph is a DAG. It defines dependencies between tasks and enables parallel execution by agents. Each node references the task's canonical file by `path`. Runtime mechanics for workspaces, leases, scheduling, command plans, and integration are defined in [`docs/execution-runtime.md`](docs/execution-runtime.md).
 
 Graph lifecycle is `draft → proposed → materialized → approved`. A draft or proposed graph validates its DAG and task contracts before task files exist. Confirmed materialization creates the missing canonical task files and generated index atomically. From `materialized` onward every node path must exist; approval happens only after Graph + Tasks validation. This avoids making task existence a precondition for approving the plan that defines those tasks.
 
@@ -524,10 +520,10 @@ spec-framework graph release --task TK-001 --agent codex
 spec-framework graph complete --graph <path> --task TK-001 --agent codex
 ```
 
-Runtime v2 leases live in `.product/claims/<task-id>.json`; `.product/claims.json` remains a v1 compatibility index during migration. Leases provide expiring operational ownership with heartbeat and recovery; they do not grant artifact approval or permission to exceed `writeScope`.
+Runtime v2 leases live in `.product/claims/<task-id>.json`; `.product/claims.json` remains a v1 compatibility index during migration. See [`docs/execution-runtime.md`](docs/execution-runtime.md) for the complete runtime contract.
 ## 9. Skills
 
-Runtime v2 makes execution resumable and safely parallel. Each `WORK-NNN` is a directory containing identity, state, structured handoffs, checkpoints, command plans, and evidence. Task ownership is a renewable lease with heartbeat and expiry; isolated tasks use one Git worktree under `.worktrees/WORK-NNN/TK-NNN`. The scheduler computes deterministic conflict-free waves from DAG dependencies, `writeScope`, and `sharedResources` but does not spawn agents. Command plans store argv rather than shell strings and initially permit only R0 read-only and R1 local-temporary operations. Validated task commits are integrated locally in DAG order; conflicts stop for human resolution and Integrated QA is mandatory.
+Runtime v2 makes execution resumable and safely parallel. The complete workspace, lease, scheduler, command-plan, worktree, recovery, and integration contract is defined in [`docs/execution-runtime.md`](docs/execution-runtime.md). The runtime does not spawn agents or grant approval.
 
 Runtime commands include `runtime`, `resume`, `handoff`, `checkpoint`, `lease`, `commands`, `schedule`, and `integrate`.
 
@@ -566,11 +562,14 @@ Failure routing is fixed. Defects with clear expected behavior route to Bug Fixe
 
 ## 11. Approval Gates
 
+The detailed lifecycle, approval-record, staleness, authority, and failure-routing contract is maintained in [`docs/lifecycle-and-approvals.md`](docs/lifecycle-and-approvals.md). This section remains the canonical summary of the method-level gates and transitions.
+
 Every step must end with a clear state:
 
 ```text
 draft
 proposed
+materialized (Execution Graph only)
 approved
 in_progress
 implemented
@@ -678,6 +677,8 @@ This prevents AI suggestions from turning into silent scope.
 ## 15. How Agents Use The Framework
 
 Agents in this repository maintain the framework; agents in adopter repositories operate only on the pinned instance and product-owned content under `product/`. Harness interaction details may differ, but method, gates, artifact contracts, and CLI semantics are agent-independent.
+
+The runtime behavior shared by all agents is defined in the pinned `AGENTS.framework.md`. This section summarizes routing and authority only; specialized procedure belongs to the owning skill, and runtime mechanics belong to [`docs/execution-runtime.md`](docs/execution-runtime.md) and [`docs/lifecycle-and-approvals.md`](docs/lifecycle-and-approvals.md).
 
 ### Activation And Routing
 
