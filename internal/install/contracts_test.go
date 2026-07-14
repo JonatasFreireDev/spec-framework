@@ -20,7 +20,7 @@ func TestEveryStartingPointHasAValidInitializationPlan(t *testing.T) {
 			if err != nil {
 				t.Fatal(err)
 			}
-			requiredFiles := []string{".product/artifacts.json", ".product/framework.json", "context.md"}
+			requiredFiles := []string{".product/artifacts.json", ".product/framework.json", "context.md", "tools/check-links.py"}
 			if point != "existing-documents" && point != "audit-only" {
 				requiredFiles = append(requiredFiles, "domains/_template-domain/context.md")
 			}

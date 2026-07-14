@@ -83,7 +83,7 @@ flowchart TD
 
 | Decision | Summary | Status |
 | --- | --- | --- |
-| `[DEC-XXX]` | `[summary]` | `[status]` |
+| [`DEC-XXX`](<path-to-decision.md>#dec-xxx) | `[summary]` | `[status]` |
 
 ## ⚠️ Assumptions And Open Questions
 

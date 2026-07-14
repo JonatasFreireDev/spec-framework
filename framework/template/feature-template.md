@@ -6,8 +6,8 @@
 | --- | --- |
 | ID | `[FT-XXX]` |
 | Status | `[draft | proposed | approved]` |
-| Domain | `[DOMAIN-XXX]` |
-| User goal | `[GOAL-XXX]` |
+| Domain | [`DOMAIN-XXX`](<path-to-domain.md>#domain-xxx) |
+| User goal | [`GOAL-XXX`](<path-to-goal.md>#goal-xxx) |
 | Owner skill | Feature AI |
 | Next skill | Use Case AI |
 
@@ -51,7 +51,7 @@
 
 | Use Case | Status | Delivery | Priority | Notes |
 | --- | --- | --- | --- | --- |
-| `[UC-XXX] [name]` | `[status]` | `[L0-L5]` | `[P0-P3]` | `[notes]` |
+| [`UC-XXX`](<path-to-use-case.md>#uc-xxx) `[name]` | `[status]` | `[L0-L5]` | `[P0-P3]` | `[notes]` |
 
 ## 🗺️ Feature Flow
 

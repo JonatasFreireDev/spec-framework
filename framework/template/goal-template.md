@@ -6,7 +6,7 @@
 | --- | --- |
 | ID | `[GOAL-XXX]` |
 | Status | `[draft | proposed | approved]` |
-| Domain | `[DOMAIN-XXX]` |
+| Domain | [`DOMAIN-XXX`](<path-to-domain.md>#domain-xxx) |
 | Owner skill | User Goal AI |
 | Next skill | Journey AI or Feature AI |
 
@@ -42,7 +42,7 @@ flowchart LR
 
 | Feature | Status | Delivery | Priority | Notes |
 | --- | --- | --- | --- | --- |
-| `[FT-XXX] [name]` | `[status]` | `[L0-L5]` | `[P0-P3]` | `[notes]` |
+| [`FT-XXX`](<path-to-feature.md>#ft-xxx) `[name]` | `[status]` | `[L0-L5]` | `[P0-P3]` | `[notes]` |
 
 ## 📏 Rules And Constraints
 

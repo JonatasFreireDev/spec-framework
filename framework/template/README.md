@@ -124,3 +124,7 @@ The validator maps artifact status from `.product/artifacts.json` to visual stat
 ## Next Step
 
 When creating an artifact, read the relevant parent `context.md`, copy the matching template structure into the target document, replace placeholders with concrete content, and leave the artifact in `draft` or `proposed` until human approval is recorded.
+
+## Reference links
+
+Every cross-artifact reference in a materialized document must be a Markdown link to the canonical file and, when applicable, its section anchor. This includes tasks, bugs, decisions, requirements, acceptance criteria, QA/security evidence, audits, releases, gaps, mappings, and any other document registered by the product. An ID by itself (for example `GAP-003`, `MAP-010`, `TASK-021`, or `DEC-014`) is not sufficient for navigation. During drafting, use the explicit placeholder form `[GAP-003](<path-to-gap-003.md>#gap-003)` and replace the path with the real product-relative path before handoff. Keep the ID in the link label so search, registry checks, and human navigation all retain the stable identity.

@@ -7,7 +7,7 @@
 | ID | `[DOMAIN-XXX]` |
 | Status | `[draft | proposed | approved]` |
 | Owner skill | Domain Architect AI |
-| Parent strategy | `[STRAT-XXX/path]` |
+| Parent strategy | [`STRAT-XXX`](<path-to-strategy.md>#strat-xxx) |
 | Next skill | User Goal AI |
 
 ## 📌 Definition
@@ -73,7 +73,7 @@ flowchart TD
 
 | Goal | Status | Delivery | Priority |
 | --- | --- | --- | --- |
-| `[GOAL-XXX] [name]` | `[status]` | `[L0-L5]` | `[P0-P3]` |
+| [`GOAL-XXX`](<path-to-goal.md>#goal-xxx) `[name]` | `[status]` | `[L0-L5]` | `[P0-P3]` |
 
 ## 📊 Metrics
 

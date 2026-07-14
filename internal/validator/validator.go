@@ -771,11 +771,19 @@ func validateMarkdownLinks(s Snapshot) []Diagnostic {
 		matches := mdLink.FindAllStringSubmatch(text, -1)
 		for _, match := range matches {
 			target := strings.TrimSpace(match[2])
-			if target == "" || strings.HasPrefix(target, "#") || strings.Contains(target, "://") || strings.HasPrefix(target, "mailto:") || strings.Contains(target, "<") {
+			if target == "" || strings.Contains(target, "://") || strings.HasPrefix(target, "mailto:") || strings.Contains(target, "<") {
 				continue
 			}
+			fragment := ""
 			if i := strings.Index(target, "#"); i >= 0 {
+				fragment = target[i+1:]
 				target = target[:i]
+			}
+			if target == "" {
+				if fragment != "" && !markdownAnchors(text)[fragment] {
+					out = append(out, Diagnostic{Error, "links", rel, "Broken Markdown section link: #" + fragment, "Create the target heading or update the link."})
+				}
+				continue
 			}
 			decoded, err := url.PathUnescape(strings.Trim(target, "<>"))
 			if err == nil {
@@ -784,10 +792,29 @@ func validateMarkdownLinks(s Snapshot) []Diagnostic {
 			candidate := filepath.Clean(filepath.Join(s.Root, filepath.Dir(filepath.FromSlash(rel)), filepath.FromSlash(target)))
 			if _, err := os.Stat(candidate); err != nil {
 				out = append(out, Diagnostic{Error, "links", rel, "Broken Markdown link: " + target, "Create the target or update the link."})
+			} else if fragment != "" {
+				targetText, readErr := os.ReadFile(candidate)
+				if readErr != nil || !markdownAnchors(string(targetText))[fragment] {
+					out = append(out, Diagnostic{Error, "links", rel, "Broken Markdown section link: " + target + "#" + fragment, "Create the target heading or update the link."})
+				}
 			}
 		}
 	}
 	return out
+}
+
+var markdownHeading = regexp.MustCompile(`(?m)^#{1,6}\s+(.+?)\s*#*\s*$`)
+
+func markdownAnchors(text string) map[string]bool {
+	anchors := map[string]bool{}
+	for _, match := range markdownHeading.FindAllStringSubmatch(text, -1) {
+		value := strings.ToLower(strings.TrimSpace(match[1]))
+		value = regexp.MustCompile(`<[^>]+>`).ReplaceAllString(value, "")
+		value = regexp.MustCompile(`[^\pL\pN\s-]`).ReplaceAllString(value, "")
+		value = regexp.MustCompile(`[\s-]+`).ReplaceAllString(value, "-")
+		anchors[strings.Trim(value, "-")] = true
+	}
+	return anchors
 }
 
 func validateApprovalRecords(s Snapshot) []Diagnostic {

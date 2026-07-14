@@ -20,7 +20,7 @@ func TestGoCLIInitValidateUpgradeAndMove(t *testing.T) {
 	if code := app.Run([]string{"init", "--target", target, "--agents", "codex,cursor,claude", "--yes"}, &stdout, &stderr); code != 0 {
 		t.Fatalf("init=%d stderr=%s", code, stderr.String())
 	}
-	for _, path := range []string{"product/.product/framework.json", "product/BOOTSTRAP.md"} {
+	for _, path := range []string{"product/.product/framework.json", "product/BOOTSTRAP.md", "product/tools/check-links.py"} {
 		if _, err := os.Stat(filepath.Join(target, filepath.FromSlash(path))); err != nil {
 			t.Fatal(err)
 		}

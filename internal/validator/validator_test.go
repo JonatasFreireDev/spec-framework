@@ -548,6 +548,22 @@ func TestBlocksBrokenMarkdownLink(t *testing.T) {
 	}
 }
 
+func TestBlocksBrokenMarkdownSectionLink(t *testing.T) {
+	root := t.TempDir()
+	_ = os.WriteFile(filepath.Join(root, "index.md"), []byte("[Missing](target.md#missing)\n"), 0644)
+	_ = os.WriteFile(filepath.Join(root, "target.md"), []byte("# Present\n"), 0644)
+	result, err := Validate(context.Background(), root, root)
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, diagnostic := range result.Diagnostics {
+		if diagnostic.Check == "links" && strings.Contains(diagnostic.Message, "section") {
+			return
+		}
+	}
+	t.Fatalf("expected broken section diagnostic: %+v", result)
+}
+
 func TestRequiresMatchingApprovalRecord(t *testing.T) {
 	root := t.TempDir()
 	_ = os.MkdirAll(filepath.Join(root, ".product"), 0755)

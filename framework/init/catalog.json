@@ -4,7 +4,8 @@
     "product-core": [
       { "source": "starter/product/.product", "target": ".product" },
       { "source": "starter/product/context.md", "target": "context.md" },
-      { "source": "starter/product/README.md", "target": "README.md" }
+      { "source": "starter/product/README.md", "target": "README.md" },
+      { "source": "starter/product/tools", "target": "tools" }
     ],
     "foundation-problem": [
       { "source": "starter/product/foundation/problem", "target": "foundation/problem" }

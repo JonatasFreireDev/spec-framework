@@ -14,7 +14,7 @@
 
 | ID | Requirement | Source | Acceptance criteria | Dependencies |
 | --- | --- | --- | --- | --- |
-| `REQ-001` | `[testable contract]` | `[artifact/decision]` | `AC-001` | `[ids/paths]` |
+| [`REQ-001`](<path-to-requirement.md>#req-001) | `[testable contract]` | `[artifact/decision]` | [`AC-001`](<path-to-tests.md>#ac-001) | `[ids/paths]` |
 
 ## Open questions
 
