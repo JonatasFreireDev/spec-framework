@@ -6,5 +6,5 @@ import "embed"
 // Init composes product-owned starter assets through versioned contracts; method
 // assets are materialized in the user cache so the released CLI works offline.
 //
-//go:embed FRAMEWORK.md all:starter all:examples/events framework/AGENTS.framework.md framework/delivery-closure.md framework/init framework/skills framework/template
+//go:embed FRAMEWORK.md all:starter all:examples/events docs/artifact-registry-modules.md framework/AGENTS.framework.md framework/delivery-closure.md framework/init framework/skills framework/template
 var Assets embed.FS

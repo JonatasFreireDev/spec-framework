@@ -12,7 +12,7 @@
 | Source graph | GRAPH-001 |
 | Source specification | SPEC-001 |
 | Generated from | execution-graph.json + tasks/*.md |
-| Owner skill | Task AI |
+| Owner skill | task-generator |
 | Next skill | Code Runner AI or QA AI |
 
 ## Navigation
@@ -103,5 +103,5 @@ flowchart LR
 | Field | Value |
 | --- | --- |
 | Ready for implementation | no |
-| Required next skill | Task AI |
+| Required next skill | task-generator |
 | Notes | Regenerate this index whenever graph nodes or task files change. |

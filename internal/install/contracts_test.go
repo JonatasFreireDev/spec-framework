@@ -33,6 +33,23 @@ func TestEveryStartingPointHasAValidInitializationPlan(t *testing.T) {
 	}
 }
 
+func TestStartingPointRegistryCarriesModulesAndRequiredArtifacts(t *testing.T) {
+	plan, err := buildInitializationPlan("existing-product")
+	if err != nil {
+		t.Fatal(err)
+	}
+	var registry struct {
+		Modules  []string              `json:"modules"`
+		Required []artifactRequirement `json:"required_artifacts"`
+	}
+	if err := json.Unmarshal(plan.Files[".product/artifacts.json"].Data, &registry); err != nil {
+		t.Fatal(err)
+	}
+	if len(registry.Modules) == 0 || len(registry.Required) != 2 {
+		t.Fatalf("expected modular registry metadata, got %+v", registry)
+	}
+}
+
 func TestStartingPointMaterializationProfiles(t *testing.T) {
 	tests := map[string]struct {
 		present []string

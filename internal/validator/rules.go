@@ -476,6 +476,7 @@ func uniqueStrings(items []string) []string {
 var allowedStatuses = map[string]bool{"draft": true, "proposed": true, "approved": true, "in_progress": true, "implemented": true, "validated": true, "released": true, "deprecated": true, "superseded": true, "rejected": true, "not_applicable": true}
 var contextFieldPattern = regexp.MustCompile(`(?m)^\s*([a-zA-Z_]+):\s*(.*?)\s*$`)
 var tableRowPattern = regexp.MustCompile(`(?m)^\|\s*([^|]+?)\s*\|\s*([^|]+?)\s*\|\s*$`)
+var labeledBulletPattern = regexp.MustCompile(`(?m)^\s*-\s*([^:]+?):\s*(.*?)\s*$`)
 
 func metadata(text string) map[string]string {
 	out := map[string]string{}
@@ -495,6 +496,12 @@ func tableFields(text string) map[string]string {
 			continue
 		}
 		out[key] = strings.Trim(strings.TrimSpace(m[2]), "`")
+	}
+	for _, m := range labeledBulletPattern.FindAllStringSubmatch(text, -1) {
+		key := strings.ToLower(strings.TrimSpace(m[1]))
+		if _, exists := out[key]; !exists {
+			out[key] = strings.Trim(strings.TrimSpace(m[2]), "`")
+		}
 	}
 	return out
 }
@@ -1170,15 +1177,9 @@ func validateRegistryAndApprovalGates(s Snapshot) []Diagnostic {
 	for _, item := range items {
 		registeredPaths[filepath.ToSlash(firstString(item["path"], ""))] = true
 	}
-	requiredFoundation := []string{"foundation/problem/problem.md", "foundation/vision/vision.md", "foundation/vision/principles.md", "foundation/vision/north-star.md", "foundation/strategy/strategy.md"}
-	if featureScopedFoundation(s) {
-		requiredFoundation = []string{"foundation/feature-brief.md"}
-	}
-	if existingProduct(s) {
-		requiredFoundation = []string{"foundation/product-baseline.md", "foundation/strategy/strategy.md"}
-	}
-	if existingImplementation(s) {
-		requiredFoundation = append([]string{"knowledge/assessments/implementation-assessment.md"}, requiredFoundation...)
+	requiredFoundation := configuredRequiredArtifacts(s)
+	if requiredFoundation == nil {
+		requiredFoundation = legacyRequiredFoundation(s)
 	}
 	for _, path := range requiredFoundation {
 		if _, exists := s.Text[path]; exists && !registeredPaths[path] {
@@ -1282,6 +1283,46 @@ func validateRegistryAndApprovalGates(s Snapshot) []Diagnostic {
 		}
 	}
 	return out
+}
+
+func configuredRequiredArtifacts(s Snapshot) []string {
+	registry, ok := s.JSON[".product/artifacts.json"].(map[string]any)
+	if !ok {
+		return nil
+	}
+	raw, exists := registry["required_artifacts"]
+	if !exists {
+		return nil
+	}
+	items, ok := raw.([]any)
+	if !ok {
+		return []string{}
+	}
+	paths := make([]string, 0, len(items))
+	for _, item := range items {
+		obj, ok := item.(map[string]any)
+		if !ok {
+			continue
+		}
+		if path, ok := obj["path"].(string); ok && strings.TrimSpace(path) != "" {
+			paths = append(paths, filepath.ToSlash(path))
+		}
+	}
+	return paths
+}
+
+func legacyRequiredFoundation(s Snapshot) []string {
+	required := []string{"foundation/problem/problem.md", "foundation/vision/vision.md", "foundation/vision/principles.md", "foundation/vision/north-star.md", "foundation/strategy/strategy.md"}
+	if featureScopedFoundation(s) {
+		return []string{"foundation/feature-brief.md"}
+	}
+	if existingProduct(s) {
+		return []string{"foundation/product-baseline.md", "foundation/strategy/strategy.md"}
+	}
+	if existingImplementation(s) {
+		return append([]string{"knowledge/assessments/implementation-assessment.md"}, required...)
+	}
+	return required
 }
 func title(value string) string {
 	if value == "" {

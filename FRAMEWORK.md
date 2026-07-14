@@ -236,6 +236,8 @@ This repository keeps three explicit sources:
 
 New products never copy the repository root. `product/.product/framework.json` pins the method version and is the exclusive activation marker; the CLI materializes embedded method assets in the operating system's versioned user cache.
 
+The modular artifact composition and approval-adapter map is maintained in [`docs/artifact-registry-modules.md`](docs/artifact-registry-modules.md). Starting-point contracts select artifact modules; the approval engine remains generic and only invokes adapters for composite or side-effectful contracts.
+
 ## 5. Context.md
 
 Every `context.md` must let an AI understand where it is, what it needs to read, and what the safe next step is.

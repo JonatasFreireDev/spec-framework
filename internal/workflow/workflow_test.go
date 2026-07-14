@@ -271,6 +271,37 @@ func TestApproveUpdatesStatusRegistryAndRecord(t *testing.T) {
 		t.Fatal(r.Artifacts[2].Status)
 	}
 }
+
+func TestApproveSupportsModularArtifactTypeWithGenericAdapter(t *testing.T) {
+	root := setupProduct(t)
+	path := filepath.Join(root, "audits", "custom-review.md")
+	if err := os.MkdirAll(filepath.Dir(path), 0755); err != nil {
+		t.Fatal(err)
+	}
+	text := "| ID | REVIEW-1 |\n| Type | custom-review |\n| Status | draft |\n"
+	if err := os.WriteFile(path, []byte(text), 0644); err != nil {
+		t.Fatal(err)
+	}
+	registry, err := LoadRegistry(root)
+	if err != nil {
+		t.Fatal(err)
+	}
+	registry.Artifacts = append(registry.Artifacts, Artifact{ID: "REVIEW-1", Type: "custom-review", Status: "draft", Path: "audits/custom-review.md"})
+	if err := writeJSON(filepath.Join(root, ".product", "artifacts.json"), registry); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := Approve(root, path, "approved", "owner", ""); err != nil {
+		t.Fatal(err)
+	}
+	entries, err := filepath.Glob(filepath.Join(root, ".product", "history", "approval-review-1-approved-*.json"))
+	if err != nil || len(entries) != 1 {
+		t.Fatalf("generic approval record missing: %v %v", err, entries)
+	}
+	updated, err := os.ReadFile(path)
+	if err != nil || !strings.Contains(string(updated), "approved") {
+		t.Fatalf("custom artifact was not approved: %v %s", err, updated)
+	}
+}
 func TestApproveBlocksUnapprovedParent(t *testing.T) {
 	root := setupProduct(t)
 	var r Registry

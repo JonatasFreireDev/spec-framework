@@ -6,6 +6,7 @@
   "files": [],
   "patches": [],
   "registry": {
+    "modules": ["product-core", "knowledge-security-baseline", "governance"],
     "exclude_types": ["problem", "vision", "product-principles", "north-star", "strategy", "domain", "user-goal", "feature", "use-case"]
   },
   "bootstrap_profile": "audit-only",

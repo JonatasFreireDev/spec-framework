@@ -43,7 +43,7 @@
         {
           "artifact_id": "TASKSET-002",
           "path": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/organizer-validates-qr-code/tasks.md",
-          "content_hash": "15aa4a6407d6965244ab75ac1e6f730071abe61434e9a0b40864b9bf054ecf61"
+          "content_hash": "43e9dc663c10df0673c34c9e447f7f46865714496cdcc7be8dee63cffb176df2"
         },
         {
           "artifact_id": "TEST-002",
@@ -236,7 +236,7 @@
         {
           "artifact_id": "TASKSET-002",
           "path": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/organizer-validates-qr-code/tasks.md",
-          "content_hash": "15aa4a6407d6965244ab75ac1e6f730071abe61434e9a0b40864b9bf054ecf61"
+          "content_hash": "43e9dc663c10df0673c34c9e447f7f46865714496cdcc7be8dee63cffb176df2"
         }
       ],
       "updated_at": "2026-07-09T22:18:06.345Z",
@@ -250,57 +250,6 @@
           "artifact_id": "FT-001",
           "path": "domains/events/goals/participate-in-event/features/qr-code-check-in/feature.md",
           "content_hash": "d2f90404b77afb0efa786665faca1b6ffb66154e77f3b807aa68e42e99420542"
-        }
-      ],
-      "updated_at": "2026-07-09T22:18:06.345Z",
-      "notes": "derivation baseline refreshed after EV-005 code evidence gates"
-    },
-    {
-      "artifact_id": "UC-001:analytics",
-      "path": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/attendee-checks-in-with-qr-code/analytics.md",
-      "derived_from": [
-        {
-          "artifact_id": "SPEC-001",
-          "path": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/attendee-checks-in-with-qr-code/specification.md",
-          "content_hash": "837750e6f5b07c961d326d679a6a3464d740a80f5bafff7b364e920c309c4775"
-        }
-      ],
-      "updated_at": "2026-07-09T22:18:06.345Z",
-      "notes": "derivation baseline refreshed after EV-005 code evidence gates"
-    },
-    {
-      "artifact_id": "UC-001:audit",
-      "path": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/attendee-checks-in-with-qr-code/audit.md",
-      "derived_from": [
-        {
-          "artifact_id": "SPEC-001",
-          "path": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/attendee-checks-in-with-qr-code/specification.md",
-          "content_hash": "837750e6f5b07c961d326d679a6a3464d740a80f5bafff7b364e920c309c4775"
-        },
-        {
-          "artifact_id": "UC-001:design",
-          "path": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/attendee-checks-in-with-qr-code/design.md",
-          "content_hash": "cd9d99db455de6101671fec56180061e09e98f4f39159210ae45e86616860fb2"
-        },
-        {
-          "artifact_id": "PLAN-001",
-          "path": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/attendee-checks-in-with-qr-code/implementation-plan.md",
-          "content_hash": "c4e91448044fc7e94782e6994935b50140560fec22d09a495bed06204b443b0d"
-        },
-        {
-          "artifact_id": "GRAPH-001",
-          "path": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/attendee-checks-in-with-qr-code/execution-graph.json",
-          "content_hash": "78787a976ebe1630e0e2f5ba3e5d82d1f3014b0a099da1c0d15a431a5645ecba"
-        },
-        {
-          "artifact_id": "UC-001:tasks",
-          "path": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/attendee-checks-in-with-qr-code/tasks.md",
-          "content_hash": "3f380e1d82e86ea1a933a635430d077b20a9afde06da3aec1eb2b78b4b8bf83e"
-        },
-        {
-          "artifact_id": "UC-001:tests",
-          "path": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/attendee-checks-in-with-qr-code/tests.md",
-          "content_hash": "364e895772bf9307866ef8f9411c3889df2e270a891dc5e0da892de697906fb1"
         }
       ],
       "updated_at": "2026-07-09T22:18:06.345Z",
@@ -343,24 +292,6 @@
       "notes": "derivation baseline refreshed after EV-005 code evidence gates"
     },
     {
-      "artifact_id": "UC-001:tests",
-      "path": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/attendee-checks-in-with-qr-code/tests.md",
-      "derived_from": [
-        {
-          "artifact_id": "SPEC-001",
-          "path": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/attendee-checks-in-with-qr-code/specification.md",
-          "content_hash": "837750e6f5b07c961d326d679a6a3464d740a80f5bafff7b364e920c309c4775"
-        },
-        {
-          "artifact_id": "UC-001:tasks",
-          "path": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/attendee-checks-in-with-qr-code/tasks.md",
-          "content_hash": "3f380e1d82e86ea1a933a635430d077b20a9afde06da3aec1eb2b78b4b8bf83e"
-        }
-      ],
-      "updated_at": "2026-07-09T22:18:06.345Z",
-      "notes": "derivation baseline refreshed after EV-005 code evidence gates"
-    },
-    {
       "artifact_id": "UC-002",
       "path": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/organizer-validates-qr-code/context.md",
       "derived_from": [
@@ -368,57 +299,6 @@
           "artifact_id": "FT-001",
           "path": "domains/events/goals/participate-in-event/features/qr-code-check-in/feature.md",
           "content_hash": "d2f90404b77afb0efa786665faca1b6ffb66154e77f3b807aa68e42e99420542"
-        }
-      ],
-      "updated_at": "2026-07-09T22:18:06.345Z",
-      "notes": "derivation baseline refreshed after EV-005 code evidence gates"
-    },
-    {
-      "artifact_id": "UC-EXAMPLE:analytics",
-      "path": "domains/_example-domain/goals/_example-goal/features/_example-feature/use-cases/_example-use-case/analytics.md",
-      "derived_from": [
-        {
-          "artifact_id": "UC-EXAMPLE:specification",
-          "path": "domains/_example-domain/goals/_example-goal/features/_example-feature/use-cases/_example-use-case/specification.md",
-          "content_hash": "3de1fc1136a9cef3794fe3135e3aa01486463e467ae8ca70cf76f5e73174e567"
-        }
-      ],
-      "updated_at": "2026-07-09T22:18:06.345Z",
-      "notes": "derivation baseline refreshed after EV-005 code evidence gates"
-    },
-    {
-      "artifact_id": "UC-EXAMPLE:audit",
-      "path": "domains/_example-domain/goals/_example-goal/features/_example-feature/use-cases/_example-use-case/audit.md",
-      "derived_from": [
-        {
-          "artifact_id": "UC-EXAMPLE:specification",
-          "path": "domains/_example-domain/goals/_example-goal/features/_example-feature/use-cases/_example-use-case/specification.md",
-          "content_hash": "3de1fc1136a9cef3794fe3135e3aa01486463e467ae8ca70cf76f5e73174e567"
-        },
-        {
-          "artifact_id": "UC-EXAMPLE:design",
-          "path": "domains/_example-domain/goals/_example-goal/features/_example-feature/use-cases/_example-use-case/design.md",
-          "content_hash": "0d787e56e74ebb627c5de65e7582ffe7e2da8d4625ede347ea26b767baac5f92"
-        },
-        {
-          "artifact_id": "UC-EXAMPLE:implementation-plan",
-          "path": "domains/_example-domain/goals/_example-goal/features/_example-feature/use-cases/_example-use-case/implementation-plan.md",
-          "content_hash": "33a5f8743a073caa35c72b135075b231b6fc843dbeaa68c0b84042fd9cdf046e"
-        },
-        {
-          "artifact_id": "GRAPH-EXAMPLE",
-          "path": "domains/_example-domain/goals/_example-goal/features/_example-feature/use-cases/_example-use-case/execution-graph.json",
-          "content_hash": "adcabd4413d21140c4d1a63a3c39feffd81144d44d5895cacc499575434bab2f"
-        },
-        {
-          "artifact_id": "UC-EXAMPLE:tasks",
-          "path": "domains/_example-domain/goals/_example-goal/features/_example-feature/use-cases/_example-use-case/tasks.md",
-          "content_hash": "2e4044167e6b8eed0a95474dd7f1e17f3feef9f639c6e8e75c5acd7c6165cb26"
-        },
-        {
-          "artifact_id": "UC-EXAMPLE:tests",
-          "path": "domains/_example-domain/goals/_example-goal/features/_example-feature/use-cases/_example-use-case/tests.md",
-          "content_hash": "89884b0198634829220ecc1ac97e392d9851953f9a3b79f10bc64871db9ace80"
         }
       ],
       "updated_at": "2026-07-09T22:18:06.345Z",
@@ -437,24 +317,6 @@
           "artifact_id": "UC-EXAMPLE",
           "path": "domains/_example-domain/goals/_example-goal/features/_example-feature/use-cases/_example-use-case/use-case.md",
           "content_hash": "e659248c7050237f6c3a201e3988baa048f0c3f8e0ddd09de4da9ff91e93c22b"
-        }
-      ],
-      "updated_at": "2026-07-09T22:18:06.345Z",
-      "notes": "derivation baseline refreshed after EV-005 code evidence gates"
-    },
-    {
-      "artifact_id": "UC-EXAMPLE:tests",
-      "path": "domains/_example-domain/goals/_example-goal/features/_example-feature/use-cases/_example-use-case/tests.md",
-      "derived_from": [
-        {
-          "artifact_id": "UC-EXAMPLE:specification",
-          "path": "domains/_example-domain/goals/_example-goal/features/_example-feature/use-cases/_example-use-case/specification.md",
-          "content_hash": "3de1fc1136a9cef3794fe3135e3aa01486463e467ae8ca70cf76f5e73174e567"
-        },
-        {
-          "artifact_id": "UC-EXAMPLE:tasks",
-          "path": "domains/_example-domain/goals/_example-goal/features/_example-feature/use-cases/_example-use-case/tasks.md",
-          "content_hash": "2e4044167e6b8eed0a95474dd7f1e17f3feef9f639c6e8e75c5acd7c6165cb26"
         }
       ],
       "updated_at": "2026-07-09T22:18:06.345Z",

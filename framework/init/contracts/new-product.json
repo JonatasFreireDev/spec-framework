@@ -5,7 +5,17 @@
   "directories": [],
   "files": [],
   "patches": [],
-  "registry": {},
+  "registry": {
+    "modules": ["product-core", "foundation-core", "knowledge", "delivery-domain", "delivery-design", "delivery-engineering", "governance"],
+    "approval_adapters": {
+      "problem": "foundation-context",
+      "vision": "foundation-context",
+      "product-principles": "foundation-context",
+      "north-star": "foundation-context",
+      "strategy": "foundation-context",
+      "engineering-system": "engineering-system"
+    }
+  },
   "bootstrap_profile": "new-product",
   "actions": []
 }

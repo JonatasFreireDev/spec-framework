@@ -43,6 +43,16 @@ func TestWriteRegistrySortsArtifacts(t *testing.T) {
 	}
 }
 
+func TestBuildRegistryClassifiesTaskByPathAndPreservesTaskType(t *testing.T) {
+	s := Snapshot{Text: map[string]string{
+		"domains/d/use-cases/u/tasks/TK-001.md": "| ID | TK-001 |\n| Type | backend |\n| Status | draft |\n",
+	}}
+	artifacts := buildRegistry(s)
+	if len(artifacts) != 1 || artifacts[0]["type"] != "task" || artifacts[0]["taskType"] != "backend" {
+		t.Fatalf("task classification=%+v", artifacts)
+	}
+}
+
 func TestBuildRegistryIncludesFoundationParents(t *testing.T) {
 	s := Snapshot{Text: map[string]string{
 		"foundation/problem/problem.md":   "| ID | `PROBLEM-1` |\n| Type | `problem` |\n| Status | `draft` |\n",

@@ -17,15 +17,22 @@ import (
 )
 
 type Artifact struct {
-	ID            string   `json:"id"`
-	Type          string   `json:"type"`
-	Status        string   `json:"status"`
-	Path          string   `json:"path"`
-	ParentIDs     []string `json:"parentIds"`
-	TargetFeature string   `json:"targetFeature,omitempty"`
+	ID              string   `json:"id"`
+	Type            string   `json:"type"`
+	Status          string   `json:"status"`
+	Path            string   `json:"path"`
+	ParentIDs       []string `json:"parentIds"`
+	TargetFeature   string   `json:"targetFeature,omitempty"`
+	ApprovalAdapter string   `json:"approval_adapter,omitempty"`
+}
+type ArtifactRequirement struct {
+	Type string `json:"type"`
+	Path string `json:"path"`
 }
 type Registry struct {
-	Artifacts []Artifact `json:"artifacts"`
+	Artifacts         []Artifact            `json:"artifacts"`
+	Modules           []string              `json:"modules,omitempty"`
+	RequiredArtifacts []ArtifactRequirement `json:"required_artifacts,omitempty"`
 }
 type Workspace struct {
 	ID               string            `json:"id"`
@@ -134,37 +141,25 @@ func requireStartingPointApproval(root string, registry Registry, selectedFeatur
 	if point == "existing-documents" {
 		return requireLatestImportMaterialized(root, manifest)
 	}
-	type requirement struct{ artifactType, path string }
-	var requirements []requirement
-	switch point {
-	case "existing-feature":
-		requirements = []requirement{{"feature-brief", "foundation/feature-brief.md"}}
-	case "existing-product":
-		requirements = []requirement{{"product-baseline", "foundation/product-baseline.md"}, {"strategy", "foundation/strategy/strategy.md"}}
-	case "existing-implementation":
-		requirements = []requirement{
-			{"implementation-assessment", "knowledge/assessments/implementation-assessment.md"},
-			{"problem", "foundation/problem/problem.md"},
-			{"vision", "foundation/vision/vision.md"},
-			{"product-principles", "foundation/vision/principles.md"},
-			{"north-star", "foundation/vision/north-star.md"},
-			{"strategy", "foundation/strategy/strategy.md"},
-		}
-	default:
+	requirements := registry.RequiredArtifacts
+	if len(requirements) == 0 {
+		requirements = legacyStartingPointRequirements(point)
+	}
+	if len(requirements) == 0 {
 		return nil
 	}
 	for _, required := range requirements {
 		found := false
 		for _, artifact := range registry.Artifacts {
-			if artifact.Type != required.artifactType {
+			if artifact.Type != required.Type || (required.Path != "" && filepath.ToSlash(artifact.Path) != filepath.ToSlash(required.Path)) {
 				continue
 			}
 			found = true
 			path := filepath.Join(root, filepath.FromSlash(artifact.Path))
 			if !isApproved(artifact.Status) || !hasCurrentApproval(root, path, artifact.Status) {
-				return fmt.Errorf("%s lacks current approval evidence: %s", strings.ReplaceAll(required.artifactType, "-", " "), artifact.Path)
+				return fmt.Errorf("%s lacks current approval evidence: %s", strings.ReplaceAll(required.Type, "-", " "), artifact.Path)
 			}
-			if required.artifactType == "feature-brief" {
+			if required.Type == "feature-brief" {
 				target, err := featureBriefTarget(path)
 				if err != nil {
 					return err
@@ -179,10 +174,23 @@ func requireStartingPointApproval(root string, registry Registry, selectedFeatur
 			break
 		}
 		if !found {
-			return fmt.Errorf("%s requires a registered %s", point, required.path)
+			return fmt.Errorf("%s requires a registered %s", point, required.Path)
 		}
 	}
 	return nil
+}
+
+func legacyStartingPointRequirements(point string) []ArtifactRequirement {
+	switch point {
+	case "existing-feature":
+		return []ArtifactRequirement{{Type: "feature-brief", Path: "foundation/feature-brief.md"}}
+	case "existing-product":
+		return []ArtifactRequirement{{Type: "product-baseline", Path: "foundation/product-baseline.md"}, {Type: "strategy", Path: "foundation/strategy/strategy.md"}}
+	case "existing-implementation":
+		return []ArtifactRequirement{{Type: "implementation-assessment", Path: "knowledge/assessments/implementation-assessment.md"}, {Type: "problem", Path: "foundation/problem/problem.md"}, {Type: "vision", Path: "foundation/vision/vision.md"}, {Type: "product-principles", Path: "foundation/vision/principles.md"}, {Type: "north-star", Path: "foundation/vision/north-star.md"}, {Type: "strategy", Path: "foundation/strategy/strategy.md"}}
+	default:
+		return nil
+	}
 }
 
 func featureBriefTarget(path string) (string, error) {
@@ -348,11 +356,11 @@ func PreviewApproval(root, artifactPath, grant string) (ApprovalPreview, error) 
 	if err != nil {
 		return ApprovalPreview{}, err
 	}
-	updates, err := approvalUpdates(root, artifactPath, updated, grant)
+	updates, err := approvalUpdatesForArtifact(root, a, artifactPath, updated, grant)
 	if err != nil {
 		return ApprovalPreview{}, err
 	}
-	currentHash, err := approvalHash(root, artifactPath, updates)
+	currentHash, err := approvalHash(root, a, artifactPath, updates)
 	if err != nil {
 		return ApprovalPreview{}, err
 	}
@@ -735,7 +743,7 @@ func Approve(root, artifactPath, grant, approvedBy, notes string) (Approval, err
 	if err != nil {
 		return Approval{}, err
 	}
-	updates, err := approvalUpdates(root, artifactPath, updated, grant)
+	updates, err := approvalUpdatesForArtifact(root, r.Artifacts[idx], artifactPath, updated, grant)
 	if err != nil {
 		return Approval{}, err
 	}
@@ -763,7 +771,7 @@ func Approve(root, artifactPath, grant, approvedBy, notes string) (Approval, err
 		rollback()
 		return Approval{}, err
 	}
-	contentHash, err := approvalHash(root, artifactPath, nil)
+	contentHash, err := approvalHash(root, r.Artifacts[idx], artifactPath, updates)
 	if err != nil {
 		rollback()
 		return Approval{}, err
@@ -782,21 +790,31 @@ func Approve(root, artifactPath, grant, approvedBy, notes string) (Approval, err
 	return rec, nil
 }
 
-func approvalUpdates(root, artifactPath, updated, status string) (map[string][]byte, error) {
+func approvalUpdatesForArtifact(root string, artifact Artifact, artifactPath, updated, status string) (map[string][]byte, error) {
 	updates := map[string][]byte{artifactPath: []byte(updated)}
-	if map[string]bool{"problem.md": true, "vision.md": true, "strategy.md": true}[filepath.Base(artifactPath)] {
+	adapter := artifact.ApprovalAdapter
+	if adapter == "" {
+		if map[string]bool{"problem": true, "vision": true, "product-principles": true, "north-star": true, "strategy": true}[artifact.Type] {
+			adapter = "foundation-context"
+		} else if artifact.Type == "engineering-system" {
+			adapter = "engineering-system"
+		}
+	}
+	if adapter == "foundation-context" {
 		contextPath := filepath.Join(filepath.Dir(artifactPath), "context.md")
 		contextData, err := os.ReadFile(contextPath)
-		if err != nil {
+		if err != nil && !os.IsNotExist(err) {
 			return nil, err
 		}
-		contextUpdated, err := setStatus(string(contextData), status)
-		if err != nil {
-			return nil, err
+		if err == nil {
+			contextUpdated, updateErr := setStatus(string(contextData), status)
+			if updateErr != nil {
+				return nil, updateErr
+			}
+			updates[contextPath] = []byte(contextUpdated)
 		}
-		updates[contextPath] = []byte(contextUpdated)
 	}
-	if filepath.Base(artifactPath) != "engineering-system.md" {
+	if adapter != "engineering-system" {
 		return updates, nil
 	}
 	inspection, inspectErr := engineeringsystem.Inspect(root)
@@ -845,8 +863,12 @@ func approvalUpdates(root, artifactPath, updated, status string) (map[string][]b
 	return updates, nil
 }
 
-func approvalHash(root, artifactPath string, updates map[string][]byte) (string, error) {
-	if filepath.Base(artifactPath) != "engineering-system.md" {
+func approvalHash(root string, artifact Artifact, artifactPath string, updates map[string][]byte) (string, error) {
+	adapter := artifact.ApprovalAdapter
+	if adapter == "" && (artifact.Type == "engineering-system" || filepath.Base(artifactPath) == "engineering-system.md") {
+		adapter = "engineering-system"
+	}
+	if adapter != "engineering-system" {
 		if updates != nil {
 			if content, exists := updates[artifactPath]; exists {
 				return Hash(string(content)), nil

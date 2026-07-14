@@ -21,6 +21,23 @@
     }
   ],
   "registry": {
+    "modules": ["product-core", "foundation-assessment", "foundation-core", "knowledge", "delivery-domain", "delivery-design", "delivery-engineering", "governance"],
+    "required_artifacts": [
+      {"type": "implementation-assessment", "path": "knowledge/assessments/implementation-assessment.md"},
+      {"type": "problem", "path": "foundation/problem/problem.md"},
+      {"type": "vision", "path": "foundation/vision/vision.md"},
+      {"type": "product-principles", "path": "foundation/vision/principles.md"},
+      {"type": "north-star", "path": "foundation/vision/north-star.md"},
+      {"type": "strategy", "path": "foundation/strategy/strategy.md"}
+    ],
+    "approval_adapters": {
+      "problem": "foundation-context",
+      "vision": "foundation-context",
+      "product-principles": "foundation-context",
+      "north-star": "foundation-context",
+      "strategy": "foundation-context",
+      "engineering-system": "engineering-system"
+    },
     "prepend_artifacts": [
       {
         "id": "IMPL-ASSESS-TBD",

@@ -65,13 +65,14 @@ func Ensure(version string) (string, error) {
 	}
 	defer os.RemoveAll(tmp)
 	assets := map[string]string{
-		"FRAMEWORK.md":                  "FRAMEWORK.md",
-		"framework/AGENTS.framework.md": "AGENTS.framework.md",
-		"framework/delivery-closure.md": "delivery-closure.md",
-		"framework/init":                "init",
-		"framework/skills":              "skills",
-		"framework/template":            "templates",
-		"examples/events":               "examples/events",
+		"FRAMEWORK.md":                      "FRAMEWORK.md",
+		"docs/artifact-registry-modules.md": "docs/artifact-registry-modules.md",
+		"framework/AGENTS.framework.md":     "AGENTS.framework.md",
+		"framework/delivery-closure.md":     "delivery-closure.md",
+		"framework/init":                    "init",
+		"framework/skills":                  "skills",
+		"framework/template":                "templates",
+		"examples/events":                   "examples/events",
 	}
 	for source, dest := range assets {
 		if err := copyTree(source, filepath.Join(tmp, dest)); err != nil {
@@ -149,6 +150,9 @@ func copyTree(source, target string) error {
 		}
 		data, err := framework.Assets.ReadFile(name)
 		if err != nil {
+			return err
+		}
+		if err := os.MkdirAll(filepath.Dir(dest), 0755); err != nil {
 			return err
 		}
 		return os.WriteFile(dest, data, 0644)

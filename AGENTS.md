@@ -52,6 +52,14 @@ Framework specialist and orchestrator skills live under `framework/skills/`. Whe
 7. Do not implement application code as part of framework documentation bootstrap, planning, readiness, or maintenance work.
 8. Preserve user changes in a dirty worktree and avoid unrelated rewrites.
 
+## Implementation Review And Modular Planning
+
+After every implementation, review the complete change set for blockers, functional, technical, and documentation gaps, inconsistencies with repository patterns, missing or insufficient tests, and compatibility impacts across CI, installation, upgrade, and distribution. Fix findings that are within the implementation scope, then repeat the review after each correction until no known blocker or gap remains.
+
+When planning an implementation, prefer modular and configurable designs. Evaluate whether the behavior can be split into plug-in or plug-out modules controlled by explicit parameters or configuration, as with optional endpoint capabilities. For each modular design, document the modules, activation parameters, dependencies, default behavior, safe addition and removal of modules, and the relevant combination tests. Keep optional capabilities decoupled from the core when practical and preserve existing flows by default.
+
+Ask the human whenever an uncertainty could change the solution, scope, architecture, compatibility, or migration. Do not invent requirements, data, approvals, or decisions. Do not stop at reporting a correctable gap.
+
 ## Product Fixture Work
 
 When modifying product artifacts under `examples/events/`, treat it like an adopter product:
@@ -91,5 +99,7 @@ For release or packaging changes, also run the release smoke workflow and requir
 ## Reporting
 
 Report changed framework surfaces, starter/example synchronization, decisions, validation, compatibility, migration, release impact, and the recommended next owner or command.
+
+Every implementation report must also include a summary of the implementation, decisions taken, validations executed, blockers and gaps found, corrections applied, pending questions or residual risks, and an explicit confirmation when no known blockers or gaps remain. If a finding cannot be resolved, report the finding, reason, impact, and recommended action.
 
 Use concise status tables and Mermaid only when they materially improve understanding. Use valid UTF-8 status icons: ✅, 🟡, 🔴, and ➖.

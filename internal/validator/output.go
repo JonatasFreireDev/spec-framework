@@ -44,6 +44,41 @@ func WriteRegistry(root string) (string, error) {
 	}
 	artifacts := buildRegistry(snap)
 	value := map[string]any{"generatedAt": time.Now().UTC().Format(time.RFC3339Nano), "generator": "spec-framework (Go)", "artifacts": artifacts}
+	if existingData, readErr := os.ReadFile(filepath.Join(root, ".product", "artifacts.json")); readErr == nil {
+		var existing map[string]any
+		if json.Unmarshal(existingData, &existing) == nil {
+			for _, key := range []string{"modules", "required_artifacts", "approval_adapters"} {
+				if metadata, ok := existing[key]; ok {
+					value[key] = metadata
+				}
+			}
+			previous := map[string]map[string]any{}
+			if raw, ok := existing["artifacts"].([]any); ok {
+				for _, item := range raw {
+					if artifact, ok := item.(map[string]any); ok {
+						key := firstString(artifact["id"], "")
+						if key == "" {
+							key = firstString(artifact["path"], "")
+						}
+						if key != "" {
+							previous[key] = artifact
+						}
+					}
+				}
+			}
+			for _, artifact := range artifacts {
+				key := firstString(artifact["id"], "")
+				if key == "" {
+					key = firstString(artifact["path"], "")
+				}
+				if old := previous[key]; old != nil {
+					if adapter, ok := old["approval_adapter"]; ok {
+						artifact["approval_adapter"] = adapter
+					}
+				}
+			}
+		}
+	}
 	data, err := json.MarshalIndent(value, "", "  ")
 	if err != nil {
 		return "", err
@@ -58,6 +93,7 @@ func WriteRegistry(root string) (string, error) {
 func buildRegistry(s Snapshot) []map[string]any {
 	byPath := map[string]map[string]any{}
 	useCaseIDs := map[string]string{}
+	featureIDs := map[string]string{}
 	featureBriefID := ""
 	if featureScopedFoundation(s) {
 		text := s.Text["foundation/feature-brief.md"]
@@ -77,6 +113,11 @@ func buildRegistry(s Snapshot) []map[string]any {
 		if strings.HasSuffix(path, "/context.md") && strings.Contains(path, "/use-cases/") {
 			if id := metadata(text)["id"]; id != "" {
 				useCaseIDs[filepath.ToSlash(filepath.Dir(path))] = id
+			}
+		}
+		if strings.HasSuffix(path, "/context.md") && strings.Contains(path, "/features/") && !strings.Contains(path, "/use-cases/") {
+			if id := metadata(text)["id"]; id != "" {
+				featureIDs[filepath.ToSlash(filepath.Dir(path))] = id
 			}
 		}
 	}
@@ -100,6 +141,9 @@ func buildRegistry(s Snapshot) []map[string]any {
 		companionLists := contextLists(s.Text[companionPath])
 		id := first(meta["id"], fields["id"])
 		kind := first(meta["type"], fields["type"], inferType(path))
+		if strings.Contains(filepath.ToSlash(path), "/tasks/") {
+			kind = "task"
+		}
 		status := first(meta["status"], fields["status"])
 		if id == "" || kind == "" || status == "" {
 			continue
@@ -126,10 +170,23 @@ func buildRegistry(s Snapshot) []map[string]any {
 				break
 			}
 		}
-		level := first(fields["delivery level"], fields["level"], meta["level"], companion["level"])
-		priority := first(fields["priority"], meta["priority"], companion["priority"])
-		rationale := first(fields["rationale"], meta["rationale"], companion["rationale"])
+		if strings.ReplaceAll(kind, "_", "-") == "use-case" {
+			for featureDir, featureID := range featureIDs {
+				if strings.HasPrefix(dir, featureDir+"/") {
+					parents = []string{featureID}
+					break
+				}
+			}
+		}
+		level := first(fields["delivery level"], fields["level"], meta["level"], companion["level"], firstSlice(companionLists["delivery_level"]))
+		priority := first(fields["priority"], meta["priority"], companion["priority"], firstSlice(companionLists["delivery_priority"]))
+		rationale := first(fields["rationale"], meta["rationale"], companion["rationale"], firstSlice(companionLists["delivery_rationale"]))
 		artifact := map[string]any{"id": id, "type": strings.ReplaceAll(kind, "_", "-"), "name": name, "status": status, "ownerSkill": owner, "path": path, "parentIds": parents, "childIds": companionLists["children"], "dependsOn": companionLists["depends_on"], "decisions": companionLists["decisions"], "delivery": map[string]any{"level": level, "priority": priority, "depends_on": companionLists["delivery_depends_on"], "rationale": rationale}, "documents": map[string]string{"canonical": path}}
+		if kind == "task" {
+			if taskType := first(fields["task type"], fields["type"]); taskType != "" && taskType != "task" {
+				artifact["taskType"] = taskType
+			}
+		}
 		if target := fields["target feature"]; strings.ReplaceAll(kind, "_", "-") == "feature-brief" && target != "" {
 			artifact["targetFeature"] = target
 		}
@@ -154,6 +211,42 @@ func buildRegistry(s Snapshot) []map[string]any {
 		}
 		delivery, _ := object["delivery"].(map[string]any)
 		byPath[path] = map[string]any{"id": id, "type": "execution-graph", "name": id, "status": firstString(object["status"], "draft"), "path": path, "parentIds": parents, "childIds": []string{}, "dependsOn": []string{}, "decisions": []string{}, "delivery": delivery, "documents": map[string]string{"canonical": path}}
+	}
+	byID := map[string][]map[string]any{}
+	for _, artifact := range byPath {
+		id, _ := artifact["id"].(string)
+		if id != "" {
+			byID[id] = append(byID[id], artifact)
+		}
+	}
+	merged := map[string]map[string]any{}
+	for id, candidates := range byID {
+		var contextArtifact, canonicalArtifact map[string]any
+		for _, candidate := range candidates {
+			path, _ := candidate["path"].(string)
+			if strings.HasSuffix(path, "/context.md") {
+				contextArtifact = candidate
+			} else if canonicalArtifact == nil {
+				canonicalArtifact = candidate
+			}
+		}
+		chosen := canonicalArtifact
+		if contextArtifact != nil {
+			chosen = contextArtifact
+			if canonicalArtifact != nil {
+				documents, _ := chosen["documents"].(map[string]string)
+				canonicalPath, _ := canonicalArtifact["path"].(string)
+				documents["canonical"] = canonicalPath
+			}
+		}
+		if chosen != nil {
+			merged[id] = chosen
+		}
+	}
+	byPath = map[string]map[string]any{}
+	for _, artifact := range merged {
+		path, _ := artifact["path"].(string)
+		byPath[path] = artifact
 	}
 	var out []map[string]any
 	for _, a := range byPath {
@@ -186,7 +279,10 @@ func contextLists(text string) map[string][]string {
 		DependsOn []string `yaml:"depends_on"`
 		Decisions []string `yaml:"decisions"`
 		Delivery  struct {
+			Level     string   `yaml:"level"`
+			Priority  string   `yaml:"priority"`
 			DependsOn []string `yaml:"depends_on"`
+			Rationale string   `yaml:"rationale"`
 		} `yaml:"delivery"`
 	}
 	if yaml.Unmarshal([]byte(body), &value) != nil {
@@ -196,7 +292,10 @@ func contextLists(text string) map[string][]string {
 	out["children"] = value.Children
 	out["depends_on"] = value.DependsOn
 	out["decisions"] = value.Decisions
+	out["delivery_level"] = []string{value.Delivery.Level}
+	out["delivery_priority"] = []string{value.Delivery.Priority}
 	out["delivery_depends_on"] = value.Delivery.DependsOn
+	out["delivery_rationale"] = []string{value.Delivery.Rationale}
 	return out
 }
 
@@ -207,6 +306,13 @@ func containsString(values []string, target string) bool {
 		}
 	}
 	return false
+}
+
+func firstSlice(values []string) string {
+	if len(values) == 0 {
+		return ""
+	}
+	return values[0]
 }
 
 func featureScopedFoundation(s Snapshot) bool {
@@ -250,7 +356,7 @@ func inferType(path string) string {
 	if strings.Contains(filepath.ToSlash(path), "/tasks/") {
 		return "task"
 	}
-	return map[string]string{"problem.md": "problem", "vision.md": "vision", "principles.md": "product-principles", "north-star.md": "north-star", "strategy.md": "strategy", "domain.md": "domain", "goal.md": "goal", "feature.md": "feature", "use-case.md": "use-case", "specification.md": "specification", "design.md": "design", "engineering-system.md": "engineering-system", "technical-discovery.md": "technical-discovery", "engineering-proposal.md": "engineering-proposal", "engineering-review.md": "engineering-review", "implementation-plan.md": "implementation-plan", "tasks.md": "taskset", "tests.md": "tests", "analytics.md": "analytics", "audit.md": "audit", "qa-evidence.md": "qa-evidence", "security-review.md": "security-review", "code-review.md": "code-review"}[base]
+	return map[string]string{"problem.md": "problem", "vision.md": "vision", "principles.md": "product-principles", "north-star.md": "north-star", "strategy.md": "strategy", "domain.md": "domain", "goal.md": "goal", "feature.md": "feature", "use-case.md": "use-case", "specification.md": "specification", "design.md": "design", "design-system.md": "design-system", "engineering-system.md": "engineering-system", "technical-discovery.md": "technical-discovery", "engineering-proposal.md": "engineering-proposal", "engineering-review.md": "engineering-review", "implementation-plan.md": "implementation-plan", "tasks.md": "taskset", "tests.md": "tests", "analytics.md": "analytics", "audit.md": "audit", "qa-evidence.md": "qa-evidence", "security-review.md": "security-review", "security-baseline.md": "security-baseline", "threat-register.md": "threat-register", "code-review.md": "code-review"}[base]
 }
 func tableList(value string) []string {
 	value = strings.Trim(strings.TrimSpace(value), "`[]")

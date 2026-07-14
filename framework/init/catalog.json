@@ -1,5 +1,22 @@
 {
   "schema_version": 1,
+  "approval_adapters": ["generic", "foundation-context", "engineering-system", "design-system", "feature-brief"],
+  "modules": {
+    "product-core": {"asset_sets": ["product-core"], "artifact_types": []},
+    "foundation-core": {"asset_sets": ["foundation-problem", "foundation-vision", "foundation-strategy"], "artifact_types": ["problem", "vision", "product-principles", "north-star", "strategy"]},
+    "foundation-strategy": {"asset_sets": ["foundation-strategy"], "artifact_types": ["strategy"]},
+    "foundation-feature": {"asset_sets": [], "artifact_types": ["feature-brief"]},
+    "foundation-baseline": {"asset_sets": [], "artifact_types": ["product-baseline"]},
+    "foundation-assessment": {"asset_sets": [], "artifact_types": ["implementation-assessment"]},
+    "delivery-domain": {"asset_sets": ["delivery-domains"], "artifact_types": ["domain", "user-goal", "feature", "use-case"]},
+    "delivery-design": {"asset_sets": ["delivery-design"], "artifact_types": ["design", "design-system"]},
+    "delivery-engineering": {"asset_sets": ["delivery-engineering"], "artifact_types": ["engineering-system", "engineering-proposal", "engineering-review"]},
+    "delivery-validation": {"asset_sets": [], "artifact_types": ["tests", "qa-evidence", "security-review", "audit"]},
+    "delivery-execution": {"asset_sets": [], "artifact_types": ["execution-graph", "taskset", "task"]},
+    "governance": {"asset_sets": ["governance"], "artifact_types": ["decision", "release"]},
+    "knowledge": {"asset_sets": ["knowledge"], "artifact_types": []},
+    "knowledge-security-baseline": {"asset_sets": ["knowledge-security-baseline"], "artifact_types": ["security-baseline"]}
+  },
   "sets": {
     "product-core": [
       { "source": "starter/product/.product", "target": ".product" },

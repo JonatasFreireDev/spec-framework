@@ -21,6 +21,11 @@
     }
   ],
   "registry": {
+    "modules": ["product-core", "foundation-baseline", "foundation-strategy", "knowledge", "delivery-domain", "delivery-design", "delivery-engineering", "governance"],
+    "required_artifacts": [
+      {"type": "product-baseline", "path": "foundation/product-baseline.md"},
+      {"type": "strategy", "path": "foundation/strategy/strategy.md"}
+    ],
     "exclude_types": ["problem", "vision", "product-principles", "north-star"],
     "prepend_artifacts": [
       {

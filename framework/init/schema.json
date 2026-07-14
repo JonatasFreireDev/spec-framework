@@ -83,7 +83,20 @@
           "items": { "type": "object" }
         },
         "append_parents_by_type": { "$ref": "#/$defs/parentsByType" },
-        "replace_parents_by_type": { "$ref": "#/$defs/parentsByType" }
+        "replace_parents_by_type": { "$ref": "#/$defs/parentsByType" },
+        "modules": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "required_artifacts": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/requiredArtifact" }
+        },
+        "approval_adapters": {
+          "type": "object",
+          "additionalProperties": { "type": "string", "minLength": 1 }
+        }
       }
     },
     "parentsByType": {
@@ -92,6 +105,15 @@
         "type": "array",
         "uniqueItems": true,
         "items": { "type": "string", "minLength": 1 }
+      }
+    },
+    "requiredArtifact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "path"],
+      "properties": {
+        "type": { "type": "string", "minLength": 1 },
+        "path": { "type": "string", "minLength": 1 }
       }
     }
   }

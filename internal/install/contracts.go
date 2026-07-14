@@ -20,6 +20,13 @@ const initContractSchemaVersion = 1
 type initAssetCatalog struct {
 	SchemaVersion int                        `json:"schema_version"`
 	Sets          map[string][]initAssetSpec `json:"sets"`
+	Modules       map[string]initModuleSpec  `json:"modules"`
+	Adapters      []string                   `json:"approval_adapters"`
+}
+
+type initModuleSpec struct {
+	AssetSets     []string `json:"asset_sets"`
+	ArtifactTypes []string `json:"artifact_types"`
 }
 
 type initContract struct {
@@ -52,10 +59,20 @@ type initPatchSpec struct {
 }
 
 type initRegistrySpec struct {
-	ExcludeTypes         []string            `json:"exclude_types"`
-	PrependArtifacts     []map[string]any    `json:"prepend_artifacts"`
-	AppendParentsByType  map[string][]string `json:"append_parents_by_type"`
-	ReplaceParentsByType map[string][]string `json:"replace_parents_by_type"`
+	ExcludeTypes         []string              `json:"exclude_types"`
+	PrependArtifacts     []map[string]any      `json:"prepend_artifacts"`
+	AppendParentsByType  map[string][]string   `json:"append_parents_by_type"`
+	ReplaceParentsByType map[string][]string   `json:"replace_parents_by_type"`
+	Modules              []string              `json:"modules"`
+	RequiredArtifacts    []artifactRequirement `json:"required_artifacts"`
+	ApprovalAdapters     map[string]string     `json:"approval_adapters"`
+	AllowedArtifactTypes []string              `json:"-"`
+	AllowedAdapters      map[string]bool       `json:"-"`
+}
+
+type artifactRequirement struct {
+	Type string `json:"type"`
+	Path string `json:"path"`
 }
 
 type initContractLoader struct {
@@ -108,6 +125,53 @@ func (loader initContractLoader) load(point string) (initContract, initAssetCata
 	if contract.BootstrapProfile != point {
 		return initContract{}, initAssetCatalog{}, fmt.Errorf("init contract %q selects bootstrap profile %q", point, contract.BootstrapProfile)
 	}
+	selectedAssets := map[string]bool{}
+	allowedTypes := map[string]bool{}
+	allowedAdapters := map[string]bool{}
+	for _, adapter := range catalog.Adapters {
+		allowedAdapters[adapter] = true
+	}
+	for _, module := range contract.Registry.Modules {
+		spec, ok := catalog.Modules[module]
+		if !ok {
+			return initContract{}, initAssetCatalog{}, fmt.Errorf("unknown artifact module %q", module)
+		}
+		for _, assetSet := range spec.AssetSets {
+			selectedAssets[assetSet] = true
+		}
+		for _, kind := range spec.ArtifactTypes {
+			allowedTypes[kind] = true
+		}
+	}
+	if len(contract.Registry.Modules) > 0 {
+		for _, assetSet := range contract.AssetSets {
+			if !selectedAssets[assetSet] {
+				return initContract{}, initAssetCatalog{}, fmt.Errorf("asset set %q is not provided by selected modules", assetSet)
+			}
+		}
+		for assetSet := range selectedAssets {
+			found := false
+			for _, selected := range contract.AssetSets {
+				if selected == assetSet {
+					found = true
+					break
+				}
+			}
+			if !found {
+				return initContract{}, initAssetCatalog{}, fmt.Errorf("selected module asset set %q is missing from contract", assetSet)
+			}
+		}
+	}
+	for kind, adapter := range contract.Registry.ApprovalAdapters {
+		if !allowedAdapters[adapter] {
+			return initContract{}, initAssetCatalog{}, fmt.Errorf("unknown approval adapter %q for artifact type %q", adapter, kind)
+		}
+	}
+	contract.Registry.AllowedArtifactTypes = make([]string, 0, len(allowedTypes))
+	for kind := range allowedTypes {
+		contract.Registry.AllowedArtifactTypes = append(contract.Registry.AllowedArtifactTypes, kind)
+	}
+	contract.Registry.AllowedAdapters = allowedAdapters
 	if err := loader.validateContract(contract, catalog); err != nil {
 		return initContract{}, initAssetCatalog{}, fmt.Errorf("invalid init contract %q: %w", point, err)
 	}
@@ -137,6 +201,11 @@ func (loader initContractLoader) readStrictJSON(name string, target any) error {
 func (loader initContractLoader) validateContract(contract initContract, catalog initAssetCatalog) error {
 	if len(contract.AssetSets) == 0 {
 		return errors.New("contract has no asset sets")
+	}
+	for _, module := range contract.Registry.Modules {
+		if _, ok := catalog.Modules[module]; !ok {
+			return fmt.Errorf("unknown artifact module %q", module)
+		}
 	}
 	seenSets := map[string]bool{}
 	for _, name := range contract.AssetSets {
@@ -364,7 +433,10 @@ func configurePlannedRegistry(plan *initializationPlan, spec initRegistrySpec) e
 		return fmt.Errorf("planned product is missing %s", registryTarget)
 	}
 	var registry struct {
-		Artifacts []map[string]any `json:"artifacts"`
+		Artifacts         []map[string]any      `json:"artifacts"`
+		Modules           []string              `json:"modules,omitempty"`
+		RequiredArtifacts []artifactRequirement `json:"required_artifacts,omitempty"`
+		ApprovalAdapters  map[string]string     `json:"approval_adapters,omitempty"`
 	}
 	if err := json.Unmarshal(file.Data, &registry); err != nil {
 		return fmt.Errorf("parse planned registry: %w", err)
@@ -402,8 +474,48 @@ func configurePlannedRegistry(plan *initializationPlan, spec initRegistrySpec) e
 		}
 	}
 	registry.Artifacts = append(append([]map[string]any{}, spec.PrependArtifacts...), filtered...)
+	registry.Modules = append([]string{}, spec.Modules...)
+	registry.RequiredArtifacts = append([]artifactRequirement{}, spec.RequiredArtifacts...)
+	registry.ApprovalAdapters = map[string]string{}
+	for kind, adapter := range spec.ApprovalAdapters {
+		registry.ApprovalAdapters[kind] = adapter
+	}
+	for _, artifact := range registry.Artifacts {
+		kind, _ := artifact["type"].(string)
+		if adapter := registry.ApprovalAdapters[kind]; adapter != "" {
+			if _, exists := artifact["approval_adapter"]; !exists {
+				artifact["approval_adapter"] = adapter
+			}
+		}
+		if adapter, exists := artifact["approval_adapter"].(string); exists && len(spec.AllowedAdapters) > 0 && !spec.AllowedAdapters[adapter] {
+			return fmt.Errorf("unknown approval adapter %q on artifact type %q", adapter, kind)
+		}
+	}
+	allowedTypes := stringSet(spec.AllowedArtifactTypes)
+	if len(allowedTypes) > 0 {
+		for _, artifact := range registry.Artifacts {
+			kind, _ := artifact["type"].(string)
+			if !allowedTypes[kind] {
+				return fmt.Errorf("artifact type %q is not provided by selected modules", kind)
+			}
+		}
+	}
 	if err := validatePlannedRegistry(registry.Artifacts, plan.Files); err != nil {
 		return err
+	}
+	for _, required := range registry.RequiredArtifacts {
+		found := false
+		for _, artifact := range registry.Artifacts {
+			kind, _ := artifact["type"].(string)
+			path, _ := artifact["path"].(string)
+			if kind == required.Type && filepath.ToSlash(path) == filepath.ToSlash(required.Path) {
+				found = true
+				break
+			}
+		}
+		if !found {
+			return fmt.Errorf("required artifact %s at %s is not registered", required.Type, required.Path)
+		}
 	}
 	data, err := json.MarshalIndent(registry, "", "  ")
 	if err != nil {
@@ -414,7 +526,6 @@ func configurePlannedRegistry(plan *initializationPlan, spec initRegistrySpec) e
 }
 
 func validatePlannedRegistry(artifacts []map[string]any, files map[string]plannedFile) error {
-	knownTypes := stringSet([]string{"problem", "vision", "product-principles", "north-star", "strategy", "product-baseline", "feature-brief", "implementation-assessment", "domain", "user-goal", "feature", "use-case"})
 	ids := map[string]bool{}
 	kinds := map[string]string{}
 	paths := map[string]bool{}
@@ -433,8 +544,8 @@ func validatePlannedRegistry(artifacts []map[string]any, files map[string]planne
 		if paths[path] {
 			return fmt.Errorf("duplicate registry artifact path %q", path)
 		}
-		if !knownTypes[kind] {
-			return fmt.Errorf("unknown initial artifact type %q", kind)
+		if strings.TrimSpace(kind) == "" {
+			return fmt.Errorf("registry artifact %q has empty type", id)
 		}
 		if status != "draft" {
 			return fmt.Errorf("initial artifact %q has invalid status %q", id, status)

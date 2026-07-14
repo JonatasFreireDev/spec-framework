@@ -281,7 +281,7 @@ func hasCurrentApproval(root, artifactPath, status string) bool {
 		return false
 	}
 	rel = filepath.ToSlash(rel)
-	hash, err := approvalHash(root, artifactPath, nil)
+	hash, err := approvalHash(root, Artifact{}, artifactPath, nil)
 	if err != nil {
 		return false
 	}
