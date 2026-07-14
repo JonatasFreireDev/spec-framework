@@ -529,13 +529,13 @@ func (app App) runInit(args []string, stdout, stderr io.Writer) int {
 		}
 		argv, _ := adapters.ProviderArgv("impeccable", "install", resolved)
 		fmt.Fprintf(stdout, "[1/3] Resolved Impeccable %s\n", resolved)
-		fmt.Fprintf(stdout, "[2/3] Installing optional adapter\n- Provider: pbakaus/impeccable\n- Command: npx %s\n", strings.Join(argv, " "))
+		fmt.Fprintf(stdout, "[2/3] Installing optional adapter\n- Provider: pbakaus/impeccable\n- Working directory: %s\n- Command: npx %s\n", result.Target, strings.Join(argv, " "))
 		if err := adapters.Execute(result.Target, "impeccable", "install", resolved, stdout, stderr); err != nil {
 			fmt.Fprintln(stderr, "Product initialized, but optional Impeccable installation failed:", err)
 			return 1
 		}
 		fmt.Fprintln(stdout, "[3/3] Impeccable installed")
-		fmt.Fprintln(stdout, "Next: reload the selected agent harness, then run /impeccable init inside it.")
+		fmt.Fprintf(stdout, "Next: reload the selected agent harness, open the repository root (%s), then run /impeccable init; keep generated product assets under product/design/. Do not use product/ as the working directory for adapter installation.\n", result.Target)
 	}
 	return 0
 }

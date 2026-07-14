@@ -43,6 +43,9 @@ func runAdapters(args []string, stdout, stderr io.Writer) int {
 	if !filepath.IsAbs(p) {
 		p = filepath.Join(cwd, p)
 	}
+	if *root == "." {
+		p = discoverProductRepositoryRoot(p)
+	}
 	switch action {
 	case "list":
 		items := adapters.Registry()
@@ -145,4 +148,25 @@ func runAdapters(args []string, stdout, stderr io.Writer) int {
 		return 2
 	}
 	return 0
+}
+
+// discoverProductRepositoryRoot makes adapter commands safe when an agent's
+// working directory is product/ or another nested directory. The adapter
+// installer writes harness skills at the repository root, while product/
+// remains product-owned state.
+func discoverProductRepositoryRoot(start string) string {
+	current, err := filepath.Abs(start)
+	if err != nil {
+		return filepath.Clean(start)
+	}
+	for {
+		if _, err := os.Stat(filepath.Join(current, "product", ".product", "framework.json")); err == nil {
+			return current
+		}
+		parent := filepath.Dir(current)
+		if parent == current {
+			return current
+		}
+		current = parent
+	}
 }

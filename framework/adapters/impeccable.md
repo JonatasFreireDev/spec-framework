@@ -14,6 +14,12 @@ spec-framework adapters install impeccable --version <cli-version> --yes
 
 The first install command previews the exact official `npx impeccable@<version> skills install` invocation. The second explicitly authorizes it. The upstream installer may still ask harness-specific questions.
 
+Run adapter commands from the repository root. If an agent is currently inside
+`product/`, the Spec Framework CLI discovers the repository root automatically
+for `adapters` commands; use `--root <repository-root>` when an explicit path is
+needed. Harness skills belong at the repository or user harness level, not under
+`product/`.
+
 Generate a non-executing adapter plan:
 
 ```bash
