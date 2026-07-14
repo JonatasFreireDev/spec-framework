@@ -54,6 +54,7 @@ Product decisions do not live here. Product decisions continue to live in `knowl
 | [FDR-042](FDR-042-cli-lifecycle-commands.md) | CLI Lifecycle Commands | proposed | CLI installation usability |
 | [FDR-043](FDR-043-native-discovery-and-challenge.md) | Native Discovery And Challenge | proposed | Planning skill interaction feedback |
 | [FDR-044](FDR-044-lean-product-readmes.md) | Lean Product READMEs | proposed | Adopter starter context review |
+| [FDR-045](FDR-045-canonical-method-compression.md) | Canonical Method Compression | proposed | Agent context efficiency review |
 
 ## Rule
 

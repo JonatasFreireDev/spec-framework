@@ -134,19 +134,15 @@ The Design System is an optional shared product artifact for products with recur
 
 ### Engineering System
 
-The Engineering System is an optional shared product artifact for stable architecture, module and data ownership, integrations, standards, quality attributes, fitness functions, operations, and evidence. It lives under `engineering/`, declares `generate`, `evolve`, or `adopt`, and uses semantic versioning. `engineering-system.md` is the human contract and `engineering-system.yaml` is the mechanical catalog. Maturity is declared by area as `baseline`, `mapped`, `governed`, `verified`, or `operated`; it describes available evidence and never grants approval.
+The optional Engineering System versions stable architecture, module and data ownership, integrations, standards, quality attributes, operations, and evidence under `engineering/`. `engineering-system.md` is the human contract and `engineering-system.yaml` the mechanical catalog; origin is `generate`, `evolve`, or `adopt`, and maturity by area is `baseline`, `mapped`, `governed`, `verified`, or `operated`. Maturity records evidence and never grants approval.
 
-Approved decisions and the Specification remain authoritative. The Engineering System records and links established technical constraints but does not replace `DEC-*` records or their approval evidence. Its approval is composite: context, human contract, mechanical catalog, architecture, standards, quality, runbooks, and evidence are hashed in deterministic path order, so any shared engineering contract change requires human re-approval.
+Specification and approved `DEC-*` records remain authoritative. Engineering System approval hashes its complete contract surface deterministically, so a shared engineering change requires human re-approval.
 
 ### Engineering Quality System
 
-The Engineering Quality System is the shared, versioned quality contract within the Engineering System. It lives under `engineering/quality/` and defines product-wide quality attributes, test levels, risk-based coverage, environments, test data, fitness functions, evidence policy, flaky-test handling, exceptions, and maturity. Its canonical human contract is `quality-system.md`; `quality-system.yaml` is the mechanical catalog; `quality-model.md`, `test-strategy.md`, and `fitness-functions.yaml` are supporting contracts.
+The Engineering Quality System is the shared contract under `engineering/quality/` for quality attributes, test levels, risk-based coverage, environments, data, fitness functions, evidence, flaky tests, exceptions, and maturity. `quality-system.md` is human-readable, `quality-system.yaml` is mechanical, and supporting contracts define the quality model, test strategy, and fitness functions.
 
-The Engineering Quality System defines policy and available capability; it does not grant delivery approval. A use-case `tests.md` applies the shared policy and pins the consumed Engineering System id/version. Delivery tasks implement tests. QA independently verifies the applicable policy, acceptance criteria, gates, and real evidence in `qa-evidence.md`. Security Review remains a separate specialized gate.
-
-Gate commands remain canonical in the active product root's `knowledge/conventions/gates.md`. Quality maturity records available evidence and never waives a gate, changes an acceptance criterion, or approves residual risk. Human and mechanical capability maturity must agree; maturity above `baseline` requires a safe, resolvable path, URL, gate, CI, or command evidence reference. Exceptions require scope, owner, rationale, residual risk, mitigation, a valid expiry or review date, re-entry gate, and status. Only open, unexpired exceptions scoped to `product` or the consuming `domains/...` path may authorize deviations. Engineering System approval synchronizes status atomically across its context, human and mechanical system contracts, and both Quality System contracts before hashing the complete `engineering/` tree.
-
-Legacy Engineering Systems whose quality area points to `quality/quality-model.md` remain valid until explicit migration. `spec-framework engineering-system migrate --dry-run` previews the additive Quality System migration; the applied command creates missing contracts before atomically replacing the catalog pointer, rolls back newly created files on failure, preserves adopter-owned files, and never creates approval evidence. Any previously approved system requires human re-approval because its composite hash changes.
+It defines policy and capability, not delivery approval. Use-case tests pin and apply it; tasks implement coverage; QA verifies acceptance criteria, configured gates, and real evidence; Security Review remains separate. Gate commands are canonical in `knowledge/conventions/gates.md`. Maturity cannot waive gates or residual risk. Exceptions require scope, owner, rationale, mitigation, expiry or review date, re-entry gate, and open status. Migration is additive, previewable, rollback-safe, preserves adopter content, creates no approval evidence, and requires re-approval when the composite Engineering System hash changes.
 
 ### Engineering Proposal
 
@@ -200,120 +196,22 @@ spec-framework move --from <old-path> --to <new-path>
 The move script rewrites Markdown links and paths in JSON that are mechanically resolvable. Mentions in free text are reported for human review, not rewritten automatically.
 ## 4. Folder Structure
 
-Canonical structure:
+An adopter repository owns one framework root, `product/`. Its stable ownership boundaries are:
 
-```text
-product/
-  .product/
-    state.json
-    decisions.json
-    roadmap.json
-    ids.json
-    history/
+| Area | Ownership |
+| --- | --- |
+| `.product/` | Manifest, artifact registry, decisions index, roadmap state, workspaces, claims, derivations, and approval history. |
+| `foundation/` | Starting-point contracts and product direction. |
+| `knowledge/` | Product rules, conventions, decisions, imports, and durable evidence. |
+| `domains/` | Domain → User Goal → Feature → Use Case hierarchy and delivery artifacts. |
+| `design/` | Shared Design System and product-owned design sources. |
+| `engineering/` | Versioned Engineering System, quality contracts, operations, and evidence. |
+| `audits/` | Readiness, consistency, QA, security, and release findings. |
+| `releases/` | Product release records when materialized. |
 
-  foundation/
-    problem/
-      problem.md
-      opportunities.md
-      researches/
-      interviews/
-      context.md
-    vision/
-      vision.md
-      principles.md
-      north-star.md
-      context.md
-    strategy/
-      strategy.md
-      personas.md
-      competitors.md
-      metrics.md
-      roadmap.md
-      context.md
+A use-case bundle owns `context.md`, `use-case.md`, Specification and modular contracts, applicable Design, Technical Discovery, Engineering Proposal and Review, Implementation Plan, Execution Graph, canonical task files plus generated index, tests, analytics, and validation evidence. Exact paths and optional directories are defined by the starter, templates, registries, and declarative initialization contracts; this method defines ownership rather than duplicating that inventory.
 
-  knowledge/
-    imports/
-      sources/
-      runs/
-        IMPORT-NNN/
-          inventory.json
-          import-plan.json
-          mapping.json
-          conflicts.md
-          import-report.md
-    glossary/
-    business-rules/
-    conventions/
-    decisions/
-    patterns/
-    prompts/
-    templates/
-    examples/
-
-  domains/
-    <domain>/
-      context.md
-      domain.md
-      decisions.md
-      goals/
-        <goal>/
-          context.md
-          goal.md
-          journeys.md
-          features/
-            <feature>/
-              context.md
-              feature.md
-              use-cases/
-                <use-case>/
-                  context.md
-                  use-case.md
-                  specification.md
-                  technical-discovery.md
-                  engineering-proposal.md
-                  engineering-review.md
-                  implementation-plan.md
-                  execution-graph.json
-                  tasks/
-                    <task-id>.md
-                  tasks.md
-                  tests.md
-                  analytics.md
-                  design.md
-                  audit.md
-
-  design/
-    system/
-      context.md
-      design-system.md
-      foundations/
-      tokens/
-        tokens.json
-        themes.json
-      components/
-      patterns/
-      sources/
-      evidence/
-  engineering/
-    context.md
-    engineering-system.md
-    engineering-system.yaml
-    architecture/
-    standards/
-    quality/
-      quality-system.md
-      quality-system.yaml
-      quality-model.md
-      test-strategy.md
-      fitness-functions.yaml
-    runbooks/
-    evidence/
-  audits/
-  releases/
-  skills/
-```
-
-In an adopter product repository, the structure above must live under `product/`. The framework runtime and method assets are resolved outside the repository from the versioned user cache:
+The framework runtime remains outside the adopter repository:
 
 ```text
 repo/
@@ -330,13 +228,13 @@ repo/
     releases/
 ```
 
-In this `spec-framework` repository, the structure exists in three explicit areas:
+This repository keeps three explicit sources:
 
-- `starter/` represents the clean `product/` skeleton copied into new product repositories.
+- `starter/` contains canonical product assets selected by initialization contracts.
 - `examples/events/` contains the worked product instance used as learning material and validation fixture.
 - `framework/` contains the executable framework core: audits, decisions, skills, templates, validators, distributable tools, framework-only tests, and adoption guidance. The repository root retains only entry points, packaging metadata, scripts, examples, and starter infrastructure.
 
-New products must not copy the entire `spec-framework` root. They start from `starter/product/`; `product/.product/framework.json` pins the adopted version and is the exclusive activation marker. The CLI materializes embedded method assets in the operating system's versioned user cache.
+New products never copy the repository root. `product/.product/framework.json` pins the method version and is the exclusive activation marker; the CLI materializes embedded method assets in the operating system's versioned user cache.
 
 ## 5. Context.md
 
@@ -635,146 +533,34 @@ Skills are specialists. They can operate in modes such as `create`, `update`, `a
 
 Definition and planning skills follow the shared Discovery and Challenge contract before substantive creation or material revision. They inspect repository and CLI evidence first, then use the harness-native structured question capability for human choices that cannot be discovered. Each round asks one to three focused questions; meaningful choices present concrete options, trade-offs, a recommendation, and a free-form path. Skills proactively warn about material scope, dependency, usability, security, operability, reversibility, approval, and delivery risks and propose safer alternatives. They must not finalize or hand off while a blocking question is unanswered, and conversational answers never grant formal approval. Harness adapters map the canonical `native_user_question` capability to their default question tool; a concise conversational question is the explicit fallback only when no structured tool is exposed.
 
-### Foundation
+| Layer | Specialist ownership |
+| --- | --- |
+| Foundation | Problem Discovery, Vision, Strategy, Domain Architect, and User Goal define evidenced product direction and boundaries. |
+| Product Design | Journey, Feature, Use Case, UX/UI, UX Review, and Design System define value slices and verifiable experience. |
+| Specification and planning | Specification, Engineering System, Technical Discovery, Engineering Proposal, Engineering Review, Implementation Planner, Execution Graph, and Task Generator turn approved intent into executable contracts. |
+| Engineering and validation | Code Runner implements one approved task; QA, Code Review, and Security Review independently verify it; Threat Modeler maintains proactive security context; Commit Crafter and PR Finalizer prepare verified delivery without merging. |
+| Audit and evolution | Gap, Conflict, Dependency, Impact, Evolution, Documentation, and Product Historian skills inspect health and route governed change. |
 
-- Problem Discovery AI: discovers pains, opportunities, and evidence.
-- Vision AI: creates or revises vision, principles, and north star.
-- Strategy AI: defines strategy, segments, metrics, and roadmap.
-- Domain Architect AI: models domains and boundaries.
-- User Goal AI: models user goals within domains.
-
-### Product Design
-
-- Journey AI: maps journeys.
-- Feature AI: creates and evolves features.
-- Use Case AI: details verifiable interactions.
-- UX/UI AI: defines flows, states, wireframes, mockups, design system, and accessibility.
-- UX Review AI: reviews design against the design system, UX principles, accessibility, and state coverage.
-- Design System AI: creates, adopts, evolves, versions, and audits shared foundations, tokens, components, patterns, and sources before they are consumed by use-case Design.
-
-### Specification And Planning
-
-- Specification AI: creates the central implementation contract.
-- Engineering System AI: creates, adopts, evolves, versions, and audits shared architecture, standards, quality attributes, fitness functions, operations, and evidence.
-- Engineering Proposal AI: describes one delivery's intended technical change after discovery and before independent review.
-- Engineering Review AI: independently reviews a delivery's Engineering Proposal before implementation planning without editing it or approving decisions.
-- Implementation Planner AI: transforms Specification into a technical plan.
-- Execution Graph AI: transforms the plan into an execution DAG.
-- Task AI: generates small, testable, and traceable executable tasks.
-
-### Engineering And Validation
-
-- Code Runner AI: implements exactly one approved task per invocation, in TDD, respecting `writeScope`, reading gates from `knowledge/conventions/gates.md`, stopping when green, and without committing.
-- QA AI: validates behavior, tests, edge cases, performance, and evidence matrix.
-- Code Review AI: reviews implementation read-only through the lenses of completeness, adherence, and quality; findings use severity and follow FDR-006 routing.
-- Security Review AI: evaluates authentication, authorization, privacy, abuse, data exposure, tokens, logs, dependencies, rollout, and residual risk.
-- Threat Modeler AI: proactively models threats at the product, domain, or feature family level; maintains the security baseline and threat register to feed Security Review.
-- Commit Crafter AI: turns verified changes into atomic local commits by concern, following `knowledge/conventions/commits.md`, without push.
-- PR Finalizer AI: prepares or opens a PR with evidence and required links, following `knowledge/conventions/pull-requests.md`, without merge.
-
-### Audit
-
-- Gap Finder AI: looks for gaps.
-- Conflict AI: looks for contradictions.
-- Dependency AI: finds implicit dependencies.
-- Impact Analysis AI: measures the effect of changes.
-- Evolution AI: suggests improvements.
-- Documentation AI: updates docs.
-- Product Historian AI: records decisions.
+The versioned `framework/skills/` contracts are authoritative for inputs, procedure, outputs, limitations, and handoff. A specialist never assumes another skill's ownership or grants human approval.
 
 ## 10. Orchestrators
 
 Orchestrators do not create primary artifacts. They control flow, order, gates, and handoffs.
 
-### Framework Guide
+| Orchestrator | Boundary |
+| --- | --- |
+| Framework Guide | Translates intent and current CLI state into the smallest safe route; it does not author artifacts or approve work. |
+| Product | Coordinates the approved Foundation sequence and stops at each human gate. |
+| Domain Evolution | Compares evidenced feature candidates and requires explicit human selection before handoff. |
+| Existing Product Import | Moves sources through inventory, conflicts, reviewed mappings, explicit materialization, and draft artifacts without treating sources as truth. |
+| New Feature | Drives an approved feature through Use Cases, Specification, Design, engineering gates, Plan, Graph, and Tasks. |
+| Audit and Evolution | Batch findings, compare improvement candidates, and route selected changes without silently expanding scope. |
+| Documentation | Synchronizes contexts, indexes, templates, decisions, and derived documentation. |
+| Delivery and Release | Coordinates implementation, independent review/QA/security, verified commits, PR preparation, integration, and release readiness without merging or bypassing gates. |
 
-Framework Guide is the conversational entry point to the CLI. It translates a person's goal into current mechanical state, the smallest safe command, and the correct specialist or approval handoff. It does not author canonical artifacts, approve work, or replace Command Planner and Command Executor.
+Framework Guide is the default entry route. Direct specialist routing requires current-session CLI evidence naming scope, gate, and owner, or an explicit human request naming specialist and scope. Persisted state must be revalidated; stale or ambiguous routes return to the Guide.
 
-The installed dispatcher routes framework-governed product operations through Framework Guide by default. It may route directly to a specialist only when current-session `guide`, `dashboard`, `status`, or `next` output names the workspace, concrete feature or use-case scope, current gate, and owner skill, or the human explicitly names both the specialist and the concrete scope. A persisted handoff or checkpoint identifies where to resume but must be revalidated by one of those read-only CLI commands before direct routing. A skill name or keyword without scope is not a verified route. A stale, ambiguous, or conflicting route returns to Framework Guide. This is an agent-routing rule, not a new product approval gate, and direct diagnostic CLI commands remain available.
-
-### Domain Evolution Orchestrator
-
-Coordinates approved goals, journeys, opportunity gaps, candidate features, delivery slices, dependency/impact analysis, and explicit human feature selection. It hands the selected feature to New Feature Orchestrator.
-
-### Existing Product Import Orchestrator
-
-Coordinates existing epics, PRDs, and other source documents through inventory, classification, reconciliation, approval, and draft materialization. Sources remain evidence, conflicts are never resolved silently, and canonical artifacts are not created before explicit human approval.
-
-```text
-Sources -> Inventory -> Candidates -> Conflicts -> Mapping -> Approval -> Draft artifacts
-```
-
-### Product Orchestrator
-
-Creates a product from scratch:
-
-```text
-Problem -> Vision -> Strategy -> Domains -> User Goals -> Roadmap
-```
-
-### New Feature Orchestrator
-
-Receives a candidate feature and drives:
-
-```text
-Impact -> Feature -> Use Cases -> Specification -> Design -> Technical Discovery -> Architecture Gate -> Engineering Proposal -> Engineering Review -> Plan -> Graph -> Tasks
-```
-
-### Audit Orchestrator
-
-Runs batch audits:
-
-```text
-Gap -> Conflict -> Dependency -> Impact -> Consistency
-```
-
-### Evolution Orchestrator
-
-Groups candidate improvements, asks which will be approved, and creates an evolution plan.
-
-### Documentation Orchestrator
-
-Keeps `context.md`, indexes, templates, decisions, and derived artifacts synchronized.
-
-### QA Orchestration
-
-QA is an independent, read-only verifier. QA re-executes the gates declared in `knowledge/conventions/gates.md` whenever possible, records real output or an explicit limitation, and routes blockers to the appropriate Code Runner, Bug Fixer, test owner, Product Historian, or human path instead of fixing code.
-
-### Implementation Orchestration
-
-Code Runner receives one approved task at a time. If the task requires a change outside `writeScope`, an unapproved decision, a missing gate command, or a Specification gap, implementation stops and reports the blocker. After any code change, the flow returns to independent QA.
-
-### Failure Routing
-
-Failures follow FDR-006. A defect, regression, vulnerability with a clearly expected behavior, or production error goes to Bug Fixer. A missing test, hollow test, or missing negative/permission coverage goes back to QA or the test owner. Incomplete implementation or out-of-contract work goes back to Code Runner. A decision gap or ambiguous rule goes to Product Historian and a human. After any code change, the flow re-enters QA; a red gate cannot be skipped. Every gate or finding has a cap of three automated attempts before escalating to a human.
-
-### Review Orchestration
-
-Code Review is a read-only gate before validation and release of executable work. The review evaluates completeness against Specification/tasks, adherence to approved contracts, and implementation quality. `blocker` or `required_fix` findings need a route and owner via FDR-006; Code Review does not fix code or approve QA.
-
-### Threat Modeling
-
-Threat Modeler acts before and alongside Security Review. It models threats at the product, domain, goal, or feature family level, records recurring rules in the security baseline, and maintains `audits/security/threat-register.md` with scenarios, mitigations, owners, evidence, and residual risks. It does not validate release; Security Review consumes that context to assess a specific delivery.
-
-### Delivery Orchestration
-
-Commit Crafter creates atomic local commits only when explicitly invoked, separating concerns and following `knowledge/conventions/commits.md`; it does not push. PR Finalizer verifies gates, QA Evidence, Code Review, and Security Review when applicable, prepares or opens a PR with evidence links following `knowledge/conventions/pull-requests.md`, records the PR back onto the tasks when appropriate, and does not merge.
-
-### Release Orchestrator
-
-Before release, checks:
-
-- gaps
-- conflicts
-- docs
-- specs
-- design
-- tasks
-- tests
-- QA
-- QA evidence
-- review
-- security review for executable deliveries, with depth proportional to risk
+Failure routing follows FDR-006. Defects with clear expected behavior route to Bug Fixer; missing or hollow coverage routes to QA or the test owner; incomplete or out-of-contract implementation routes to Code Runner; decision gaps route to Product Historian and a human. Code Review and QA remain independent and read-only, every code change re-enters QA, and three failed automated attempts require human escalation. Threat Modeler maintains proactive shared context; Security Review evaluates the concrete delivery. Commit Crafter does not push, PR Finalizer does not merge, and release readiness requires all applicable product, engineering, evidence, review, QA, and security gates.
 
 ## 11. Approval Gates
 
@@ -889,123 +675,37 @@ This prevents AI suggestions from turning into silent scope.
 
 ## 15. How Agents Use The Framework
 
-In this repository, agents maintain the framework itself. In adopter repositories, supported agent harnesses operate on an instance composed from `starter/product/`, resolve the pinned method through the CLI runtime, and write framework documentation artifacts in `product/`. Harness-specific installation or interaction details may differ, but the manifest, method, gates, artifact contracts, and CLI behavior are agent-independent.
+Agents in this repository maintain the framework; agents in adopter repositories operate only on the pinned instance and product-owned content under `product/`. Harness interaction details may differ, but method, gates, artifact contracts, and CLI semantics are agent-independent.
 
-Spec Framework activates only when the current repository contains a valid `product/.product/framework.json` with `framework: spec-framework`, a concrete version, and `activation.mode: manifest-only`. A user mention, keyword, prompt, or similarly named file does not activate it. A single user-scoped, namespaced dispatcher resolves skills from the versioned cache; specialized skill trees are not copied into adopter repositories. `init` and `upgrade` install or refresh that dispatcher for every selected agent. After activation, the dispatcher resolves `framework-guide` first unless it has a verified direct route from current CLI guidance or an explicit human request that names both specialist and concrete scope; persisted runtime state must first be revalidated through the CLI.
+### Activation And Routing
 
-In a newly initialized product repository, read `product/BOOTSTRAP.md` first. It explains the ordered foundation gates and distinguishes a structurally valid starter from a product that is ready for implementation.
+- Activate only from a valid `product/.product/framework.json` with `framework: spec-framework`, a concrete version, and `activation.mode: manifest-only`.
+- Resolve versioned skills through the user-scoped dispatcher. Do not copy specialist trees into adopter repositories.
+- Route through Framework Guide unless current CLI evidence or an explicit human request names both specialist and concrete scope. Revalidate persisted handoffs with `guide`, `dashboard`, `status`, or `next`.
+- Read `product/BOOTSTRAP.md`, relevant `context.md` files, applicable decisions, the owning skill, and its template before mutation.
 
-The CLI command tree is implemented with Cobra. It owns command discovery, help, subcommand routing, and compatible exit handling; product manifests and explicit CLI flags remain the authoritative configuration contracts. Viper is not introduced unless the CLI gains a documented need for user-level configuration precedence across defaults, environment, and config files.
+### Initialization And Preservation
 
-During `init`, choose the repository's starting point. This choice customizes `BOOTSTRAP.md` and the active artifact registry; it does not remove skills, orchestrators, rigor requirements, or approval gates. The `existing-feature` starting point replaces the full product Foundation package with one individually approved `foundation/feature-brief.md` for the bounded delivery. If product direction or scope is broad or uncertain, escalate to the full Problem, Vision, Product Principles, North Star, and Strategy path. Every starting point that creates or revises domains must read the pinned runtime's `examples/events/` reference before the first domain change and model a business-area boundary, explicit non-ownership, cross-domain dependencies, and one Domain -> User Goal -> Feature -> Use Case walking skeleton. `audit-only` uses the same reference to assess existing domain boundaries without changing product artifacts. When starting from existing documents, the CLI creates a source inventory and an analysis-only import run under `product/knowledge/imports/`. Review and explicitly approve mappings before materializing draft product artifacts.
+- `init` resolves one strict declarative starting-point contract, validates its complete materialization plan, stages it, and atomically publishes `product/`. Data contracts cannot execute arbitrary commands or escape the product root.
+- A starting point changes the initial evidence, registry, bootstrap, and first gate; it never removes later rigor or approval requirements. Existing code and documents remain evidence, not approved truth. `audit-only` remains read-only until an explicit supported transition.
+- `existing-documents` creates an analysis-only import run. Human review of inventory, conflicts, and selected mappings is required before explicit draft materialization; imported artifacts retain their normal owners, parents, and individual approval gates.
+- `init` never overwrites an existing `product/`. `upgrade` refreshes only the pinned runtime, manifest, and selected dispatchers; it never replays initialization over adopter-owned content.
+- Starting-point details belong to `docs/starting-points.md`, `framework/init/`, generated `BOOTSTRAP.md`, and the relevant FDRs rather than this operational summary.
 
-Initialization is driven by versioned declarative contracts under `framework/init/contracts/`. Each starting point selects named asset sets, explicit directories including intentionally empty architecture, entry-specific template files, deterministic text patches, initial registry transformations, its bootstrap profile, and a closed list of CLI-owned actions. The CLI strictly parses the complete contract, expands every embedded source into an in-memory plan, rejects unknown fields, unsafe targets, file/directory collisions, ambiguous patches, and invalid artifact relationships, then materializes the verified plan in staging and atomically publishes `product/`. Contracts cannot execute arbitrary commands or escape `product/`. Entry-specific actions that require runtime state, such as creating an immutable import run, remain typed CLI behavior selected by contract name and complete in staging before publication. The contracts preserve the current starting-point method: reference skeletons required for explicit escalation remain present but inactive where the applicable registry contract excludes them. `init` never overwrites an existing `product/`, including with `--force`; `upgrade` refreshes the pinned runtime and manifest without replaying initialization contracts over adopter-owned content.
+### Operation And Authority
 
-CLI lifecycle and adopter lifecycle are separate. The checksum-verifying `install` scripts install the released binary, record installer ownership in `install.json`, and do not run product initialization. `spec-framework update [--check | --version <version>]` checks or replaces that binary; replacement requires `--yes`, verifies the official release checksum and candidate version, stages beside the executable, and preserves or recovers the current binary on failure. `spec-framework upgrade` continues to update only an adopter's pinned runtime, manifest, and dispatchers. `spec-framework uninstall` previews ownership and removes the local binary, managed manifest, and installer-managed PATH entry; `--purge` additionally removes versioned runtime caches and only namespaced Spec Framework dispatchers. Neither uninstall mode searches for or removes `product/` repositories.
+- Use concurrent `WORK-NNN` workspaces rather than a global active feature. Read CLI help and current mechanical output for command syntax and next actions.
+- Definition and planning skills inspect evidence, use the harness-native question capability, compare options, recommend a path, warn about material risks, and stop on blocking questions. Execution and review skills follow approved contracts and route product ambiguity back to the owning definition skill.
+- Human identity and explicit confirmation are required for approvals and consequential mutations. Conversation never creates approval evidence.
+- External adapters are optional and supervised. Their output and availability never grant approval; provider failure does not roll back an initialized product.
 
-The `existing-implementation` starting point first materializes and individually approves `knowledge/assessments/implementation-assessment.md`. The assessment becomes a parent of Problem, after which Problem, Vision, Product Principles, North Star, and Strategy require their normal individual approvals before workspace creation. Implementation evidence may support Foundation drafts, but it never grants product approval by itself.
+### Lifecycle Boundary
 
-The `existing-product` starting point may treat code, tests, releases, telemetry, and operational history as primary evidence for one individually approved `foundation/product-baseline.md`. It then requires a separate individually approved Strategy whose parent is that baseline. Unknown audience, unclear delivered value, or material repositioning escalates to the full Foundation path.
+Installation, CLI update, product upgrade, and removal are separate. Install scripts verify and install the CLI without running `init`; `update` changes the CLI binary; `upgrade` changes the pinned product runtime; `uninstall` removes only managed CLI paths and optional namespaced caches/dispatchers. Product repositories are never searched for or removed by CLI uninstall.
 
-For `existing-documents`, the latest import run declared in the canonical manifest is the entry gate. Review its inventory, conflicts, and selected mappings, then run `spec-framework import materialize` with explicit human identity. Materialization authorizes only the selected draft writes; each resulting product artifact retains its normal owner, parent, validation, and individual approval gates. Workspace creation remains blocked until that latest run is materially complete and approved for materialization.
+The CLI's generated help is authoritative for command syntax. Framework decisions record why these boundaries exist; skills define specialist procedure; templates define artifact structure; `BOOTSTRAP.md` defines the initial route; `context.md` defines local state and handoff.
 
-When the canonical manifest declares `audit-only`, the CLI permits read-only validation, inspection, status, readiness, review, impact, and navigation, but blocks writes to product artifacts, registry, reports, approvals, workspaces, imports, migrations, design state, and delivery runtime state. `init` may establish the audit manifest and `upgrade` may maintain its pinned framework runtime. Turning findings into product work requires an explicit supported starting-point transition; agents must not bypass the guard by editing statuses or metadata manually.
-
-Operational navigation uses concurrent workspaces rather than a global active feature:
-
-```text
-spec-framework work --feature <path-or-id> --created-by <human>
-spec-framework status --work WORK-001
-spec-framework next --work WORK-001
-spec-framework approve --artifact <path> --grant approved --approved-by <human> --yes
-spec-framework gates
-spec-framework guide --work WORK-001
-spec-framework graph materialize --graph <execution-graph.json> --yes
-spec-framework task readiness --graph <execution-graph.json> --task TK-001 [--json]
-spec-framework review --work WORK-001 --stage <stage>
-spec-framework approve-stage --work WORK-001 --stage <stage> --approved-by <human> --yes
-spec-framework impact --decision DEC-021 [--json]
-spec-framework dashboard --work WORK-001 [--json]
-spec-framework status --work WORK-001 --graph [--json]
-spec-framework decisions migrate [--dry-run | --interactive | --yes]
-spec-framework adapters list
-spec-framework adapters status impeccable
-spec-framework adapters doctor impeccable [--check-latest]
-spec-framework adapters install impeccable --version <provider-cli-version> [--yes]
-```
-
-External adapters are optional. Read-only discovery and diagnosis may run without confirmation. Install and update must show the exact provider command, require an explicit version and `--yes`, execute with direct argv from the repository root, and never fabricate readiness after a provider failure. Removal is unsupported until the provider documents a reversible contract.
-
-Interactive `init` may offer an explicit optional-adapter install choice. Headless installation requires adapter-specific selection, an explicit provider version, and `--yes`. Framework initialization completes before the external provider runs; provider failure is reported as partial success and never rolls back or deletes the initialized product.
-
-Recommended prompt for the architecture phase:
-
-```text
-You are a Software Architect collaborating on the Product Engineering Framework.
-Resolve the pinned framework through spec-framework skill path and read the framework root's FRAMEWORK.md plus the relevant product/**/context.md files.
-
-At this stage, do not create files and do not implement.
-Your mission is to critique the architecture, find ambiguities, propose alternatives,
-compare trade-offs, and ask what needs to be approved.
-
-Only implement when I say: FREEZE ARCHITECTURE.
-```
-
-Recommended prompt for the generation phase:
-
-```text
-Resolve and read the pinned framework root's FRAMEWORK.md.
-Use only approved decisions.
-Do not invent new layers, names, or flows.
-Convert the approved architecture into files, templates, and skills.
-Preserve traceability between Problem, Vision, Strategy, Domain, Goal, Feature,
-Use Case, Specification, Implementation Plan, Execution Graph, and Tasks.
-```
-
-Recommended prompt for a new feature:
-
-```text
-Resolve and read the pinned framework root's FRAMEWORK.md and the domain's context.md.
-Drive the feature through the flow:
-Feature -> Use Cases -> Specification -> Design -> Implementation Plan -> Execution Graph -> Tasks.
-
-Before persisting each stage, list the decisions, gaps, conflicts, and approval questions.
-```
-
-## 16. Framework Roadmap
-
-### v0
-
-- Folder structure.
-- Basic templates.
-- `FRAMEWORK.md`.
-- List of skills and orchestrators.
-
-### v1
-
-- Canonical contexts at every level.
-- Consistent IDs.
-- Decision log.
-- Complete templates.
-- Basic audits.
-
-### v2
-
-- Operational skills.
-- Orchestrators with handoff.
-- Real Execution Graph.
-- Task generation by DAG.
-- Approval gates.
-
-### v3
-
-- Queryable knowledge graph.
-- Automatic impact analysis.
-- Supervised automatic agent spawning with provider adapters, `max_parallel`, leases, isolated worktrees, heartbeat, cancellation, and checkpoint recovery.
-- Task-level review/QA followed by governed integration and Integrated QA for automatically spawned work.
-- Automatic replanning after failures.
-
-## 17. Final Rule
+## 16. Final Rule
 
 The framework must help agents think before they build.
 

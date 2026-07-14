@@ -21,11 +21,24 @@ Do not write product scope, product decisions, approval records, or delivery evi
 
 Do not write framework-method decisions into `product/knowledge/decisions/`.
 
-Use `.product/workspaces/WORK-NNN/` for concurrent feature focus and resume from `state.json`, the latest checkpoint, and the latest handoff; never invent a global active feature. A legacy `WORK-NNN.json` is read-only compatible until explicit runtime migration. Before implementation, require modular specification contracts by rigor, approved Design or structured `not_applicable`, Technical Discovery, a resolved Architecture Gate, applicable Engineering Proposal and passed current Engineering Review, configured gates, graph/tasks, and an active lease when graph runtime is used. `implemented` uses working-tree evidence and diff hash; commit only after Code Review and task QA approve that same hash, then require Integrated QA after combining task commits.
+Operational boundaries:
+
+- Use `.product/workspaces/WORK-NNN/` for concurrent focus; never invent a global active feature.
+- Resume from `state.json`, the latest checkpoint, and the latest handoff. Legacy `WORK-NNN.json` is read-only until explicit migration.
+- Before implementation, require the rigor-appropriate Specification contracts, approved Design or structured `not_applicable`, Technical Discovery, resolved Architecture Gate, applicable Engineering Proposal and current passed Engineering Review, configured gates, Graph, Tasks, and an active lease when used.
+- Record working-tree evidence and diff hash at `implemented`. Commit only after Code Review and task QA approve that same hash; require Integrated QA after task integration.
 
 When the product declares `product/design/system/`, use the Design System skill for shared foundations, tokens, components, patterns, versions, and sources. UX/UI owns use-case Design and must pin the approved Design System version before proposed-or-later use. External visual tools are optional adapters; their installation, output, and availability never grant product approval or replace framework contracts.
 
 ## Required Reading
+
+Authority order:
+
+```text
+FRAMEWORK.md → owning skill → matching template → product context and decisions → current CLI evidence
+```
+
+Later sources specialize earlier ones within their scope but cannot weaken framework gates or human approval requirements.
 
 Before creating or updating framework-governed work:
 
