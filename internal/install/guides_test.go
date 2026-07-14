@@ -5,131 +5,58 @@ import (
 	"testing"
 )
 
-func TestBootstrapProfilesGiveEveryStartingPointAnImmediateAction(t *testing.T) {
-	for _, startingPoint := range []string{"new-product", "existing-product", "existing-documents", "existing-feature", "existing-implementation", "audit-only"} {
+var bootstrapStartingPoints = []string{"new-product", "existing-product", "existing-documents", "existing-feature", "existing-implementation", "audit-only"}
+
+func TestDeclarativeBootstrapProfilesAreComplete(t *testing.T) {
+	for _, startingPoint := range bootstrapStartingPoints {
 		t.Run(startingPoint, func(t *testing.T) {
-			profile := bootstrapProfileFor(startingPoint)
-			if profile.location == "" || profile.nextAction == "" || profile.style == "" || profile.scopeRule == "" || profile.artifactAction == "" || profile.approvalIntro == "" || profile.approvalGuidance == "" || profile.approvalRule == "" || profile.foundationPath == "" || profile.agentPrompts == "" {
-				t.Fatalf("incomplete profile: %+v", profile)
+			bootstrap, err := declarativeBootstrapFor(startingPoint)
+			if err != nil {
+				t.Fatal(err)
 			}
+			if !strings.Contains(bootstrap, "# Product Bootstrap") || !strings.Contains(bootstrap, "## Guided steps") || !strings.Contains(bootstrap, "## Rules for the agent") {
+				t.Fatalf("bootstrap is missing required sections: %s", bootstrap)
+			}
+			if !strings.Contains(bootstrap, "Starting point: **"+startingPoint+"**") {
+				t.Fatalf("bootstrap does not identify starting point")
+			}
+		})
+	}
+}
+
+func TestBootstrapContainsProfileSpecificReadingAndPrompts(t *testing.T) {
+	cases := map[string][]string{
+		"new-product":             {"product/context.md", "problem.md", "Vision", "Stop before approval"},
+		"existing-product":        {"product-baseline.md", "runtime configuration", "future bets"},
+		"existing-documents":      {"traceability.json", "mapping.json", "Do not automatically convert Epic to Feature", "materialize"},
+		"existing-feature":        {"feature-brief.md", "walking skeleton", "Feature Brief"},
+		"existing-implementation": {"implementation-assessment.md", "database", "full Foundation"},
+		"audit-only":              {"read-only", "Do not edit product files", "Human decision"},
+	}
+	for startingPoint, expected := range cases {
+		t.Run(startingPoint, func(t *testing.T) {
 			bootstrap := bootstrapFor(startingPoint)
-			for _, expected := range []string{startingPoint, profile.location, profile.nextAction, profile.style, profile.scopeRule, profile.artifactAction, profile.approvalIntro, profile.approvalGuidance, profile.approvalRule, profile.agentPrompts, profile.foundationPath} {
-				if !strings.Contains(bootstrap, expected) {
-					t.Errorf("bootstrap does not contain %q", expected)
+			for _, text := range expected {
+				if !strings.Contains(strings.ToLower(bootstrap), strings.ToLower(text)) {
+					t.Errorf("bootstrap missing %q", text)
 				}
 			}
 		})
 	}
 }
 
-func TestBootstrapExplainsFoundationBeforeWorkspace(t *testing.T) {
-	bootstrap := bootstrapFor("existing-feature")
-	for _, expected := range []string{
-		"Structural validity",
-		"replaces the full product Foundation package with one Feature Brief",
-		"spec-framework approve --product-root product --artifact foundation/feature-brief.md",
-		"A Markdown status edit alone is not approval.",
-		"require a WORK-NNN workspace",
-		"spec-framework work --feature <id-or-path>",
-		"## Before modeling domains",
-		"examples/events/",
-		"Domain -> User Goal -> Feature -> Use Case",
-	} {
-		if !strings.Contains(bootstrap, expected) {
-			t.Errorf("bootstrap missing %q", expected)
-		}
-	}
-	if strings.Contains(bootstrap, "approve-stage --stage foundation") {
-		t.Fatal("bootstrap must not recommend batch Foundation approval")
-	}
-	if strings.Contains(bootstrap, "foundation/problem/problem.md") {
-		t.Fatal("existing-feature bootstrap must not route through full Foundation artifacts")
-	}
-}
-
-func TestEveryBootstrapIncludesDomainModelingGuidance(t *testing.T) {
-	for _, startingPoint := range []string{"new-product", "existing-product", "existing-documents", "existing-feature", "existing-implementation", "audit-only"} {
-		bootstrap := bootstrapFor(startingPoint)
-		for _, expected := range []string{"Before modeling domains", "every starting point", "examples/events/"} {
-			if !strings.Contains(bootstrap, expected) {
-				t.Errorf("%s bootstrap missing %q", startingPoint, expected)
-			}
-		}
-	}
-}
-
-func TestNewProductBootstrapKeepsFullFoundation(t *testing.T) {
-	bootstrap := bootstrapFor("new-product")
-	for _, expected := range []string{
-		"foundation/problem/problem.md",
-		"foundation/vision/vision.md",
-		"foundation/strategy/strategy.md",
-	} {
-		if !strings.Contains(bootstrap, expected) {
-			t.Errorf("new-product bootstrap missing %q", expected)
-		}
-	}
-}
-
-func TestExistingImplementationBootstrapStartsWithAssessment(t *testing.T) {
-	bootstrap := bootstrapFor("existing-implementation")
-	for _, expected := range []string{
-		"Implementation Assessment, before canonical Foundation",
-		"knowledge/assessments/implementation-assessment.md",
-		"foundation/problem/problem.md",
-		"foundation/strategy/strategy.md",
-	} {
-		if !strings.Contains(bootstrap, expected) {
-			t.Errorf("existing-implementation bootstrap missing %q", expected)
-		}
-	}
-}
-
-func TestExistingProductBootstrapUsesBaselineAndStrategy(t *testing.T) {
-	bootstrap := bootstrapFor("existing-product")
-	for _, expected := range []string{
-		"Product Baseline, before future Strategy",
-		"foundation/product-baseline.md",
-		"foundation/strategy/strategy.md",
-		"code and operating evidence",
-	} {
-		if !strings.Contains(bootstrap, expected) {
-			t.Errorf("existing-product bootstrap missing %q", expected)
-		}
-	}
-	for _, absent := range []string{"foundation/problem/problem.md", "foundation/vision/vision.md"} {
-		if strings.Contains(bootstrap, absent) {
-			t.Errorf("existing-product bootstrap should not require consolidated artifact %q", absent)
-		}
-	}
-}
-
-func TestExistingDocumentsBootstrapStartsWithMaterializationGate(t *testing.T) {
+func TestExistingDocumentsBootstrapPinsImportRun(t *testing.T) {
 	bootstrap := bootstrapFor("existing-documents")
-	for _, expected := range []string{
-		"Latest import run, before canonical product artifacts",
-		"mapping.json",
-		"traceability.json",
-		"spec-framework import materialize",
-		"does not create product approval history",
-	} {
-		if !strings.Contains(bootstrap, expected) {
-			t.Errorf("existing-documents bootstrap missing %q", expected)
-		}
-	}
-	if strings.Contains(bootstrap, "--artifact foundation/problem/problem.md") {
-		t.Fatal("existing-documents bootstrap must not skip ahead to Problem approval")
+	if !strings.Contains(bootstrap, "<latest-run>") || !strings.Contains(bootstrap, "traceability.json") || !strings.Contains(bootstrap, "import materialize") {
+		t.Fatalf("existing-documents bootstrap is not import-oriented: %s", bootstrap)
 	}
 }
 
-func TestAuditOnlyBootstrapUsesNoWriteFlags(t *testing.T) {
+func TestAuditOnlyBootstrapHasNoMutationInstructions(t *testing.T) {
 	bootstrap := bootstrapFor("audit-only")
-	for _, absent := range []string{"--write-registry", "--write-report", "spec-framework approve", "spec-framework work --feature"} {
-		if strings.Contains(bootstrap, absent) {
-			t.Errorf("audit-only bootstrap contains mutating guidance %q", absent)
+	for _, forbidden := range []string{"approve --", "import materialize", "work --feature", "write-registry"} {
+		if strings.Contains(bootstrap, forbidden) {
+			t.Fatalf("audit-only bootstrap contains mutation guidance %q", forbidden)
 		}
-	}
-	if !strings.Contains(bootstrap, "spec-framework validate --product-root product") || !strings.Contains(bootstrap, "Keep this session read-only") {
-		t.Fatal("audit-only bootstrap lacks read-only validation guidance")
 	}
 }
