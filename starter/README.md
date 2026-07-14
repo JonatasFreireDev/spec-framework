@@ -39,6 +39,7 @@ These are the default `new-product` steps. For every initialized repository, rea
 7. Replace product gate placeholders in `product/knowledge/conventions/gates.md` before marking executable work as implemented or validated.
 8. Use `spec-framework work`, then `resume`, leases, checkpoints, and handoffs so execution can be continued without conversation history.
 9. Use `spec-framework engineering-system inspect` for the shared technical baseline, `spec-framework dashboard --work WORK-001` for the consolidated flow, and `spec-framework decisions migrate` to preview legacy decision metadata upgrades.
+11. Run `spec-framework decisions check --strict` in CI to validate decision paths, domains, approvals, references, and navigable links.
 10. For `existing-documents`, ask the Artifact Importer agent to read each source and fill `traceability.json` plus proposed `mapping.json` entries before materialization; review unmapped gaps explicitly.
 
 ## Boundary Rule

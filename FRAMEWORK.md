@@ -632,6 +632,15 @@ Relevant product decisions are indexed in `.product/decisions.json`. The index i
 
 An index may add future domains through a top-level `decisionDomains` map, for example `{ "security": "knowledge/security-decisions/" }`. A domain record must live under its configured root. The `domain` field is optional for backward compatibility; when absent, the validator infers it from the path. Existing records are not moved automatically and their approval evidence remains valid.
 
+Decision health can be inspected without changing files:
+
+```bash
+spec-framework decisions check --product-root product --strict
+spec-framework decisions check --product-root product --json
+```
+
+The check reports missing or unindexed records, invalid domain/path combinations, duplicate IDs, unknown references, broken or absent navigable links, approval staleness, and references outside `affectedArtifacts`. `--strict` exits non-zero on errors; warnings remain visible but non-blocking. `--fix-links` only previews mechanically resolvable replacements until explicitly combined with `--yes`; it never changes approval records or ambiguous/external references.
+
 `DEC-*` is the single decision identity; an ADR is a DEC whose type is `architecture`. Decisions declare `domain`, `type`, artifact/path `scope`, and optional structured `workflowEffects` (`requiredTaskTypes`, `requiredGates`, `requiredEvidence`, `requiredWriteScopes`, and `sharedResources`). A DEC can unblock an Architecture Gate only when it exists, is indexed, is approved, has a current hash-matching approval record, and applies to the affected scope. Decision prose is never executable. Effects constrain Graph, Tasks, Task Readiness, and configured gates; they never silently generate work.
 
 Framework or method changes are incorporated directly into this document, owning skill contracts, validators, and tests. Git history preserves their evolution. Skill contracts, gates, writeScope, QA policies, failure routing, commit policy, validators, and orchestration rules must not be recorded in product decision roots, because those roots are reserved for adopter-owned product decisions.

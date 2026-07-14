@@ -2,6 +2,7 @@
   "decisions": [
     {
       "id": "DEC-001",
+      "domain": "product",
       "title": "QR expiration duration",
       "affectedArtifacts": [
         "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/attendee-checks-in-with-qr-code/specification.md",
@@ -17,6 +18,7 @@
     },
     {
       "id": "DEC-002",
+      "domain": "product",
       "title": "QR token strategy",
       "affectedArtifacts": [
         "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/attendee-checks-in-with-qr-code/specification.md",
@@ -32,6 +34,7 @@
     },
     {
       "id": "DEC-003",
+      "domain": "cross-cutting",
       "title": "Approval Records",
       "affectedArtifacts": [
         "../../FRAMEWORK.md",
@@ -48,6 +51,7 @@
     },
     {
       "id": "DEC-004",
+      "domain": "cross-cutting",
       "title": "Code Link Convention",
       "affectedArtifacts": [
         "../../FRAMEWORK.md",
@@ -63,6 +67,7 @@
     },
     {
       "id": "DEC-005",
+      "domain": "cross-cutting",
       "title": "Derived Staleness",
       "affectedArtifacts": [
         "../../FRAMEWORK.md",
@@ -79,6 +84,7 @@
     },
     {
       "id": "DEC-006",
+      "domain": "cross-cutting",
       "title": "Task Files As Canonical Task Records",
       "affectedArtifacts": [
         "../../FRAMEWORK.md",
@@ -102,6 +108,7 @@
     },
     {
       "id": "DEC-007",
+      "domain": "cross-cutting",
       "title": "Code Evidence Gates",
       "affectedArtifacts": [
         "../../FRAMEWORK.md",
@@ -121,6 +128,7 @@
     },
     {
       "id": "DEC-008",
+      "domain": "cross-cutting",
       "title": "Rigor Tiers For Use Cases",
       "affectedArtifacts": [
         "../../FRAMEWORK.md",
@@ -140,6 +148,7 @@
     },
     {
       "id": "DEC-009",
+      "domain": "cross-cutting",
       "title": "Scoped IDs, Immutable Slugs, And Move Tooling",
       "affectedArtifacts": [
         "../../FRAMEWORK.md",

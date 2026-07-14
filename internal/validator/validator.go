@@ -29,8 +29,11 @@ const (
 )
 
 type Diagnostic struct {
-	Severity                  Severity `json:"severity"`
-	Check, File, Message, Fix string
+	Severity Severity `json:"severity"`
+	Check    string   `json:"check"`
+	File     string   `json:"file"`
+	Message  string   `json:"message"`
+	Fix      string   `json:"fix"`
 }
 type Snapshot struct {
 	Root, FrameworkRoot string

@@ -12,6 +12,8 @@
 | Scope | `[artifact IDs or product-relative path prefixes]` |
 | Owner | `[role/person]` |
 
+`domain` identifies the owning area and determines the canonical directory. `type` describes the nature of the decision. `path` in `.product/decisions.json` is the canonical document location; it must match the configured root for `domain`.
+
 ## ✅ Decision
 
 [State the decision clearly.]

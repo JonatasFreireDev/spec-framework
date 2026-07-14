@@ -21,4 +21,4 @@ Product-owned specifications, decisions, plans, and evidence live here. Framewor
 
 `BOOTSTRAP.md` and `context.md` are authoritative for sequencing; this README is navigation only.
 
-For CI navigation checks, run `python tools/check-links.py .`. It verifies local Markdown files, section anchors, links that escape the product root, and references to registered tasks, bugs, decisions, requirements, evidence, and other artifacts that are not linked.
+For CI navigation checks, run `python tools/check-links.py .` and `spec-framework decisions check --strict`. The first verifies local Markdown files and anchors; the second verifies indexed decisions, domain/path coherence, approvals, references, and canonical decision links.

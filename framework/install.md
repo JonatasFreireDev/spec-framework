@@ -73,4 +73,12 @@ The CLI expands and validates the selected contract in memory, including explici
 
 The initialized product includes [`tools/check-links.py`](../starter/product/tools/check-links.py). Run `python product/tools/check-links.py product` locally or in CI to verify relative Markdown links and section anchors. The script uses only the Python standard library and exits with status 1 when a link is broken.
 
+Decision-specific CI diagnostics can run alongside it:
+
+```bash
+spec-framework decisions check --product-root product --strict
+```
+
+Use `--json` for CI annotations or `--fix-links --yes` only after reviewing the preview. The command never changes approval records, moves decision files, or rewrites ambiguous references.
+
 The pinned runtime also materializes the shared contracts [`execution-runtime.md`](../docs/execution-runtime.md), [`engineering-systems.md`](../docs/engineering-systems.md), and [`lifecycle-and-approvals.md`](../docs/lifecycle-and-approvals.md) alongside `FRAMEWORK.md` and `AGENTS.framework.md`. Skills and orchestrators use these documents for cross-cutting runtime, engineering-system, and lifecycle rules.

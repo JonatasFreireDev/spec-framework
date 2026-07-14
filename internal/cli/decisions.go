@@ -6,16 +6,22 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"path/filepath"
 	"strings"
 
+	"github.com/JonatasFreireDev/spec-framework/internal/decisioncheck"
+	"github.com/JonatasFreireDev/spec-framework/internal/validator"
 	"github.com/JonatasFreireDev/spec-framework/internal/wizard"
 	"github.com/JonatasFreireDev/spec-framework/internal/workflow"
 )
 
 func runDecisions(args []string, out, errout io.Writer) int {
-	if len(args) == 0 || args[0] != "migrate" {
-		fmt.Fprintln(errout, "decisions requires migrate")
+	if len(args) == 0 || (args[0] != "migrate" && args[0] != "check") {
+		fmt.Fprintln(errout, "decisions requires check or migrate")
 		return 2
+	}
+	if args[0] == "check" {
+		return runDecisionCheck(args[1:], out, errout)
 	}
 	fs := flag.NewFlagSet("decisions migrate", flag.ContinueOnError)
 	fs.SetOutput(errout)
@@ -77,5 +83,57 @@ func runDecisions(args []string, out, errout io.Writer) int {
 		return 1
 	}
 	fmt.Fprintf(out, "Migrated %d decisions\nBackup: %s\nIndex: %s\n", result.Changed, result.Backup, result.IndexPath)
+	return 0
+}
+
+func runDecisionCheck(args []string, out, errout io.Writer) int {
+	fs := flag.NewFlagSet("decisions check", flag.ContinueOnError)
+	fs.SetOutput(errout)
+	root := fs.String("product-root", "product", "product root")
+	frameworkRoot := fs.String("framework-root", ".", "framework root")
+	domain := fs.String("domain", "", "only inspect one decision domain")
+	strict := fs.Bool("strict", false, "fail when errors are found; warnings remain non-blocking")
+	asJSON := fs.Bool("json", false, "JSON output")
+	fixLinks := fs.Bool("fix-links", false, "preview or fix mechanically resolvable decision links")
+	yes := fs.Bool("yes", false, "apply link fixes")
+	if err := fs.Parse(args); err != nil {
+		return 2
+	}
+	rootPath := productPath(*root)
+	frameworkPath := *frameworkRoot
+	if !filepath.IsAbs(frameworkPath) {
+		cwd, _ := os.Getwd()
+		frameworkPath = filepath.Join(cwd, frameworkPath)
+	}
+	report, err := decisioncheck.Run(decisioncheck.Options{Root: rootPath, FrameworkRoot: frameworkPath, Domain: *domain, FixLinks: *fixLinks, Yes: *yes})
+	if err != nil {
+		fmt.Fprintln(errout, err)
+		return 1
+	}
+	if *fixLinks && !*yes {
+		fmt.Fprintln(out, "Preview only: re-run with --fix-links --yes to apply mechanically resolvable links.")
+	}
+	if *asJSON {
+		b, _ := json.MarshalIndent(report, "", "  ")
+		fmt.Fprintln(out, string(b))
+	} else {
+		for _, d := range report.Diagnostics {
+			fmt.Fprintf(out, "%s %s %s: %s\n", strings.ToUpper(string(d.Severity)), d.Check, d.File, d.Message)
+			if d.Fix != "" {
+				fmt.Fprintf(out, "  Fix: %s\n", d.Fix)
+			}
+		}
+		for _, path := range report.ChangedFiles {
+			fmt.Fprintf(out, "CHANGED %s\n", path)
+		}
+		fmt.Fprintf(out, "Decision check: %d decisions, %d changed files\n", report.DecisionCount, len(report.ChangedFiles))
+	}
+	if *strict {
+		for _, d := range report.Diagnostics {
+			if d.Severity == validator.Error {
+				return 1
+			}
+		}
+	}
 	return 0
 }

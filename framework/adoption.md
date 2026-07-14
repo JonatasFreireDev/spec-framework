@@ -130,6 +130,8 @@ spec-framework decisions migrate
 
 Use `decisions migrate` as a preview first. Existing repositories should use `--interactive` to review ambiguous inferred types and scopes before applying the metadata migration.
 
+For CI and routine audits, run `spec-framework decisions check --strict`. Use `--json` for machine-readable findings. `--fix-links` is preview-only unless `--yes` is supplied and never changes approval records.
+
 Engineering System catalogs created before schema versioning must run `engineering-system migrate --dry-run` and then the same command without `--dry-run`. The migration only adds `schema_version: 1`, preserves product-owned fields, and never creates approval records. Approved systems must be re-approved by a human after any migrated content change.
 
 Legacy Engineering Systems whose `quality` area still points to `quality/quality-model.md` use the same migration command. The dry run reports the catalog update and missing Quality System files. The applied migration preserves the existing quality model and any pre-existing quality files, creates only missing `quality-system.md`, `quality-system.yaml`, and `test-strategy.md`, atomically changes the area contract to `quality/quality-system.md` only after materialization succeeds, rolls back generated files on failure, and never creates approval evidence. Review the generated baseline, increment the Engineering System version when required by compatibility policy, and obtain human re-approval before proposed-or-later consumers rely on it.
