@@ -18,11 +18,6 @@
       "target": "context.md",
       "find": "Do not create domains or features until `foundation/problem/problem.md`, `foundation/vision/vision.md`, and `foundation/strategy/strategy.md` contain product-specific content.",
       "replace": "For `existing-product`, approve `foundation/product-baseline.md` from repository and operational evidence, then approve `foundation/strategy/strategy.md` before creating delivery work."
-    },
-    {
-      "target": "foundation/README.md",
-      "find": "Fill `problem/problem.md`, then `vision/vision.md`, then `strategy/strategy.md`.",
-      "replace": "For `existing-product`, complete and individually approve `product-baseline.md`, then `strategy/strategy.md`. Escalate to the full Foundation path when audience, delivered value, or product direction is uncertain."
     }
   ],
   "registry": {

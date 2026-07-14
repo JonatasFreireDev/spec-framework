@@ -1,23 +1,12 @@
 # Product Engineering
 
-## Purpose
+This area owns the versioned Engineering System: architecture, standards, quality attributes, fitness functions, operations, and evidence.
 
-Store the versioned product Engineering System: stable architecture, ownership, standards, quality attributes, fitness functions, runbooks, and evidence.
+## Start here
 
-Framework validators and framework method decisions should be installed or referenced from the framework core, not mixed with product engineering decisions.
+- Read `context.md`, `engineering-system.md`, and `engineering-system.yaml`.
+- Base maturity claims on real code and operational evidence.
+- Keep product gates in `../knowledge/conventions/gates.md`.
+- Inspect with `spec-framework engineering-system inspect` and validate with `spec-framework engineering-system validate`.
 
-## Expected Areas
-
-| Area | Purpose |
-| --- | --- |
-| `architecture/` | Product architecture notes and ADR links. |
-| `runbooks/` | Product operational runbooks. |
-| `conventions/` | Product-specific engineering conventions. |
-| `quality/` | Versioned Quality System, test strategy, quality model, configured fitness functions, and exception policy. |
-| `evidence/` | Evidence supporting maturity and operational claims. |
-
-## Next Step
-
-Complete `engineering-system.md` and `engineering-system.yaml` from real code and operational evidence. Define product-specific gates in `knowledge/conventions/gates.md`; do not claim maturity or create architecture decisions from placeholder content.
-
-Inspect with `spec-framework engineering-system inspect` and validate with `spec-framework engineering-system validate`. Use `spec-framework engineering-system triggers` before declaring delivery-specific triggers in a use-case context. Legacy catalogs can preview schema migration with `spec-framework engineering-system migrate --dry-run`; migration never creates approval records.
+Framework validators and FDRs do not belong in product engineering content.

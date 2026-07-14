@@ -1,25 +1,11 @@
 # Foundation
 
-## Purpose
+Foundation records the product direction or the proportional entry contract selected during `init`.
 
-Capture product problem, vision, and strategy before domain or feature work begins.
+## Start here
 
-This is the complete Foundation package. The generated `../BOOTSTRAP.md` determines whether the selected starting point requires it, replaces it with a proportional contract, or keeps the session read-only.
+- Follow `../BOOTSTRAP.md`; not every starting point requires the full Foundation.
+- Read the relevant `context.md` before editing.
+- For `new-product`, progress through Problem → Vision → Strategy before domain work.
 
-## Expected Flow
-
-```text
-Problem -> Vision -> Strategy -> Domains
-```
-
-## Next Step
-
-Fill `problem/problem.md`, then `vision/vision.md`, then `strategy/strategy.md`.
-
-## Required Contexts
-
-| Context | Owner Skill | Purpose |
-| --- | --- | --- |
-| [problem/context.md](problem/context.md) | Problem Discovery AI | Preserve problem evidence and next handoff. |
-| [vision/context.md](vision/context.md) | Vision AI | Preserve product direction and principles. |
-| [strategy/context.md](strategy/context.md) | Strategy AI | Preserve delivery levels, segments, metrics, and roadmap. |
+Approval and status live in the artifacts and `.product/history/`, not in this README.

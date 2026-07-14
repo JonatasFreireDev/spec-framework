@@ -1,18 +1,9 @@
-# Template Feature
+# Feature Template
 
-## Purpose
+Copy this folder for one independently valuable delivery slice serving the parent goal.
 
-Copy this folder when defining a solution that serves the parent user goal.
+- Update `context.md` and `feature.md`.
+- State scope, non-goals, observable outcome, Delivery Level, and Priority.
+- Replace every `TBD` before requesting review.
 
-## Expected Files
-
-| File | Purpose |
-| --- | --- |
-| `context.md` | Feature identity, parent goal, child use cases, and delivery metadata. |
-| `feature.md` | Feature scope, non-goals, user value, and risks. |
-| `use-cases/` | Verifiable interactions generated from the feature. |
-
-## Next Step
-
-Rename this folder, update [context.md](context.md), then create use cases from [use-cases/_template-use-case](use-cases/_template-use-case/README.md).
-
+Next: derive verifiable interactions under `use-cases/`.

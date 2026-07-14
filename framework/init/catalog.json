@@ -21,8 +21,7 @@
       { "source": "starter/product/engineering", "target": "engineering" }
     ],
     "governance": [
-      { "source": "starter/product/audits", "target": "audits" },
-      { "source": "starter/product/releases", "target": "releases" }
+      { "source": "starter/product/audits", "target": "audits" }
     ]
   }
 }

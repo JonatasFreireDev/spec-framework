@@ -18,11 +18,6 @@
       "target": "context.md",
       "find": "Do not create domains or features until `foundation/problem/problem.md`, `foundation/vision/vision.md`, and `foundation/strategy/strategy.md` contain product-specific content.",
       "replace": "For `existing-implementation`, approve `knowledge/assessments/implementation-assessment.md`, then complete the full Foundation path before creating delivery work. Observed code is evidence, not approved product intent."
-    },
-    {
-      "target": "foundation/README.md",
-      "find": "Fill `problem/problem.md`, then `vision/vision.md`, then `strategy/strategy.md`.",
-      "replace": "For `existing-implementation`, first approve `../knowledge/assessments/implementation-assessment.md`. Then fill `problem/problem.md`, `vision/vision.md`, and `strategy/strategy.md` from reviewed evidence without treating observed behavior as intent."
     }
   ],
   "registry": {

@@ -1,19 +1,9 @@
-# Template Goal
+# Goal Template
 
-## Purpose
+Copy this folder for one measurable user outcome inside the parent domain.
 
-Copy this folder when defining a user goal inside the domain.
+- Update `context.md`, `goal.md`, and `journeys.md`.
+- Keep the goal focused on an outcome, not a feature or implementation.
+- Replace every `TBD` before requesting review.
 
-## Expected Files
-
-| File | Purpose |
-| --- | --- |
-| `context.md` | Goal identity, parent domain, child features, and delivery metadata. |
-| `goal.md` | User goal, success criteria, and product rationale. |
-| `journeys.md` | Current and target journeys. |
-| `features/` | Feature candidates that serve this goal. |
-
-## Next Step
-
-Rename this folder, update [context.md](context.md), then create the first feature from [features/_template-feature](features/_template-feature/README.md).
-
+Next: copy `features/_template-feature/` for an approved delivery slice.

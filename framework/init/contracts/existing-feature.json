@@ -20,11 +20,6 @@
       "target": "context.md",
       "find": "Do not create domains or features until `foundation/problem/problem.md`, `foundation/vision/vision.md`, and `foundation/strategy/strategy.md` contain product-specific content.",
       "replace": "For `existing-feature`, complete and approve `foundation/feature-brief.md` before creating a workspace. Escalate to full Foundation when the work requires product-wide direction."
-    },
-    {
-      "target": "foundation/README.md",
-      "find": "Fill `problem/problem.md`, then `vision/vision.md`, then `strategy/strategy.md`.",
-      "replace": "For `existing-feature`, complete and individually approve `feature-brief.md`. Use the full Problem -> Vision -> Strategy path only when the scope is broad or uncertain."
     }
   ],
   "registry": {

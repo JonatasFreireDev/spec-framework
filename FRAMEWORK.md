@@ -342,6 +342,8 @@ New products must not copy the entire `spec-framework` root. They start from `st
 
 Every `context.md` must let an AI understand where it is, what it needs to read, and what the safe next step is.
 
+Product READMEs are navigation aids, not workflow or state authorities. Keep them only where they clarify an area boundary or a copyable template entry point, and keep them concise. `BOOTSTRAP.md` owns starting-point sequencing, `context.md` owns local state and handoff, skills own operating workflow, and templates own artifact structure. Do not ship a README only to preserve an empty directory; declarative initialization or the owning skill creates that directory when a real artifact requires it. Upgrade preserves adopter-owned READMEs even when newer starters omit them.
+
 Minimal template:
 
 ```yaml

@@ -8,6 +8,45 @@ import (
 	"testing"
 )
 
+func TestInitShipsLeanReadmeSurfaceAndUpgradePreservesAdopterReadmes(t *testing.T) {
+	t.Setenv("SPEC_FRAMEWORK_CACHE", filepath.Join(t.TempDir(), "cache"))
+	t.Setenv("SPEC_FRAMEWORK_AGENT_HOME", filepath.Join(t.TempDir(), "agents"))
+	target := filepath.Join(t.TempDir(), "product-repo")
+	if _, err := Init(Options{Target: target, Version: "test", Agents: []Agent{Codex}}); err != nil {
+		t.Fatal(err)
+	}
+	product := filepath.Join(target, "product")
+	readmes := 0
+	if err := filepath.WalkDir(product, func(path string, entry os.DirEntry, err error) error {
+		if err == nil && !entry.IsDir() && entry.Name() == "README.md" {
+			readmes++
+		}
+		return err
+	}); err != nil {
+		t.Fatal(err)
+	}
+	if readmes != 17 {
+		t.Fatalf("initialized product has %d READMEs, want 17", readmes)
+	}
+	obsolete := filepath.Join(product, "knowledge", "prompts", "README.md")
+	if _, err := os.Stat(obsolete); !os.IsNotExist(err) {
+		t.Fatalf("leaf placeholder README was materialized: %v", err)
+	}
+	if err := os.MkdirAll(filepath.Dir(obsolete), 0755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(obsolete, []byte("adopter-owned guidance"), 0644); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := Upgrade(Options{Target: target, Version: "test", Agents: []Agent{Codex}}); err != nil {
+		t.Fatal(err)
+	}
+	data, err := os.ReadFile(obsolete)
+	if err != nil || string(data) != "adopter-owned guidance" {
+		t.Fatalf("upgrade changed adopter README: %q %v", data, err)
+	}
+}
+
 func TestInitExistingFeatureActivatesOnlyFeatureBriefFoundation(t *testing.T) {
 	t.Setenv("SPEC_FRAMEWORK_CACHE", filepath.Join(t.TempDir(), "cache"))
 	t.Setenv("SPEC_FRAMEWORK_AGENT_HOME", filepath.Join(t.TempDir(), "agents"))

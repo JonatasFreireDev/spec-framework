@@ -1,10 +1,5 @@
 # Use Cases
 
-## Purpose
+Each use case represents one verifiable interaction and owns its specification, design, engineering, plan, graph, tasks, tests, and validation evidence.
 
-Use cases are verifiable interactions derived from the feature. Each use case owns its Specification, Design, Implementation Plan, Execution Graph, Tasks, Tests, and validation artifacts.
-
-## Template
-
-Copy [_template-use-case](_template-use-case/README.md), rename the folder to a stable slug, and update every `TBD` field before requesting approval.
-
+Copy `_template-use-case/` to a stable interaction slug, then update its `context.md` and replace every `TBD`.

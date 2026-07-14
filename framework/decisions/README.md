@@ -53,6 +53,7 @@ Product decisions do not live here. Product decisions continue to live in `knowl
 | [FDR-041](FDR-041-declarative-initialization-contracts.md) | Declarative Initialization Contracts | proposed | CLI architecture evolution |
 | [FDR-042](FDR-042-cli-lifecycle-commands.md) | CLI Lifecycle Commands | proposed | CLI installation usability |
 | [FDR-043](FDR-043-native-discovery-and-challenge.md) | Native Discovery And Challenge | proposed | Planning skill interaction feedback |
+| [FDR-044](FDR-044-lean-product-readmes.md) | Lean Product READMEs | proposed | Adopter starter context review |
 
 ## Rule
 
