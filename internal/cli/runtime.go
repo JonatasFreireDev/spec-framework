@@ -99,6 +99,10 @@ func runRuntime(command string, args []string, out, errout io.Writer) int {
 		}
 		switch rest[0] {
 		case "claim":
+			if *isolate && strings.TrimSpace(*work) == "" {
+				fmt.Fprintln(errout, "lease claim --isolate requires --work")
+				return 2
+			}
 			l, e := workflow.ClaimLease(p, g, *task, *agent, 30*time.Minute)
 			if e != nil {
 				fmt.Fprintln(errout, e)
@@ -109,6 +113,7 @@ func runRuntime(command string, args []string, out, errout io.Writer) int {
 				repo := filepath.Dir(p)
 				path, x := workflow.CreateTaskWorktree(repo, *work, *task)
 				if x != nil {
+					_ = workflow.ReleaseLease(p, *task, *agent)
 					fmt.Fprintln(errout, x)
 					return 1
 				}
@@ -158,7 +163,7 @@ func runRuntime(command string, args []string, out, errout io.Writer) int {
 				fmt.Fprintln(errout, "commands execute requires plan id")
 				return 2
 			}
-			ev, e := workflow.ExecuteCommandPlan(p, *work, rest[1])
+			ev, e := workflow.ExecuteCommandPlan(p, *work, rest[1], *agent)
 			fmt.Fprint(out, ev.Output)
 			if e != nil {
 				fmt.Fprintln(errout, e)

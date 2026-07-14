@@ -5,6 +5,7 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"os"
 	"os/exec"
@@ -149,6 +150,12 @@ func leasePath(root, task string) string {
 	return filepath.Join(root, ".product", "claims", task+".json")
 }
 func ClaimLease(root, graph, task, agent string, ttl time.Duration) (Lease, error) {
+	if err := validateRuntimeComponent(task, "task"); err != nil {
+		return Lease{}, err
+	}
+	if err := validateRuntimeComponent(agent, "agent"); err != nil {
+		return Lease{}, err
+	}
 	if ttl <= 0 {
 		ttl = 30 * time.Minute
 	}
@@ -159,18 +166,57 @@ func ClaimLease(root, graph, task, agent string, ttl time.Duration) (Lease, erro
 		if exp.After(now) {
 			return Lease{}, fmt.Errorf("task %s is leased by %s until %s", task, old.Agent, old.ExpiresAt)
 		}
+		_ = os.Remove(leasePath(root, task))
+		_ = ReleaseClaim(root, old.TaskID, old.Agent)
 	}
-	if _, err := ClaimTask(root, graph, task, agent); err != nil && !strings.Contains(err.Error(), "already claimed") {
+	if _, err := ClaimTask(root, graph, task, agent); err != nil {
 		return Lease{}, err
 	}
+	claimed := true
+	defer func() {
+		if claimed {
+			_ = ReleaseClaim(root, task, agent)
+		}
+	}()
 	_ = os.MkdirAll(filepath.Dir(leasePath(root, task)), 0755)
 	l := Lease{Version: 2, TaskID: task, Agent: agent, Graph: filepath.ToSlash(graph), ClaimedAt: now.Format(time.RFC3339), HeartbeatAt: now.Format(time.RFC3339), ExpiresAt: now.Add(ttl).Format(time.RFC3339), Attempt: old.Attempt + 1}
 	if l.Attempt > 3 {
 		return Lease{}, fmt.Errorf("task %s exceeded three attempts", task)
 	}
-	return l, writeJSON(leasePath(root, task), l)
+	if err := writeJSON(leasePath(root, task), l); err != nil {
+		return Lease{}, err
+	}
+	claimed = false
+	return l, nil
+}
+
+func ReleaseLease(root, task, agent string) error {
+	if err := validateRuntimeComponent(task, "task"); err != nil {
+		return err
+	}
+	if err := validateRuntimeComponent(agent, "agent"); err != nil {
+		return err
+	}
+	var l Lease
+	path := leasePath(root, task)
+	if err := readJSON(path, &l); err != nil {
+		return err
+	}
+	if l.Agent != agent {
+		return fmt.Errorf("task %s is not leased by %s", task, agent)
+	}
+	if err := os.Remove(path); err != nil && !os.IsNotExist(err) {
+		return err
+	}
+	return ReleaseClaim(root, task, agent)
 }
 func Heartbeat(root, task, agent string, ttl time.Duration) (Lease, error) {
+	if err := validateRuntimeComponent(task, "task"); err != nil {
+		return Lease{}, err
+	}
+	if err := validateRuntimeComponent(agent, "agent"); err != nil {
+		return Lease{}, err
+	}
 	var l Lease
 	if err := readJSON(leasePath(root, task), &l); err != nil {
 		return l, err
@@ -217,8 +263,11 @@ func RecoverLeases(root string) ([]string, error) {
 }
 
 func CreateTaskWorktree(repoRoot, work, task string) (string, error) {
-	if work == "" || task == "" {
-		return "", fmt.Errorf("work and task are required")
+	if err := validateRuntimeComponent(work, "work"); err != nil {
+		return "", err
+	}
+	if err := validateRuntimeComponent(task, "task"); err != nil {
+		return "", err
 	}
 	branch := "codex/" + strings.ToLower(work+"-"+task)
 	path := filepath.Join(repoRoot, ".worktrees", work, task)
@@ -235,6 +284,12 @@ func CreateTaskWorktree(repoRoot, work, task string) (string, error) {
 }
 
 func CreateCommandPlan(root, work, task, cwd, source, risk string, argv []string, timeout int) (CommandPlan, error) {
+	if err := validateRuntimeComponent(work, "work"); err != nil {
+		return CommandPlan{}, err
+	}
+	if err := validateRuntimeComponent(task, "task"); err != nil {
+		return CommandPlan{}, err
+	}
 	if regexp.MustCompile(`(?i)^DEC-\d+$`).MatchString(strings.TrimSpace(source)) {
 		return CommandPlan{}, fmt.Errorf("decision text is not an executable command source; use a validated gate")
 	}
@@ -257,13 +312,61 @@ func CreateCommandPlan(root, work, task, cwd, source, risk string, argv []string
 	p := CommandPlan{Version: 2, ID: id, WorkspaceID: work, TaskID: task, Cwd: filepath.ToSlash(cwd), Source: source, Risk: risk, Argv: argv, TimeoutSeconds: timeout, BaseCommit: strings.TrimSpace(base), InputHash: hex.EncodeToString(sum[:]), CreatedAt: time.Now().UTC().Format(time.RFC3339)}
 	return p, writeJSON(filepath.Join(dir, id+".json"), p)
 }
-func ExecuteCommandPlan(root, work, id string) (CommandEvidence, error) {
+func ExecuteCommandPlan(root, work, id, agent string) (CommandEvidence, error) {
 	var p CommandPlan
 	if err := readJSON(filepath.Join(workspaceDir(root, work), "command-plans", id+".json"), &p); err != nil {
 		return CommandEvidence{}, err
 	}
+	if p.Version != RuntimeVersion || p.WorkspaceID != work || p.TaskID == "" {
+		return CommandEvidence{}, errors.New("command plan is invalid or belongs to another workspace")
+	}
+	if err := validateRuntimeComponent(p.TaskID, "task"); err != nil {
+		return CommandEvidence{}, err
+	}
+	if len(p.Argv) == 0 || strings.TrimSpace(p.Argv[0]) == "" {
+		return CommandEvidence{}, errors.New("command plan has no executable argv")
+	}
 	if p.Risk != "R0" && p.Risk != "R1" {
 		return CommandEvidence{}, fmt.Errorf("risk %s is disabled", p.Risk)
+	}
+	if strings.TrimSpace(agent) == "" {
+		return CommandEvidence{}, errors.New("command execution requires an agent")
+	}
+	var lease Lease
+	if err := readJSON(leasePath(root, p.TaskID), &lease); err != nil {
+		return CommandEvidence{}, fmt.Errorf("read active task lease: %w", err)
+	}
+	expires, err := time.Parse(time.RFC3339, lease.ExpiresAt)
+	if err != nil || !expires.After(time.Now().UTC()) || lease.Agent != agent {
+		return CommandEvidence{}, fmt.Errorf("task %s does not have an active lease owned by %s", p.TaskID, agent)
+	}
+	var claims Claims
+	if err := readJSON(filepath.Join(root, ".product", "claims.json"), &claims); err != nil {
+		return CommandEvidence{}, fmt.Errorf("read task claim: %w", err)
+	}
+	claimed := false
+	for _, claim := range claims.Claims {
+		if claim.TaskID == p.TaskID && claim.Agent == agent {
+			claimed = true
+			break
+		}
+	}
+	if !claimed {
+		return CommandEvidence{}, fmt.Errorf("task %s is not claimed by %s", p.TaskID, agent)
+	}
+	raw, _ := json.Marshal(p.Argv)
+	sum := sha256.Sum256(raw)
+	if hex.EncodeToString(sum[:]) != p.InputHash {
+		return CommandEvidence{}, errors.New("command plan input hash does not match argv")
+	}
+	if p.TimeoutSeconds <= 0 {
+		return CommandEvidence{}, errors.New("command plan timeout must be positive")
+	}
+	if p.BaseCommit != "" {
+		head, headErr := gitOutput(root, "rev-parse", "HEAD")
+		if headErr != nil || strings.TrimSpace(head) != p.BaseCommit {
+			return CommandEvidence{}, errors.New("command plan base commit is stale")
+		}
 	}
 	cwd := filepath.Join(root, filepath.FromSlash(p.Cwd))
 	rel, err := filepath.Rel(root, cwd)
@@ -284,14 +387,22 @@ func ExecuteCommandPlan(root, work, id string) (CommandEvidence, error) {
 			exit = x.ExitCode()
 		}
 	}
-	sum := sha256.Sum256(out)
-	e := CommandEvidence{Version: 2, PlanID: id, StartedAt: started.Format(time.RFC3339), FinishedAt: time.Now().UTC().Format(time.RFC3339), ExitCode: exit, Success: runErr == nil, OutputHash: hex.EncodeToString(sum[:]), Output: string(out)}
+	outputSum := sha256.Sum256(out)
+	e := CommandEvidence{Version: 2, PlanID: id, StartedAt: started.Format(time.RFC3339), FinishedAt: time.Now().UTC().Format(time.RFC3339), ExitCode: exit, Success: runErr == nil, OutputHash: hex.EncodeToString(outputSum[:]), Output: string(out)}
 	dir := filepath.Join(workspaceDir(root, work), "evidence")
 	_ = os.MkdirAll(dir, 0755)
 	if err := writeJSON(filepath.Join(dir, id+".json"), e); err != nil {
 		return e, err
 	}
 	return e, runErr
+}
+
+func validateRuntimeComponent(value, label string) error {
+	value = strings.TrimSpace(value)
+	if value == "" || value == "." || value == ".." || filepath.Base(value) != value || strings.ContainsAny(value, `/\\`) {
+		return fmt.Errorf("invalid %s %q", label, value)
+	}
+	return nil
 }
 
 func BuildSchedule(root, work, graph string, max int) (Schedule, error) {

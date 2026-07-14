@@ -941,6 +941,12 @@ func ReadyUnclaimed(root, graphPath string) ([]Node, error) {
 	return out, nil
 }
 func ClaimTask(root, graphPath, taskID, agent string) (Claim, error) {
+	if err := validateRuntimeComponent(taskID, "task"); err != nil {
+		return Claim{}, err
+	}
+	if err := validateRuntimeComponent(agent, "agent"); err != nil {
+		return Claim{}, err
+	}
 	ready, err := Ready(graphPath)
 	if err != nil {
 		return Claim{}, err
@@ -1017,6 +1023,12 @@ func ClaimTask(root, graphPath, taskID, agent string) (Claim, error) {
 	return c, nil
 }
 func ReleaseClaim(root, taskID, agent string) error {
+	if err := validateRuntimeComponent(taskID, "task"); err != nil {
+		return err
+	}
+	if err := validateRuntimeComponent(agent, "agent"); err != nil {
+		return err
+	}
 	unlock, err := acquireClaimLock(root)
 	if err != nil {
 		return err
