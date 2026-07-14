@@ -1012,7 +1012,7 @@ footer{
   <div class="hero">
     <p class="eyebrow">Framework de engenharia de produto para agentes de IA</p>
     <h1 class="title">Documentação como infraestrutura de engenharia</h1>
-    <p class="lede">O <b>Spec Framework</b> é um método — e um CLI — que faz produto, especificação, planejamento, execução e auditoria funcionarem como um único pipeline rastreável, em vez de pedir a uma IA para "implementar uma feature" a partir de contexto solto. Cada mudança nasce de um problema real e chega ao código com rastreabilidade completa.</p>
+    <p class="lede">O <b>Spec Framework</b> é um método — e um CLI — que faz produto, especificação, planejamento, execução e auditoria funcionarem como um único pipeline rastreável, em vez de pedir a uma IA para "implementar uma feature" a partir de contexto solto. Cada mudança nasce de um problema real e chega ao código com rastreabilidade completa. O contrato canônico está em <a href="../FRAMEWORK.md">FRAMEWORK.md</a>.</p>
     <div class="cta-row">
       <a class="btn primary" href="#comecar" data-page="comecar">Primeiros passos →</a>
       <a class="btn" href="#exemplo" data-page="exemplo">Ver um exemplo ponta a ponta</a>
@@ -1143,7 +1143,7 @@ footer{
       <h3 class="block-title" id="comecar-ponto">2. Escolha seu ponto de partida</h3>
       <p class="lead" style="margin-bottom:20px;">Execute o comando abaixo e responda às perguntas do wizard. Ele ajudará você a escolher a opção que melhor representa o que existe hoje.</p>
       <div class="cli-scroll" style="margin-bottom:22px;"><pre class="cli"><span class="cmd">spec-framework init</span> ../meu-produto</pre></div>
-      <p class="note" style="margin-bottom:22px;">O ponto de partida define como o produto entra no framework. Ele não aprova documentos automaticamente e não remove validações das etapas seguintes.</p>
+        <p class="note" style="margin-bottom:22px;">O ponto de partida define como o produto entra no framework. Ele não aprova documentos automaticamente e não remove validações das etapas seguintes. Consulte a <a href="starting-points.md">referência de starting points</a> e o <a href="artifact-registry-modules.md">mapa modular de artifacts</a> para ver a composição inicial.</p>
       <div class="starting-point-list">
         <details class="starting-point-card" open>
           <summary><span class="starting-point-name">new-product · padrão</span><span class="starting-point-summary">Tenho uma ideia, mas o produto ainda precisa ser definido.</span></summary>
@@ -1294,7 +1294,7 @@ footer{
         </div>
         <div class="gterm">
           <div class="gname">Sistemas compartilhados</div>
-          <p>Produtos com fundações recorrentes podem declarar um <a href="#design-system">Design System</a> (tokens, componentes, padrões) e um <a href="#eng-sistema">Engineering System</a> (arquitetura, ownership, qualidade) — ambos versionados, pinados por entrega e incapazes de aprovar qualquer coisa sozinhos.</p>
+          <p>Produtos com fundações recorrentes podem declarar um <a href="#design-system">Design System</a> (tokens, componentes, padrões) e um <a href="#eng-sistema">Engineering System</a> (arquitetura, ownership, qualidade) — ambos versionados, pinados por entrega e incapazes de aprovar qualquer coisa sozinhos. Veja os contratos de <a href="engineering-systems.md">Engineering Systems</a> e <a href="lifecycle-and-approvals.md">lifecycle e aprovações</a>.</p>
         </div>
         <div class="gterm">
           <div class="gname">Decisões (DEC-*)</div>
@@ -1367,7 +1367,7 @@ footer{
     </div>
 
     <p class="lead">
-      Cada skill declara uma única <b>responsibility</b>, lê <code>FRAMEWORK.md</code>, os <code>context.md</code> relevantes e as decisões aprovadas antes de agir, e para diante de aprovação humana pendente, conflito ou limite de tentativas. Todas operam nos mesmos quatro modos:
+      Cada skill declara uma única <b>responsibility</b>, lê o <a href="../framework/AGENTS.framework.md"><code>AGENTS.framework.md</code></a>, <code>FRAMEWORK.md</code>, os <code>context.md</code> relevantes e as decisões aprovadas antes de agir, e para diante de aprovação humana pendente, conflito ou limite de tentativas. Todas operam nos mesmos quatro modos:
     </p>
     <div class="adapter-row" style="margin:-14px 0 44px;">
       <div class="adapter-chip"><span class="aname">create</span><span class="adesc">produz o primeiro artefato</span></div>
@@ -1602,7 +1602,7 @@ footer{
   <section id="engenharia" class="page">
     <div class="section-head">
       <h2 class="section-title">O fluxo de Engenharia</h2>
-      <div class="section-note">O que o Design é para a experiência, o Engineering System é para a arquitetura: contrato compartilhado, versão pinada, revisão independente.</div>
+      <div class="section-note">O que o Design é para a experiência, o Engineering System é para a arquitetura: contrato compartilhado, versão pinada, revisão independente. <a href="engineering-systems.md">Contrato técnico →</a></div>
     </div>
     <div class="page-toc">
       <a href="#eng-sistema">Engineering System</a>
@@ -1682,7 +1682,7 @@ footer{
   <section id="gates" class="page">
     <div class="section-head">
       <h2 class="section-title">Gates de aprovação</h2>
-      <div class="section-note">Nenhum artefato avança sem um estado claro e, a partir de <span class="tag">approved</span>, um registro de aprovação com hash do conteúdo.</div>
+      <div class="section-note">Nenhum artefato avança sem um estado claro e, a partir de <span class="tag">approved</span>, um registro de aprovação com hash do conteúdo. <a href="lifecycle-and-approvals.md">Contrato completo →</a></div>
     </div>
     <div class="page-toc">
       <a href="#gates-estados">Os estados</a>
@@ -1703,6 +1703,7 @@ footer{
       <span class="gates-sep">→</span>
       <span class="gate ok">released</span>
     </div>
+    <p class="note" style="margin-top:14px;"><code>materialized</code> é um estado específico do Execution Graph: indica que os arquivos canônicos de tasks e o índice gerado já existem; não é um estado geral de artifacts.</p>
 
     <div class="cat-block" style="margin-top:44px;">
       <h3 class="block-title" id="gates-estados">Cada transição tem um preço</h3>
@@ -1738,7 +1739,7 @@ footer{
   <section id="entrega" class="page">
     <div class="section-head">
       <h2 class="section-title">Da task aprovada até a entrega</h2>
-      <div class="section-note">Sim, existe um orquestrador dedicado a isso: o <b>Delivery Orchestrator</b>. Ele roteia, não implementa.</div>
+      <div class="section-note">Sim, existe um orquestrador dedicado a isso: o <b>Delivery Orchestrator</b>. Ele roteia, não implementa. <a href="execution-runtime.md">Contrato de runtime →</a></div>
     </div>
 
     <div class="page-toc">
@@ -2065,7 +2066,15 @@ footer{
       </div>
 
       <div class="cli-block">
-        <p class="caption">9 · descobrir, diagnosticar e instalar adapters visuais opcionais</p>
+        <p class="caption">9 · manter o Engineering System compartilhado</p>
+        <div class="cli-scroll"><pre class="cli"><span class="cmd">spec-framework engineering-system inspect</span> --product-root product
+<span class="cmd">spec-framework engineering-system validate</span> --product-root product
+<span class="cmd">spec-framework engineering-system triggers</span> --product-root product
+<span class="cmd">spec-framework engineering-system migrate</span> --product-root product --dry-run</pre></div>
+      </div>
+
+      <div class="cli-block">
+        <p class="caption">10 · descobrir, diagnosticar e instalar adapters visuais opcionais</p>
         <div class="cli-scroll"><pre class="cli"><span class="cmd">spec-framework adapters list</span>
 <span class="cmd">spec-framework adapters status</span> impeccable
 <span class="cmd">spec-framework adapters doctor</span> impeccable --check-latest
@@ -2075,20 +2084,20 @@ footer{
       </div>
 
       <div class="cli-block">
-        <p class="caption">10 · ver o estado consolidado do trabalho e migrar decisões antigas</p>
+        <p class="caption">11 · ver o estado consolidado do trabalho e migrar decisões antigas</p>
         <div class="cli-scroll"><pre class="cli"><span class="cmd">spec-framework dashboard</span> --work WORK-001
 <span class="cmd">spec-framework status</span> --work WORK-001 --graph --json
 <span class="cmd">spec-framework decisions migrate</span> --product-root product --interactive</pre></div>
       </div>
 
       <div class="cli-block">
-        <p class="caption">11 · planejar comandos governados por risco (R0/R1) e validar</p>
+        <p class="caption">12 · planejar comandos governados por risco (R0/R1) e validar</p>
         <div class="cli-scroll"><pre class="cli"><span class="cmd">spec-framework commands plan</span> --work WORK-001 --task TK-001 --risk R0 -- go test ./...
 <span class="cmd">spec-framework validate</span></pre></div>
       </div>
 
       <div class="cli-block">
-        <p class="caption">12 · bootstrap a partir de documentos existentes (epics, PRDs)</p>
+        <p class="caption">13 · bootstrap a partir de documentos existentes (epics, PRDs)</p>
         <div class="cli-scroll"><pre class="cli"><span class="c"># cria um inventário e um run de importação, só análise</span>
 <span class="cmd">spec-framework init</span> ../meu-produto --agents codex --starting-point existing-documents --source-dir ../product-docs --yes
 <span class="c"># materializa artefatos de rascunho após aprovação humana explícita</span>
@@ -2096,7 +2105,7 @@ footer{
       </div>
 
       <div class="cli-block">
-        <p class="caption">13 · atualizar o runtime externo e migrar repositórios legados</p>
+        <p class="caption">14 · atualizar o runtime externo e migrar repositórios legados</p>
         <div class="cli-scroll"><pre class="cli"><span class="c"># atualiza o cache versionado e o manifest pinado, preservando product/</span>
 <span class="cmd">spec-framework upgrade</span> --yes
 <span class="c"># repositório antigo com .spec-framework/ local: preview antes de migrar</span>
@@ -2104,16 +2113,25 @@ footer{
 <span class="c"># resolve o SKILL.md pinado de uma skill a partir do cache</span>
 <span class="cmd">spec-framework skill path</span> code-runner</pre></div>
       </div>
+
+      <div class="cli-block">
+        <p class="caption">15 · operar o runtime resumível e a integração local</p>
+        <div class="cli-scroll"><pre class="cli"><span class="cmd">spec-framework runtime</span>
+<span class="cmd">spec-framework resume</span> --work WORK-001
+<span class="cmd">spec-framework checkpoint</span> --work WORK-001
+<span class="cmd">spec-framework handoff</span> --work WORK-001
+<span class="cmd">spec-framework integrate</span> --work WORK-001</pre></div>
+      </div>
     </div>
 
     <p class="note">
-      O CLI opera o método — cria workspaces, registra aprovações, materializa grafos, arrenda tasks — mas não invoca agentes automaticamente. Quem decide implementar continua sendo o agente (Codex, Claude, Cursor) lendo <code>FRAMEWORK.md</code> e os <code>context.md</code> relevantes.
+      O CLI opera o método — cria workspaces, registra aprovações, materializa grafos, arrenda tasks — mas não invoca agentes automaticamente. Quem decide implementar continua sendo o agente (Codex, Claude, Cursor) lendo <a href="../framework/AGENTS.framework.md"><code>AGENTS.framework.md</code></a>, <code>FRAMEWORK.md</code> e os <code>context.md</code> relevantes. A mecânica detalhada está em <a href="execution-runtime.md">execution-runtime.md</a>.
     </p>
   </section>
 
   <footer>
     <span>Fonte: FRAMEWORK.md e framework/skills/ do repositório.</span>
-    <span>Sincronizado com <code style="font-family:var(--mono);font-size:11.5px;">master @ aa0d3aa</code> · 2026-07-12</span>
+    <span>Sincronizado com <code style="font-family:var(--mono);font-size:11.5px;">master @ 75f8d49</code> · v0.6.0 · 2026-07-14</span>
   </footer>
 </div>
 
