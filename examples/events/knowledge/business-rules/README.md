@@ -21,4 +21,4 @@ Supporting skills: Domain Architect AI, Product Historian AI, QA AI.
 
 ## Next Step
 
-When a rule changes product behavior, record a decision in `knowledge/decisions/` and reference it from affected specifications.
+When a rule changes product behavior, record a decision in the matching indexed domain root (`knowledge/decisions/`, `design/decisions/`, or `engineering/decisions/`) and reference it from affected specifications.

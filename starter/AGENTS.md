@@ -13,7 +13,7 @@ Activate only when `product/.product/framework.json` is valid, then resolve and 
 - `product/.product/`: product state, approval history, artifact registry, derivations, and framework adoption metadata.
 - `product/foundation/`: problem, vision, and strategy.
 - `product/domains/`: domains, goals, features, use cases, specifications, tasks, and validation artifacts.
-- `product/knowledge/decisions/`: product decisions only.
+- `product/knowledge/decisions/`: product and cross-cutting decisions; design and engineering decisions live in their respective domain roots and all are indexed in `product/.product/decisions.json`.
 - `product/knowledge/imports/runs/<IMPORT-NNN>/traceability.json`: per-source review, evidence, claims, destinations, and unmapped gaps for LLM-assisted imports.
 - `product/audits/`: product audits and readiness reports.
 

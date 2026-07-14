@@ -31,7 +31,7 @@ Security baseline updates; threat register entries; threat scenarios; impacted a
 - the active product root's `knowledge/conventions/security-baseline.md`.
 - `framework/template/security-baseline-template.md` when creating or normalizing a baseline.
 - `framework/template/threat-register-template.md` when creating or normalizing a threat register.
-- Approved product decisions in the active product root's `knowledge/decisions/` and `.product/decisions.json`.
+- Approved decisions are discovered through the active product root's `.product/decisions.json`; resolve each registered `path` from its declared domain root (`knowledge/decisions/`, `design/decisions/`, or `engineering/decisions/`).
 - Security and failure-routing policy in `FRAMEWORK.md`.
 - Existing active product root `audits/security/threat-register.md` when present.
 - Related Security Review, QA Evidence, and audit artifacts when present.

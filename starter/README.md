@@ -43,7 +43,7 @@ These are the default `new-product` steps. For every initialized repository, rea
 
 ## Boundary Rule
 
-Do not put framework maintenance history in `product/knowledge/decisions/`. Product decisions go there; the framework method lives in the pinned external runtime.
+Do not put framework maintenance history in any product decision domain. Product decisions are indexed in `product/.product/decisions.json` and stored under `product/knowledge/decisions/`, `product/design/decisions/`, or `product/engineering/decisions/` according to domain; the framework method lives in the pinned external runtime.
 
 ## Starter Templates
 

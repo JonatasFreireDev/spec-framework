@@ -15,7 +15,7 @@ Orchestrator. Controls workflow, gates, handoffs, and approval checkpoints. It s
 - the framework root's `FRAMEWORK.md`
 - Relevant context.md files for the requested scope.
 - the active product root's `.product/state.json`, `.product/roadmap.json`, and `.product/decisions.json` when present.
-- Approved product decisions in the active product root's `knowledge/decisions/`.
+- Approved decisions are discovered through the active product root's `.product/decisions.json`; resolve each registered `path` from its declared domain root.
 
 ## Default sequence
 Documentation Writer -> Product Historian -> targeted audit skills

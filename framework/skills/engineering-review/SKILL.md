@@ -28,7 +28,7 @@ Approved Specification; Design; approved Technical Discovery; `engineering-propo
 - the framework root's `FRAMEWORK.md`
 - Relevant parent context.md files.
 - Relevant templates in framework/template/.
-- Approved product decisions in the active product root's `knowledge/decisions/` and `.product/decisions.json`.
+- Approved decisions are discovered through the active product root's `.product/decisions.json`; resolve each registered `path` from its declared domain root (`knowledge/decisions/`, `design/decisions/`, or `engineering/decisions/`).
 
 ## Workflow
 1. Read the proposal and record its normalized SHA-256 content hash so later edits make the review stale.

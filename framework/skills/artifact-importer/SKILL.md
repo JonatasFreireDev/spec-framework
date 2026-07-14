@@ -28,7 +28,7 @@ Source documents; product context; existing Domains, User Goals, Features, gloss
 - Relevant parent context.md files.
 - Relevant templates in framework/template/.
 - `framework/template/import-traceability-template.json` when normalizing the traceability ledger.
-- Approved product decisions in the active product root's `knowledge/decisions/` and `.product/decisions.json`.
+- Approved decisions are discovered through the active product root's `.product/decisions.json`; resolve each registered `path` from its declared domain root (`knowledge/decisions/`, `design/decisions/`, or `engineering/decisions/`).
 
 ## Workflow
 1. Copy or reference sources without modifying their content and compute a SHA-256 hash for each source.

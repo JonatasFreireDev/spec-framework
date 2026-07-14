@@ -7,6 +7,8 @@ import (
 	"regexp"
 	"sort"
 	"strings"
+
+	"github.com/JonatasFreireDev/spec-framework/internal/decisions"
 )
 
 type DecisionImpact struct {
@@ -14,6 +16,7 @@ type DecisionImpact struct {
 	Type              string         `json:"type"`
 	Status            string         `json:"status"`
 	Path              string         `json:"path"`
+	Domain            string         `json:"domain,omitempty"`
 	Valid             bool           `json:"valid"`
 	AffectedArtifacts []string       `json:"affected_artifacts,omitempty"`
 	References        []string       `json:"references,omitempty"`
@@ -55,7 +58,12 @@ func DecisionImpactReport(root, id string) (DecisionImpact, error) {
 			decisionType = "product"
 		}
 	}
-	r := DecisionImpact{ID: id, Type: decisionType, Status: fmt.Sprint(d["status"]), Path: filepath.ToSlash(fmt.Sprint(d["path"])), WorkflowEffects: map[string]any{}}
+	path := filepath.ToSlash(fmt.Sprint(d["path"]))
+	domain := fmt.Sprint(d["domain"])
+	if domain == "<nil>" || domain == "" {
+		domain = decisions.DomainForPath(path, decisions.DomainPaths(index))
+	}
+	r := DecisionImpact{ID: id, Type: decisionType, Status: fmt.Sprint(d["status"]), Path: path, Domain: domain, WorkflowEffects: map[string]any{}}
 	r.AffectedArtifacts = stringAnySlice(d["affectedArtifacts"])
 	if x, ok := d["workflowEffects"].(map[string]any); ok {
 		r.WorkflowEffects = x

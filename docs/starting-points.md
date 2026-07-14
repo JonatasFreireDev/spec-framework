@@ -274,7 +274,7 @@ Possíveis mapeamentos:
 | Epic do Jira | User Goal, Feature ou conjunto de Features, após revisão |
 | Story do Jira | Use Case ou evidência para uma Specification |
 | Acceptance Criteria | Specification e testes |
-| ADR no Confluence | `knowledge/decisions/DEC-*.md` |
+| ADR no Confluence | `knowledge/decisions/DEC-*.md`, `design/decisions/DEC-*.md`, or `engineering/decisions/DEC-*.md`, according to the declared domain |
 | Regras de negócio | `knowledge/business-rules/` |
 | Documento de arquitetura | Evidência para Engineering System ou Technical Discovery |
 

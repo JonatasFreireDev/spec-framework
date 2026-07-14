@@ -28,7 +28,7 @@ Code Review verifies that implementation matches the Specification, tasks, archi
 - Relevant `context.md`.
 - Specification, Design, Implementation Plan, Execution Graph, Tasks, Tests, QA Evidence, and Security Review when present.
 - the active product root's `knowledge/conventions/gates.md`.
-- Product decisions in the active product root's `knowledge/decisions/` and `.product/decisions.json`.
+- Product decisions are discovered through the active product root's `.product/decisions.json`; resolve each registered `path` from its declared domain root.
 - Failure routing in `FRAMEWORK.md`.
 - The diff, branch, commits, PR, or code paths referenced by the task files.
 

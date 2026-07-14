@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Index decisions that affect this domain. Full product decisions belong in `knowledge/decisions/` inside the product root.
+Index decisions that affect this domain. Canonical records remain in their domain roots (`knowledge/decisions/`, `design/decisions/`, or `engineering/decisions/`) and are indexed globally in `.product/decisions.json`.
 
 ## Decisions
 

@@ -10,6 +10,7 @@ import (
 	"sort"
 	"strings"
 
+	"github.com/JonatasFreireDev/spec-framework/internal/decisions"
 	"github.com/JonatasFreireDev/spec-framework/internal/engineeringsystem"
 )
 
@@ -913,6 +914,7 @@ func validateDecisions(s Snapshot) []Diagnostic {
 	}
 	raw, _ := index["decisions"].([]any)
 	known := map[string]map[string]any{}
+	domainPaths := decisions.DomainPaths(index)
 	records := map[string][]map[string]any{}
 	for path, value := range s.JSON {
 		if strings.HasPrefix(path, ".product/history/approval-") {
@@ -939,9 +941,18 @@ func validateDecisions(s Snapshot) []Diagnostic {
 		known[id] = d
 		path, _ := d["path"].(string)
 		if path == "" {
-			out = append(out, Diagnostic{Error, "decisions-index", ".product/decisions.json", id + " is missing path.", "Point to knowledge/decisions/."})
+			out = append(out, Diagnostic{Error, "decisions-index", ".product/decisions.json", id + " is missing path.", "Point to the decision domain root configured for its domain."})
 		} else if _, exists := s.Text[filepath.ToSlash(path)]; !exists {
 			out = append(out, Diagnostic{Error, "decisions-index", path, id + " decision path does not exist.", "Create the decision or fix its path."})
+		}
+		domain, _ := d["domain"].(string)
+		if domain == "" {
+			domain = decisions.DomainForPath(path, domainPaths)
+		}
+		if domain == "" {
+			out = append(out, Diagnostic{Error, "decision-domain", path, id + " is outside a registered decision domain.", "Add domain metadata and place the record under its configured decision root."})
+		} else if err := decisions.ValidatePath(domain, path, domainPaths); err != nil {
+			out = append(out, Diagnostic{Error, "decision-domain", path, id + " is stored in the wrong decision domain.", err.Error()})
 		}
 		decisionType, _ := d["type"].(string)
 		if decisionType == "" {
@@ -982,7 +993,7 @@ func validateDecisions(s Snapshot) []Diagnostic {
 	}
 	decisionRef := regexp.MustCompile(`\bDEC-\d+\b`)
 	for path, text := range s.Text {
-		if strings.HasPrefix(path, "knowledge/decisions/") {
+		if decisions.DomainForPath(path, domainPaths) != "" {
 			continue
 		}
 		for _, id := range decisionRef.FindAllString(text, -1) {

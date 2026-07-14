@@ -27,7 +27,7 @@ goal.md; goal context.md; candidate journeys; feature opportunity list.
 - the framework root's `FRAMEWORK.md`
 - Relevant parent context.md files.
 - Relevant templates in framework/template/.
-- Approved product decisions in the active product root's `knowledge/decisions/` and `.product/decisions.json`.
+- Approved decisions are discovered through the active product root's `.product/decisions.json`; resolve each registered `path` from its declared domain root (`knowledge/decisions/`, `design/decisions/`, or `engineering/decisions/`).
 
 ## Discovery and challenge
 

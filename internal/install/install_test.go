@@ -25,8 +25,8 @@ func TestInitShipsLeanReadmeSurfaceAndUpgradePreservesAdopterReadmes(t *testing.
 	}); err != nil {
 		t.Fatal(err)
 	}
-	if readmes != 16 {
-		t.Fatalf("initialized product has %d READMEs, want 16", readmes)
+	if readmes != 18 {
+		t.Fatalf("initialized product has %d READMEs, want 18", readmes)
 	}
 	obsolete := filepath.Join(product, "knowledge", "prompts", "README.md")
 	if _, err := os.Stat(obsolete); !os.IsNotExist(err) {

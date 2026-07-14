@@ -4,7 +4,7 @@ Store durable knowledge owned by this product, including business rules, convent
 
 ## Boundaries
 
-- Product decisions belong in `decisions/` and `.product/decisions.json`.
+- Product and cross-cutting decisions belong in `decisions/`; design decisions belong in `../design/decisions/`; engineering decisions belong in `../engineering/decisions/`. Every record is indexed in `.product/decisions.json` with its `domain` and `path`.
 - Product gate commands and security conventions belong in `conventions/`.
 - Existing source material and reviewed mappings belong in `imports/`.
 - Create other knowledge directories only when a real artifact needs them.

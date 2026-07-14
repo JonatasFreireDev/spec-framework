@@ -14,3 +14,5 @@ Delivery-specific change analysis lives beside its use case in `technical-discov
 ## Boundary Rule
 
 Framework method decisions do not live here.
+
+Engineering ADRs and engineering-owned decisions live in [`../decisions/`](../decisions/). Index every record in `.product/decisions.json` with `domain: engineering`; this architecture folder remains the stable technical baseline and reference material.

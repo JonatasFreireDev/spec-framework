@@ -23,7 +23,7 @@ Use these roots:
 
 Do not write product scope, product decisions, approval records, or delivery evidence into the external runtime cache.
 
-Do not write framework-method decisions into `product/knowledge/decisions/`.
+Do not write framework-method decisions into any product decision domain.
 
 Operational boundaries:
 
@@ -62,7 +62,7 @@ Before creating or updating framework-governed work:
 1. Resolve and read the pinned framework root's `FRAMEWORK.md`.
 2. Read the relevant `product/**/context.md` files.
 3. Read the matching template in the pinned framework root's `templates/` when creating or normalizing an artifact.
-4. Read approved product decisions in `product/knowledge/decisions/` and `product/.product/decisions.json` when relevant.
+4. Read approved decisions from `product/.product/decisions.json` and resolve each record from its registered `path`; default domain roots are `knowledge/decisions/`, `design/decisions/`, and `engineering/decisions/`.
 
 Before writing, confirm the owning skill, artifact scope, and allowed write scope. Do not edit artifacts owned by another skill without an explicit handoff or route.
 

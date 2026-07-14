@@ -7,11 +7,14 @@ import (
 	"path/filepath"
 	"strings"
 	"time"
+
+	"github.com/JonatasFreireDev/spec-framework/internal/decisions"
 )
 
 type DecisionMigrationItem struct {
 	ID           string   `json:"id"`
 	InferredType string   `json:"inferred_type"`
+	Domain       string   `json:"domain"`
 	Scope        []string `json:"scope"`
 	NeedsReview  bool     `json:"needs_review"`
 	Reasons      []string `json:"reasons"`
@@ -40,15 +43,24 @@ func PlanDecisionMigration(root string) (DecisionMigrationPlan, error) {
 		_, hasType := d["type"].(string)
 		_, hasEffects := d["workflowEffects"].(map[string]any)
 		_, hasStructuredScope := d["scope"].([]any)
+		_, hasDomain := d["domain"].(string)
 		scopeValues := stringAnySlice(d["scope"])
 		if len(scopeValues) == 0 {
 			scopeValues = decisionScopePaths(d)
 		}
-		if hasType && hasEffects && hasStructuredScope {
+		path := fmt.Sprint(d["path"])
+		domain := fmt.Sprint(d["domain"])
+		if domain == "<nil>" || domain == "" {
+			domain = decisions.DomainForPath(path, decisions.DomainPaths(index))
+		}
+		if domain == "" {
+			domain = "product"
+		}
+		if hasType && hasEffects && hasStructuredScope && hasDomain {
 			continue
 		}
 		kind, ambiguous := inferDecisionType(fmt.Sprint(d["scope"]))
-		item := DecisionMigrationItem{ID: id, InferredType: kind, Scope: scopeValues, NeedsReview: ambiguous}
+		item := DecisionMigrationItem{ID: id, InferredType: kind, Domain: domain, Scope: scopeValues, NeedsReview: ambiguous}
 		if !hasType {
 			item.Reasons = append(item.Reasons, "missing type")
 		}
@@ -58,6 +70,9 @@ func PlanDecisionMigration(root string) (DecisionMigrationPlan, error) {
 		}
 		if !hasEffects {
 			item.Reasons = append(item.Reasons, "missing workflowEffects")
+		}
+		if !hasDomain {
+			item.Reasons = append(item.Reasons, "missing domain (inferred from path)")
 		}
 		plan.Items = append(plan.Items, item)
 	}
@@ -94,6 +109,9 @@ func ApplyDecisionMigration(plan DecisionMigrationPlan, items []DecisionMigratio
 		d["scope"] = stringsToAny(item.Scope)
 		if _, ok = d["workflowEffects"].(map[string]any); !ok {
 			d["workflowEffects"] = emptyDecisionEffects()
+		}
+		if _, ok = d["domain"].(string); !ok && item.Domain != "" {
+			d["domain"] = item.Domain
 		}
 		changed++
 	}

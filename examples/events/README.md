@@ -15,6 +15,8 @@ This folder is a self-contained product root, mirroring the canonical structure 
 | Attendee use case | [domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/attendee-checks-in-with-qr-code/context.md](domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/attendee-checks-in-with-qr-code/context.md) |
 | Organizer use case | [domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/organizer-validates-qr-code/context.md](domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/organizer-validates-qr-code/context.md) |
 | Product decisions | [knowledge/decisions/](knowledge/decisions/) |
+| Design decisions | [design/decisions/](design/decisions/) |
+| Engineering decisions | [engineering/decisions/](engineering/decisions/) |
 | Approval history | [.product/history/](.product/history/) |
 
 Framework core assets (`FRAMEWORK.md`, `AGENTS.md`, `framework/skills/`, `framework/template/`, and `framework/validators/`) live outside this folder, primarily under `framework/`. Documents in this example that reference them use relative links that cross that boundary; the validator reports those as warnings because they point outside `--product-root`.

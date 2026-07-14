@@ -31,7 +31,7 @@ Code Runner turns a task contract into code and executable evidence. It does not
 - The parent `context.md`.
 - The Specification sections named by the task.
 - The relevant Design and Implementation Plan sections when the task touches UI, architecture, data, integrations, or rollout.
-- Approved product decisions in the active product root's `knowledge/decisions/` and `.product/decisions.json` when referenced by the task.
+- Approved decisions are discovered through the active product root's `.product/decisions.json`; resolve each registered `path` from its declared domain root (`knowledge/decisions/`, `design/decisions/`, or `engineering/decisions/`) when referenced by the task.
 
 ## Preconditions
 

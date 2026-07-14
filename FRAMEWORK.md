@@ -198,7 +198,7 @@ An adopter repository owns one framework root, `product/`. Its stable ownership 
 | --- | --- |
 | `.product/` | Manifest, artifact registry, decisions index, roadmap state, workspaces, claims, derivations, and approval history. |
 | `foundation/` | Starting-point contracts and product direction. |
-| `knowledge/` | Product rules, conventions, decisions, imports, and durable evidence. |
+| `knowledge/` | Product rules, conventions, cross-cutting decisions, imports, and durable evidence. |
 | `domains/` | Domain → User Goal → Feature → Use Case hierarchy and delivery artifacts. |
 | `design/` | Shared Design System and product-owned design sources. |
 | `engineering/` | Versioned Engineering System, quality contracts, operations, and evidence. |
@@ -621,11 +621,20 @@ Staleness is a condition derived by the validator, not an editable status. Downs
 
 ## 12. Decisions
 
-Relevant product decisions must be recorded in `knowledge/decisions/` and indexed in `.product/decisions.json`.
+Relevant product decisions are indexed in `.product/decisions.json`. The index is the single discovery and approval surface; the record is stored by its declared domain:
 
-`DEC-*` is the single product decision identity; an ADR is a DEC whose type is `architecture`. Decisions declare `type`, artifact/path `scope`, and optional structured `workflowEffects` (`requiredTaskTypes`, `requiredGates`, `requiredEvidence`, `requiredWriteScopes`, and `sharedResources`). A DEC can unblock an Architecture Gate only when it exists, is indexed, is approved, has a current hash-matching approval record, and applies to the affected scope. Decision prose is never executable. Effects constrain Graph, Tasks, Task Readiness, and configured gates; they never silently generate work.
+| Domain | Canonical record root | Use |
+| --- | --- | --- |
+| `product` | `knowledge/decisions/` | Product scope, business rules, and product strategy. |
+| `cross-cutting` | `knowledge/decisions/` | Decisions spanning domains or with no single owner. |
+| `design` | `design/decisions/` | Visual, interaction, UX, design-system, and design ADRs. |
+| `engineering` | `engineering/decisions/` | Architecture, data, integration, operational, and engineering ADRs. |
 
-Framework or method changes are incorporated directly into this document, owning skill contracts, validators, and tests. Git history preserves their evolution. Skill contracts, gates, writeScope, QA policies, failure routing, commit policy, validators, and orchestration rules must not be recorded in `knowledge/decisions/`, because that folder is reserved for the adopter product.
+An index may add future domains through a top-level `decisionDomains` map, for example `{ "security": "knowledge/security-decisions/" }`. A domain record must live under its configured root. The `domain` field is optional for backward compatibility; when absent, the validator infers it from the path. Existing records are not moved automatically and their approval evidence remains valid.
+
+`DEC-*` is the single decision identity; an ADR is a DEC whose type is `architecture`. Decisions declare `domain`, `type`, artifact/path `scope`, and optional structured `workflowEffects` (`requiredTaskTypes`, `requiredGates`, `requiredEvidence`, `requiredWriteScopes`, and `sharedResources`). A DEC can unblock an Architecture Gate only when it exists, is indexed, is approved, has a current hash-matching approval record, and applies to the affected scope. Decision prose is never executable. Effects constrain Graph, Tasks, Task Readiness, and configured gates; they never silently generate work.
+
+Framework or method changes are incorporated directly into this document, owning skill contracts, validators, and tests. Git history preserves their evolution. Skill contracts, gates, writeScope, QA policies, failure routing, commit policy, validators, and orchestration rules must not be recorded in product decision roots, because those roots are reserved for adopter-owned product decisions.
 
 A decision must be created when it:
 

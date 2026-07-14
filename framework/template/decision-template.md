@@ -5,6 +5,7 @@
 | Field | Value |
 | --- | --- |
 | ID | `[DEC-XXX]` |
+| Domain | `[product | cross-cutting | design | engineering]` |
 | Status | `[proposed | approved | superseded | rejected]` |
 | Date | `[YYYY-MM-DD]` |
 | Type | `[product | architecture | security | data | delivery]` |

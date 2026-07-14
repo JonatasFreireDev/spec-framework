@@ -32,7 +32,7 @@ Security verdict; threat model summary; control checklist; blocking findings; re
 - `framework/template/security-review-template.md`.
 - the active product root's `knowledge/conventions/security-baseline.md` and any linked domain baseline.
 - Existing active product root `audits/security/threat-register.md` entries that affect the artifact.
-- Approved product decisions in the active product root's `knowledge/decisions/` and `.product/decisions.json`.
+- Approved decisions are discovered through the active product root's `.product/decisions.json`; resolve each registered `path` from its declared domain root (`knowledge/decisions/`, `design/decisions/`, or `engineering/decisions/`).
 - Related `tests.md`, `qa-evidence.md`, and `audit.md` when present.
 - Failure routing in `FRAMEWORK.md`.
 

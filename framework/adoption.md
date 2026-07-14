@@ -91,7 +91,7 @@ spec-framework upgrade --target ../my-product --agents codex --yes
 | `product/.product/` | Product state, registry, derivations, approval records, and adopted framework metadata. |
 | `product/foundation/` | Full Foundation and proportional Feature Brief or Product Baseline contracts selected during adoption. |
 | `product/domains/` | Product domains, goals, features, use cases, specifications, and tasks. |
-| `product/knowledge/decisions/` | Product decisions only. |
+| `product/knowledge/decisions/` | Product and cross-cutting decisions; design and engineering decisions use dedicated roots. |
 | `product/knowledge/business-rules/` | Product business rules. |
 | `product/audits/` | Product audits, readiness reports, QA evidence references, and threat register. |
 | `product/releases/` | Product release notes and release readiness. |
@@ -107,7 +107,7 @@ spec-framework upgrade --target ../my-product --agents codex --yes
 
 ## Non-Goals For Starter Repositories
 
-- Do not copy framework maintenance history into `product/knowledge/decisions/`.
+- Do not copy framework maintenance history into any product decision domain.
 - Do not inherit example domains as real product scope.
 - Do not inherit retroactive approval records from the framework lab.
 - Do not edit cached framework internals to encode product scope.
