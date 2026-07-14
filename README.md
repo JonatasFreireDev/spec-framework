@@ -108,7 +108,7 @@ All mutations preview before executing; approval commands require an explicit hu
 | --- | --- |
 | [FRAMEWORK.md](FRAMEWORK.md) | Canonical method and architecture. |
 | [framework/](framework/) | Executable framework core: skills, templates, validators, and tools. |
-| [framework/skills/](framework/skills/) | 50 specialist and orchestrator skill contracts. |
+| [framework/skills/](framework/skills/) | 49 skill folders, plus shared runtime contracts. |
 | [starter/](starter/) | Canonical source assets selected by declarative initialization contracts. |
 | [examples/events/](examples/events/) | Worked product instance used as learning material and validation fixture. |
 | [docs/](docs/) | Published visual guide (GitHub Pages). |

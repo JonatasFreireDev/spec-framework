@@ -56,7 +56,29 @@ func TestCobraCommandTreeKeepsStableTopLevelCommands(t *testing.T) {
 func TestCobraLeafHelpDoesNotInvokeLegacyCommand(t *testing.T) {
 	var stdout, stderr bytes.Buffer
 	exitCode := cli.New("test").Run([]string{"graph", "--help"}, &stdout, &stderr)
-	if exitCode != 0 || !strings.Contains(stdout.String(), "Inspect and operate execution graphs.") || stderr.Len() != 0 {
+	if exitCode != 0 || !strings.Contains(stdout.String(), "Inspect and operate execution graphs.") || strings.Contains(stdout.String(), "unknown graph command") || stderr.Len() != 0 {
 		t.Fatalf("exit=%d stdout=%q stderr=%q", exitCode, stdout.String(), stderr.String())
+	}
+}
+
+func TestLegacySubcommandHelpIncludesFlagsAndSucceeds(t *testing.T) {
+	for _, args := range [][]string{
+		{"init", "--help"},
+		{"task", "readiness", "--help"},
+		{"graph", "ready", "--help"},
+	} {
+		var stdout, stderr bytes.Buffer
+		if code := cli.New("test").Run(args, &stdout, &stderr); code != 0 {
+			t.Fatalf("args=%v exit=%d stdout=%q stderr=%q", args, code, stdout.String(), stderr.String())
+		}
+		if !strings.Contains(stdout.String(), "Usage") || stderr.Len() != 0 {
+			t.Fatalf("args=%v stdout=%q stderr=%q", args, stdout.String(), stderr.String())
+		}
+		if args[0] == "init" && !strings.Contains(stdout.String(), "-starting-point string") {
+			t.Fatalf("init help missing starting-point flag: %q", stdout.String())
+		}
+		if args[0] == "task" && !strings.Contains(stdout.String(), "-graph string") {
+			t.Fatalf("task help missing graph flag: %q", stdout.String())
+		}
 	}
 }

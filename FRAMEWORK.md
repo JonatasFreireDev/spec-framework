@@ -228,7 +228,7 @@ This repository keeps three explicit sources:
 
 - `starter/` contains canonical product assets selected by initialization contracts.
 - `examples/events/` contains the worked product instance used as learning material and validation fixture.
-- `framework/` contains the executable framework core: audits, decisions, skills, templates, validators, distributable tools, framework-only tests, and adoption guidance. The repository root retains only entry points, packaging metadata, scripts, examples, and starter infrastructure.
+- `framework/` contains the executable framework core: decisions, skills, templates, validators, distributable tools, framework-only tests, and adoption guidance. Audit artifacts belong to the active product's `product/audits/`; this repository does not maintain a separate framework-audit artifact tree. The repository root retains only entry points, packaging metadata, scripts, examples, and starter infrastructure.
 
 New products never copy the repository root. `product/.product/framework.json` pins the method version and is the exclusive activation marker; the CLI materializes embedded method assets in the operating system's versioned user cache.
 

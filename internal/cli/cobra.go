@@ -1,6 +1,7 @@
 package cli
 
 import (
+	"bytes"
 	"fmt"
 	"io"
 
@@ -92,8 +93,25 @@ func (app App) legacyCommand(use, short string, run func([]string, io.Writer, io
 		Short:              short,
 		DisableFlagParsing: true,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			if len(args) == 1 && (args[0] == "--help" || args[0] == "-h" || args[0] == "help") {
-				return cmd.Help()
+			if len(args) > 0 && (args[len(args)-1] == "--help" || args[len(args)-1] == "-h" || args[len(args)-1] == "help") {
+				// Legacy leaves still own their flag parsing. Ask the leaf to
+				// render its native flag package usage, but translate help into a
+				// successful Cobra command so users get the real flags instead of
+				// Cobra's flag-less parent summary.
+				var helpOut, helpErr bytes.Buffer
+				run(args, &helpOut, &helpErr)
+				nativeHelp := append(helpOut.Bytes(), helpErr.Bytes()...)
+				if !bytes.Contains(nativeHelp, []byte("Usage of ")) {
+					return cmd.Help()
+				}
+				fmt.Fprintln(stdout, cmd.Short)
+				if helpOut.Len() > 0 {
+					_, _ = stdout.Write(helpOut.Bytes())
+				}
+				if helpErr.Len() > 0 {
+					_, _ = stdout.Write(helpErr.Bytes())
+				}
+				return nil
 			}
 			if code := run(args, stdout, stderr); code != 0 {
 				return commandExitError{code: code}

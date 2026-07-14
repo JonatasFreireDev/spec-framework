@@ -11,7 +11,7 @@ Always read `FRAMEWORK.md` before changing framework behavior.
 | Area | Responsibility |
 | --- | --- |
 | `FRAMEWORK.md` | Canonical framework method and architecture. |
-| `framework/` | Framework-owned skills, templates, validators, adapters, audits, and engineering guidance. |
+| `framework/` | Framework-owned skills, templates, validators, adapters, and engineering guidance. |
 | `starter/` | Clean skeleton copied into new adopter repositories. |
 | `examples/events/` | Worked product fixture used for learning and validation; never use it as the starter. |
 | `cmd/`, `internal/`, `assets.go` | Go CLI, embedded assets, installer, runtime, workflow, and validator implementation. |
