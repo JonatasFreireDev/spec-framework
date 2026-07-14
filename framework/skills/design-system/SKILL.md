@@ -28,7 +28,6 @@ Approved Vision and Strategy; personas; brand sources; existing interfaces or co
 - Relevant product foundation and design context files.
 - Relevant templates in framework/template/.
 - Approved product decisions in the active product root's `knowledge/decisions/` and `.product/decisions.json`.
-- FDR-021 and FDR-023.
 
 ## Discovery and challenge
 

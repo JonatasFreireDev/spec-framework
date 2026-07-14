@@ -16,12 +16,12 @@ Skills are written to work in both this framework repository and adopter reposit
 
 | Path kind | In this repository | In adopter repositories |
 | --- | --- | --- |
-| Framework method assets | `framework/skills/`, `framework/template/`, `framework/decisions/`, `framework/validators/`, `framework/tools/`, `framework/tests/` | Versioned external user cache resolved from `product/.product/framework.json` |
+| Framework method assets | `framework/skills/`, `framework/template/`, `framework/validators/`, `framework/tools/`, `framework/tests/` | Versioned external user cache resolved from `product/.product/framework.json` |
 | Active product artifacts | `examples/events/` | `product/` |
 | Product decisions and state | `examples/events/knowledge/decisions/`, `examples/events/.product/` | `product/knowledge/decisions/`, `product/.product/` |
 | Product gates and conventions | `examples/events/knowledge/conventions/` | `product/knowledge/conventions/` |
 
-When a skill mentions a product-relative path such as `knowledge/conventions/gates.md`, `.product/decisions.json`, `domains/`, `audits/`, or `releases/`, resolve it under the active product root. When it mentions framework assets such as `FRAMEWORK.md`, `templates/`, `validators/`, or FDRs, resolve it under the framework root.
+When a skill mentions a product-relative path such as `knowledge/conventions/gates.md`, `.product/decisions.json`, `domains/`, `audits/`, or `releases/`, resolve it under the active product root. When it mentions framework assets such as `FRAMEWORK.md`, `templates/`, or `validators/`, resolve it under the framework root.
 
 ## Expected Files
 

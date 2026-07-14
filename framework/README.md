@@ -15,7 +15,6 @@ The `framework/` directory hosts the executable framework core. New product repo
 | `framework/template/` | Framework core | Yes, into the versioned user cache | Reusable artifact templates. |
 | Go CLI | Framework core | Installed as a release binary | Mechanical gates and migration tools. |
 | `framework/tests/` | Framework core | No | Tests the framework laboratory and distribution flow. |
-| `framework/decisions/FDR-*` | Framework core | Yes, into the versioned user cache | Framework method history, not product history. |
 | `starter/product/` | Product starter | Yes | Clean product-owned skeleton. |
 | `examples/` | Examples | Optional | Learning material, not production source of truth. |
 

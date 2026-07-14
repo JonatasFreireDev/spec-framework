@@ -32,7 +32,7 @@ PR Finalizer verifies hard preconditions, links evidence, writes PR metadata bac
 - Security Review when applicable.
 - Audit/release readiness reports when present.
 - The integration record and Integrated QA evidence when multiple task branches were combined.
-- `framework/decisions/FDR-008-delivery-commits-and-prs.md`.
+- Delivery and pull-request policy in `FRAMEWORK.md`.
 
 ## Hard Preconditions
 

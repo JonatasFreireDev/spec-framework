@@ -32,7 +32,7 @@ Security baseline updates; threat register entries; threat scenarios; impacted a
 - `framework/template/security-baseline-template.md` when creating or normalizing a baseline.
 - `framework/template/threat-register-template.md` when creating or normalizing a threat register.
 - Approved product decisions in the active product root's `knowledge/decisions/` and `.product/decisions.json`.
-- Framework security decisions in `framework/decisions/`, especially FDR-006 and FDR-009.
+- Security and failure-routing policy in `FRAMEWORK.md`.
 - Existing active product root `audits/security/threat-register.md` when present.
 - Related Security Review, QA Evidence, and audit artifacts when present.
 
@@ -44,7 +44,7 @@ Security baseline updates; threat register entries; threat scenarios; impacted a
 5. Map each threat to impacted artifacts and required mitigations. Do not invent product scope; mark missing behavior as an open question or decision candidate.
 6. Update the security baseline when a rule should apply repeatedly across the product or domain.
 7. Update the threat register when a concrete scenario needs tracking, mitigation, owner, evidence, or acceptance.
-8. Route blockers through FDR-006. Vulnerability with expected behavior -> `bug-fixer`; missing security test -> `qa`; incomplete control -> `code-runner`; missing permission/privacy decision -> `product-historian` plus human approval.
+8. Route blockers through the fixed failure-routing policy. Vulnerability with expected behavior -> `bug-fixer`; missing security test -> `qa`; incomplete control -> `code-runner`; missing permission/privacy decision -> `product-historian` plus human approval.
 9. Hand off to Security Review with baseline links, active threats, required evidence, and residual risks.
 
 ## Threat Lenses

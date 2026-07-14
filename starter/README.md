@@ -42,7 +42,7 @@ These are the default `new-product` steps. For every initialized repository, rea
 
 ## Boundary Rule
 
-Do not put framework method decisions in `product/knowledge/decisions/`. Product decisions go there; framework decisions live in the pinned external runtime.
+Do not put framework maintenance history in `product/knowledge/decisions/`. Product decisions go there; the framework method lives in the pinned external runtime.
 
 ## Starter Templates
 

@@ -7,7 +7,7 @@
 | ID | `[THREAT-REGISTER-XXX]` |
 | Status | `[draft | proposed | approved]` |
 | Owner skill | Threat Modeler AI |
-| Governed by | `[FDR-009]` |
+| Governed by | `FRAMEWORK.md security policy` |
 | Scope | `[product/domain/release]` |
 | Last reviewed | `YYYY-MM-DD` |
 

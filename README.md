@@ -107,7 +107,7 @@ All mutations preview before executing; approval commands require an explicit hu
 | Area | Purpose |
 | --- | --- |
 | [FRAMEWORK.md](FRAMEWORK.md) | Canonical method and architecture. |
-| [framework/](framework/) | Executable framework core: skills, templates, validators, FDRs. |
+| [framework/](framework/) | Executable framework core: skills, templates, validators, and tools. |
 | [framework/skills/](framework/skills/) | 50 specialist and orchestrator skill contracts. |
 | [starter/](starter/) | Canonical source assets selected by declarative initialization contracts. |
 | [examples/events/](examples/events/) | Worked product instance used as learning material and validation fixture. |
@@ -125,7 +125,7 @@ go test -race ./...
 go run ./cmd/spec-framework validate --product-root examples/events --framework-root . --write-registry --write-report
 ```
 
-Method changes are recorded as [Framework Decision Records](framework/decisions/) (`FDR-*`).
+Method changes update `FRAMEWORK.md`, affected skills, templates, validators, documentation, and tests together. Git history is the maintenance record.
 
 ## License
 

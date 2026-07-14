@@ -12,7 +12,7 @@ Use these roots:
 
 | Root | Purpose |
 | --- | --- |
-| Versioned user cache | Installed framework method, skills, templates, validators, tools, and framework decisions. |
+| Versioned user cache | Installed framework method, skills, templates, validators, and tools. |
 | `product/` | Product-owned state, foundation, domains, decisions, audits, releases, and evidence. |
 | User-scoped `spec-framework` dispatcher | Manifest-gated resolver for the pinned specialized skill contracts. |
 | `product/knowledge/imports/` | Source evidence, immutable inventories, proposed mappings, conflicts, and import reports. |
@@ -46,7 +46,6 @@ Before creating or updating framework-governed work:
 2. Read the relevant `product/**/context.md` files.
 3. Read the matching template in the pinned framework root's `templates/` when creating or normalizing an artifact.
 4. Read approved product decisions in `product/knowledge/decisions/` and `product/.product/decisions.json` when relevant.
-5. Read framework decisions in the pinned framework root's `decisions/` when the work touches method, gates, validators, skills, or workflow policy.
 
 ## Active Product Root
 
@@ -54,7 +53,7 @@ The active product root is `product/`.
 
 When a skill mentions product-relative paths such as `knowledge/conventions/gates.md`, `.product/decisions.json`, `domains/`, `audits/`, or `releases/`, resolve them under `product/`.
 
-When a skill mentions framework-relative paths such as `FRAMEWORK.md`, `templates/`, `skills/`, or framework decisions, resolve them under the versioned runtime returned by the CLI. Run executable operations through the installed `spec-framework` CLI.
+When a skill mentions framework-relative paths such as `FRAMEWORK.md`, `templates/`, or `skills/`, resolve them under the versioned runtime returned by the CLI. Run executable operations through the installed `spec-framework` CLI.
 
 Use Framework Guide as the default route unless current CLI output or an explicit human request names both the specialist and concrete scope. Revalidate persisted handoffs/checkpoints with `dashboard`, `status`, `next`, or `guide` before routing directly. A skill name without scope is only a hint. Use `spec-framework adapters` for supervised optional-adapter discovery or installation; never install an external adapter silently.
 

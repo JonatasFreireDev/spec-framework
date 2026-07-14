@@ -506,7 +506,7 @@ Rules:
 - `sharedResources` declares generated or shared resources, such as indexes, locales, local schema, local database, generated contracts, or catalogs. Two parallel nodes that contend for the same resource must become a dependency or be merged.
 - Two nodes are parallel when there is no dependency path between them in the DAG. Parallel nodes must not have overlapping `writeScope`.
 - Path overlap is prefix-based: `src/` covers `src/foo.ts`.
-- The rollout of the `writeScope` check follows FDR-003: Phase A reports warnings; Phase B, after approved migration of existing graphs, can promote the same findings to errors.
+- The `writeScope` check rolls out in two compatible phases: Phase A reports warnings; Phase B, after approved migration of existing graphs, can promote the same findings to errors.
 - Every task points to its source Specification.
 - Every node must point to the canonical file at `tasks/<task-id>.md`.
 - Snapshots in the graph, such as `title` and `type`, are allowed only when they match the referenced task file.
@@ -560,7 +560,7 @@ Orchestrators do not create primary artifacts. They control flow, order, gates, 
 
 Framework Guide is the default entry route. Direct specialist routing requires current-session CLI evidence naming scope, gate, and owner, or an explicit human request naming specialist and scope. Persisted state must be revalidated; stale or ambiguous routes return to the Guide.
 
-Failure routing follows FDR-006. Defects with clear expected behavior route to Bug Fixer; missing or hollow coverage routes to QA or the test owner; incomplete or out-of-contract implementation routes to Code Runner; decision gaps route to Product Historian and a human. Code Review and QA remain independent and read-only, every code change re-enters QA, and three failed automated attempts require human escalation. Threat Modeler maintains proactive shared context; Security Review evaluates the concrete delivery. Commit Crafter does not push, PR Finalizer does not merge, and release readiness requires all applicable product, engineering, evidence, review, QA, and security gates.
+Failure routing is fixed. Defects with clear expected behavior route to Bug Fixer; missing or hollow coverage routes to QA or the test owner; incomplete or out-of-contract implementation routes to Code Runner; decision gaps route to Product Historian and a human. Code Review and QA remain independent and read-only, every code change re-enters QA, and three failed automated attempts require human escalation. Threat Modeler maintains proactive shared context; Security Review evaluates the concrete delivery. Commit Crafter does not push, PR Finalizer does not merge, and release readiness requires all applicable product, engineering, evidence, review, QA, and security gates.
 
 ## 11. Approval Gates
 
@@ -623,7 +623,7 @@ Relevant product decisions must be recorded in `knowledge/decisions/` and indexe
 
 `DEC-*` is the single product decision identity; an ADR is a DEC whose type is `architecture`. Decisions declare `type`, artifact/path `scope`, and optional structured `workflowEffects` (`requiredTaskTypes`, `requiredGates`, `requiredEvidence`, `requiredWriteScopes`, and `sharedResources`). A DEC can unblock an Architecture Gate only when it exists, is indexed, is approved, has a current hash-matching approval record, and applies to the affected scope. Decision prose is never executable. Effects constrain Graph, Tasks, Task Readiness, and configured gates; they never silently generate work.
 
-Framework or method decisions live in `framework/decisions/FDR-*` or as explicit amendments to this document. Skill contracts, gates, writeScope, QA policies, failure routing, commit policy, validators, and orchestration rules must not be recorded in `knowledge/decisions/`, because that folder is reserved for the adopter product.
+Framework or method changes are incorporated directly into this document, owning skill contracts, validators, and tests. Git history preserves their evolution. Skill contracts, gates, writeScope, QA policies, failure routing, commit policy, validators, and orchestration rules must not be recorded in `knowledge/decisions/`, because that folder is reserved for the adopter product.
 
 A decision must be created when it:
 
@@ -690,7 +690,7 @@ Agents in this repository maintain the framework; agents in adopter repositories
 - A starting point changes the initial evidence, registry, bootstrap, and first gate; it never removes later rigor or approval requirements. Existing code and documents remain evidence, not approved truth. `audit-only` remains read-only until an explicit supported transition.
 - `existing-documents` creates an analysis-only import run. Human review of inventory, conflicts, and selected mappings is required before explicit draft materialization; imported artifacts retain their normal owners, parents, and individual approval gates.
 - `init` never overwrites an existing `product/`. `upgrade` refreshes only the pinned runtime, manifest, and selected dispatchers; it never replays initialization over adopter-owned content.
-- Starting-point details belong to `docs/starting-points.md`, `framework/init/`, generated `BOOTSTRAP.md`, and the relevant FDRs rather than this operational summary.
+- Starting-point details belong to `docs/starting-points.md`, `framework/init/`, and generated `BOOTSTRAP.md` rather than this operational summary.
 
 ### Operation And Authority
 
@@ -703,7 +703,7 @@ Agents in this repository maintain the framework; agents in adopter repositories
 
 Installation, CLI update, product upgrade, and removal are separate. Install scripts verify and install the CLI without running `init`; `update` changes the CLI binary; `upgrade` changes the pinned product runtime; `uninstall` removes only managed CLI paths and optional namespaced caches/dispatchers. Product repositories are never searched for or removed by CLI uninstall.
 
-The CLI's generated help is authoritative for command syntax. Framework decisions record why these boundaries exist; skills define specialist procedure; templates define artifact structure; `BOOTSTRAP.md` defines the initial route; `context.md` defines local state and handoff.
+The CLI's generated help is authoritative for command syntax. Git history records how framework boundaries evolved; skills define specialist procedure; templates define artifact structure; `BOOTSTRAP.md` defines the initial route; `context.md` defines local state and handoff.
 
 ## 16. Final Rule
 

@@ -28,7 +28,6 @@ Updated workspace state; structured handoff; checkpoint request; routed next orc
 - Relevant parent context.md files.
 - Relevant templates in framework/template/.
 - Approved product decisions in the active product root's `knowledge/decisions/` and `.product/decisions.json`.
-- FDR-016 and FDR-017.
 
 ## Workflow
 1. Load the workspace, current commit, approved artifacts, and runtime policy.
@@ -44,7 +43,7 @@ Updated workspace state; structured handoff; checkpoint request; routed next orc
 - [ ] Preserves traceability to affected artifacts.
 - [ ] Uses the correct template and naming conventions.
 - [ ] Records base commit, hashes, owner, timestamps, attempts, and blockers.
-- [ ] Enforces the FDR-017 authority boundary.
+- [ ] Enforces the runtime authority boundary.
 - [ ] Detects gaps, conflicts, and dependencies.
 - [ ] Records or requests decisions for meaningful changes.
 - [ ] Leaves a clear handoff for the next skill or orchestrator.

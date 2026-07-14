@@ -7,7 +7,7 @@
 | ID | `THREAT-REGISTER-001` |
 | Status | `draft` |
 | Owner skill | Threat Modeler AI |
-| Governed by | [FDR-009](../../../../framework/decisions/FDR-009-threat-modeling-baseline.md) |
+| Governed by | `FRAMEWORK.md security policy` |
 | Scope | Product/framework adoption baseline |
 | Last reviewed | `2026-07-10` |
 

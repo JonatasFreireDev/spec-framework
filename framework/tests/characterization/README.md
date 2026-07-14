@@ -1,7 +1,7 @@
 # Node CLI characterization
 
 This directory freezes the externally observable Node CLI behavior that the Go
-implementation must preserve during the migration described by FDR-013.
+implementation must preserve during the Go CLI migration.
 
 `node-contract.json` is the frozen pre-cutover baseline. The capture utility was
 removed with the Node implementation after the Go black-box suite reached full

@@ -7,11 +7,11 @@ description: Keep embedded Go assets, starter content, framework docs, generated
 
 ## Asset flow
 
-The root `assets.go` embeds `FRAMEWORK.md`, `starter/product/`, framework decisions, skills, templates, and adopter instructions. `internal/install` copies only product-owned starter content into the adopter repository; framework assets are materialized in the versioned user cache and selected harnesses receive a user-scoped dispatcher.
+The root `assets.go` embeds `FRAMEWORK.md`, `starter/product/`, framework skills, templates, and adopter instructions. `internal/install` copies only product-owned starter content into the adopter repository; framework assets are materialized in the versioned user cache and selected harnesses receive a user-scoped dispatcher.
 
 ## Checklist
 
-- When changing framework skills, update `framework/skills/README.md`, neighboring handoffs, templates, and relevant FDRs.
+- When changing framework skills, update `FRAMEWORK.md`, `framework/skills/README.md`, neighboring handoffs, templates, validators, and tests as applicable.
 - When changing starter content, check generated README/bootstrap ownership and upgrade preservation.
 - When adding shipped assets, update `assets.go`, installer fixtures, adoption documentation, and release smoke coverage.
 - Keep `.codex/skills/` as the single repository-maintenance skill tree; do not recreate `.claude/` or `.agents/` copies.

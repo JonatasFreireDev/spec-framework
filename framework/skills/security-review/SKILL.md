@@ -33,7 +33,7 @@ Security verdict; threat model summary; control checklist; blocking findings; re
 - Existing active product root `audits/security/threat-register.md` entries that affect the artifact.
 - Approved product decisions in the active product root's `knowledge/decisions/` and `.product/decisions.json`.
 - Related `tests.md`, `qa-evidence.md`, and `audit.md` when present.
-- `framework/decisions/FDR-006-failure-routing-and-regression.md`.
+- Failure routing in `FRAMEWORK.md`.
 
 ## Workflow
 1. Read the local context and identify artifact status, delivery level, priority, and release intent.
@@ -44,7 +44,7 @@ Security verdict; threat model summary; control checklist; blocking findings; re
 6. Confirm the Execution Graph and Tasks include explicit security work when the flow touches data, permissions, tokens, payments, uploads, messaging, search, public endpoints, or admin operations.
 7. Review QA evidence and verify that security controls have evidence, not only intention.
 8. Classify findings as blocker, required fix, note, or accepted residual risk.
-9. Route blockers using FDR-006: security bug with clear expected behavior -> `bug-fixer`; missing security test -> `qa`; incomplete implementation -> `code-runner`; missing permission/privacy decision -> `product-historian` plus human approval.
+9. Route blockers using the fixed failure-routing policy: security bug with clear expected behavior -> `bug-fixer`; missing security test -> `qa`; incomplete implementation -> `code-runner`; missing permission/privacy decision -> `product-historian` plus human approval.
 10. Do not mark the artifact secure when a blocker remains. Request a decision for any accepted high or hard-to-reverse residual risk.
 
 ## Review Checklist
@@ -67,6 +67,6 @@ Security verdict; threat model summary; control checklist; blocking findings; re
 - `blocked`: any high-risk gap, missing evidence for a required control, unapproved permission/privacy decision, or release-impacting unknown remains.
 
 ## Handoff
-Next: bug-fixer, code-runner, QA AI, Product Historian, Audit Orchestrator, or Release Orchestrator depending on FDR-006 routing.
+Next: bug-fixer, code-runner, QA AI, Product Historian, Audit Orchestrator, or Release Orchestrator depending on the fixed failure-routing policy.
 
 Pass forward the verdict, evidence links, blockers, residual risks, required decisions, and whether release is blocked.

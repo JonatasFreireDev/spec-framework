@@ -68,7 +68,6 @@ func Ensure(version string) (string, error) {
 		"FRAMEWORK.md":                  "FRAMEWORK.md",
 		"framework/AGENTS.framework.md": "AGENTS.framework.md",
 		"framework/delivery-closure.md": "delivery-closure.md",
-		"framework/decisions":           "decisions",
 		"framework/init":                "init",
 		"framework/skills":              "skills",
 		"framework/template":            "templates",

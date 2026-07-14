@@ -47,7 +47,7 @@ QA verdict; test evidence; blocking findings; residual risks; required fixes.
 10. Separate verified facts from assumptions and recommendations.
 11. Report gaps, conflicts, dependencies, and risks with file-level evidence when possible.
 12. Stay read-only: do not fix code, do not edit application files, and do not create, edit, or repair approval records.
-13. Route blocking findings using FDR-006:
+13. Route blocking findings using the fixed failure-routing policy:
     - defect, regression, vulnerability with known expected behavior, or production error -> `bug-fixer`;
     - missing test, hollow test, missing negative or permission coverage -> `qa` or test owner;
     - incomplete implementation or code outside task contract -> `code-runner`;
@@ -72,6 +72,6 @@ QA verdict; test evidence; blocking findings; residual risks; required fixes.
 - [ ] Leaves a clear handoff for the next skill or orchestrator.
 
 ## Handoff
-Next: commit-crafter when QA and Code Review pass; otherwise bug-fixer, code-runner, product-historian, or security-review according to FDR-006 routing.
+Next: commit-crafter when QA and Code Review pass; otherwise bug-fixer, code-runner, product-historian, or security-review according to the fixed failure-routing policy.
 
 Pass forward approved artifacts, findings, open questions, decisions, dependencies, risks, and required follow-up work.

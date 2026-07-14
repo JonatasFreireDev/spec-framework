@@ -11,7 +11,7 @@ Always read `FRAMEWORK.md` before changing framework behavior.
 | Area | Responsibility |
 | --- | --- |
 | `FRAMEWORK.md` | Canonical framework method and architecture. |
-| `framework/` | Framework-owned skills, templates, validators, adapters, audits, engineering guidance, and FDRs. |
+| `framework/` | Framework-owned skills, templates, validators, adapters, audits, and engineering guidance. |
 | `starter/` | Clean skeleton copied into new adopter repositories. |
 | `examples/events/` | Worked product fixture used for learning and validation; never use it as the starter. |
 | `cmd/`, `internal/`, `assets.go` | Go CLI, embedded assets, installer, runtime, workflow, and validator implementation. |
@@ -22,7 +22,6 @@ Do not encode Events product scope into reusable framework assets. Do not treat 
 ## Sources Of Truth
 
 - Method and gates: `FRAMEWORK.md`.
-- Framework decisions: `framework/decisions/FDR-*`.
 - Canonical shipped skills: `framework/skills/`.
 - Canonical templates: `framework/template/`.
 - Adopter skeleton: `starter/`.
@@ -35,7 +34,6 @@ Generated agent trees are derived copies. Do not edit them as the canonical sour
 
 Use repository-local maintenance skills when applicable:
 
-- `fdr`: framework-method decisions.
 - `new-framework-skill`: new or normalized shipped skills.
 - `sync-framework-assets`: synchronization across embedded assets and agent targets.
 - `verify`: complete mechanical gate suite.
@@ -45,10 +43,10 @@ Framework specialist and orchestrator skills live under `framework/skills/`. Whe
 
 ## Change Rules
 
-1. Record changes to method, skill contracts, validator behavior, gates, or delivery workflow as an FDR unless the change is purely editorial synchronization.
-2. Keep `FRAMEWORK.md`, FDRs, skills, templates, validators, starter assets, examples, installer behavior, and tests synchronized for the affected surface.
+1. Incorporate changes to method, skill contracts, validator behavior, gates, or delivery workflow directly into `FRAMEWORK.md` and every affected executable or instructional surface; Git history is the maintenance record.
+2. Keep `FRAMEWORK.md`, skills, templates, validators, starter assets, examples, installer behavior, and tests synchronized for the affected surface.
 3. Preserve adopter-owned product content during `upgrade`; never solve an upgrade by overwriting product scope or approval history.
-4. Keep FDRs in `framework/decisions/` and product decisions in the active product root's `knowledge/decisions/`.
+4. Keep product decisions in the active product root's `knowledge/decisions/`; do not place framework maintenance history there.
 5. Do not create, edit, or repair product approval records unless the human explicitly authorizes a migration that names approval-record generation.
 6. Use `spec-framework move` for artifact moves governed by the framework and review reported free-text mentions.
 7. Do not implement application code as part of framework documentation bootstrap, planning, readiness, or maintenance work.

@@ -31,7 +31,6 @@ Code Runner turns a task contract into code and executable evidence. It does not
 - The Specification sections named by the task.
 - The relevant Design and Implementation Plan sections when the task touches UI, architecture, data, integrations, or rollout.
 - Approved product decisions in the active product root's `knowledge/decisions/` and `.product/decisions.json` when referenced by the task.
-- Framework decisions in `framework/decisions/` when they govern implementation behavior.
 
 ## Preconditions
 

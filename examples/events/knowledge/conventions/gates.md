@@ -5,7 +5,7 @@
 | Field | Value |
 | --- | --- |
 | Status | `placeholder` |
-| Governed by | [FDR-002](../../../../framework/decisions/FDR-002-gate-commands.md) |
+| Governed by | `FRAMEWORK.md configured gate policy` |
 | Owner | Product adopter |
 | Purpose | Declare product-specific technical gates for implementation and QA. |
 

@@ -30,7 +30,7 @@ Commit Crafter packages completed work into atomic commits by concern, following
 - QA Evidence, Code Review, and Security Review when the commit is part of validation/release work.
 - Matching Code Review and QA diff hashes for working-tree implementation; refuse to commit when the diff changed after either gate.
 - For parallel delivery, the current isolated task worktree and its active lease/checkpoint.
-- `framework/decisions/FDR-008-delivery-commits-and-prs.md`.
+- Delivery commit policy in `FRAMEWORK.md`.
 
 ## Preconditions
 

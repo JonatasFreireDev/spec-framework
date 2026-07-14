@@ -5,7 +5,7 @@
 | Field | Value |
 | --- | --- |
 | Status | `approved` |
-| Governed by | [FDR-008](../../../../framework/decisions/FDR-008-delivery-commits-and-prs.md) |
+| Governed by | `FRAMEWORK.md delivery commit policy` |
 | Owner | Commit Crafter |
 
 ## Rule

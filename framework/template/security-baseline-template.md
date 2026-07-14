@@ -8,7 +8,7 @@
 | Status | `[draft | proposed | approved]` |
 | Scope | `[product | domain | goal | feature family]` |
 | Owner skill | Threat Modeler AI |
-| Governed by | `[FDR-009 or local decision]` |
+| Governed by | `FRAMEWORK.md security policy or local DEC-*` |
 | Last reviewed | `YYYY-MM-DD` |
 | Next review trigger | `[scope change / release / incident / dependency change]` |
 
@@ -19,7 +19,7 @@
 | Framework baseline convention | `[knowledge/conventions/security-baseline.md]` |
 | Threat register | `[audits/security/threat-register.md]` |
 | Related domain context | `[context.md or N/A]` |
-| Related decisions | `[DEC/FDR links]` |
+| Related decisions | `[DEC-* links]` |
 
 ## Scope
 

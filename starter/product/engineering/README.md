@@ -9,4 +9,4 @@ This area owns the versioned Engineering System: architecture, standards, qualit
 - Keep product gates in `../knowledge/conventions/gates.md`.
 - Inspect with `spec-framework engineering-system inspect` and validate with `spec-framework engineering-system validate`.
 
-Framework validators and FDRs do not belong in product engineering content.
+Framework validators and maintenance history do not belong in product engineering content.

@@ -29,7 +29,7 @@ Bug Fixer handles defects. It does not implement new scope, decide product behav
 - The related task file and `execution-graph.json`.
 - The related Specification acceptance criteria and source sections.
 - Relevant tests and implementation notes.
-- Approved product decisions and related FDRs.
+- Approved product decisions and applicable framework policy.
 
 ## Routing Contract
 
@@ -39,7 +39,7 @@ Bug Fixer handles defects. It does not implement new scope, decide product behav
 | Missing test case, hollow test, missing negative or permission coverage | `qa` or tests owner |
 | Incomplete task implementation or code outside task contract | `code-runner` |
 | Missing product decision, unclear business rule, permissions ambiguity, accepted residual risk | `product-historian` plus human approval |
-| Architecture change or framework-method change | FDR / Evolution Orchestrator |
+| Architecture change or framework-method change | Product Historian or Evolution Orchestrator, with human direction |
 
 ## Workflow
 

@@ -101,13 +101,13 @@ spec-framework upgrade --target ../my-product --agents codex --yes
 
 | Framework-Owned Area | Purpose |
 | --- | --- |
-| Versioned user cache | Method, decisions, skills, templates, and validation assets resolved from the product manifest. |
+| Versioned user cache | Method, skills, templates, and validation assets resolved from the product manifest. |
 | User-scoped `spec-framework` dispatcher | Manifest-gated agent integration that resolves specialized skills. |
 | Installed `spec-framework` binary | Validation, bootstrap, upgrade, and migration tooling. |
 
 ## Non-Goals For Starter Repositories
 
-- Do not copy framework FDRs into `product/knowledge/decisions/`.
+- Do not copy framework maintenance history into `product/knowledge/decisions/`.
 - Do not inherit example domains as real product scope.
 - Do not inherit retroactive approval records from the framework lab.
 - Do not edit cached framework internals to encode product scope.

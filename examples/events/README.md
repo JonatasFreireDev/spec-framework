@@ -17,7 +17,7 @@ This folder is a self-contained product root, mirroring the canonical structure 
 | Product decisions | [knowledge/decisions/](knowledge/decisions/) |
 | Approval history | [.product/history/](.product/history/) |
 
-Framework core assets (`FRAMEWORK.md`, `AGENTS.md`, `framework/skills/`, `framework/template/`, `framework/validators/`, `framework/decisions/FDR-*`) live outside this folder, primarily under `framework/`. Documents in this example that reference them use relative links that cross that boundary; the validator reports those as warnings (points outside `--product-root`), not errors, per FDR-010.
+Framework core assets (`FRAMEWORK.md`, `AGENTS.md`, `framework/skills/`, `framework/template/`, and `framework/validators/`) live outside this folder, primarily under `framework/`. Documents in this example that reference them use relative links that cross that boundary; the validator reports those as warnings because they point outside `--product-root`.
 
 ## Validation
 

@@ -6,7 +6,7 @@ Record decisions that change product scope, business rules, data, permissions, p
 
 ## Expected File
 
-Use the framework decision template after framework assets are installed:
+Use the product decision template after framework assets are installed:
 
 ```text
 framework/template/decision-template.md

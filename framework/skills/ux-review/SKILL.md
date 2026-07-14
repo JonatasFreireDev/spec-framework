@@ -18,7 +18,7 @@ Approved Specification; `design.md`; source and use-case manifests; screen inven
 UX review verdict; coverage and fidelity findings; accessibility and responsive findings; blockers; required fixes; evidence references; handoff to UX/UI or human approval.
 
 ## Required reading
-- `FRAMEWORK.md` and FDR-021.
+- `FRAMEWORK.md`.
 - Relevant parent and local `context.md` files.
 - Specification contracts and `design.md`.
 - Every source marked `visual_canonical` and its manifest.

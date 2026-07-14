@@ -13,7 +13,7 @@ Validation
 
 Review implemented code and evidence without editing files.
 
-Code Review verifies that implementation matches the Specification, tasks, architecture, and project conventions. It reports findings and routes fixes through FDR-006. It does not repair code, approve QA, create approval records, commit, push, merge, or open PRs.
+Code Review verifies that implementation matches the Specification, tasks, architecture, and project conventions. It reports findings and routes fixes through the framework's fixed failure-routing policy. It does not repair code, approve QA, create approval records, commit, push, merge, or open PRs.
 
 ## Operating Modes
 
@@ -28,7 +28,7 @@ Code Review verifies that implementation matches the Specification, tasks, archi
 - Specification, Design, Implementation Plan, Execution Graph, Tasks, Tests, QA Evidence, and Security Review when present.
 - the active product root's `knowledge/conventions/gates.md`.
 - Product decisions in the active product root's `knowledge/decisions/` and `.product/decisions.json`.
-- Framework routing in `framework/decisions/FDR-006-failure-routing-and-regression.md`.
+- Failure routing in `FRAMEWORK.md`.
 - The diff, branch, commits, PR, or code paths referenced by the task files.
 
 ## Review Lenses
@@ -56,7 +56,7 @@ Code Review verifies that implementation matches the Specification, tasks, archi
 4. Inspect the diff/code paths against the three lenses.
 5. Classify findings as `blocker`, `required_fix`, or `note`.
 5. Cite file and line when possible.
-6. Route each blocking or required finding using FDR-006:
+6. Route each blocking or required finding using the fixed failure-routing policy:
    - defect/regression -> `bug-fixer`;
    - incomplete implementation or drift from task contract -> `code-runner`;
    - missing tests/evidence -> `qa`;

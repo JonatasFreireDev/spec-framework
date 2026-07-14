@@ -42,4 +42,7 @@ func TestEnsureMaterializesVersionedAssets(t *testing.T) {
 			t.Fatal(err)
 		}
 	}
+	if _, err := os.Stat(filepath.Join(root, "decisions")); !os.IsNotExist(err) {
+		t.Fatalf("obsolete framework archive must not be materialized: %v", err)
+	}
 }
