@@ -39,6 +39,17 @@ func TestCreateRunInventoriesMultipleSourcesWithoutMaterializingArtifacts(t *tes
 	if _, err := os.Stat(filepath.Join(root, "domains")); !os.IsNotExist(err) {
 		t.Fatal("import unexpectedly materialized domains")
 	}
+	traceData, err := os.ReadFile(filepath.Join(root, "knowledge", "imports", "runs", runID, "traceability.json"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	var trace Traceability
+	if err := json.Unmarshal(traceData, &trace); err != nil {
+		t.Fatal(err)
+	}
+	if trace.Status != "unreviewed" || len(trace.Sources) != 2 || trace.Sources[0].ReviewStatus != "unreviewed" {
+		t.Fatalf("unexpected traceability: %+v", trace)
+	}
 }
 
 func TestCreateRunRequiresSources(t *testing.T) {
@@ -88,6 +99,17 @@ func TestMaterializeRequiresExplicitApprovalAndCreatesDraft(t *testing.T) {
 	hashes, _ := plan["materialized_hashes"].(map[string]any)
 	if hashes["domains/payments/domain.md"] == "" {
 		t.Fatalf("materialized draft hash missing: %v", plan)
+	}
+	traceData, err := os.ReadFile(filepath.Join(root, "knowledge", "imports", "runs", runID, "traceability.json"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	var trace Traceability
+	if err := json.Unmarshal(traceData, &trace); err != nil {
+		t.Fatal(err)
+	}
+	if trace.Status != "materialized_as_draft" || len(trace.Sources[0].MaterializedPaths) != 1 || trace.Sources[0].MaterializedPaths[0] != "domains/payments/domain.md" {
+		t.Fatalf("materialization not reflected in traceability: %+v", trace)
 	}
 	if _, err := Materialize(root, runID, "Jonatas"); err == nil {
 		t.Fatal("expected overwrite protection")

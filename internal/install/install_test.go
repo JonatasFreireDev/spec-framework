@@ -219,7 +219,7 @@ func TestInitFromExistingDocumentsCreatesImportRun(t *testing.T) {
 	if result.ImportID != "IMPORT-001" {
 		t.Fatalf("import=%q", result.ImportID)
 	}
-	for _, name := range []string{"inventory.json", "import-plan.json", "mapping.json", "conflicts.md", "import-report.md"} {
+	for _, name := range []string{"inventory.json", "import-plan.json", "mapping.json", "traceability.json", "conflicts.md", "import-report.md"} {
 		if _, err := os.Stat(filepath.Join(target, "product", "knowledge", "imports", "runs", result.ImportID, name)); err != nil {
 			t.Fatal(err)
 		}

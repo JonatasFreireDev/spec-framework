@@ -552,7 +552,7 @@ Orchestrators do not create primary artifacts. They control flow, order, gates, 
 | Framework Guide | Translates intent and current CLI state into the smallest safe route; it does not author artifacts or approve work. |
 | Product | Coordinates the approved Foundation sequence and stops at each human gate. |
 | Domain Evolution | Compares evidenced feature candidates and requires explicit human selection before handoff. |
-| Existing Product Import | Moves sources through inventory, conflicts, reviewed mappings, explicit materialization, and draft artifacts without treating sources as truth. |
+| Existing Product Import | Moves sources through inventory, per-source traceability, conflicts, reviewed mappings, explicit materialization, and draft artifacts without treating sources as truth. |
 | New Feature | Drives an approved feature through Use Cases, Specification, Design, engineering gates, Plan, Graph, and Tasks. |
 | Audit and Evolution | Batch findings, compare improvement candidates, and route selected changes without silently expanding scope. |
 | Documentation | Synchronizes contexts, indexes, templates, decisions, and derived documentation. |
@@ -688,7 +688,7 @@ Agents in this repository maintain the framework; agents in adopter repositories
 
 - `init` resolves one strict declarative starting-point contract, validates its complete materialization plan, stages it, and atomically publishes `product/`. Data contracts cannot execute arbitrary commands or escape the product root.
 - A starting point changes the initial evidence, registry, bootstrap, and first gate; it never removes later rigor or approval requirements. Existing code and documents remain evidence, not approved truth. `audit-only` remains read-only until an explicit supported transition.
-- `existing-documents` creates an analysis-only import run. Human review of inventory, conflicts, and selected mappings is required before explicit draft materialization; imported artifacts retain their normal owners, parents, and individual approval gates.
+- `existing-documents` creates an analysis-only import run with `traceability.json` as the dedicated per-source ledger. The Artifact Importer agent reads each source, records evidence, extracted claims, candidate destinations, and unmapped gaps there, then proposes mappings. Human review of inventory, traceability, conflicts, and selected mappings is required before explicit draft materialization; imported artifacts retain their normal owners, parents, and individual approval gates.
 - `init` never overwrites an existing `product/`. `upgrade` refreshes only the pinned runtime, manifest, and selected dispatchers; it never replays initialization over adopter-owned content.
 - Starting-point details belong to `docs/starting-points.md`, `framework/init/`, and generated `BOOTSTRAP.md` rather than this operational summary.
 

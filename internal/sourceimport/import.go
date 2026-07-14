@@ -42,6 +42,35 @@ type MappingFile struct {
 	Mappings      []Mapping `json:"mappings"`
 }
 
+// Traceability records the LLM-assisted review of each imported source. It is
+// deliberately separate from mapping.json: mappings describe proposed writes,
+// while this file records what was read, what was covered, and what remains
+// unknown or unmapped.
+type Traceability struct {
+	SchemaVersion int              `json:"schema_version"`
+	ImportID      string           `json:"import_id"`
+	Status        string           `json:"status"`
+	Sources       []SourceCoverage `json:"sources"`
+}
+
+type SourceCoverage struct {
+	Path              string     `json:"path"`
+	SHA256            string     `json:"sha256"`
+	ReviewStatus      string     `json:"review_status"`
+	Evidence          []Evidence `json:"evidence"`
+	ExtractedClaims   []string   `json:"extracted_claims"`
+	CandidateIDs      []string   `json:"candidate_ids"`
+	MappedTargets     []string   `json:"mapped_targets"`
+	MaterializedPaths []string   `json:"materialized_paths"`
+	Gaps              []string   `json:"gaps"`
+	Notes             string     `json:"notes"`
+}
+
+type Evidence struct {
+	Locator string `json:"locator"`
+	Claim   string `json:"claim"`
+}
+
 // CreateRun copies regular files into the product import area and creates an
 // analysis-only run. It deliberately does not infer or materialize product artifacts.
 func CreateRun(productRoot string, inputs []string) (string, error) {
@@ -95,6 +124,14 @@ func CreateRun(productRoot string, inputs []string) (string, error) {
 	if err := writeJSON(filepath.Join(runRoot, "mapping.json"), map[string]any{"schema_version": 1, "import_id": runID, "mappings": []any{}}); err != nil {
 		return "", err
 	}
+	coverage := make([]SourceCoverage, 0, len(inv.Sources))
+	for _, source := range inv.Sources {
+		coverage = append(coverage, SourceCoverage{Path: source.Path, SHA256: source.SHA256, ReviewStatus: "unreviewed", Evidence: []Evidence{}, ExtractedClaims: []string{}, CandidateIDs: []string{}, MappedTargets: []string{}, MaterializedPaths: []string{}, Gaps: []string{}})
+	}
+	traceability := Traceability{SchemaVersion: 1, ImportID: runID, Status: "unreviewed", Sources: coverage}
+	if err := writeJSON(filepath.Join(runRoot, "traceability.json"), traceability); err != nil {
+		return "", err
+	}
 	if err := os.WriteFile(filepath.Join(runRoot, "conflicts.md"), []byte("# Import Conflicts\n\nNo conflicts have been classified yet.\n"), 0644); err != nil {
 		return "", err
 	}
@@ -127,6 +164,18 @@ func Materialize(productRoot, runID, approvedBy string) ([]string, error) {
 	}
 	if file.ImportID != runID {
 		return nil, fmt.Errorf("mapping import_id %q does not match %q", file.ImportID, runID)
+	}
+
+	tracePath := filepath.Join(runRoot, "traceability.json")
+	traceData, traceErr := os.ReadFile(tracePath)
+	var traceability Traceability
+	if traceErr == nil {
+		if err := json.Unmarshal(trimBOM(traceData), &traceability); err != nil {
+			return nil, fmt.Errorf("parse traceability: %w", err)
+		}
+		if traceability.ImportID != runID {
+			return nil, fmt.Errorf("traceability import_id %q does not match %q", traceability.ImportID, runID)
+		}
 	}
 	invData, err := os.ReadFile(filepath.Join(runRoot, "inventory.json"))
 	if err != nil {
@@ -218,7 +267,38 @@ func Materialize(productRoot, runID, approvedBy string) ([]string, error) {
 		rollback()
 		return nil, err
 	}
+	if traceErr == nil {
+		bySource := map[string][]string{}
+		for _, mapping := range selected {
+			for _, source := range mapping.SourceDocuments {
+				bySource[source] = appendUnique(bySource[source], mapping.Target)
+			}
+		}
+		for i := range traceability.Sources {
+			source := &traceability.Sources[i]
+			for _, target := range bySource[source.Path] {
+				source.MappedTargets = appendUnique(source.MappedTargets, target)
+				source.MaterializedPaths = appendUnique(source.MaterializedPaths, target)
+			}
+			if len(source.MaterializedPaths) > 0 {
+				source.ReviewStatus = "materialized_as_draft"
+			}
+		}
+		traceability.Status = "materialized_as_draft"
+		if err := writeJSON(tracePath, traceability); err != nil {
+			return nil, err
+		}
+	}
 	return created, nil
+}
+
+func appendUnique(values []string, value string) []string {
+	for _, existing := range values {
+		if existing == value {
+			return values
+		}
+	}
+	return append(values, value)
 }
 
 func validateMapping(mapping Mapping) error {

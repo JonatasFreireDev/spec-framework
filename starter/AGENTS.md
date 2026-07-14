@@ -14,6 +14,7 @@ Activate only when `product/.product/framework.json` is valid, then resolve and 
 - `product/foundation/`: problem, vision, and strategy.
 - `product/domains/`: domains, goals, features, use cases, specifications, tasks, and validation artifacts.
 - `product/knowledge/decisions/`: product decisions only.
+- `product/knowledge/imports/runs/<IMPORT-NNN>/traceability.json`: per-source review, evidence, claims, destinations, and unmapped gaps for LLM-assisted imports.
 - `product/audits/`: product audits and readiness reports.
 
 ## Framework-Owned Assets
@@ -29,7 +30,7 @@ Do not edit framework-owned assets to encode product scope. Put product-specific
 
 ## First Handoff
 
-Start with Framework Guide unless a current CLI result or explicit human request names both the specialist and the concrete artifact or workspace scope. Revalidate persisted handoffs/checkpoints with `dashboard`, `status`, `next`, or `guide` before routing directly. A skill name without scope is only a hint. For a new product, continue through Product Orchestrator, Problem Discovery, Vision, and Strategy before creating domains or features.
+Start with Framework Guide unless a current CLI result or explicit human request names both the specialist and the concrete artifact or workspace scope. Revalidate persisted handoffs/checkpoints with `dashboard`, `status`, `next`, or `guide` before routing directly. A skill name without scope is only a hint. For a new product, continue through Product Orchestrator, Problem Discovery, Vision, and Strategy before creating domains or features. For `existing-documents`, let Artifact Importer read every inventoried source and complete `traceability.json` and `mapping.json` before requesting materialization.
 
 ## Canonical Delivery Flow
 

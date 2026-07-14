@@ -1,0 +1,24 @@
+{
+  "schema_version": 1,
+  "import_id": "IMPORT-001",
+  "status": "unreviewed",
+  "sources": [
+    {
+      "path": "knowledge/imports/sources/example.md",
+      "sha256": "",
+      "review_status": "unreviewed",
+      "evidence": [
+        {
+          "locator": "heading or page/section",
+          "claim": "Evidence-backed claim extracted by the agent"
+        }
+      ],
+      "extracted_claims": [],
+      "candidate_ids": [],
+      "mapped_targets": [],
+      "materialized_paths": [],
+      "gaps": [],
+      "notes": ""
+    }
+  ]
+}

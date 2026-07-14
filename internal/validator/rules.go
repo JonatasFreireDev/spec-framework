@@ -57,6 +57,35 @@ func validateImportRuns(s Snapshot) []Diagnostic {
 				out = append(out, Diagnostic{Warning, "imports", path, "Source changed after this import inventory was created.", "Create a new import run and review affected mappings."})
 			}
 		}
+		tracePath := runDir + "/traceability.json"
+		if trace, exists := s.JSON[tracePath]; exists {
+			traceObj, ok := trace.(map[string]any)
+			if !ok {
+				out = append(out, Diagnostic{Error, "imports", tracePath, "Import traceability is not a JSON object.", "Regenerate the traceability file."})
+			} else {
+				if importID, _ := traceObj["import_id"].(string); importID != filepath.Base(filepath.FromSlash(runDir)) {
+					out = append(out, Diagnostic{Error, "imports", tracePath, "Traceability import_id does not match its run directory.", "Use the enclosing IMPORT-NNN id."})
+				}
+				coverage, _ := traceObj["sources"].([]any)
+				seenCoverage := map[string]bool{}
+				for _, raw := range coverage {
+					entry, _ := raw.(map[string]any)
+					path, _ := entry["path"].(string)
+					if !knownSources[path] {
+						out = append(out, Diagnostic{Error, "imports", tracePath, "Traceability references an uninventoried source: " + path + ".", "Use a source path from inventory.json."})
+					}
+					if seenCoverage[path] {
+						out = append(out, Diagnostic{Error, "imports", tracePath, "Traceability contains duplicate source coverage: " + path + ".", "Keep one coverage entry per imported source."})
+					}
+					seenCoverage[path] = true
+				}
+				for path := range knownSources {
+					if !seenCoverage[path] {
+						out = append(out, Diagnostic{Warning, "imports", tracePath, "Source has no traceability entry: " + path + ".", "Ask the Artifact Importer to review this source."})
+					}
+				}
+			}
+		}
 		plan, _ := s.JSON[runDir+"/import-plan.json"].(map[string]any)
 		if plan == nil {
 			out = append(out, Diagnostic{Error, "imports", runDir + "/import-plan.json", "Import plan is not valid JSON.", "Repair the plan before materialization."})

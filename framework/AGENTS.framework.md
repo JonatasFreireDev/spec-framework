@@ -15,7 +15,7 @@ Use these roots:
 | Versioned user cache | Installed framework method, skills, templates, validators, and tools. |
 | `product/` | Product-owned state, foundation, domains, decisions, audits, releases, and evidence. |
 | User-scoped `spec-framework` dispatcher | Manifest-gated resolver for the pinned specialized skill contracts. |
-| `product/knowledge/imports/` | Source evidence, immutable inventories, proposed mappings, conflicts, and import reports. |
+| `product/knowledge/imports/` | Source evidence, immutable inventories, proposed mappings, per-source traceability, conflicts, and import reports. |
 
 Do not write product scope, product decisions, approval records, or delivery evidence into the external runtime cache.
 

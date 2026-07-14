@@ -9,11 +9,11 @@ func TestBootstrapProfilesGiveEveryStartingPointAnImmediateAction(t *testing.T) 
 	for _, startingPoint := range []string{"new-product", "existing-product", "existing-documents", "existing-feature", "existing-implementation", "audit-only"} {
 		t.Run(startingPoint, func(t *testing.T) {
 			profile := bootstrapProfileFor(startingPoint)
-			if profile.location == "" || profile.nextAction == "" || profile.style == "" || profile.scopeRule == "" || profile.artifactAction == "" || profile.approvalIntro == "" || profile.approvalGuidance == "" || profile.approvalRule == "" || profile.foundationPath == "" {
+			if profile.location == "" || profile.nextAction == "" || profile.style == "" || profile.scopeRule == "" || profile.artifactAction == "" || profile.approvalIntro == "" || profile.approvalGuidance == "" || profile.approvalRule == "" || profile.foundationPath == "" || profile.agentPrompts == "" {
 				t.Fatalf("incomplete profile: %+v", profile)
 			}
 			bootstrap := bootstrapFor(startingPoint)
-			for _, expected := range []string{startingPoint, profile.location, profile.nextAction, profile.style, profile.scopeRule, profile.artifactAction, profile.approvalIntro, profile.approvalGuidance, profile.approvalRule, profile.foundationPath} {
+			for _, expected := range []string{startingPoint, profile.location, profile.nextAction, profile.style, profile.scopeRule, profile.artifactAction, profile.approvalIntro, profile.approvalGuidance, profile.approvalRule, profile.agentPrompts, profile.foundationPath} {
 				if !strings.Contains(bootstrap, expected) {
 					t.Errorf("bootstrap does not contain %q", expected)
 				}
@@ -109,6 +109,7 @@ func TestExistingDocumentsBootstrapStartsWithMaterializationGate(t *testing.T) {
 	for _, expected := range []string{
 		"Latest import run, before canonical product artifacts",
 		"mapping.json",
+		"traceability.json",
 		"spec-framework import materialize",
 		"does not create product approval history",
 	} {

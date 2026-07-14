@@ -82,6 +82,12 @@ Starting point: **%s**
 
    %s
 
+## Prompts for the agent
+
+Use these prompts as a starting point. The agent must read the cited evidence first, propose changes in the correct template, show unresolved questions, and stop before approval or materialization.
+
+%s
+
 ## Foundation path
 
 %s
@@ -119,7 +125,7 @@ Then ask:
 2. Which approved statuses have matching current history records?
 3. What is the first blocked parent?
 4. Is the chosen Foundation scope lean, full, or feature-scoped?
-`, startingPoint, profile.location, profile.nextAction, profile.style, validationCommand, profile.scopeRule, profile.artifactAction, profile.approvalIntro, profile.approvalGuidance, profile.approvalRule, profile.foundationPath, workspaceGuidance, validationCommand)
+`, startingPoint, profile.location, profile.nextAction, profile.style, validationCommand, profile.scopeRule, profile.artifactAction, profile.approvalIntro, profile.approvalGuidance, profile.approvalRule, profile.agentPrompts, profile.foundationPath, workspaceGuidance, validationCommand)
 }
 
 type bootstrapProfile struct {
@@ -132,6 +138,7 @@ type bootstrapProfile struct {
 	approvalGuidance string
 	approvalRule     string
 	foundationPath   string
+	agentPrompts     string
 }
 
 const fullFoundationScope = "Lean keeps Problem, Vision, Principles, North Star, and Strategy proportional to the available evidence. It reduces depth, not approval integrity."
@@ -192,7 +199,7 @@ func bootstrapProfileFor(startingPoint string) bootstrapProfile {
 			nextAction:     "Review inventory, conflicts, and selected mappings, then explicitly materialize them as drafts",
 			style:          "Lean when the sources already contain a coherent brief",
 			scopeRule:      "Existing-documents uses the latest import run as its entry contract. Materialization approves selected draft writes, not the resulting product artifacts.",
-			artifactAction: "Review `product/knowledge/imports/runs/<latest-run>/inventory.json`, `conflicts.md`, and `mapping.json`. Sources are evidence, not approved product truth.",
+			artifactAction: "Review `product/knowledge/imports/runs/<latest-run>/inventory.json`, `traceability.json`, `conflicts.md`, and `mapping.json`. Ask the Artifact Importer agent to read every source and record covered claims and unmapped gaps before materialization. Sources are evidence, not approved product truth.",
 			approvalIntro:  "Review every selected mapping, target, source reference, conflict, and draft body; then authorize draft materialization explicitly.",
 			approvalGuidance: `~~~text
    spec-framework import materialize --product-root product --run <IMPORT-NNN> --approved-by "Your Name" --yes
@@ -241,7 +248,59 @@ func bootstrapProfileFor(startingPoint string) bootstrapProfile {
 		},
 	}
 	if profile, ok := profiles[startingPoint]; ok {
+		profile.agentPrompts = agentPromptsFor(startingPoint)
 		return profile
 	}
-	return profiles["new-product"]
+	profile := profiles["new-product"]
+	profile.agentPrompts = agentPromptsFor("new-product")
+	return profile
+}
+
+func agentPromptsFor(startingPoint string) string {
+	switch startingPoint {
+	case "new-product":
+		return `### Product identity
+> Read ` + "`product/context.md`" + `. Ask me for the product name, owner, audience, and first business area. Propose only the smallest edits needed to replace ` + "`TBD`" + ` placeholders. Do not invent facts.
+
+### Problem
+> Read ` + "`product/context.md`" + `, the Problem context, and any evidence I provide. Ask focused questions about audience, pain, frequency, urgency, alternatives, and evidence. Draft ` + "`foundation/problem/problem.md`" + ` using the template, label assumptions, and list unanswered questions. Stop before approval.
+
+### Foundation sequence
+> After I confirm the previous artifact, read its current content and parent approval state. Propose the next artifact only: Vision, Product Principles, North Star, or Strategy. Preserve traceability to the parent, call out contradictions, and never change status or create approval records.`
+	case "existing-product":
+		return `### Product Baseline
+> Read the repository, tests, runtime configuration, operational evidence, and ` + "`product/context.md`" + `. Propose ` + "`foundation/product-baseline.md`" + ` with observed facts separated from inferred intent and unknowns. Cite evidence paths. Do not treat existing code as approved product scope.
+
+### Strategy
+> Read the approved Product Baseline and propose ` + "`foundation/strategy/strategy.md`" + ` with future bets, trade-offs, metrics, and roadmap. Ask before making assumptions about direction. Stop before approval.`
+	case "existing-documents":
+		return `### Source review and traceability
+> Read every source in ` + "`product/knowledge/imports/sources/`" + ` and the current ` + "`inventory.json`" + `. For each source, update ` + "`traceability.json`" + ` with review status, section-level evidence, extracted claims, candidate ids, mapped targets, and gaps. Do not silently discard content.
+
+### Draft proposals
+> Compare the traced claims with existing product artifacts and templates. Propose ` + "`mapping.json`" + ` entries for useful drafts, preserving ` + "`source_documents`" + ` references. Record conflicts and ambiguous ownership in ` + "`conflicts.md`" + `. Do not materialize or approve anything.
+
+### Human review
+> Summarize what is covered, what is unmapped, which sources conflict, and which mappings are safe to materialize as drafts. Ask for explicit selection before running the materialization command.`
+	case "existing-feature":
+		return `### Feature Brief
+> Read the request, existing product context, relevant decisions, and nearby artifacts. Ask questions about the user, outcome, scope, non-goals, constraints, success signal, and delivery level. Draft ` + "`foundation/feature-brief.md`" + ` for this bounded feature only. Flag when the request actually needs full Foundation. Stop before approval.
+
+### Bounded delivery slice
+> After the Feature Brief is approved, read the pinned ` + "`examples/events/`" + ` reference and choose one Domain -> User Goal -> Feature -> Use Case walking skeleton that fits the brief. Create only the smallest draft slice and preserve parent traceability.`
+	case "existing-implementation":
+		return `### Implementation Assessment
+> Inspect the code, configuration, database schema, integrations, tests, and operational evidence. Fill ` + "`knowledge/assessments/implementation-assessment.md`" + ` with observed behavior, architecture, risks, and unknowns. Separate evidence from inferred product intent. Do not modify application code or create approval records.
+
+### Derive product truth carefully
+> Use the approved assessment as evidence for the full Foundation. Propose Problem, Vision, Principles, North Star, and Strategy one artifact at a time, asking questions where the implementation does not prove user intent.`
+	case "audit-only":
+		return `### Read-only audit
+> Read ` + "`product/BOOTSTRAP.md`" + `, the manifest, validation output, contexts, import runs, decisions, and existing artifacts. Report structural gaps, stale evidence, missing traceability, conflicts, and approval inconsistencies. Do not edit product files, materialize imports, approve artifacts, or create workspaces.
+
+### Human handoff
+> Summarize the first safe remediation, the owning skill, required evidence, and the exact command or human decision needed. Keep the session read-only.`
+	default:
+		return agentPromptsFor("new-product")
+	}
 }
