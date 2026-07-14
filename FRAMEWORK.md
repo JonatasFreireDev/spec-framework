@@ -597,6 +597,7 @@ Mandatory transitions:
 - `validate --write-registry` preserves `parents`, `children`, `depends_on`, decisions, and delivery dependencies from structured companion `context.md` YAML. Starting-point-specific parents are additive and must not erase the existing product graph.
 - `proposed`: does not require an approval record, but must not advance from an incomplete parent gate.
 - `approved` and later states: require a corresponding approval record in `.product/history/`, with `artifact_id`, `path`, `content_hash`, `status_granted`, `approved_by`, `approved_at`, and `notes`. Validator and operational navigation both require that record to match the current artifact content; editing status prose alone never advances work.
+- Human approval may be applied to one artifact with `approve` or to an explicit batch with `approve-batch`. Batch approval must preview the exact paths, IDs, hashes, ignored artifacts, blockers, and next gate first; it requires explicit scope, human identity, and `--yes`, and never includes stale or ineligible artifacts.
 - `approved -> in_progress`: requires an approved task or an explicit prototype/draft exception.
 - `in_progress -> implemented`: requires structured working-tree evidence in the task file: branch, base commit, changed paths, diff hash, tests, and gate results. It does not require a commit.
 - Code Runner can produce code and technical evidence, but does not commit, push, merge, create approval records, or approve QA.

@@ -55,6 +55,7 @@ func (app App) NewCommand(stdout, stderr io.Writer) *cobra.Command {
 		app.legacyCommand("status", "Show workspace readiness and blockers.", func(args []string, out, errout io.Writer) int { return runWorkStatus("status", args, out, errout) }, stdout, stderr),
 		app.legacyCommand("next", "Show the next skill for a workspace.", func(args []string, out, errout io.Writer) int { return runWorkStatus("next", args, out, errout) }, stdout, stderr),
 		app.legacyCommand("approve", "Record an explicit artifact approval.", func(args []string, out, errout io.Writer) int { return runApprove(args, out, errout) }, stdout, stderr),
+		app.legacyCommand("approve-batch", "Preview or approve multiple eligible artifacts.", func(args []string, out, errout io.Writer) int { return runApproveBatch(args, out, errout) }, stdout, stderr),
 		app.legacyCommand("gates", "Check implementation gate readiness.", func(args []string, out, errout io.Writer) int { return runGates(args, out, errout) }, stdout, stderr),
 		app.legacyCommand("graph", "Inspect and operate execution graphs.", func(args []string, out, errout io.Writer) int { return runGraph(args, out, errout) }, stdout, stderr),
 		app.legacyCommand("task", "Inspect task readiness.", func(args []string, out, errout io.Writer) int { return runTask(args, out, errout) }, stdout, stderr),

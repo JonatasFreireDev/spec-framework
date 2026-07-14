@@ -24,6 +24,10 @@ Every transition must be valid for the artifact type and its starting-point cont
 
 Approved and later artifacts require a matching record in `.product/history/` with `artifact_id`, `path`, `content_hash`, `status_granted`, `approved_by`, `approved_at`, and `notes`. The record must match the current normalized artifact content.
 
+Use `spec-framework approve` for one artifact and `spec-framework approve-batch` for an explicit set, Foundation, stage, or eligible artifacts through `--until`. The ordered stages are Foundation, Domains, Feature, Use Cases, Specification, Design, Engineering, Planning, and Tasks. Batch approval first produces a preview with paths, IDs, hashes, ignored artifacts, blockers, and the next gate. Applying it requires the same human identity and explicit `--yes`; stale artifacts, invalid parents, and blockers are excluded. The legacy `approve-stage` command remains available for workspace-scoped stage approval.
+
+For a human operating directly in a terminal, `approve-batch --interactive` uses the existing Bubble Tea-based form for the final confirmation and then reports per-artifact progress. CI and agent-driven flows should use the textual or `--json` preview followed by explicit `--yes`.
+
 ## Delivery evidence
 
 An implemented executable task records immutable working-tree evidence: branch, base commit, changed paths, diff hash, tests, and applicable gate results. It does not require an early commit. Validation requires the applicable approved QA, Code Review, Security Review, and concrete evidence. Code Review and task QA must cover the same current diff hash.

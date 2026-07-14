@@ -22,6 +22,8 @@ func auditOnlyMutation(args []string) (bool, string) {
 	switch command {
 	case "move", "import", "approve":
 		mutating = true
+	case "approve-batch":
+		mutating = boolArgumentEnabled(args, "--yes") && !boolArgumentEnabled(args, "--dry-run")
 	case "validate":
 		mutating = boolArgumentEnabled(args, "--write-registry") || boolArgumentEnabled(args, "--write-report")
 	case "work":

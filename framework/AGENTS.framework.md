@@ -88,6 +88,10 @@ spec-framework validate
 
 If a product artifact is `approved` or later and its approval record is missing or inconsistent, report the blocker and stop. Agents must not create, edit, or repair approval records unless a human explicitly approves that migration.
 
+When a human requests approval, use the batch-capable approval route whenever the scope contains more than one artifact or names a Foundation/stage. First run `spec-framework approve-batch` without `--yes` to preview the exact files, IDs, hashes, ignored items, blockers, and next gate. Ask for explicit human confirmation and approver identity; only then rerun with `--yes`. Never infer approval from conversational agreement. The command supports `--artifact`, `--ids`, `--foundation`, `--stage`, `--all-eligible`, and `--until`; stale artifacts, invalid parents, and blockers must remain excluded.
+
+Whenever a workflow stage is complete and the next stage would require an approval gate, stop after the preview and ask the human whether the listed artifacts should be approved. Do not continue to the next stage until the human confirms the exact listed scope.
+
 ## Stop Conditions
 
 Stop and ask for human direction when any of the following applies:

@@ -1918,7 +1918,7 @@ footer{
         <div class="intent-row"><span class="intent-q">"Quero apenas auditar, sem alterar nada"</span><span class="intent-arrow">→</span><span class="intent-a"><code>init --starting-point audit-only</code> → inspeção sem flags de escrita</span></div>
         <div class="intent-row"><span class="intent-q">"Onde meu trabalho está?"</span><span class="intent-arrow">→</span><span class="intent-a"><code>dashboard</code> · <code>status</code> · <code>next</code></span></div>
         <div class="intent-row"><span class="intent-q">"Trazer épicos/PRDs existentes"</span><span class="intent-arrow">→</span><span class="intent-a"><code>init --starting-point existing-documents</code> → <code>import materialize</code></span></div>
-        <div class="intent-row"><span class="intent-q">"Revisar ou aprovar um estágio"</span><span class="intent-arrow">→</span><span class="intent-a"><code>review</code> → <code>approve</code> / <code>approve-stage</code></span></div>
+        <div class="intent-row"><span class="intent-q">"Revisar ou aprovar artifacts"</span><span class="intent-arrow">→</span><span class="intent-a"><code>approve</code> para um arquivo; <code>approve-batch</code> para Foundation, IDs ou etapa; <code>approve-stage</code> mantém o fluxo por workspace</span></div>
         <div class="intent-row"><span class="intent-q">"Gerar, evoluir ou adotar Design"</span><span class="intent-arrow">→</span><span class="intent-a"><code>design init/import/register</code> + UX/UI + UX Review</span></div>
         <div class="intent-row"><span class="intent-q">"Diagnosticar ou instalar um adapter visual"</span><span class="intent-arrow">→</span><span class="intent-a"><code>adapters list/status/doctor</code> → <code>install --version ... --yes</code></span></div>
         <div class="intent-row"><span class="intent-q">"O que muda se eu alterar essa decisão?"</span><span class="intent-arrow">→</span><span class="intent-a"><code>impact</code></span></div>
@@ -2034,28 +2034,38 @@ footer{
       </div>
 
       <div class="cli-block">
-        <p class="caption">5 · operar o grafo de execução e checar prontidão de uma tarefa</p>
+        <p class="caption">5 · revisar e aprovar um lote com escopo explícito</p>
+        <div class="cli-scroll"><pre class="cli"><span class="c"># preview: lista arquivos, hashes, ignorados, blockers e próximo gate</span>
+<span class="cmd">spec-framework approve-batch</span> --foundation
+<span class="cmd">spec-framework approve-batch</span> --all-eligible --until specification --json
+<span class="cmd">spec-framework approve-batch</span> --foundation --approved-by "Product Owner" --interactive
+<span class="c"># aplicar somente depois da confirmação humana explícita</span>
+<span class="cmd">spec-framework approve-batch</span> --ids PRB-001,VIS-001 --approved-by "Product Owner" --yes</pre></div>
+      </div>
+
+      <div class="cli-block">
+        <p class="caption">6 · operar o grafo de execução e checar prontidão de uma tarefa</p>
         <div class="cli-scroll"><pre class="cli"><span class="cmd">spec-framework graph ready</span> --graph domains/events/.../execution-graph.json
 <span class="cmd">spec-framework graph materialize</span> --graph domains/events/.../execution-graph.json --yes
 <span class="cmd">spec-framework task readiness</span> --graph domains/events/.../execution-graph.json --task TK-001</pre></div>
       </div>
 
       <div class="cli-block">
-        <p class="caption">6 · resumir, arrendar e agendar execução governada</p>
+        <p class="caption">7 · resumir, arrendar e agendar execução governada</p>
         <div class="cli-scroll"><pre class="cli"><span class="cmd">spec-framework resume</span> --work WORK-001
 <span class="cmd">spec-framework lease claim</span> --work WORK-001 --graph domains/events/.../execution-graph.json --task TK-001 --agent codex --isolate
 <span class="cmd">spec-framework schedule</span> --work WORK-001 --graph domains/events/.../execution-graph.json --max-parallel 4</pre></div>
       </div>
 
       <div class="cli-block">
-        <p class="caption">7 · revisar um estágio e medir o impacto de uma decisão</p>
+        <p class="caption">8 · revisar um estágio e medir o impacto de uma decisão</p>
         <div class="cli-scroll"><pre class="cli"><span class="cmd">spec-framework review</span> --work WORK-001 --stage tasks
 <span class="cmd">spec-framework approve-stage</span> --work WORK-001 --stage tasks --approved-by "Product Owner" --yes
 <span class="cmd">spec-framework impact</span> --decision DEC-021</pre></div>
       </div>
 
       <div class="cli-block">
-        <p class="caption">8 · gerar, importar ou adotar Design; validar o Design System compartilhado</p>
+        <p class="caption">9 · gerar, importar ou adotar Design; validar o Design System compartilhado</p>
         <div class="cli-scroll"><pre class="cli"><span class="cmd">spec-framework design init</span> --product-root product --use-case &lt;path&gt; --mode generate
 <span class="cmd">spec-framework design register</span> --product-root product --use-case &lt;path&gt; --type figma --source &lt;url&gt; --version &lt;version&gt; --authority visual-canonical
 <span class="cmd">spec-framework design map</span> --product-root product --use-case &lt;path&gt; --mappings mapping.json
@@ -2066,7 +2076,7 @@ footer{
       </div>
 
       <div class="cli-block">
-        <p class="caption">9 · manter o Engineering System compartilhado</p>
+        <p class="caption">10 · manter o Engineering System compartilhado</p>
         <div class="cli-scroll"><pre class="cli"><span class="cmd">spec-framework engineering-system inspect</span> --product-root product
 <span class="cmd">spec-framework engineering-system validate</span> --product-root product
 <span class="cmd">spec-framework engineering-system triggers</span> --product-root product
@@ -2074,7 +2084,7 @@ footer{
       </div>
 
       <div class="cli-block">
-        <p class="caption">10 · descobrir, diagnosticar e instalar adapters visuais opcionais</p>
+        <p class="caption">11 · descobrir, diagnosticar e instalar adapters visuais opcionais</p>
         <div class="cli-scroll"><pre class="cli"><span class="cmd">spec-framework adapters list</span>
 <span class="cmd">spec-framework adapters status</span> impeccable
 <span class="cmd">spec-framework adapters doctor</span> impeccable --check-latest
@@ -2084,20 +2094,20 @@ footer{
       </div>
 
       <div class="cli-block">
-        <p class="caption">11 · ver o estado consolidado do trabalho e migrar decisões antigas</p>
+        <p class="caption">12 · ver o estado consolidado do trabalho e migrar decisões antigas</p>
         <div class="cli-scroll"><pre class="cli"><span class="cmd">spec-framework dashboard</span> --work WORK-001
 <span class="cmd">spec-framework status</span> --work WORK-001 --graph --json
 <span class="cmd">spec-framework decisions migrate</span> --product-root product --interactive</pre></div>
       </div>
 
       <div class="cli-block">
-        <p class="caption">12 · planejar comandos governados por risco (R0/R1) e validar</p>
+        <p class="caption">13 · planejar comandos governados por risco (R0/R1) e validar</p>
         <div class="cli-scroll"><pre class="cli"><span class="cmd">spec-framework commands plan</span> --work WORK-001 --task TK-001 --risk R0 -- go test ./...
 <span class="cmd">spec-framework validate</span></pre></div>
       </div>
 
       <div class="cli-block">
-        <p class="caption">13 · bootstrap a partir de documentos existentes (epics, PRDs)</p>
+        <p class="caption">14 · bootstrap a partir de documentos existentes (epics, PRDs)</p>
         <div class="cli-scroll"><pre class="cli"><span class="c"># cria um inventário e um run de importação, só análise</span>
 <span class="cmd">spec-framework init</span> ../meu-produto --agents codex --starting-point existing-documents --source-dir ../product-docs --yes
 <span class="c"># materializa artefatos de rascunho após aprovação humana explícita</span>
@@ -2105,7 +2115,7 @@ footer{
       </div>
 
       <div class="cli-block">
-        <p class="caption">14 · atualizar o runtime externo e migrar repositórios legados</p>
+        <p class="caption">15 · atualizar o runtime externo e migrar repositórios legados</p>
         <div class="cli-scroll"><pre class="cli"><span class="c"># atualiza o cache versionado e o manifest pinado, preservando product/</span>
 <span class="cmd">spec-framework upgrade</span> --yes
 <span class="c"># repositório antigo com .spec-framework/ local: preview antes de migrar</span>
@@ -2115,7 +2125,7 @@ footer{
       </div>
 
       <div class="cli-block">
-        <p class="caption">15 · operar o runtime resumível e a integração local</p>
+        <p class="caption">16 · operar o runtime resumível e a integração local</p>
         <div class="cli-scroll"><pre class="cli"><span class="cmd">spec-framework runtime</span>
 <span class="cmd">spec-framework resume</span> --work WORK-001
 <span class="cmd">spec-framework checkpoint</span> --work WORK-001

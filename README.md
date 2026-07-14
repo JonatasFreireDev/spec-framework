@@ -88,7 +88,7 @@ The [Framework Guide skill](framework/skills/framework-guide/SKILL.md) is the de
 | --- | --- |
 | Start or import a product | `init`, `import materialize` |
 | Navigate and see state | `work`, `status`, `next`, `dashboard`, `guide` |
-| Approve explicitly | `review`, `approve`, `approve-stage`, `gates` |
+| Approve explicitly | `review`, `approve`, `approve-batch`, `approve-stage`, `gates` |
 | Design workflows | `design init/import/register/map/inspect/audit`, `design-system init/inspect/validate/migrate` |
 | Engineering workflows | `engineering-system inspect/validate/triggers/migrate` |
 | Operate the graph | `graph ready/materialize/claim/complete`, `task readiness` |
@@ -100,7 +100,7 @@ The [Framework Guide skill](framework/skills/framework-guide/SKILL.md) is the de
 
 The CLI uses Cobra for its command tree and generated help. It deliberately does not load ambient user configuration: product manifests and explicit flags remain the source of truth.
 
-All mutations preview before executing; approval commands require an explicit human identity and `--yes`.
+All mutations preview before executing; approval commands require an explicit human identity and `--yes`. For example: `spec-framework approve-batch --foundation` previews the Foundation scope, and `spec-framework approve-batch --foundation --approved-by "Product Owner" --yes` applies it after human confirmation. Use `--all-eligible --until specification` to include the ordered Foundation, Domains, Feature, Use Case, and Specification stages. Direct terminal users may use `--interactive` for Bubble Tea confirmation; CI should use textual or `--json` output.
 
 ## Repository Map
 
