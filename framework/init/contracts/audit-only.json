@@ -1,11 +1,13 @@
 {
   "schema_version": 1,
   "id": "audit-only",
-  "asset_sets": ["product-core", "foundation-full", "knowledge", "delivery-scaffold", "governance"],
+  "asset_sets": ["product-core", "knowledge-security-baseline", "governance"],
   "directories": [],
   "files": [],
   "patches": [],
-  "registry": {},
+  "registry": {
+    "exclude_types": ["problem", "vision", "product-principles", "north-star", "strategy", "domain", "user-goal", "feature", "use-case"]
+  },
   "bootstrap_profile": "audit-only",
   "actions": []
 }

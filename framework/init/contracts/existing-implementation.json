@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "id": "existing-implementation",
-  "asset_sets": ["product-core", "foundation-full", "knowledge", "delivery-scaffold", "governance"],
+  "asset_sets": ["product-core", "foundation-problem", "foundation-vision", "foundation-strategy", "knowledge", "delivery-domains", "delivery-design", "delivery-engineering", "governance"],
   "directories": [],
   "files": [
     {

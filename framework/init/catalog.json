@@ -4,20 +4,30 @@
     "product-core": [
       { "source": "starter/product/.product", "target": ".product" },
       { "source": "starter/product/context.md", "target": "context.md" },
-      { "source": "starter/product/README.md", "target": "README.md" },
-      { "source": "starter/product/foundation/README.md", "target": "foundation/README.md" }
+      { "source": "starter/product/README.md", "target": "README.md" }
     ],
-    "foundation-full": [
-      { "source": "starter/product/foundation/problem", "target": "foundation/problem" },
-      { "source": "starter/product/foundation/vision", "target": "foundation/vision" },
+    "foundation-problem": [
+      { "source": "starter/product/foundation/problem", "target": "foundation/problem" }
+    ],
+    "foundation-vision": [
+      { "source": "starter/product/foundation/vision", "target": "foundation/vision" }
+    ],
+    "foundation-strategy": [
       { "source": "starter/product/foundation/strategy", "target": "foundation/strategy" }
     ],
     "knowledge": [
       { "source": "starter/product/knowledge", "target": "knowledge" }
     ],
-    "delivery-scaffold": [
-      { "source": "starter/product/domains", "target": "domains" },
-      { "source": "starter/product/design", "target": "design" },
+    "knowledge-security-baseline": [
+      { "source": "starter/product/knowledge/conventions/security-baseline.md", "target": "knowledge/conventions/security-baseline.md" }
+    ],
+    "delivery-domains": [
+      { "source": "starter/product/domains", "target": "domains" }
+    ],
+    "delivery-design": [
+      { "source": "starter/product/design", "target": "design" }
+    ],
+    "delivery-engineering": [
       { "source": "starter/product/engineering", "target": "engineering" }
     ],
     "governance": [

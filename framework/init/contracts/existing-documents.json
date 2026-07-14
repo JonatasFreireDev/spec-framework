@@ -1,11 +1,13 @@
 {
   "schema_version": 1,
   "id": "existing-documents",
-  "asset_sets": ["product-core", "foundation-full", "knowledge", "delivery-scaffold", "governance"],
+  "asset_sets": ["product-core", "knowledge", "governance"],
   "directories": ["knowledge/imports/sources", "knowledge/imports/runs"],
   "files": [],
   "patches": [],
-  "registry": {},
+  "registry": {
+    "exclude_types": ["problem", "vision", "product-principles", "north-star", "strategy", "domain", "user-goal", "feature", "use-case"]
+  },
   "bootstrap_profile": "existing-documents",
   "actions": ["create-import-run"]
 }

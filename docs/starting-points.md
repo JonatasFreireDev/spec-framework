@@ -39,6 +39,27 @@ CLI e runtime do framework
       -> materializam somente o resultado em product/
 ```
 
+### Matriz de materialização
+
+Os contratos de `init` devem seguir esta matriz. `sim` significa que o
+starting point recebe o conjunto inicial; não significa que os artefatos já
+estejam aprovados. Diretórios de delivery podem ser criados posteriormente
+por uma skill quando a entrega realmente precisar deles.
+
+| Starting point | Foundation | Knowledge | Delivery | Governance |
+| --- | --- | --- | --- | --- |
+| `new-product` | Problem, Vision, Principles, North Star e Strategy | Sim | Domains, Design e Engineering | Sim |
+| `existing-product` | Product Baseline e Strategy | Sim | Domains, Design e Engineering | Sim |
+| `existing-implementation` | Implementation Assessment e Foundation completa | Sim | Domains, Design e Engineering | Sim |
+| `existing-documents` | Somente artefatos selecionados na materialização do import | Imports | Não inicialmente | Sim |
+| `existing-feature` | Feature Brief | Sim | Domains | Sim |
+| `audit-only` | Nenhuma | Security Baseline mínimo | Não | Relatórios mínimos |
+
+Essa matriz controla a estrutura inicial, mas não remove skills, validações,
+gates ou rigor posterior. A materialização de um arquivo importado pode criar
+o diretório-pai necessário sem transformar o restante do scaffold em conteúdo
+inicial.
+
 ## Resumo das opções
 
 | Starting point | Situação inicial | Primeiro contrato ou gate |

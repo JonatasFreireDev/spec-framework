@@ -20,9 +20,75 @@ func TestEveryStartingPointHasAValidInitializationPlan(t *testing.T) {
 			if err != nil {
 				t.Fatal(err)
 			}
-			for _, required := range []string{".product/artifacts.json", ".product/framework.json", "context.md", "domains/_template-domain/context.md"} {
+			requiredFiles := []string{".product/artifacts.json", ".product/framework.json", "context.md"}
+			if point != "existing-documents" && point != "audit-only" {
+				requiredFiles = append(requiredFiles, "domains/_template-domain/context.md")
+			}
+			for _, required := range requiredFiles {
 				if _, ok := plan.Files[required]; !ok {
 					t.Fatalf("plan is missing %s", required)
+				}
+			}
+		})
+	}
+}
+
+func TestStartingPointMaterializationProfiles(t *testing.T) {
+	tests := map[string]struct {
+		present []string
+		absent  []string
+	}{
+		"new-product": {
+			present: []string{"foundation/problem/problem.md", "foundation/vision/vision.md", "domains/_template-domain/context.md", "design/system/context.md", "engineering/context.md"},
+		},
+		"existing-product": {
+			present: []string{"foundation/strategy/strategy.md", "foundation/product-baseline.md", "domains/_template-domain/context.md"},
+			absent:  []string{"foundation/problem/problem.md", "foundation/vision/vision.md"},
+		},
+		"existing-feature": {
+			present: []string{"foundation/feature-brief.md", "domains/_template-domain/context.md"},
+			absent:  []string{"foundation/problem/problem.md", "foundation/strategy/strategy.md", "design/system/context.md", "engineering/context.md"},
+		},
+		"existing-documents": {
+			present: []string{"context.md"},
+			absent:  []string{"foundation/README.md", "foundation/problem/problem.md", "domains/_template-domain/context.md", "design/system/context.md", "engineering/context.md"},
+		},
+		"existing-implementation": {
+			present: []string{"knowledge/assessments/implementation-assessment.md", "foundation/problem/problem.md", "domains/_template-domain/context.md"},
+		},
+		"audit-only": {
+			present: []string{"audits/README.md", "knowledge/conventions/security-baseline.md"},
+			absent:  []string{"foundation/README.md", "foundation/problem/problem.md", "knowledge/conventions/gates.md", "domains/_template-domain/context.md", "design/system/context.md", "engineering/context.md"},
+		},
+	}
+	for point, expected := range tests {
+		t.Run(point, func(t *testing.T) {
+			plan, err := buildInitializationPlan(point)
+			if err != nil {
+				t.Fatal(err)
+			}
+			for _, path := range expected.present {
+				if _, ok := plan.Files[path]; !ok {
+					t.Fatalf("expected %s to be materialized", path)
+				}
+			}
+			for _, path := range expected.absent {
+				if _, ok := plan.Files[path]; ok {
+					t.Fatalf("did not expect %s to be materialized", path)
+				}
+			}
+			if point == "existing-documents" {
+				for _, directory := range []string{"knowledge/imports/sources", "knowledge/imports/runs"} {
+					found := false
+					for _, planned := range plan.Directories {
+						if planned == directory {
+							found = true
+							break
+						}
+					}
+					if !found {
+						t.Fatalf("expected %s directory to be materialized", directory)
+					}
 				}
 			}
 		})

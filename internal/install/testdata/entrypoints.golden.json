@@ -12,7 +12,7 @@
     "actions": []
   },
   "existing-documents": {
-    "artifact_ids": ["PROBLEM-TBD", "VISION-TBD", "PRINCIPLES-TBD", "NORTH-STAR-TBD", "STRATEGY-TBD", "DOMAIN-TEMPLATE", "GOAL-TEMPLATE", "FT-TEMPLATE", "UC-TEMPLATE"],
+    "artifact_ids": [],
     "special_files": [],
     "directories": ["knowledge/imports/runs", "knowledge/imports/sources"],
     "actions": ["create-import-run"]
@@ -30,7 +30,7 @@
     "actions": []
   },
   "audit-only": {
-    "artifact_ids": ["PROBLEM-TBD", "VISION-TBD", "PRINCIPLES-TBD", "NORTH-STAR-TBD", "STRATEGY-TBD", "DOMAIN-TEMPLATE", "GOAL-TEMPLATE", "FT-TEMPLATE", "UC-TEMPLATE"],
+    "artifact_ids": [],
     "special_files": [],
     "directories": [],
     "actions": []
