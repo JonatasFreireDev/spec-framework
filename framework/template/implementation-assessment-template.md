@@ -1,5 +1,21 @@
 # Implementation Assessment
 
+## 🧾 Generation And Agent Self-Check
+
+> Complete this section when materializing the artifact. Keep unresolved items explicit in the relevant scope, findings, risks, or handoff section.
+
+| Field | Value |
+| --- | --- |
+| Generated on | `YYYY-MM-DD` |
+| Purpose | `[decision, evidence, contract, or handoff this artifact supports]` |
+| Use when | `[workflow stage, trigger, or condition]` |
+| Prepared by | `[owning skill, role, or accountable person]` |
+| Scope covered | `[artifact, product area, use case, or review boundary]` |
+| Required inputs and evidence | `[links to approved parents, documents, code, decisions, or observations]` |
+| Ready when | `[artifact-specific completion, evidence, and gate conditions]` |
+| Current status | `[status allowed by this artifact's owning workflow]` |
+
+
 ## Snapshot
 
 | Field | Value |
@@ -58,3 +74,10 @@
 ## Recommended Next Step
 
 [Name the smallest Foundation artifact that can now be drafted, plus unresolved blockers.]
+
+## ✅ Agent Verification Checklist
+
+- [ ] Repository claims cite observed files, commands, runtime behavior, or other concrete evidence.
+- [ ] Behavior, architecture, data, integrations, tests, operations, security, and privacy are assessed.
+- [ ] Inferences are separated from observations and carry confidence and conflict notes.
+- [ ] Risks, documentation gaps, candidate product claims, and the recommended next gate are explicit.

@@ -1,5 +1,21 @@
 # Context: [artifact name]
 
+## 🧾 Generation And Agent Self-Check
+
+> Complete this section when materializing the artifact. Keep unresolved items explicit in the relevant scope, findings, risks, or handoff section.
+
+| Field | Value |
+| --- | --- |
+| Generated on | `YYYY-MM-DD` |
+| Purpose | `[decision, evidence, contract, or handoff this artifact supports]` |
+| Use when | `[workflow stage, trigger, or condition]` |
+| Prepared by | `[owning skill, role, or accountable person]` |
+| Scope covered | `[artifact, product area, use case, or review boundary]` |
+| Required inputs and evidence | `[links to approved parents, documents, code, decisions, or observations]` |
+| Ready when | `[artifact-specific completion, evidence, and gate conditions]` |
+| Current status | `[status allowed by this artifact's owning workflow]` |
+
+
 ## 🧭 Snapshot
 
 ```yaml
@@ -99,3 +115,10 @@ flowchart TD
 | Next recommended skill | `[skill]` |
 | Required reading | [`[artifact]`]([path]) |
 | Stop condition | `[approval gate/blocker]` |
+
+## ✅ Agent Verification Checklist
+
+- [ ] Identity, immutable slug, type, status, owner, rigor tier, and delivery fields are valid.
+- [ ] Parents, children, dependencies, consumers, decisions, and canonical documents use navigable links.
+- [ ] Purpose, boundaries, open questions, and local risks match the canonical artifact.
+- [ ] The handoff names the safe next action, owner, required inputs, and blocking conditions.

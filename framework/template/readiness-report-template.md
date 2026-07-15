@@ -1,5 +1,21 @@
 # Readiness Report: [feature/use case]
 
+## 🧾 Generation And Agent Self-Check
+
+> Complete this section when materializing the artifact. Keep unresolved items explicit in the relevant scope, findings, risks, or handoff section.
+
+| Field | Value |
+| --- | --- |
+| Generated on | `YYYY-MM-DD` |
+| Purpose | `[decision, evidence, contract, or handoff this artifact supports]` |
+| Use when | `[workflow stage, trigger, or condition]` |
+| Prepared by | `[owning skill, role, or accountable person]` |
+| Scope covered | `[artifact, product area, use case, or review boundary]` |
+| Required inputs and evidence | `[links to approved parents, documents, code, decisions, or observations]` |
+| Ready when | `[artifact-specific completion, evidence, and gate conditions]` |
+| Current status | `[status allowed by this artifact's owning workflow]` |
+
+
 ## 🧭 Executive Snapshot
 
 | Field | Value |
@@ -157,3 +173,10 @@ flowchart TD
 | Verdict | `[✅ ready | 🟡 ready_with_notes | 🔴 not_ready]` |
 | Can generate/execute tasks | `[yes/no]` |
 | Required next step | `[skill/orchestrator]` |
+
+## ✅ Agent Verification Checklist
+
+- [ ] Required artifacts, hashes, links, statuses, approvals, and derivation freshness are checked.
+- [ ] Specification, design, planning, graph, task, decision, and evidence gates match rigor tier.
+- [ ] Every blocker has evidence, owner, required fix, and next action.
+- [ ] The readiness verdict and task-generation decision reflect the complete gate matrix.

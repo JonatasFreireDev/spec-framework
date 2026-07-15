@@ -1,5 +1,21 @@
 # Tests: [use case name]
 
+## 🧾 Generation And Agent Self-Check
+
+> Complete this section when materializing the artifact. Keep unresolved items explicit in the relevant scope, findings, risks, or handoff section.
+
+| Field | Value |
+| --- | --- |
+| Generated on | `YYYY-MM-DD` |
+| Purpose | `[decision, evidence, contract, or handoff this artifact supports]` |
+| Use when | `[workflow stage, trigger, or condition]` |
+| Prepared by | `[owning skill, role, or accountable person]` |
+| Scope covered | `[artifact, product area, use case, or review boundary]` |
+| Required inputs and evidence | `[links to approved parents, documents, code, decisions, or observations]` |
+| Ready when | `[artifact-specific completion, evidence, and gate conditions]` |
+| Current status | `[status allowed by this artifact's owning workflow]` |
+
+
 ## 🧭 Snapshot
 
 | Field | Value |
@@ -105,3 +121,10 @@ flowchart LR
 | QA evidence | [qa-evidence.md](qa-evidence.md) |
 | Security review | [security-review.md](security-review.md) |
 | Next owner | `[role/skill]` |
+
+## ✅ Agent Verification Checklist
+
+- [ ] Test coverage traces every acceptance criterion, requirement, risk, and applicable policy.
+- [ ] Happy, alternate, error, edge, regression, security, accessibility, and operational cases are considered.
+- [ ] Environment, data, commands, expected results, evidence, and ownership are executable.
+- [ ] Residual gaps and QA verdict are explicit and do not fabricate execution results.

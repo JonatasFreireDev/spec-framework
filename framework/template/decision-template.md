@@ -1,5 +1,21 @@
 # Decision: [decision title]
 
+## 🧾 Generation And Agent Self-Check
+
+> Complete this section when materializing the artifact. Keep unresolved items explicit in the relevant scope, findings, risks, or handoff section.
+
+| Field | Value |
+| --- | --- |
+| Generated on | `YYYY-MM-DD` |
+| Purpose | `[decision, evidence, contract, or handoff this artifact supports]` |
+| Use when | `[workflow stage, trigger, or condition]` |
+| Prepared by | `[owning skill, role, or accountable person]` |
+| Scope covered | `[artifact, product area, use case, or review boundary]` |
+| Required inputs and evidence | `[links to approved parents, documents, code, decisions, or observations]` |
+| Ready when | `[artifact-specific completion, evidence, and gate conditions]` |
+| Current status | `[status allowed by this artifact's owning workflow]` |
+
+
 ## 🧭 Snapshot
 
 | Field | Value |
@@ -86,3 +102,10 @@ Mirror this structure in the decision's `.product/decisions.json` entry. Empty a
 | Date |  |
 | Approval record | `[.product/history/approval-...]` |
 | Notes |  |
+
+## ✅ Agent Verification Checklist
+
+- [ ] The decision ID, domain, type, scope, status, owner, and canonical path are consistent.
+- [ ] Options, rationale, consequences, affected artifacts, and supersession are explicit.
+- [ ] Workflow effects are structured, scoped, and do not silently create work or approval.
+- [ ] Any approval reference points to real current evidence; no approval record was fabricated.

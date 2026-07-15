@@ -1,5 +1,21 @@
 # Engineering System: [product]
 
+## 🧾 Generation And Agent Self-Check
+
+> Complete this section when materializing the artifact. Keep unresolved items explicit in the relevant scope, findings, risks, or handoff section.
+
+| Field | Value |
+| --- | --- |
+| Generated on | `YYYY-MM-DD` |
+| Purpose | `[decision, evidence, contract, or handoff this artifact supports]` |
+| Use when | `[workflow stage, trigger, or condition]` |
+| Prepared by | `[owning skill, role, or accountable person]` |
+| Scope covered | `[artifact, product area, use case, or review boundary]` |
+| Required inputs and evidence | `[links to approved parents, documents, code, decisions, or observations]` |
+| Ready when | `[artifact-specific completion, evidence, and gate conditions]` |
+| Current status | `[status allowed by this artifact's owning workflow]` |
+
+
 ## Snapshot
 
 | Field | Value |
@@ -57,3 +73,10 @@
 ## Handoff
 
 Next: `technical-discovery` for delivery-specific work.
+
+## ✅ Agent Verification Checklist
+
+- [ ] Scope, version, origin, mechanical catalog, and architecture boundaries are consistent.
+- [ ] Module, data, integration, standards, quality, security, and operational ownership are explicit.
+- [ ] Decisions, deviations, migrations, consumers, and compatibility expectations are traceable.
+- [ ] The handoff identifies required downstream pins, evidence, and unresolved system gaps.

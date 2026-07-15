@@ -1,5 +1,21 @@
 # Use Case: [use case name]
 
+## 🧾 Generation And Agent Self-Check
+
+> Complete this section when materializing the artifact. Keep unresolved items explicit in the relevant scope, findings, risks, or handoff section.
+
+| Field | Value |
+| --- | --- |
+| Generated on | `YYYY-MM-DD` |
+| Purpose | `[decision, evidence, contract, or handoff this artifact supports]` |
+| Use when | `[workflow stage, trigger, or condition]` |
+| Prepared by | `[owning skill, role, or accountable person]` |
+| Scope covered | `[artifact, product area, use case, or review boundary]` |
+| Required inputs and evidence | `[links to approved parents, documents, code, decisions, or observations]` |
+| Ready when | `[artifact-specific completion, evidence, and gate conditions]` |
+| Current status | `[status allowed by this artifact's owning workflow]` |
+
+
 ## 🧭 Snapshot
 
 | Field | Value |
@@ -138,3 +154,10 @@ flowchart TD
 | Approved by |  |
 | Date |  |
 | Notes |  |
+
+## ✅ Agent Verification Checklist
+
+- [ ] The use case traces to one feature and states actors, trigger, goal, preconditions, and outcome.
+- [ ] Rigor tier, automatic triggers, delivery slice, level, priority, and dependencies agree.
+- [ ] Main, alternate, error, and edge flows cover rules, UX states, data, permissions, and risks.
+- [ ] Acceptance criteria, decisions, approval, and specification handoff are complete and testable.

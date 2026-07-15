@@ -1,5 +1,21 @@
 # Engineering Quality System: [product]
 
+## 🧾 Generation And Agent Self-Check
+
+> Complete this section when materializing the artifact. Keep unresolved items explicit in the relevant scope, findings, risks, or handoff section.
+
+| Field | Value |
+| --- | --- |
+| Generated on | `YYYY-MM-DD` |
+| Purpose | `[decision, evidence, contract, or handoff this artifact supports]` |
+| Use when | `[workflow stage, trigger, or condition]` |
+| Prepared by | `[owning skill, role, or accountable person]` |
+| Scope covered | `[artifact, product area, use case, or review boundary]` |
+| Required inputs and evidence | `[links to approved parents, documents, code, decisions, or observations]` |
+| Ready when | `[artifact-specific completion, evidence, and gate conditions]` |
+| Current status | `[status allowed by this artifact's owning workflow]` |
+
+
 ## Snapshot
 
 | Field | Value |
@@ -73,3 +89,10 @@ Every known flaky test or policy exception must record scope (`product` or a saf
 ## Handoff
 
 Next: `qa` for delivery-specific test planning or independent evidence, depending on delivery state.
+
+## ✅ Agent Verification Checklist
+
+- [ ] Scope, principles, capability levels, environments, data, and mechanical catalog agree.
+- [ ] Risk triggers map to required test levels, evidence, gates, and fitness functions.
+- [ ] Flaky-test, exception, expiry, ownership, and escalation policies are explicit.
+- [ ] Consumers, versions, migrations, deviations, and handoff requirements are traceable.

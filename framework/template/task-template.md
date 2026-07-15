@@ -1,5 +1,21 @@
 # Task: [task title]
 
+## 🧾 Generation And Agent Self-Check
+
+> Complete this section when materializing the artifact. Keep unresolved items explicit in the relevant scope, findings, risks, or handoff section.
+
+| Field | Value |
+| --- | --- |
+| Generated on | `YYYY-MM-DD` |
+| Purpose | `[decision, evidence, contract, or handoff this artifact supports]` |
+| Use when | `[workflow stage, trigger, or condition]` |
+| Prepared by | `[owning skill, role, or accountable person]` |
+| Scope covered | `[artifact, product area, use case, or review boundary]` |
+| Required inputs and evidence | `[links to approved parents, documents, code, decisions, or observations]` |
+| Ready when | `[artifact-specific completion, evidence, and gate conditions]` |
+| Current status | `[status allowed by this artifact's owning workflow]` |
+
+
 ## Snapshot
 
 | Field | Value |
@@ -104,3 +120,10 @@
 | Readiness command | `spec-framework task readiness --graph ../execution-graph.json --task [TK-XXX-001]` |
 | Required next skill | `[skill]` |
 | Notes | `[handoff notes]` |
+
+## ✅ Agent Verification Checklist
+
+- [ ] The task maps to one graph node, specification scope, delivery level, priority, and owner.
+- [ ] Objective, boundaries, dependencies, acceptance checks, and validation commands are executable.
+- [ ] Working-tree and validation evidence use the current branch, base commit, paths, diff hash, and gates.
+- [ ] Status and handoff follow lifecycle rules and do not claim review, QA, commit, or release prematurely.

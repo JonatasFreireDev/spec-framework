@@ -1,5 +1,21 @@
 # Security Review: [use case name]
 
+## 🧾 Generation And Agent Self-Check
+
+> Complete this section when materializing the artifact. Keep unresolved items explicit in the relevant scope, findings, risks, or handoff section.
+
+| Field | Value |
+| --- | --- |
+| Generated on | `YYYY-MM-DD` |
+| Purpose | `[decision, evidence, contract, or handoff this artifact supports]` |
+| Use when | `[workflow stage, trigger, or condition]` |
+| Prepared by | `[owning skill, role, or accountable person]` |
+| Scope covered | `[artifact, product area, use case, or review boundary]` |
+| Required inputs and evidence | `[links to approved parents, documents, code, decisions, or observations]` |
+| Ready when | `[artifact-specific completion, evidence, and gate conditions]` |
+| Current status | `[status allowed by this artifact's owning workflow]` |
+
+
 ## 🧭 Snapshot
 
 | Field | Value |
@@ -122,3 +138,10 @@ flowchart LR
 | Blocks release | `[yes/no]` |
 | Required decisions | `[DEC-XXX or N/A]` |
 | Next owner | `[skill/role]` |
+
+## ✅ Agent Verification Checklist
+
+- [ ] The review targets the current delivery, baseline, threat entries, decisions, diff, and QA evidence.
+- [ ] Authentication, authorization, privacy, abuse, secrets, logging, dependencies, rollout, and rollback are assessed.
+- [ ] Findings and residual risks include evidence, severity, owner, mitigation, and acceptance authority.
+- [ ] The verdict follows security gates and does not approve unresolved high risk.

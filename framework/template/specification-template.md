@@ -1,5 +1,21 @@
 # Specification: [use case name]
 
+## 🧾 Generation And Agent Self-Check
+
+> Complete this section when materializing the artifact. Keep unresolved items explicit in the relevant scope, findings, risks, or handoff section.
+
+| Field | Value |
+| --- | --- |
+| Generated on | `YYYY-MM-DD` |
+| Purpose | `[decision, evidence, contract, or handoff this artifact supports]` |
+| Use when | `[workflow stage, trigger, or condition]` |
+| Prepared by | `[owning skill, role, or accountable person]` |
+| Scope covered | `[artifact, product area, use case, or review boundary]` |
+| Required inputs and evidence | `[links to approved parents, documents, code, decisions, or observations]` |
+| Ready when | `[artifact-specific completion, evidence, and gate conditions]` |
+| Current status | `[status allowed by this artifact's owning workflow]` |
+
+
 ## 🧭 Snapshot
 
 | Field | Value |
@@ -191,3 +207,10 @@ flowchart LR
 | Approved by |  |
 | Date |  |
 | Notes |  |
+
+## ✅ Agent Verification Checklist
+
+- [ ] The specification traces to approved use case, feature, decisions, and applicable modular contracts.
+- [ ] Main, alternate, error, and edge flows cover product, UX, API, data, permissions, and rules.
+- [ ] Requirements and acceptance criteria are stable, testable, linked, and non-duplicative.
+- [ ] Analytics, observability, performance, reliability, rollout, risks, and open decisions are complete.

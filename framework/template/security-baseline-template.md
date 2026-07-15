@@ -1,5 +1,21 @@
 # Security Baseline: [product or domain name]
 
+## 🧾 Generation And Agent Self-Check
+
+> Complete this section when materializing the artifact. Keep unresolved items explicit in the relevant scope, findings, risks, or handoff section.
+
+| Field | Value |
+| --- | --- |
+| Generated on | `YYYY-MM-DD` |
+| Purpose | `[decision, evidence, contract, or handoff this artifact supports]` |
+| Use when | `[workflow stage, trigger, or condition]` |
+| Prepared by | `[owning skill, role, or accountable person]` |
+| Scope covered | `[artifact, product area, use case, or review boundary]` |
+| Required inputs and evidence | `[links to approved parents, documents, code, decisions, or observations]` |
+| Ready when | `[artifact-specific completion, evidence, and gate conditions]` |
+| Current status | `[status allowed by this artifact's owning workflow]` |
+
+
 ## Snapshot
 
 | Field | Value |
@@ -71,3 +87,10 @@
 ## Handoff To Security Review
 
 Security Review must verify that each applicable required control has evidence and that active threat-register entries are mitigated, explicitly accepted, or route-blocked before validation.
+
+## ✅ Agent Verification Checklist
+
+- [ ] Scope, actors, roles, data classes, trust boundaries, and threat sources are complete.
+- [ ] Required controls have owners, verification evidence, and applicable decisions.
+- [ ] Domain threats and residual-risk policy define review and escalation triggers.
+- [ ] The handoff tells Security Review which baseline, threats, exceptions, and evidence to inspect.

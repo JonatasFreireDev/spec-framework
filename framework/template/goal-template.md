@@ -1,5 +1,21 @@
 # User Goal: [goal name]
 
+## 🧾 Generation And Agent Self-Check
+
+> Complete this section when materializing the artifact. Keep unresolved items explicit in the relevant scope, findings, risks, or handoff section.
+
+| Field | Value |
+| --- | --- |
+| Generated on | `YYYY-MM-DD` |
+| Purpose | `[decision, evidence, contract, or handoff this artifact supports]` |
+| Use when | `[workflow stage, trigger, or condition]` |
+| Prepared by | `[owning skill, role, or accountable person]` |
+| Scope covered | `[artifact, product area, use case, or review boundary]` |
+| Required inputs and evidence | `[links to approved parents, documents, code, decisions, or observations]` |
+| Ready when | `[artifact-specific completion, evidence, and gate conditions]` |
+| Current status | `[status allowed by this artifact's owning workflow]` |
+
+
 ## 🧭 Snapshot
 
 | Field | Value |
@@ -69,3 +85,10 @@ flowchart LR
 | Approved by |  |
 | Date |  |
 | Notes |  |
+
+## ✅ Agent Verification Checklist
+
+- [ ] The goal expresses a stable user intent and outcome rather than a proposed solution.
+- [ ] Domain ownership, journey, constraints, candidate features, and dependencies are coherent.
+- [ ] Metrics measure user-value progress and include relevant guardrails.
+- [ ] Risks, open questions, decisions, approval, and handoff are explicit.

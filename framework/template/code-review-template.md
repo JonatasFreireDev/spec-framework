@@ -1,5 +1,21 @@
 # Code Review: [use case or task name]
 
+## 🧾 Generation And Agent Self-Check
+
+> Complete this section when materializing the artifact. Keep unresolved items explicit in the relevant scope, findings, risks, or handoff section.
+
+| Field | Value |
+| --- | --- |
+| Generated on | `YYYY-MM-DD` |
+| Purpose | `[decision, evidence, contract, or handoff this artifact supports]` |
+| Use when | `[workflow stage, trigger, or condition]` |
+| Prepared by | `[owning skill, role, or accountable person]` |
+| Scope covered | `[artifact, product area, use case, or review boundary]` |
+| Required inputs and evidence | `[links to approved parents, documents, code, decisions, or observations]` |
+| Ready when | `[artifact-specific completion, evidence, and gate conditions]` |
+| Current status | `[status allowed by this artifact's owning workflow]` |
+
+
 ## Snapshot
 
 | Field | Value |
@@ -104,3 +120,10 @@ flowchart LR
 | Blocks validation | `[yes/no]` |
 | Blocks release | `[yes/no]` |
 | Next owner | `[skill/role]` |
+
+## ✅ Agent Verification Checklist
+
+- [ ] The review target identifies the exact branch, base commit, diff hash, and changed paths.
+- [ ] Specification, task, decision, test, and gate adherence are checked against current evidence.
+- [ ] Every finding has severity, evidence, required action, owner, and scope.
+- [ ] The verdict covers the current diff only and preserves independent QA and Security Review ownership.

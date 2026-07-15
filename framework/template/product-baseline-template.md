@@ -1,5 +1,21 @@
 # Product Baseline
 
+## 🧾 Generation And Agent Self-Check
+
+> Complete this section when materializing the artifact. Keep unresolved items explicit in the relevant scope, findings, risks, or handoff section.
+
+| Field | Value |
+| --- | --- |
+| Generated on | `YYYY-MM-DD` |
+| Purpose | `[decision, evidence, contract, or handoff this artifact supports]` |
+| Use when | `[workflow stage, trigger, or condition]` |
+| Prepared by | `[owning skill, role, or accountable person]` |
+| Scope covered | `[artifact, product area, use case, or review boundary]` |
+| Required inputs and evidence | `[links to approved parents, documents, code, decisions, or observations]` |
+| Ready when | `[artifact-specific completion, evidence, and gate conditions]` |
+| Current status | `[status allowed by this artifact's owning workflow]` |
+
+
 ## Snapshot
 
 | Field | Value |
@@ -65,3 +81,10 @@
 | Is current delivered value evidenced? | [yes/no/uncertain] |
 | Is the requested direction incremental rather than a repositioning? | [yes/no/uncertain] |
 | Is full Foundation discovery required? | [yes/no and rationale] |
+
+## ✅ Agent Verification Checklist
+
+- [ ] Current audiences, needs, delivered value, capabilities, and operating model cite evidence.
+- [ ] Signals, decision rules, constraints, risks, gaps, and unknowns are explicit.
+- [ ] Observed current state is separated from future strategy and inferred intent.
+- [ ] The escalation check correctly determines whether the baseline is sufficient for Strategy.

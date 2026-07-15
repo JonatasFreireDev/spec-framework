@@ -30,10 +30,14 @@ Use these templates whenever a new canonical artifact is created or an existing 
 - `execution-graph-template.json`: proposed DAG contract; task paths become mandatory after atomic materialization.
 - `task-template.md`: canonical task contract and readiness handoff.
 - `specification-contract-template.md`: reusable structure for modular product, behavior, UX, API, data, security, quality, observability, and rollout contracts.
+- `import-traceability-template.json`, `import-plan-template.json`, `import-mapping-template.json`, `import-report-template.md`: staged source-import evidence, review, selection, and reporting contracts.
+- `command-plan-template.json`, `handoff-template.json`, `runtime-workspace-template.json`, `integration-template.json`: execution-runtime planning, handoff, workspace, and integration state contracts.
 
 ## Responsible Skill
 
-Primary owner: Documentation Writer AI.
+Primary editorial owner: Documentation Writer AI.
+
+The specialist named by the artifact's `owner_skill` or owning workflow remains accountable for its content and gate. Runtime JSON templates are owned by their command, workspace, handoff, or integration workflow rather than by Documentation Writer AI.
 
 Supporting skills: Product Historian AI for decisions, Specification AI for specification completeness, UX/UI AI for design coverage, Task AI for executable task structure, QA AI for evidence coverage, Security Review AI for security gates, Threat Modeler AI for security baselines and threat registers.
 
@@ -46,6 +50,22 @@ Templates should produce artifacts that are easy to scan in GitHub and Codex:
 - use tables for scope, decisions, risks, dependencies, owners, and acceptance;
 - use Mermaid diagrams for flows, artifact chains, gates, journeys, and dependencies;
 - keep prose focused on decisions, evidence, and handoff.
+
+## Generation And Self-Check Standard
+
+Every Markdown artifact template includes a `Generation And Agent Self-Check` section near the top. When materializing an artifact, the owning agent must:
+
+- record the generation date in `YYYY-MM-DD` format;
+- state the artifact purpose, workflow trigger, responsible owner, and covered scope;
+- link required inputs and evidence instead of naming unsupported claims;
+- define the artifact-specific conditions that make the artifact ready;
+- use the status vocabulary defined by the specific template;
+- explain unresolved, blocked, or not-applicable items in the relevant artifact section;
+- complete the checklist at the end of the artifact before handing it to the next skill.
+
+Each checklist is tailored to the artifact contract. It must verify the artifact's specialized gates, evidence, approvals, lifecycle boundaries, and delivery criteria rather than repeat a generic documentation checklist.
+
+Machine-readable JSON and YAML templates do not include editorial guidance, icons, comments, or checklists unless their validated schema defines those fields. Their field names, enum values, timestamps, and placeholders are the executable contract; accompanying Markdown templates and owning skills provide human guidance.
 
 ## Link Standard
 
