@@ -57,6 +57,10 @@ type ScalableStatus struct {
 	ImportID                                                        string `json:"import_id"`
 	Sources, Chunks, Queued, Reviewing, Reviewed, Blocked, Excluded int
 }
+type ChunkReview struct {
+	SourceEvidence map[string][]Evidence `json:"source_evidence"`
+	Gaps           map[string][]string   `json:"gaps,omitempty"`
+}
 
 func DefaultCreateOptions() CreateOptions {
 	return CreateOptions{MaxFiles: 500, MaxTotalBytes: 200 << 20, MaxFileBytes: 10 << 20, ChunkSize: 25, BinaryPolicy: "inventory_only", Exclude: []string{".git/**", "node_modules/**", "**/.git/**", "**/node_modules/**"}}
@@ -265,6 +269,86 @@ func Resume(productRoot, runID, chunkID, agent string) (Chunk, error) {
 		return chunk, writeJSON(path, chunk)
 	}
 	return Chunk{}, errors.New("no resumable import chunk")
+}
+
+// RecordChunkReview records evidence for every non-excluded source in a leased
+// chunk. It is deliberately unable to select mappings or materialize drafts.
+func RecordChunkReview(productRoot, runID, chunkID, agent string, review ChunkReview) error {
+	if strings.TrimSpace(agent) == "" {
+		return errors.New("chunk review requires agent")
+	}
+	path := filepath.Join(productRoot, "knowledge", "imports", "runs", runID, "chunks", chunkID+".json")
+	var chunk Chunk
+	if err := readJSONFile(path, &chunk); err != nil {
+		return err
+	}
+	if chunk.Status != "reviewing" || chunk.Agent != agent || mustParseTime(chunk.LeaseExpires).Before(time.Now().UTC()) {
+		return errors.New("chunk is not actively leased by this importer")
+	}
+	sources, err := scalableSources(productRoot, runID)
+	if err != nil {
+		return err
+	}
+	sourceByID := map[string]ScalableSource{}
+	for _, source := range sources {
+		sourceByID[source.ID] = source
+	}
+	for _, id := range chunk.SourceIDs {
+		source, ok := sourceByID[id]
+		if !ok {
+			return fmt.Errorf("chunk references unknown source %s", id)
+		}
+		if source.Status == "excluded" {
+			continue
+		}
+		if len(review.SourceEvidence[id]) == 0 {
+			return fmt.Errorf("review evidence is required for source %s", id)
+		}
+	}
+	traceDir := filepath.Join(productRoot, "knowledge", "imports", "runs", runID, "traceability")
+	if err := os.MkdirAll(traceDir, 0755); err != nil {
+		return err
+	}
+	if err := writeJSON(filepath.Join(traceDir, chunkID+".json"), review); err != nil {
+		return err
+	}
+	chunk.Status, chunk.Agent, chunk.LeaseExpires = "reviewed", "", ""
+	return writeJSON(path, chunk)
+}
+
+func scalableSources(productRoot, runID string) ([]ScalableSource, error) {
+	runRoot := filepath.Join(productRoot, "knowledge", "imports", "runs", runID)
+	data, err := os.ReadFile(filepath.Join(runRoot, "inventory", "index.json"))
+	if err != nil {
+		return nil, err
+	}
+	var index InventoryIndex
+	if err := json.Unmarshal(data, &index); err != nil {
+		return nil, err
+	}
+	var all []ScalableSource
+	for page := 1; page <= index.Pages; page++ {
+		file, err := os.Open(filepath.Join(runRoot, "inventory", "pages", fmt.Sprintf("PAGE-%04d.jsonl", page)))
+		if err != nil {
+			return nil, err
+		}
+		scanner := bufio.NewScanner(file)
+		scanner.Buffer(make([]byte, 1024), 4<<20)
+		for scanner.Scan() {
+			var source ScalableSource
+			if err := json.Unmarshal(scanner.Bytes(), &source); err != nil {
+				file.Close()
+				return nil, err
+			}
+			all = append(all, source)
+		}
+		if err := scanner.Err(); err != nil {
+			file.Close()
+			return nil, err
+		}
+		file.Close()
+	}
+	return all, nil
 }
 func matchesAny(path string, patterns []string) bool {
 	path = filepath.ToSlash(path)
