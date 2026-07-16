@@ -1,469 +1,1592 @@
 {
   "artifacts": [
     {
+      "childIds": [
+        "SPEC-002",
+        "DES-002",
+        "PLAN-002",
+        "GRAPH-002",
+        "TASKSET-002",
+        "TEST-002",
+        "QA-002",
+        "SEC-002",
+        "ANA-002",
+        "AUD-002",
+        "ENGPROP-002",
+        "ENGREV-002"
+      ],
+      "decisions": [
+        "DEC-001",
+        "DEC-002",
+        "DEC-008"
+      ],
+      "delivery": {
+        "depends_on": [
+          "DOMAIN-users",
+          "DOMAIN-events",
+          "DEC-001",
+          "DEC-002"
+        ],
+        "level": "L1 Walking Skeleton",
+        "priority": "P0",
+        "rationale": "Organizer validation closes the walking skeleton for event attendance by turning attendee QR proof into server-authoritative check-in."
+      },
+      "dependsOn": [
+        "UC-001"
+      ],
+      "documents": {
+        "canonical": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/organizer-validates-qr-code/analytics.md"
+      },
       "id": "ANA-002",
-      "type": "analytics",
-      "status": "draft",
+      "name": "analytics",
+      "ownerSkill": "",
+      "parentIds": [
+        "UC-002"
+      ],
       "path": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/organizer-validates-qr-code/analytics.md",
-      "parentIds": [
-        "UC-002"
-      ]
+      "status": "draft",
+      "type": "analytics"
     },
     {
+      "childIds": [
+        "SPEC-002",
+        "DES-002",
+        "PLAN-002",
+        "GRAPH-002",
+        "TASKSET-002",
+        "TEST-002",
+        "QA-002",
+        "SEC-002",
+        "ANA-002",
+        "AUD-002",
+        "ENGPROP-002",
+        "ENGREV-002"
+      ],
+      "decisions": [
+        "DEC-001",
+        "DEC-002",
+        "DEC-008"
+      ],
+      "delivery": {
+        "depends_on": [
+          "DOMAIN-users",
+          "DOMAIN-events",
+          "DEC-001",
+          "DEC-002"
+        ],
+        "level": "L1",
+        "priority": "P0",
+        "rationale": "Organizer validation closes the walking skeleton for event attendance by turning attendee QR proof into server-authoritative check-in."
+      },
+      "dependsOn": [
+        "UC-001"
+      ],
+      "documents": {
+        "canonical": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/organizer-validates-qr-code/audit.md"
+      },
       "id": "AUD-002",
-      "type": "audit",
-      "status": "draft",
+      "name": "audit",
+      "ownerSkill": "",
+      "parentIds": [
+        "UC-002"
+      ],
       "path": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/organizer-validates-qr-code/audit.md",
-      "parentIds": [
-        "UC-002"
-      ]
+      "status": "draft",
+      "type": "audit"
     },
     {
+      "childIds": [
+        "SPEC-002",
+        "DES-002",
+        "PLAN-002",
+        "GRAPH-002",
+        "TASKSET-002",
+        "TEST-002",
+        "QA-002",
+        "SEC-002",
+        "ANA-002",
+        "AUD-002",
+        "ENGPROP-002",
+        "ENGREV-002"
+      ],
+      "decisions": [
+        "DEC-001",
+        "DEC-002",
+        "DEC-008"
+      ],
+      "delivery": {
+        "depends_on": [
+          "DOMAIN-users",
+          "DOMAIN-events",
+          "DEC-001",
+          "DEC-002"
+        ],
+        "level": "L1 Walking Skeleton",
+        "priority": "P0",
+        "rationale": "Organizer validation closes the walking skeleton for event attendance by turning attendee QR proof into server-authoritative check-in."
+      },
+      "dependsOn": [
+        "UC-001"
+      ],
+      "documents": {
+        "canonical": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/organizer-validates-qr-code/design.md"
+      },
       "id": "DES-002",
-      "type": "design",
-      "status": "draft",
+      "name": "design",
+      "ownerSkill": "",
+      "parentIds": [
+        "UC-002"
+      ],
       "path": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/organizer-validates-qr-code/design.md",
-      "parentIds": [
-        "UC-002"
-      ]
+      "status": "draft",
+      "type": "design"
     },
     {
+      "childIds": null,
+      "decisions": null,
+      "delivery": {
+        "depends_on": [
+          "DOMAIN-users"
+        ],
+        "level": "L1",
+        "priority": "P0",
+        "rationale": "Events is part of the walking skeleton because QR check-in needs event ownership, attendance, and organizer context."
+      },
+      "dependsOn": null,
+      "documents": {
+        "canonical": "domains/events/domain.md"
+      },
       "id": "DOMAIN-001",
-      "type": "domain",
-      "status": "draft",
+      "name": "domain",
+      "ownerSkill": "",
+      "parentIds": null,
       "path": "domains/events/domain.md",
-      "parentIds": null
+      "status": "draft",
+      "type": "domain"
     },
     {
+      "childIds": null,
+      "decisions": [],
+      "delivery": {
+        "depends_on": [
+          "foundation/vision",
+          "foundation/strategy"
+        ],
+        "level": "L0",
+        "priority": "P1",
+        "rationale": "QR presentation and scanner validation need shared accessible feedback foundations."
+      },
+      "dependsOn": null,
+      "documents": {
+        "canonical": "design/system/design-system.md"
+      },
       "id": "DSYS-001",
-      "type": "design-system",
-      "status": "draft",
+      "name": "design-system",
+      "ownerSkill": "",
+      "parentIds": null,
       "path": "design/system/design-system.md",
-      "parentIds": null
+      "status": "draft",
+      "type": "design-system"
     },
     {
+      "childIds": null,
+      "decisions": null,
+      "delivery": {
+        "depends_on": [
+          "FT-001",
+          "DEC-001",
+          "DEC-002"
+        ],
+        "level": "L1",
+        "priority": "P0",
+        "rationale": "Inherited from the attendee QR walking-skeleton delivery."
+      },
+      "dependsOn": null,
+      "documents": {
+        "canonical": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/attendee-checks-in-with-qr-code/engineering-proposal.md"
+      },
       "id": "ENGPROP-001",
-      "type": "engineering-proposal",
-      "status": "draft",
+      "name": "engineering-proposal",
+      "ownerSkill": "engineering-proposal",
+      "parentIds": [
+        "UC-001"
+      ],
       "path": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/attendee-checks-in-with-qr-code/engineering-proposal.md",
-      "parentIds": [
-        "UC-001"
-      ]
+      "status": "draft",
+      "type": "engineering-proposal"
     },
     {
+      "childIds": [
+        "SPEC-002",
+        "DES-002",
+        "PLAN-002",
+        "GRAPH-002",
+        "TASKSET-002",
+        "TEST-002",
+        "QA-002",
+        "SEC-002",
+        "ANA-002",
+        "AUD-002",
+        "ENGPROP-002",
+        "ENGREV-002"
+      ],
+      "decisions": [
+        "DEC-001",
+        "DEC-002",
+        "DEC-008"
+      ],
+      "delivery": {
+        "depends_on": [
+          "DOMAIN-users",
+          "DOMAIN-events",
+          "DEC-001",
+          "DEC-002"
+        ],
+        "level": "L1",
+        "priority": "P0",
+        "rationale": "Inherited from the organizer validation walking-skeleton delivery."
+      },
+      "dependsOn": [
+        "UC-001"
+      ],
+      "documents": {
+        "canonical": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/organizer-validates-qr-code/engineering-proposal.md"
+      },
       "id": "ENGPROP-002",
-      "type": "engineering-proposal",
-      "status": "draft",
+      "name": "engineering-proposal",
+      "ownerSkill": "engineering-proposal",
+      "parentIds": [
+        "UC-002"
+      ],
       "path": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/organizer-validates-qr-code/engineering-proposal.md",
-      "parentIds": [
-        "UC-002"
-      ]
+      "status": "draft",
+      "type": "engineering-proposal"
     },
     {
+      "childIds": null,
+      "decisions": null,
+      "delivery": {
+        "depends_on": [
+          "FT-001",
+          "DEC-001",
+          "DEC-002"
+        ],
+        "level": "L1",
+        "priority": "P0",
+        "rationale": "Inherited from the reviewed attendee QR delivery."
+      },
+      "dependsOn": null,
+      "documents": {
+        "canonical": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/attendee-checks-in-with-qr-code/engineering-review.md"
+      },
       "id": "ENGREV-001",
-      "type": "engineering-review",
-      "status": "draft",
+      "name": "engineering-review",
+      "ownerSkill": "engineering-review",
+      "parentIds": [
+        "UC-001"
+      ],
       "path": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/attendee-checks-in-with-qr-code/engineering-review.md",
-      "parentIds": [
-        "UC-001"
-      ]
+      "status": "draft",
+      "type": "engineering-review"
     },
     {
+      "childIds": [
+        "SPEC-002",
+        "DES-002",
+        "PLAN-002",
+        "GRAPH-002",
+        "TASKSET-002",
+        "TEST-002",
+        "QA-002",
+        "SEC-002",
+        "ANA-002",
+        "AUD-002",
+        "ENGPROP-002",
+        "ENGREV-002"
+      ],
+      "decisions": [
+        "DEC-001",
+        "DEC-002",
+        "DEC-008"
+      ],
+      "delivery": {
+        "depends_on": [
+          "DOMAIN-users",
+          "DOMAIN-events",
+          "DEC-001",
+          "DEC-002"
+        ],
+        "level": "L1",
+        "priority": "P0",
+        "rationale": "Inherited from the reviewed organizer validation delivery."
+      },
+      "dependsOn": [
+        "UC-001"
+      ],
+      "documents": {
+        "canonical": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/organizer-validates-qr-code/engineering-review.md"
+      },
       "id": "ENGREV-002",
-      "type": "engineering-review",
-      "status": "draft",
-      "path": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/organizer-validates-qr-code/engineering-review.md",
+      "name": "engineering-review",
+      "ownerSkill": "engineering-review",
       "parentIds": [
         "UC-002"
-      ]
+      ],
+      "path": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/organizer-validates-qr-code/engineering-review.md",
+      "status": "draft",
+      "type": "engineering-review"
     },
     {
+      "childIds": null,
+      "decisions": null,
+      "delivery": {
+        "depends_on": null,
+        "level": "",
+        "priority": "",
+        "rationale": ""
+      },
+      "dependsOn": null,
+      "documents": {
+        "canonical": "engineering/engineering-system.md"
+      },
       "id": "ENGSYS-EVENTS-001",
-      "type": "engineering-system",
-      "status": "approved",
+      "name": "engineering-system",
+      "ownerSkill": "engineering-system",
+      "parentIds": null,
       "path": "engineering/engineering-system.md",
-      "parentIds": null
+      "status": "approved",
+      "type": "engineering-system"
     },
     {
+      "childIds": null,
+      "decisions": null,
+      "delivery": {
+        "depends_on": [
+          "GOAL-001",
+          "DOMAIN-users"
+        ],
+        "level": "L1",
+        "priority": "P0",
+        "rationale": "QR Code Check-in is required for the first end-to-end event attendance proof."
+      },
+      "dependsOn": null,
+      "documents": {
+        "canonical": "domains/events/goals/participate-in-event/features/qr-code-check-in/feature.md"
+      },
       "id": "FT-001",
-      "type": "feature",
-      "status": "draft",
+      "name": "feature",
+      "ownerSkill": "",
+      "parentIds": null,
       "path": "domains/events/goals/participate-in-event/features/qr-code-check-in/feature.md",
-      "parentIds": null
+      "status": "draft",
+      "type": "feature"
     },
     {
+      "childIds": null,
+      "decisions": null,
+      "delivery": {
+        "depends_on": [
+          "DOMAIN-001"
+        ],
+        "level": "L1",
+        "priority": "P0",
+        "rationale": "Participating in an event is the user goal that the QR check-in walking skeleton proves end to end."
+      },
+      "dependsOn": null,
+      "documents": {
+        "canonical": "domains/events/goals/participate-in-event/goal.md"
+      },
       "id": "GOAL-001",
-      "type": "goal",
-      "status": "draft",
+      "name": "goal",
+      "ownerSkill": "",
+      "parentIds": null,
       "path": "domains/events/goals/participate-in-event/goal.md",
-      "parentIds": null
+      "status": "draft",
+      "type": "goal"
     },
     {
+      "childIds": [],
+      "decisions": [],
+      "delivery": {
+        "dependsOn": [
+          "SPEC-001",
+          "PLAN-001",
+          "DEC-001",
+          "DEC-002"
+        ],
+        "level": "L1",
+        "priority": "P0",
+        "rationale": "The graph orders the minimum L1 work needed to generate, present, and validate attendee QR codes."
+      },
+      "dependsOn": [],
+      "documents": {
+        "canonical": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/attendee-checks-in-with-qr-code/execution-graph.json"
+      },
       "id": "GRAPH-001",
-      "type": "execution-graph",
-      "status": "draft",
-      "path": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/attendee-checks-in-with-qr-code/execution-graph.json",
+      "name": "GRAPH-001",
       "parentIds": [
         "UC-001"
-      ]
+      ],
+      "path": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/attendee-checks-in-with-qr-code/execution-graph.json",
+      "status": "draft",
+      "type": "execution-graph"
     },
     {
+      "childIds": [],
+      "decisions": [],
+      "delivery": {
+        "dependsOn": [
+          "DEC-001",
+          "DEC-002"
+        ],
+        "level": "L1",
+        "priority": "P0",
+        "rationale": "Organizer validation is required to close the walking skeleton for event attendance."
+      },
+      "dependsOn": [],
+      "documents": {
+        "canonical": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/organizer-validates-qr-code/execution-graph.json"
+      },
       "id": "GRAPH-002",
-      "type": "execution-graph",
-      "status": "draft",
-      "path": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/organizer-validates-qr-code/execution-graph.json",
+      "name": "GRAPH-002",
       "parentIds": [
         "UC-002"
-      ]
+      ],
+      "path": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/organizer-validates-qr-code/execution-graph.json",
+      "status": "draft",
+      "type": "execution-graph"
     },
     {
+      "childIds": [],
+      "decisions": [],
+      "delivery": {
+        "level": "N/A",
+        "priority": "N/A",
+        "rationale": "Structural example only; not product scope."
+      },
+      "dependsOn": [],
+      "documents": {
+        "canonical": "domains/_example-domain/goals/_example-goal/features/_example-feature/use-cases/_example-use-case/execution-graph.json"
+      },
       "id": "GRAPH-EXAMPLE",
-      "type": "execution-graph",
-      "status": "draft",
-      "path": "domains/_example-domain/goals/_example-goal/features/_example-feature/use-cases/_example-use-case/execution-graph.json",
+      "name": "GRAPH-EXAMPLE",
       "parentIds": [
         "UC-EXAMPLE"
-      ]
+      ],
+      "path": "domains/_example-domain/goals/_example-goal/features/_example-feature/use-cases/_example-use-case/execution-graph.json",
+      "status": "draft",
+      "type": "execution-graph"
     },
     {
+      "childIds": [
+        "STRAT-001"
+      ],
+      "decisions": [],
+      "delivery": {
+        "depends_on": null,
+        "level": "L0",
+        "priority": "P0",
+        "rationale": "Vision gives strategic direction before domains and features are evaluated."
+      },
+      "dependsOn": [
+        "foundation/problem/context.md"
+      ],
+      "documents": {
+        "canonical": "foundation/vision/north-star.md"
+      },
       "id": "NORTH-STAR-EVENTS",
-      "type": "north-star",
-      "status": "draft",
+      "name": "north-star",
+      "ownerSkill": "",
+      "parentIds": [
+        "VISION-EVENTS"
+      ],
       "path": "foundation/vision/north-star.md",
-      "parentIds": [
-        "VISION-EVENTS"
-      ]
+      "status": "draft",
+      "type": "north-star"
     },
     {
+      "childIds": null,
+      "decisions": null,
+      "delivery": {
+        "depends_on": [
+          "FT-001",
+          "DEC-001",
+          "DEC-002"
+        ],
+        "level": "L1 Walking Skeleton",
+        "priority": "P0",
+        "rationale": "The plan sequences the minimum technical work needed to prove QR check-in in the walking skeleton."
+      },
+      "dependsOn": null,
+      "documents": {
+        "canonical": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/attendee-checks-in-with-qr-code/implementation-plan.md"
+      },
       "id": "PLAN-001",
-      "type": "implementation-plan",
-      "status": "draft",
-      "path": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/attendee-checks-in-with-qr-code/implementation-plan.md",
+      "name": "implementation-plan",
+      "ownerSkill": "",
       "parentIds": [
         "UC-001"
-      ]
+      ],
+      "path": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/attendee-checks-in-with-qr-code/implementation-plan.md",
+      "status": "draft",
+      "type": "implementation-plan"
     },
     {
+      "childIds": [
+        "SPEC-002",
+        "DES-002",
+        "PLAN-002",
+        "GRAPH-002",
+        "TASKSET-002",
+        "TEST-002",
+        "QA-002",
+        "SEC-002",
+        "ANA-002",
+        "AUD-002",
+        "ENGPROP-002",
+        "ENGREV-002"
+      ],
+      "decisions": [
+        "DEC-001",
+        "DEC-002",
+        "DEC-008"
+      ],
+      "delivery": {
+        "depends_on": [
+          "DOMAIN-users",
+          "DOMAIN-events",
+          "DEC-001",
+          "DEC-002"
+        ],
+        "level": "L1 Walking Skeleton",
+        "priority": "P0",
+        "rationale": "Organizer validation closes the L1 event attendance loop by turning QR proof into server-authoritative check-in."
+      },
+      "dependsOn": [
+        "UC-001"
+      ],
+      "documents": {
+        "canonical": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/organizer-validates-qr-code/implementation-plan.md"
+      },
       "id": "PLAN-002",
-      "type": "implementation-plan",
-      "status": "draft",
-      "path": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/organizer-validates-qr-code/implementation-plan.md",
+      "name": "implementation-plan",
+      "ownerSkill": "",
       "parentIds": [
         "UC-002"
-      ]
+      ],
+      "path": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/organizer-validates-qr-code/implementation-plan.md",
+      "status": "draft",
+      "type": "implementation-plan"
     },
     {
+      "childIds": [
+        "STRAT-001"
+      ],
+      "decisions": [],
+      "delivery": {
+        "depends_on": null,
+        "level": "L0",
+        "priority": "P0",
+        "rationale": "Vision gives strategic direction before domains and features are evaluated."
+      },
+      "dependsOn": [
+        "foundation/problem/context.md"
+      ],
+      "documents": {
+        "canonical": "foundation/vision/principles.md"
+      },
       "id": "PRINCIPLES-EVENTS",
-      "type": "product-principles",
-      "status": "draft",
-      "path": "foundation/vision/principles.md",
+      "name": "principles",
+      "ownerSkill": "",
       "parentIds": [
         "VISION-EVENTS"
-      ]
+      ],
+      "path": "foundation/vision/principles.md",
+      "status": "draft",
+      "type": "product-principles"
     },
     {
+      "childIds": [
+        "VIS-001"
+      ],
+      "decisions": [],
+      "delivery": {
+        "depends_on": null,
+        "level": "L0",
+        "priority": "P0",
+        "rationale": "The product needs a validated problem before vision, strategy, domains, or implementation can be safely derived."
+      },
+      "dependsOn": [],
+      "documents": {
+        "canonical": "foundation/problem/problem.md"
+      },
       "id": "PROBLEM-EVENTS",
-      "type": "problem",
-      "status": "draft",
+      "name": "problem",
+      "ownerSkill": "",
+      "parentIds": [],
       "path": "foundation/problem/problem.md",
-      "parentIds": []
+      "status": "draft",
+      "type": "problem"
     },
     {
+      "childIds": null,
+      "decisions": null,
+      "delivery": {
+        "depends_on": [
+          "FT-001",
+          "DEC-001",
+          "DEC-002"
+        ],
+        "level": "L1",
+        "priority": "P0",
+        "rationale": "Attendee QR presentation is required to close the walking skeleton with organizer validation."
+      },
+      "dependsOn": null,
+      "documents": {
+        "canonical": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/attendee-checks-in-with-qr-code/qa-evidence.md"
+      },
       "id": "QA-001",
-      "type": "qa-evidence",
-      "status": "draft",
+      "name": "qa-evidence",
+      "ownerSkill": "QA AI",
+      "parentIds": [
+        "UC-001"
+      ],
       "path": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/attendee-checks-in-with-qr-code/qa-evidence.md",
-      "parentIds": [
-        "UC-001"
-      ]
+      "status": "draft",
+      "type": "qa-evidence"
     },
     {
+      "childIds": [
+        "SPEC-002",
+        "DES-002",
+        "PLAN-002",
+        "GRAPH-002",
+        "TASKSET-002",
+        "TEST-002",
+        "QA-002",
+        "SEC-002",
+        "ANA-002",
+        "AUD-002",
+        "ENGPROP-002",
+        "ENGREV-002"
+      ],
+      "decisions": [
+        "DEC-001",
+        "DEC-002",
+        "DEC-008"
+      ],
+      "delivery": {
+        "depends_on": [
+          "DOMAIN-users",
+          "DOMAIN-events",
+          "DEC-001",
+          "DEC-002"
+        ],
+        "level": "L1",
+        "priority": "P0",
+        "rationale": "Organizer validation closes the walking skeleton for event attendance by turning attendee QR proof into server-authoritative check-in."
+      },
+      "dependsOn": [
+        "UC-001"
+      ],
+      "documents": {
+        "canonical": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/organizer-validates-qr-code/qa-evidence.md"
+      },
       "id": "QA-002",
-      "type": "qa-evidence",
-      "status": "draft",
+      "name": "qa-evidence",
+      "ownerSkill": "QA AI",
+      "parentIds": [
+        "UC-002"
+      ],
       "path": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/organizer-validates-qr-code/qa-evidence.md",
-      "parentIds": [
-        "UC-002"
-      ]
+      "status": "draft",
+      "type": "qa-evidence"
     },
     {
+      "childIds": null,
+      "decisions": null,
+      "delivery": {
+        "depends_on": [
+          "FT-001",
+          "DEC-001",
+          "DEC-002"
+        ],
+        "level": "L1",
+        "priority": "P0",
+        "rationale": "Tier L is required because the flow uses authentication, organizer permissions, opaque tokens, and attendance writes."
+      },
+      "dependsOn": null,
+      "documents": {
+        "canonical": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/attendee-checks-in-with-qr-code/security-review.md"
+      },
       "id": "SEC-001",
-      "type": "security-review",
-      "status": "draft",
+      "name": "security-review",
+      "ownerSkill": "Security Review AI",
+      "parentIds": [
+        "UC-001"
+      ],
       "path": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/attendee-checks-in-with-qr-code/security-review.md",
-      "parentIds": [
-        "UC-001"
-      ]
+      "status": "draft",
+      "type": "security-review"
     },
     {
+      "childIds": [
+        "SPEC-002",
+        "DES-002",
+        "PLAN-002",
+        "GRAPH-002",
+        "TASKSET-002",
+        "TEST-002",
+        "QA-002",
+        "SEC-002",
+        "ANA-002",
+        "AUD-002",
+        "ENGPROP-002",
+        "ENGREV-002"
+      ],
+      "decisions": [
+        "DEC-001",
+        "DEC-002",
+        "DEC-008"
+      ],
+      "delivery": {
+        "depends_on": [
+          "DOMAIN-users",
+          "DOMAIN-events",
+          "DEC-001",
+          "DEC-002"
+        ],
+        "level": "L1",
+        "priority": "P0",
+        "rationale": "Organizer validation is a server-authoritative attendance action and must be reviewed before validation or release."
+      },
+      "dependsOn": [
+        "UC-001"
+      ],
+      "documents": {
+        "canonical": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/organizer-validates-qr-code/security-review.md"
+      },
       "id": "SEC-002",
-      "type": "security-review",
-      "status": "draft",
-      "path": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/organizer-validates-qr-code/security-review.md",
+      "name": "security-review",
+      "ownerSkill": "Security Review AI",
       "parentIds": [
         "UC-002"
-      ]
+      ],
+      "path": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/organizer-validates-qr-code/security-review.md",
+      "status": "draft",
+      "type": "security-review"
     },
     {
+      "childIds": null,
+      "decisions": null,
+      "delivery": {
+        "depends_on": [
+          "FT-001",
+          "DEC-001",
+          "DEC-002"
+        ],
+        "level": "L1 Walking Skeleton",
+        "priority": "P0",
+        "rationale": "Attendee QR generation and presentation are required for the first end-to-end check-in flow."
+      },
+      "dependsOn": null,
+      "documents": {
+        "canonical": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/attendee-checks-in-with-qr-code/specification.md"
+      },
       "id": "SPEC-001",
-      "type": "specification",
-      "status": "draft",
-      "path": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/attendee-checks-in-with-qr-code/specification.md",
+      "name": "specification",
+      "ownerSkill": "",
       "parentIds": [
         "UC-001"
-      ]
+      ],
+      "path": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/attendee-checks-in-with-qr-code/specification.md",
+      "status": "draft",
+      "type": "specification"
     },
     {
+      "childIds": [
+        "SPEC-002",
+        "DES-002",
+        "PLAN-002",
+        "GRAPH-002",
+        "TASKSET-002",
+        "TEST-002",
+        "QA-002",
+        "SEC-002",
+        "ANA-002",
+        "AUD-002",
+        "ENGPROP-002",
+        "ENGREV-002"
+      ],
+      "decisions": [
+        "DEC-001",
+        "DEC-002",
+        "DEC-008"
+      ],
+      "delivery": {
+        "depends_on": [
+          "DOMAIN-users",
+          "DOMAIN-events",
+          "DEC-001",
+          "DEC-002"
+        ],
+        "level": "L1 Walking Skeleton",
+        "priority": "P0",
+        "rationale": "Organizer validation is required to prove the event attendance flow end to end."
+      },
+      "dependsOn": [
+        "UC-001"
+      ],
+      "documents": {
+        "canonical": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/organizer-validates-qr-code/specification.md"
+      },
       "id": "SPEC-002",
-      "type": "specification",
-      "status": "proposed",
-      "path": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/organizer-validates-qr-code/specification.md",
+      "name": "validateEventCheckIn",
+      "ownerSkill": "",
       "parentIds": [
         "UC-002"
-      ]
+      ],
+      "path": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/organizer-validates-qr-code/specification.md",
+      "status": "proposed",
+      "type": "specification"
     },
     {
+      "childIds": [
+        "DOMAIN-001"
+      ],
+      "decisions": [],
+      "delivery": {
+        "depends_on": null,
+        "level": "L0",
+        "priority": "P0",
+        "rationale": "Strategy decides sequencing and success criteria before domain work becomes executable."
+      },
+      "dependsOn": [
+        "foundation/problem/context.md",
+        "foundation/vision/context.md"
+      ],
+      "documents": {
+        "canonical": "foundation/strategy/strategy.md"
+      },
       "id": "STRATEGY-EVENTS",
-      "type": "strategy",
-      "status": "draft",
-      "path": "foundation/strategy/strategy.md",
+      "name": "strategy",
+      "ownerSkill": "",
       "parentIds": [
         "VISION-EVENTS",
         "PRINCIPLES-EVENTS",
         "NORTH-STAR-EVENTS"
-      ]
+      ],
+      "path": "foundation/strategy/strategy.md",
+      "status": "draft",
+      "type": "strategy"
     },
     {
+      "childIds": null,
+      "decisions": null,
+      "delivery": {
+        "depends_on": null,
+        "level": "N/A",
+        "priority": "N/A",
+        "rationale": "Structural example only; not product scope."
+      },
+      "dependsOn": null,
+      "documents": {
+        "canonical": "domains/_example-domain/goals/_example-goal/features/_example-feature/use-cases/_example-use-case/tasks/TASK-000.md"
+      },
       "id": "TASK-000",
-      "type": "task",
-      "status": "draft",
+      "name": "TASK-000",
+      "ownerSkill": "task-generator",
+      "parentIds": [
+        "UC-EXAMPLE"
+      ],
       "path": "domains/_example-domain/goals/_example-goal/features/_example-feature/use-cases/_example-use-case/tasks/TASK-000.md",
-      "parentIds": [
-        "UC-EXAMPLE"
-      ]
+      "status": "draft",
+      "taskType": "example",
+      "type": "task"
     },
     {
+      "childIds": [
+        "SPEC-002",
+        "DES-002",
+        "PLAN-002",
+        "GRAPH-002",
+        "TASKSET-002",
+        "TEST-002",
+        "QA-002",
+        "SEC-002",
+        "ANA-002",
+        "AUD-002",
+        "ENGPROP-002",
+        "ENGREV-002"
+      ],
+      "decisions": [
+        "DEC-001",
+        "DEC-002",
+        "DEC-008"
+      ],
+      "delivery": {
+        "depends_on": [
+          "DOMAIN-users",
+          "DOMAIN-events",
+          "DEC-001",
+          "DEC-002"
+        ],
+        "level": "L1",
+        "priority": "P0",
+        "rationale": "Organizer validation is required to close the walking skeleton for event attendance."
+      },
+      "dependsOn": [
+        "UC-001"
+      ],
+      "documents": {
+        "canonical": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/organizer-validates-qr-code/tasks.md"
+      },
       "id": "TASKSET-002",
-      "type": "taskset",
-      "status": "draft",
+      "name": "tasks",
+      "ownerSkill": "task-generator",
+      "parentIds": [
+        "UC-002"
+      ],
       "path": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/organizer-validates-qr-code/tasks.md",
-      "parentIds": [
-        "UC-002"
-      ]
+      "status": "draft",
+      "type": "taskset"
     },
     {
+      "childIds": [
+        "SPEC-002",
+        "DES-002",
+        "PLAN-002",
+        "GRAPH-002",
+        "TASKSET-002",
+        "TEST-002",
+        "QA-002",
+        "SEC-002",
+        "ANA-002",
+        "AUD-002",
+        "ENGPROP-002",
+        "ENGREV-002"
+      ],
+      "decisions": [
+        "DEC-001",
+        "DEC-002",
+        "DEC-008"
+      ],
+      "delivery": {
+        "depends_on": [
+          "DOMAIN-users",
+          "DOMAIN-events",
+          "DEC-001",
+          "DEC-002"
+        ],
+        "level": "L1 Walking Skeleton",
+        "priority": "P0",
+        "rationale": "Organizer validation closes the walking skeleton for event attendance by turning attendee QR proof into server-authoritative check-in."
+      },
+      "dependsOn": [
+        "UC-001"
+      ],
+      "documents": {
+        "canonical": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/organizer-validates-qr-code/tests.md"
+      },
       "id": "TEST-002",
-      "type": "tests",
-      "status": "draft",
+      "name": "tests",
+      "ownerSkill": "",
+      "parentIds": [
+        "UC-002"
+      ],
       "path": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/organizer-validates-qr-code/tests.md",
-      "parentIds": [
-        "UC-002"
-      ]
+      "status": "draft",
+      "type": "tests"
     },
     {
+      "childIds": null,
+      "decisions": null,
+      "delivery": {
+        "depends_on": null,
+        "level": "",
+        "priority": "",
+        "rationale": ""
+      },
+      "dependsOn": null,
+      "documents": {
+        "canonical": "audits/security/threat-register.md"
+      },
       "id": "THREAT-REGISTER-001",
-      "type": "threat-register",
-      "status": "rejected",
+      "name": "threat-register",
+      "ownerSkill": "Threat Modeler AI",
+      "parentIds": null,
       "path": "audits/security/threat-register.md",
-      "parentIds": null
+      "status": "rejected",
+      "type": "threat-register"
     },
     {
+      "childIds": null,
+      "decisions": null,
+      "delivery": {
+        "depends_on": null,
+        "level": "L1",
+        "priority": "P0",
+        "rationale": "The graph orders the minimum L1 work needed to generate, present, and validate attendee QR codes."
+      },
+      "dependsOn": null,
+      "documents": {
+        "canonical": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/attendee-checks-in-with-qr-code/tasks/TK-001.md"
+      },
       "id": "TK-001",
-      "type": "task",
-      "status": "draft",
+      "name": "TK-001",
+      "ownerSkill": "code-runner",
+      "parentIds": [
+        "UC-001"
+      ],
       "path": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/attendee-checks-in-with-qr-code/tasks/TK-001.md",
-      "parentIds": [
-        "UC-001"
-      ]
+      "status": "draft",
+      "taskType": "database",
+      "type": "task"
     },
     {
+      "childIds": null,
+      "decisions": null,
+      "delivery": {
+        "depends_on": null,
+        "level": "L1",
+        "priority": "P0",
+        "rationale": "The graph orders the minimum L1 work needed to generate, present, and validate attendee QR codes."
+      },
+      "dependsOn": null,
+      "documents": {
+        "canonical": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/attendee-checks-in-with-qr-code/tasks/TK-002.md"
+      },
       "id": "TK-002",
-      "type": "task",
-      "status": "draft",
+      "name": "TK-002",
+      "ownerSkill": "code-runner",
+      "parentIds": [
+        "UC-001"
+      ],
       "path": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/attendee-checks-in-with-qr-code/tasks/TK-002.md",
-      "parentIds": [
-        "UC-001"
-      ]
+      "status": "draft",
+      "taskType": "backend",
+      "type": "task"
     },
     {
+      "childIds": null,
+      "decisions": null,
+      "delivery": {
+        "depends_on": null,
+        "level": "L1",
+        "priority": "P0",
+        "rationale": "Organizer validation is required to close the walking skeleton for event attendance."
+      },
+      "dependsOn": null,
+      "documents": {
+        "canonical": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/organizer-validates-qr-code/tasks/TK-002-001.md"
+      },
       "id": "TK-002-001",
-      "type": "task",
-      "status": "draft",
+      "name": "TK-002-001",
+      "ownerSkill": "implementation-planner",
+      "parentIds": [
+        "UC-002"
+      ],
       "path": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/organizer-validates-qr-code/tasks/TK-002-001.md",
-      "parentIds": [
-        "UC-002"
-      ]
+      "status": "draft",
+      "taskType": "data",
+      "type": "task"
     },
     {
+      "childIds": null,
+      "decisions": null,
+      "delivery": {
+        "depends_on": null,
+        "level": "L1",
+        "priority": "P0",
+        "rationale": "Organizer validation is required to close the walking skeleton for event attendance."
+      },
+      "dependsOn": null,
+      "documents": {
+        "canonical": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/organizer-validates-qr-code/tasks/TK-002-002.md"
+      },
       "id": "TK-002-002",
-      "type": "task",
-      "status": "draft",
+      "name": "TK-002-002",
+      "ownerSkill": "implementation-planner",
+      "parentIds": [
+        "UC-002"
+      ],
       "path": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/organizer-validates-qr-code/tasks/TK-002-002.md",
-      "parentIds": [
-        "UC-002"
-      ]
+      "status": "draft",
+      "taskType": "security",
+      "type": "task"
     },
     {
+      "childIds": null,
+      "decisions": null,
+      "delivery": {
+        "depends_on": null,
+        "level": "L1",
+        "priority": "P0",
+        "rationale": "Organizer validation is required to close the walking skeleton for event attendance."
+      },
+      "dependsOn": null,
+      "documents": {
+        "canonical": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/organizer-validates-qr-code/tasks/TK-002-003.md"
+      },
       "id": "TK-002-003",
-      "type": "task",
-      "status": "draft",
+      "name": "TK-002-003",
+      "ownerSkill": "implementation-planner",
+      "parentIds": [
+        "UC-002"
+      ],
       "path": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/organizer-validates-qr-code/tasks/TK-002-003.md",
-      "parentIds": [
-        "UC-002"
-      ]
+      "status": "draft",
+      "taskType": "backend",
+      "type": "task"
     },
     {
+      "childIds": null,
+      "decisions": null,
+      "delivery": {
+        "depends_on": null,
+        "level": "L1",
+        "priority": "P0",
+        "rationale": "Organizer validation is required to close the walking skeleton for event attendance."
+      },
+      "dependsOn": null,
+      "documents": {
+        "canonical": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/organizer-validates-qr-code/tasks/TK-002-004.md"
+      },
       "id": "TK-002-004",
-      "type": "task",
-      "status": "draft",
+      "name": "TK-002-004",
+      "ownerSkill": "implementation-planner",
+      "parentIds": [
+        "UC-002"
+      ],
       "path": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/organizer-validates-qr-code/tasks/TK-002-004.md",
-      "parentIds": [
-        "UC-002"
-      ]
+      "status": "draft",
+      "taskType": "api",
+      "type": "task"
     },
     {
+      "childIds": null,
+      "decisions": null,
+      "delivery": {
+        "depends_on": null,
+        "level": "L1",
+        "priority": "P0",
+        "rationale": "Organizer validation is required to close the walking skeleton for event attendance."
+      },
+      "dependsOn": null,
+      "documents": {
+        "canonical": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/organizer-validates-qr-code/tasks/TK-002-005.md"
+      },
       "id": "TK-002-005",
-      "type": "task",
-      "status": "draft",
+      "name": "TK-002-005",
+      "ownerSkill": "ux-ui",
+      "parentIds": [
+        "UC-002"
+      ],
       "path": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/organizer-validates-qr-code/tasks/TK-002-005.md",
-      "parentIds": [
-        "UC-002"
-      ]
+      "status": "draft",
+      "taskType": "frontend",
+      "type": "task"
     },
     {
+      "childIds": null,
+      "decisions": null,
+      "delivery": {
+        "depends_on": null,
+        "level": "L1",
+        "priority": "P0",
+        "rationale": "Organizer validation is required to close the walking skeleton for event attendance."
+      },
+      "dependsOn": null,
+      "documents": {
+        "canonical": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/organizer-validates-qr-code/tasks/TK-002-006.md"
+      },
       "id": "TK-002-006",
-      "type": "task",
-      "status": "draft",
+      "name": "TK-002-006",
+      "ownerSkill": "documentation-writer",
+      "parentIds": [
+        "UC-002"
+      ],
       "path": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/organizer-validates-qr-code/tasks/TK-002-006.md",
-      "parentIds": [
-        "UC-002"
-      ]
+      "status": "draft",
+      "taskType": "analytics",
+      "type": "task"
     },
     {
+      "childIds": null,
+      "decisions": null,
+      "delivery": {
+        "depends_on": null,
+        "level": "L1",
+        "priority": "P0",
+        "rationale": "Organizer validation is required to close the walking skeleton for event attendance."
+      },
+      "dependsOn": null,
+      "documents": {
+        "canonical": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/organizer-validates-qr-code/tasks/TK-002-007.md"
+      },
       "id": "TK-002-007",
-      "type": "task",
-      "status": "draft",
-      "path": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/organizer-validates-qr-code/tasks/TK-002-007.md",
+      "name": "TK-002-007",
+      "ownerSkill": "qa",
       "parentIds": [
         "UC-002"
-      ]
+      ],
+      "path": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/organizer-validates-qr-code/tasks/TK-002-007.md",
+      "status": "draft",
+      "taskType": "qa",
+      "type": "task"
     },
     {
+      "childIds": null,
+      "decisions": null,
+      "delivery": {
+        "depends_on": null,
+        "level": "L1",
+        "priority": "P0",
+        "rationale": "The graph orders the minimum L1 work needed to generate, present, and validate attendee QR codes."
+      },
+      "dependsOn": null,
+      "documents": {
+        "canonical": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/attendee-checks-in-with-qr-code/tasks/TK-003.md"
+      },
       "id": "TK-003",
-      "type": "task",
-      "status": "draft",
+      "name": "TK-003",
+      "ownerSkill": "code-runner",
+      "parentIds": [
+        "UC-001"
+      ],
       "path": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/attendee-checks-in-with-qr-code/tasks/TK-003.md",
-      "parentIds": [
-        "UC-001"
-      ]
+      "status": "draft",
+      "taskType": "backend",
+      "type": "task"
     },
     {
+      "childIds": null,
+      "decisions": null,
+      "delivery": {
+        "depends_on": null,
+        "level": "L1",
+        "priority": "P0",
+        "rationale": "The graph orders the minimum L1 work needed to generate, present, and validate attendee QR codes."
+      },
+      "dependsOn": null,
+      "documents": {
+        "canonical": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/attendee-checks-in-with-qr-code/tasks/TK-004.md"
+      },
       "id": "TK-004",
-      "type": "task",
-      "status": "draft",
+      "name": "TK-004",
+      "ownerSkill": "code-runner",
+      "parentIds": [
+        "UC-001"
+      ],
       "path": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/attendee-checks-in-with-qr-code/tasks/TK-004.md",
-      "parentIds": [
-        "UC-001"
-      ]
+      "status": "draft",
+      "taskType": "frontend",
+      "type": "task"
     },
     {
+      "childIds": null,
+      "decisions": null,
+      "delivery": {
+        "depends_on": null,
+        "level": "L1",
+        "priority": "P0",
+        "rationale": "The graph orders the minimum L1 work needed to generate, present, and validate attendee QR codes."
+      },
+      "dependsOn": null,
+      "documents": {
+        "canonical": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/attendee-checks-in-with-qr-code/tasks/TK-005.md"
+      },
       "id": "TK-005",
-      "type": "task",
-      "status": "draft",
+      "name": "TK-005",
+      "ownerSkill": "code-runner",
+      "parentIds": [
+        "UC-001"
+      ],
       "path": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/attendee-checks-in-with-qr-code/tasks/TK-005.md",
-      "parentIds": [
-        "UC-001"
-      ]
+      "status": "draft",
+      "taskType": "frontend",
+      "type": "task"
     },
     {
+      "childIds": null,
+      "decisions": null,
+      "delivery": {
+        "depends_on": null,
+        "level": "L1",
+        "priority": "P0",
+        "rationale": "The graph orders the minimum L1 work needed to generate, present, and validate attendee QR codes."
+      },
+      "dependsOn": null,
+      "documents": {
+        "canonical": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/attendee-checks-in-with-qr-code/tasks/TK-006.md"
+      },
       "id": "TK-006",
-      "type": "task",
-      "status": "draft",
+      "name": "TK-006",
+      "ownerSkill": "qa",
+      "parentIds": [
+        "UC-001"
+      ],
       "path": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/attendee-checks-in-with-qr-code/tasks/TK-006.md",
-      "parentIds": [
-        "UC-001"
-      ]
+      "status": "draft",
+      "taskType": "test",
+      "type": "task"
     },
     {
+      "childIds": null,
+      "decisions": null,
+      "delivery": {
+        "depends_on": [
+          "FT-001",
+          "DEC-001",
+          "DEC-002"
+        ],
+        "level": "L1",
+        "priority": "P0",
+        "rationale": "Attendee QR presentation is required to close the walking skeleton with organizer validation."
+      },
+      "dependsOn": null,
+      "documents": {
+        "canonical": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/attendee-checks-in-with-qr-code/use-case.md"
+      },
       "id": "UC-001",
-      "type": "use-case",
-      "status": "draft",
+      "name": "use-case",
+      "ownerSkill": "",
+      "parentIds": [
+        "FT-001"
+      ],
       "path": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/attendee-checks-in-with-qr-code/use-case.md",
-      "parentIds": [
-        "FT-001"
-      ]
+      "status": "draft",
+      "type": "use-case"
     },
     {
+      "childIds": null,
+      "decisions": null,
+      "delivery": {
+        "depends_on": [
+          "FT-001",
+          "DEC-001",
+          "DEC-002"
+        ],
+        "level": "L1",
+        "priority": "P0",
+        "rationale": "Attendee QR presentation is required to close the walking skeleton with organizer validation."
+      },
+      "dependsOn": null,
+      "documents": {
+        "canonical": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/attendee-checks-in-with-qr-code/design.md"
+      },
       "id": "UC-001:design",
-      "type": "design",
-      "status": "draft",
+      "name": "design",
+      "ownerSkill": "",
+      "parentIds": [
+        "UC-001"
+      ],
       "path": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/attendee-checks-in-with-qr-code/design.md",
-      "parentIds": [
-        "UC-001"
-      ]
-    },
-    {
-      "id": "UC-001:tasks",
-      "type": "taskset",
       "status": "draft",
-      "path": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/attendee-checks-in-with-qr-code/tasks.md",
-      "parentIds": [
-        "UC-001"
-      ]
+      "type": "design"
     },
     {
+      "childIds": null,
+      "decisions": null,
+      "delivery": {
+        "depends_on": [
+          "FT-001",
+          "DEC-001",
+          "DEC-002"
+        ],
+        "level": "L1",
+        "priority": "P0",
+        "rationale": "The graph orders the minimum L1 work needed to generate, present, and validate attendee QR codes."
+      },
+      "dependsOn": null,
+      "documents": {
+        "canonical": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/attendee-checks-in-with-qr-code/tasks.md"
+      },
+      "id": "UC-001:tasks",
+      "name": "tasks",
+      "ownerSkill": "task-generator",
+      "parentIds": [
+        "UC-001"
+      ],
+      "path": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/attendee-checks-in-with-qr-code/tasks.md",
+      "status": "draft",
+      "type": "taskset"
+    },
+    {
+      "childIds": [
+        "SPEC-002",
+        "DES-002",
+        "PLAN-002",
+        "GRAPH-002",
+        "TASKSET-002",
+        "TEST-002",
+        "QA-002",
+        "SEC-002",
+        "ANA-002",
+        "AUD-002",
+        "ENGPROP-002",
+        "ENGREV-002"
+      ],
+      "decisions": [
+        "DEC-001",
+        "DEC-002",
+        "DEC-008"
+      ],
+      "delivery": {
+        "depends_on": [
+          "DOMAIN-users",
+          "DOMAIN-events",
+          "DEC-001",
+          "DEC-002"
+        ],
+        "level": "L1 Walking Skeleton",
+        "priority": "P0",
+        "rationale": "Organizer validation closes the walking skeleton for event attendance by turning attendee QR proof into server-authoritative check-in."
+      },
+      "dependsOn": [
+        "UC-001"
+      ],
+      "documents": {
+        "canonical": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/organizer-validates-qr-code/use-case.md"
+      },
       "id": "UC-002",
-      "type": "use-case",
-      "status": "proposed",
-      "path": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/organizer-validates-qr-code/use-case.md",
+      "name": "use-case",
+      "ownerSkill": "",
       "parentIds": [
         "FT-001"
-      ]
+      ],
+      "path": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/organizer-validates-qr-code/use-case.md",
+      "status": "proposed",
+      "type": "use-case"
     },
     {
+      "childIds": null,
+      "decisions": null,
+      "delivery": {
+        "depends_on": [
+          "FT-EXAMPLE"
+        ],
+        "level": "N/A",
+        "priority": "N/A",
+        "rationale": "Structural example only; not product scope."
+      },
+      "dependsOn": null,
+      "documents": {
+        "canonical": "domains/_example-domain/goals/_example-goal/features/_example-feature/use-cases/_example-use-case/design.md"
+      },
       "id": "UC-EXAMPLE:design",
-      "type": "design",
-      "status": "draft",
+      "name": "design",
+      "ownerSkill": "",
+      "parentIds": [
+        "UC-EXAMPLE"
+      ],
       "path": "domains/_example-domain/goals/_example-goal/features/_example-feature/use-cases/_example-use-case/design.md",
-      "parentIds": [
-        "UC-EXAMPLE"
-      ]
+      "status": "draft",
+      "type": "design"
     },
     {
+      "childIds": null,
+      "decisions": null,
+      "delivery": {
+        "depends_on": [
+          "FT-EXAMPLE"
+        ],
+        "level": "N/A",
+        "priority": "N/A",
+        "rationale": "Placeholder artifact used only to demonstrate structure."
+      },
+      "dependsOn": null,
+      "documents": {
+        "canonical": "domains/_example-domain/goals/_example-goal/features/_example-feature/use-cases/_example-use-case/implementation-plan.md"
+      },
       "id": "UC-EXAMPLE:implementation-plan",
-      "type": "implementation-plan",
-      "status": "draft",
+      "name": "implementation-plan",
+      "ownerSkill": "",
+      "parentIds": [
+        "UC-EXAMPLE"
+      ],
       "path": "domains/_example-domain/goals/_example-goal/features/_example-feature/use-cases/_example-use-case/implementation-plan.md",
-      "parentIds": [
-        "UC-EXAMPLE"
-      ]
+      "status": "draft",
+      "type": "implementation-plan"
     },
     {
+      "childIds": null,
+      "decisions": null,
+      "delivery": {
+        "depends_on": [
+          "FT-EXAMPLE"
+        ],
+        "level": "N/A",
+        "priority": "N/A",
+        "rationale": "Placeholder artifact used only to demonstrate structure."
+      },
+      "dependsOn": null,
+      "documents": {
+        "canonical": "domains/_example-domain/goals/_example-goal/features/_example-feature/use-cases/_example-use-case/specification.md"
+      },
       "id": "UC-EXAMPLE:specification",
-      "type": "specification",
-      "status": "draft",
+      "name": "specification",
+      "ownerSkill": "",
+      "parentIds": [
+        "UC-EXAMPLE"
+      ],
       "path": "domains/_example-domain/goals/_example-goal/features/_example-feature/use-cases/_example-use-case/specification.md",
-      "parentIds": [
-        "UC-EXAMPLE"
-      ]
+      "status": "draft",
+      "type": "specification"
     },
     {
+      "childIds": null,
+      "decisions": null,
+      "delivery": {
+        "depends_on": [
+          "FT-EXAMPLE"
+        ],
+        "level": "N/A",
+        "priority": "N/A",
+        "rationale": "Structural example only; not product scope."
+      },
+      "dependsOn": null,
+      "documents": {
+        "canonical": "domains/_example-domain/goals/_example-goal/features/_example-feature/use-cases/_example-use-case/tasks.md"
+      },
       "id": "UC-EXAMPLE:tasks",
-      "type": "taskset",
-      "status": "draft",
-      "path": "domains/_example-domain/goals/_example-goal/features/_example-feature/use-cases/_example-use-case/tasks.md",
+      "name": "tasks",
+      "ownerSkill": "task-generator",
       "parentIds": [
         "UC-EXAMPLE"
-      ]
+      ],
+      "path": "domains/_example-domain/goals/_example-goal/features/_example-feature/use-cases/_example-use-case/tasks.md",
+      "status": "draft",
+      "type": "taskset"
     },
     {
+      "childIds": [
+        "STRAT-001"
+      ],
+      "decisions": [],
+      "delivery": {
+        "depends_on": null,
+        "level": "L0",
+        "priority": "P0",
+        "rationale": "Vision gives strategic direction before domains and features are evaluated."
+      },
+      "dependsOn": [
+        "foundation/problem/context.md"
+      ],
+      "documents": {
+        "canonical": "foundation/vision/vision.md"
+      },
       "id": "VISION-EVENTS",
-      "type": "vision",
-      "status": "draft",
-      "path": "foundation/vision/vision.md",
+      "name": "vision",
+      "ownerSkill": "",
       "parentIds": [
         "PROBLEM-EVENTS"
-      ]
+      ],
+      "path": "foundation/vision/vision.md",
+      "status": "draft",
+      "type": "vision"
     }
-  ]
+  ],
+  "generatedAt": "2026-07-16T18:01:48.8218037Z",
+  "generator": "spec-framework (Go)"
 }
