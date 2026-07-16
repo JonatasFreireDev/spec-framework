@@ -27,6 +27,8 @@ type Envelope struct {
 	Graph            string   `json:"graph"`
 	TaskPath         string   `json:"task_path"`
 	InputHash        string   `json:"input_hash"`
+	DiffHash         string   `json:"diff_hash,omitempty"`
+	ParentID         string   `json:"parent_id,omitempty"`
 	RequiredReading  []string `json:"required_reading"`
 	WriteScope       []string `json:"write_scope"`
 	ExpectedEvidence []string `json:"expected_evidence"`
@@ -112,7 +114,7 @@ func Assign(root, work, graph, task, role, agent string) (Envelope, error) {
 	}
 	return e, write(filepath.Join(dir(root, work), id+".json"), e)
 }
-func Return(root, work, id, agent, summary string, evidence []string) (Envelope, error) {
+func Return(root, work, id, agent, summary, diffHash string, evidence []string) (Envelope, error) {
 	var e Envelope
 	path := filepath.Join(dir(root, work), id+".json")
 	if err := read(path, &e); err != nil {
@@ -121,17 +123,48 @@ func Return(root, work, id, agent, summary string, evidence []string) (Envelope,
 	if e.Agent != agent || e.Status != "assigned" {
 		return e, errors.New("dispatch is not assigned to this agent")
 	}
-	if strings.TrimSpace(summary) == "" || len(evidence) == 0 {
-		return e, errors.New("return requires summary and evidence")
+	if strings.TrimSpace(summary) == "" || strings.TrimSpace(diffHash) == "" || len(evidence) == 0 {
+		return e, errors.New("return requires summary, diff hash, and evidence")
 	}
 	e.Status = "returned"
 	e.Summary = summary
 	e.Evidence = evidence
+	e.DiffHash = diffHash
 	e.ReturnedAt = time.Now().UTC().Format(time.RFC3339)
 	if err := write(path, e); err != nil {
 		return e, err
 	}
 	return e, workflow.ReleaseLease(root, e.TaskID, agent)
+}
+
+// AssignReview creates an independent read-only review envelope for the exact
+// diff returned by a code-runner. It never claims write ownership.
+func AssignReview(root, work, parentID, role, agent string) (Envelope, error) {
+	if role != "qa" && role != "code-review" && role != "security-review" {
+		return Envelope{}, errors.New("review role must be qa, code-review, or security-review")
+	}
+	var parent Envelope
+	if err := read(filepath.Join(dir(root, work), parentID+".json"), &parent); err != nil {
+		return Envelope{}, err
+	}
+	if parent.Role != "code-runner" || parent.Status != "returned" || parent.DiffHash == "" {
+		return Envelope{}, errors.New("review requires a returned code-runner dispatch with diff hash")
+	}
+	id := fmt.Sprintf("DISPATCH-%d", time.Now().UTC().UnixNano())
+	e := parent
+	e.ID = id
+	e.Role = role
+	e.Agent = agent
+	e.ParentID = parent.ID
+	e.Status = "assigned"
+	e.CreatedAt = time.Now().UTC().Format(time.RFC3339)
+	e.ReturnedAt = ""
+	e.Summary = ""
+	e.Evidence = nil
+	e.WriteScope = nil
+	e.Forbidden = []string{"approval", "code-change", "commit", "push", "merge", "release", "review-resolution"}
+	e.ExpectedEvidence = []string{"review verdict", "findings", "diff hash: " + parent.DiffHash}
+	return e, write(filepath.Join(dir(root, work), id+".json"), e)
 }
 func Observe(root, work string) ([]Envelope, error) {
 	entries, err := os.ReadDir(dir(root, work))

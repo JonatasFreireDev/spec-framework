@@ -26,6 +26,8 @@ func runDispatch(args []string, out, errout io.Writer) int {
 	id := fs.String("id", "", "dispatch id")
 	summary := fs.String("summary", "", "return summary")
 	evidence := fs.String("evidence", "", "comma-separated evidence")
+	diffHash := fs.String("diff-hash", "", "immutable working-tree diff hash")
+	parent := fs.String("parent", "", "returned code-runner dispatch id")
 	yes := fs.Bool("yes", false, "confirm mutation")
 	if err := fs.Parse(args[1:]); err != nil {
 		return 2
@@ -51,9 +53,18 @@ func runDispatch(args []string, out, errout io.Writer) int {
 		}
 		return 0
 	case "assign":
-		if !*yes || *work == "" || *task == "" || *agent == "" {
+		if !*yes || *work == "" || *agent == "" || ((*role != "qa" && *role != "code-review" && *role != "security-review") && *task == "") || ((*role == "qa" || *role == "code-review" || *role == "security-review") && *parent == "") {
 			fmt.Fprintln(errout, "dispatch assign requires --work --task --agent --yes")
 			return 2
+		}
+		if *role == "qa" || *role == "code-review" || *role == "security-review" {
+			x, e := dispatch.AssignReview(p, *work, *parent, *role, *agent)
+			if e != nil {
+				fmt.Fprintln(errout, e)
+				return 1
+			}
+			fmt.Fprintln(out, "ASSIGNED", x.ID)
+			return 0
 		}
 		x, e := dispatch.Assign(p, *work, g, *task, *role, *agent)
 		if e != nil {
@@ -67,7 +78,7 @@ func runDispatch(args []string, out, errout io.Writer) int {
 			fmt.Fprintln(errout, "dispatch return requires --work --id --agent --yes")
 			return 2
 		}
-		x, e := dispatch.Return(p, *work, *id, *agent, *summary, splitCSV(*evidence))
+		x, e := dispatch.Return(p, *work, *id, *agent, *summary, *diffHash, splitCSV(*evidence))
 		if e != nil {
 			fmt.Fprintln(errout, e)
 			return 1
