@@ -5,7 +5,7 @@
 | Field | Value |
 | --- | --- |
 | Engineering System | `ENGSYS-EVENTS-001 @ 0.1.0` |
-| Status | `draft` |
+| Status | `approved` |
 | Mechanical catalog | [quality-system.yaml](quality-system.yaml) |
 | Quality model | [quality-model.md](quality-model.md) |
 | Test strategy | [test-strategy.md](test-strategy.md) |

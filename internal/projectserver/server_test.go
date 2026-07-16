@@ -1,0 +1,133 @@
+package projectserver
+
+import (
+	"bytes"
+	"context"
+	"encoding/json"
+	"net/http"
+	"os"
+	"path/filepath"
+	"testing"
+	"time"
+
+	"github.com/JonatasFreireDev/spec-framework/internal/workflow"
+)
+
+func TestStartServesLocalPageAndStopRemovesDescriptor(t *testing.T) {
+	root := t.TempDir()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+	running, err := Start(ctx, Config{ProductRoot: root})
+	if err != nil {
+		t.Fatal(err)
+	}
+	response, err := http.Get(running.URL + "/")
+	if err != nil {
+		t.Fatal(err)
+	}
+	response.Body.Close()
+	if response.StatusCode != http.StatusOK {
+		t.Fatalf("status=%s", response.Status)
+	}
+	if _, err := ReadDescriptor(root); err != nil {
+		t.Fatalf("descriptor: %v", err)
+	}
+	if _, err := Healthy(root); err != nil {
+		t.Fatalf("health: %v", err)
+	}
+	if err := Stop(root); err != nil {
+		t.Fatal(err)
+	}
+	select {
+	case err := <-running.Done:
+		if err != nil {
+			t.Fatal(err)
+		}
+	case <-time.After(5 * time.Second):
+		t.Fatal("server did not stop")
+	}
+	deadline := time.Now().Add(2 * time.Second)
+	for {
+		_, err := os.Stat(filepath.Join(root, ".product", descriptorName))
+		if os.IsNotExist(err) {
+			break
+		}
+		if time.Now().After(deadline) {
+			t.Fatalf("descriptor still exists: %v", err)
+		}
+		time.Sleep(10 * time.Millisecond)
+	}
+}
+
+func TestStatusAndRejectionEndpointsUseProductData(t *testing.T) {
+	root := t.TempDir()
+	if err := os.MkdirAll(filepath.Join(root, ".product", "history"), 0o755); err != nil {
+		t.Fatal(err)
+	}
+	artifact := workflow.Artifact{ID: "TASK-1", Type: "task", Status: "draft", Path: "tasks/one.md"}
+	data, err := json.Marshal(workflow.Registry{Artifacts: []workflow.Artifact{artifact}})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(root, ".product", "artifacts.json"), data, 0o644); err != nil {
+		t.Fatal(err)
+	}
+	path := filepath.Join(root, "tasks", "one.md")
+	if err := os.MkdirAll(filepath.Dir(path), 0o755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(path, []byte("status: draft\n# Tarefa de exemplo\n\nConteúdo."), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+	running, err := Start(ctx, Config{ProductRoot: root})
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer func() { _ = Stop(root); <-running.Done }()
+	response, err := http.Get(running.URL + "/api/status")
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer response.Body.Close()
+	var status projectStatus
+	if err := json.NewDecoder(response.Body).Decode(&status); err != nil {
+		t.Fatal(err)
+	}
+	if len(status.Documents) != 1 || status.Documents[0].Title != "Tarefa de exemplo" || status.Metrics.Pending != 1 {
+		t.Fatalf("status=%+v", status)
+	}
+	planRequest := bytes.NewBufferString(`{"artifactIds":["TASK-1"]}`)
+	response, err = http.Post(running.URL+"/api/batch-approval-plan", "application/json", planRequest)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer response.Body.Close()
+	if response.StatusCode != http.StatusOK {
+		t.Fatalf("batch plan status=%s", response.Status)
+	}
+	var plan workflow.BatchPlan
+	if err := json.NewDecoder(response.Body).Decode(&plan); err != nil {
+		t.Fatal(err)
+	}
+	if len(plan.ToApprove) != 1 || plan.ToApprove[0].ID != "TASK-1" {
+		t.Fatalf("batch plan=%+v", plan)
+	}
+	body := bytes.NewBufferString(`{"artifactId":"TASK-1","status":"rejected","approvedBy":"Product Owner","notes":"Falta definir os critérios.","confirmed":true}`)
+	response, err = http.Post(running.URL+"/api/transition", "application/json", body)
+	if err != nil {
+		t.Fatal(err)
+	}
+	response.Body.Close()
+	if response.StatusCode != http.StatusOK {
+		t.Fatalf("rejection status=%s", response.Status)
+	}
+	registry, err := workflow.LoadRegistry(root)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if registry.Artifacts[0].Status != "rejected" {
+		t.Fatalf("artifact status=%s", registry.Artifacts[0].Status)
+	}
+}

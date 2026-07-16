@@ -5,7 +5,7 @@
 | Field | Value |
 | --- | --- |
 | ID | `ENGSYS-EVENTS-001` |
-| Status | `draft` |
+| Status | `approved` |
 | Version | `0.1.0` |
 | Origin mode | `generate` |
 | Mechanical catalog | [engineering-system.yaml](engineering-system.yaml) |

@@ -2,7 +2,7 @@
 id: ENGSYS-EVENTS-001
 type: engineering-system
 name: Events Worked Fixture Engineering System
-status: draft
+status: approved
 owner_skill: engineering-system
 version: 0.1.0
 origin_mode: generate

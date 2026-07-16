@@ -66,6 +66,7 @@ func (app App) NewCommand(stdout, stderr io.Writer) *cobra.Command {
 		app.legacyCommand("approve-stage", "Approve eligible artifacts in a stage atomically.", func(args []string, out, errout io.Writer) int { return runStage("approve-stage", args, out, errout) }, stdout, stderr),
 		app.legacyCommand("impact", "Inspect a decision's validity and propagation.", func(args []string, out, errout io.Writer) int { return runImpact(args, out, errout) }, stdout, stderr),
 		app.legacyCommand("dashboard", "Show a consolidated workflow dashboard.", func(args []string, out, errout io.Writer) int { return runDashboard(args, out, errout) }, stdout, stderr),
+		app.legacyCommand("server", "Run the local project-status server.", func(args []string, out, errout io.Writer) int { return runServer(args, out, errout) }, stdout, stderr),
 		app.legacyCommand("decisions", "Check or migrate product decisions.", func(args []string, out, errout io.Writer) int { return runDecisions(args, out, errout) }, stdout, stderr),
 		app.legacyCommand("dispatch", "Plan and supervise governed subagent assignments.", func(args []string, out, errout io.Writer) int { return runDispatch(args, out, errout) }, stdout, stderr),
 	)

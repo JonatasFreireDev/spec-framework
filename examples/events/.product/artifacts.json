@@ -354,7 +354,7 @@
       "ownerSkill": "engineering-system",
       "parentIds": null,
       "path": "engineering/engineering-system.md",
-      "status": "draft",
+      "status": "approved",
       "type": "engineering-system"
     },
     {
@@ -1016,7 +1016,7 @@
       "ownerSkill": "Threat Modeler AI",
       "parentIds": null,
       "path": "audits/security/threat-register.md",
-      "status": "draft",
+      "status": "rejected",
       "type": "threat-register"
     },
     {
@@ -1587,6 +1587,6 @@
       "type": "vision"
     }
   ],
-  "generatedAt": "2026-07-14T15:29:10.2725287Z",
+  "generatedAt": "2026-07-16T18:01:48.8218037Z",
   "generator": "spec-framework (Go)"
 }

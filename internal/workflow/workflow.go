@@ -373,10 +373,12 @@ func PreviewApproval(root, artifactPath, grant string) (ApprovalPreview, error) 
 		return ApprovalPreview{}, fmt.Errorf("invalid status transition %s -> %s", a.Status, grant)
 	}
 	var blockers []string
-	for _, pid := range a.ParentIDs {
-		for _, p := range r.Artifacts {
-			if p.ID == pid && (!isApproved(p.Status) || !hasCurrentApproval(root, filepath.Join(root, filepath.FromSlash(p.Path)), p.Status)) {
-				blockers = append(blockers, fmt.Sprintf("parent %s lacks current approval evidence", pid))
+	if grant != "rejected" && grant != "draft" && grant != "proposed" {
+		for _, pid := range a.ParentIDs {
+			for _, p := range r.Artifacts {
+				if p.ID == pid && (!isApproved(p.Status) || !hasCurrentApproval(root, filepath.Join(root, filepath.FromSlash(p.Path)), p.Status)) {
+					blockers = append(blockers, fmt.Sprintf("parent %s lacks current approval evidence", pid))
+				}
 			}
 		}
 	}
@@ -388,14 +390,16 @@ func PreviewApproval(root, artifactPath, grant string) (ApprovalPreview, error) 
 	if err != nil {
 		return ApprovalPreview{}, err
 	}
-	validation, err := validator.ValidateCandidate(context.Background(), root, root, artifactPath, updated, grant)
-	if err != nil {
-		return ApprovalPreview{}, err
-	}
 	validationBlockers := make([]string, 0)
-	for _, diagnostic := range validation.Diagnostics {
-		if filepath.ToSlash(diagnostic.File) == rel && (diagnostic.Check == "template-conformance" || diagnostic.Check == "import-provenance" || diagnostic.Check == "status-coherence" || diagnostic.Check == "qa-evidence" || diagnostic.Check == "delivery") && diagnostic.Severity == validator.Error {
-			validationBlockers = append(validationBlockers, fmt.Sprintf("%s: %s", diagnostic.Check, diagnostic.Message))
+	if grant != "rejected" && grant != "draft" && grant != "proposed" {
+		validation, err := validator.ValidateCandidate(context.Background(), root, root, artifactPath, updated, grant)
+		if err != nil {
+			return ApprovalPreview{}, err
+		}
+		for _, diagnostic := range validation.Diagnostics {
+			if filepath.ToSlash(diagnostic.File) == rel && (diagnostic.Check == "template-conformance" || diagnostic.Check == "import-provenance" || diagnostic.Check == "status-coherence" || diagnostic.Check == "qa-evidence" || diagnostic.Check == "delivery") && diagnostic.Severity == validator.Error {
+				validationBlockers = append(validationBlockers, fmt.Sprintf("%s: %s", diagnostic.Check, diagnostic.Message))
+			}
 		}
 	}
 	updates, err := approvalUpdatesForArtifact(root, a, artifactPath, updated, grant)
@@ -736,14 +740,17 @@ func requiredContracts(contextPath string) []string {
 
 func Approve(root, artifactPath, grant, approvedBy, notes string) (Approval, error) {
 	grant = strings.TrimSpace(grant)
-	if !map[string]bool{"approved": true, "in_progress": true, "implemented": true, "validated": true, "released": true}[grant] {
+	if !map[string]bool{"draft": true, "proposed": true, "approved": true, "rejected": true, "in_progress": true, "implemented": true, "validated": true, "released": true}[grant] {
 		return Approval{}, fmt.Errorf("unsupported grant %q", grant)
+	}
+	if grant == "rejected" && strings.TrimSpace(notes) == "" {
+		return Approval{}, errors.New("rejection requires notes explaining what must be revised")
 	}
 	preview, err := PreviewApproval(root, artifactPath, grant)
 	if err != nil {
 		return Approval{}, err
 	}
-	if len(preview.ParentBlockers) > 0 || len(preview.ValidationBlockers) > 0 {
+	if grant != "rejected" && grant != "draft" && grant != "proposed" && (len(preview.ParentBlockers) > 0 || len(preview.ValidationBlockers) > 0) {
 		return Approval{}, errors.New(strings.Join(append(preview.ParentBlockers, preview.ValidationBlockers...), "; "))
 	}
 	r, err := LoadRegistry(root)
@@ -766,6 +773,9 @@ func Approve(root, artifactPath, grant, approvedBy, notes string) (Approval, err
 		return Approval{}, fmt.Errorf("artifact is not registered: %s", rel)
 	}
 	for _, pid := range r.Artifacts[idx].ParentIDs {
+		if grant == "rejected" || grant == "draft" || grant == "proposed" {
+			break
+		}
 		for _, p := range r.Artifacts {
 			if p.ID == pid && (!isApproved(p.Status) || !hasCurrentApproval(root, filepath.Join(root, filepath.FromSlash(p.Path)), p.Status)) {
 				return Approval{}, fmt.Errorf("parent %s lacks current approval evidence", pid)
@@ -1282,7 +1292,7 @@ func validTransition(from, to string) bool {
 	if from == to {
 		return true
 	}
-	allowed := map[string][]string{"draft": {"proposed", "approved"}, "proposed": {"approved"}, "materialized": {"approved"}, "approved": {"in_progress"}, "in_progress": {"implemented"}, "implemented": {"validated"}, "validated": {"released"}}
+	allowed := map[string][]string{"draft": {"proposed", "approved", "rejected"}, "proposed": {"approved", "rejected"}, "materialized": {"approved", "rejected"}, "approved": {"in_progress", "rejected"}, "in_progress": {"implemented"}, "implemented": {"validated"}, "validated": {"released"}, "rejected": {"draft", "proposed", "approved"}}
 	return contains(allowed[from], to)
 }
 func readJSON(path string, value any) error {
