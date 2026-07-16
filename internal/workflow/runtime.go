@@ -91,6 +91,9 @@ type Integration struct {
 	IntegratedDiffHash                             string   `json:"integrated_diff_hash,omitempty"`
 	RequiresIntegratedQA                           bool     `json:"requires_integrated_qa"`
 }
+type RuntimeFinding struct {
+	Kind, Detail, Owner string
+}
 
 func workspaceDir(root, id string) string { return filepath.Join(root, ".product", "workspaces", id) }
 func eventDir(root, id string) string     { return filepath.Join(workspaceDir(root, id), "events") }
@@ -371,6 +374,37 @@ func RecoverLeases(root string) ([]string, error) {
 	}
 	sort.Strings(out)
 	return out, nil
+}
+
+// ReconcileRuntime is read-only: it reports stale or orphaned operational
+// state and deliberately never repairs approval, task, or worktree state.
+func ReconcileRuntime(root, workspaceID string) ([]RuntimeFinding, error) {
+	if err := validateRuntimeComponent(workspaceID, "workspace"); err != nil {
+		return nil, err
+	}
+	findings := []RuntimeFinding{}
+	if _, err := Resume(root, workspaceID); err != nil {
+		findings = append(findings, RuntimeFinding{Kind: "workspace-state", Detail: err.Error(), Owner: "delivery-orchestrator"})
+	}
+	entries, err := os.ReadDir(filepath.Join(root, ".product", "claims"))
+	if err != nil && !os.IsNotExist(err) {
+		return nil, err
+	}
+	now := time.Now().UTC()
+	for _, entry := range entries {
+		var lease Lease
+		if readJSON(filepath.Join(root, ".product", "claims", entry.Name()), &lease) != nil {
+			continue
+		}
+		if lease.Graph == "" {
+			continue
+		}
+		expires, _ := time.Parse(time.RFC3339, lease.ExpiresAt)
+		if !expires.After(now) {
+			findings = append(findings, RuntimeFinding{Kind: "expired-lease", Detail: lease.TaskID, Owner: "delivery-orchestrator"})
+		}
+	}
+	return findings, nil
 }
 
 func CreateTaskWorktree(repoRoot, work, task string) (string, error) {
