@@ -47,6 +47,8 @@ Runtime commands include `runtime`, `resume`, `handoff`, `checkpoint`, `lease`, 
 
 Operational memory is optional and has shared (`memory/shared.md`) and task-local (`memory/tasks/<task>.md`) tiers. Its compact form uses `- source: [label](path)` and `- risk: ...` lines. Inspection is read-only; explicit compaction only removes duplicate lines and refuses approval history or flagged contradictions.
 
+ACP dispatch is experimental and disabled by default. A run requires explicit enablement and per-run acknowledgement, then claims exactly one ready task for its named agent. It records a local transcript hash and releases that lease at the end. It cannot invoke Git delivery commands and has no approval, review-resolution, push, merge, or release authority.
+
 ## Owning skills
 
 - `execution-graph`: defines and validates the DAG and graph lifecycle.
