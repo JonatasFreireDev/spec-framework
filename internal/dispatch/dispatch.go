@@ -9,6 +9,7 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"sort"
 	"strings"
@@ -50,6 +51,13 @@ type Finding struct {
 	DispatchID string `json:"dispatch_id"`
 	Detail     string `json:"detail"`
 	Owner      string `json:"owner"`
+}
+type Transcript struct {
+	DispatchID string `json:"dispatch_id"`
+	StartedAt  string `json:"started_at"`
+	FinishedAt string `json:"finished_at"`
+	ExitCode   int    `json:"exit_code"`
+	OutputHash string `json:"output_hash"`
 }
 
 func dir(root, work string) string {
@@ -221,6 +229,44 @@ func Reconcile(root, work string) ([]Finding, error) {
 	}
 	sort.Slice(out, func(i, j int) bool { return out[i].DispatchID < out[j].DispatchID })
 	return out, nil
+}
+
+// Run executes only an assigned code-runner envelope after explicit enablement.
+// It deliberately refuses Git delivery commands and records a transcript.
+func Run(root, work, id string, enabled bool, command string, args []string) (Transcript, error) {
+	if !enabled {
+		return Transcript{}, errors.New("supervised dispatch execution is disabled")
+	}
+	var e Envelope
+	path := filepath.Join(dir(root, work), id+".json")
+	if err := read(path, &e); err != nil {
+		return Transcript{}, err
+	}
+	if e.Role != "code-runner" || e.Status != "assigned" {
+		return Transcript{}, errors.New("only assigned code-runner dispatches can run")
+	}
+	if strings.EqualFold(filepath.Base(command), "git") {
+		return Transcript{}, errors.New("dispatch runner cannot invoke git delivery commands")
+	}
+	started := time.Now().UTC()
+	cmd := exec.Command(command, args...)
+	cmd.Dir = filepath.Dir(root)
+	output, err := cmd.CombinedOutput()
+	exit := 0
+	if x, ok := err.(*exec.ExitError); ok {
+		exit = x.ExitCode()
+	}
+	sum := sha256.Sum256(output)
+	t := Transcript{DispatchID: id, StartedAt: started.Format(time.RFC3339), FinishedAt: time.Now().UTC().Format(time.RFC3339), ExitCode: exit, OutputHash: hex.EncodeToString(sum[:])}
+	data, _ := json.MarshalIndent(t, "", "  ")
+	tdir := filepath.Join(dir(root, work), "transcripts")
+	if mk := os.MkdirAll(tdir, 0755); mk != nil {
+		return t, mk
+	}
+	if writeErr := os.WriteFile(filepath.Join(tdir, id+".json"), append(data, '\n'), 0644); writeErr != nil {
+		return t, writeErr
+	}
+	return t, err
 }
 func mustNodes(graph string) []workflow.Node {
 	var raw struct {

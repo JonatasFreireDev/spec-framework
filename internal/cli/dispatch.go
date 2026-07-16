@@ -26,6 +26,8 @@ func runDispatch(args []string, out, errout io.Writer) int {
 	id := fs.String("id", "", "dispatch id")
 	summary := fs.String("summary", "", "return summary")
 	evidence := fs.String("evidence", "", "comma-separated evidence")
+	command := fs.String("command", "", "supervised executable")
+	enable := fs.Bool("enable", false, "explicitly enable supervised execution")
 	diffHash := fs.String("diff-hash", "", "immutable working-tree diff hash")
 	parent := fs.String("parent", "", "returned code-runner dispatch id")
 	yes := fs.Bool("yes", false, "confirm mutation")
@@ -112,6 +114,18 @@ func runDispatch(args []string, out, errout io.Writer) int {
 		for _, x := range xs {
 			fmt.Fprintf(out, "%s %s -> %s\n", x.Kind, x.DispatchID, x.Owner)
 		}
+		return 0
+	case "run":
+		if !*yes || !*enable || *work == "" || *id == "" || *command == "" {
+			fmt.Fprintln(errout, "dispatch run requires --work --id --command --enable --yes")
+			return 2
+		}
+		t, e := dispatch.Run(p, *work, *id, *enable, *command, fs.Args())
+		if e != nil {
+			fmt.Fprintln(errout, e)
+			return 1
+		}
+		fmt.Fprintln(out, "RAN", t.DispatchID, t.OutputHash)
 		return 0
 	}
 	fmt.Fprintln(errout, "unknown dispatch operation")
