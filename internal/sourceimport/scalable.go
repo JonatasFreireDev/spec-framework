@@ -137,6 +137,13 @@ func CreateScalableRun(productRoot string, inputs []string, options CreateOption
 	}
 	runRoot := filepath.Join(base, "runs", runID)
 	sourceRoot := filepath.Join(base, "sources", runID)
+	published := false
+	defer func() {
+		if !published {
+			_ = os.RemoveAll(runRoot)
+			_ = os.RemoveAll(sourceRoot)
+		}
+	}()
 	for _, dir := range []string{runRoot, sourceRoot, filepath.Join(runRoot, "inventory", "pages"), filepath.Join(runRoot, "chunks")} {
 		if err := os.MkdirAll(dir, 0755); err != nil {
 			return "", err
@@ -149,6 +156,9 @@ func CreateScalableRun(productRoot string, inputs []string, options CreateOption
 	var page []ScalableSource
 	var sources []ScalableSource
 	for index, input := range chosen {
+		if isBinary(input) && options.BinaryPolicy == "reject" {
+			return "", fmt.Errorf("binary source rejected: %s", input)
+		}
 		name := fmt.Sprintf("%06d-%s", index+1, filepath.Base(input))
 		dest := filepath.Join(sourceRoot, name)
 		if err := copyFile(input, dest); err != nil {
@@ -162,9 +172,6 @@ func CreateScalableRun(productRoot string, inputs []string, options CreateOption
 		rel, _ := filepath.Rel(productRoot, dest)
 		source := ScalableSource{ID: fmt.Sprintf("SRC-%06d", index+1), OriginalPath: input, Path: filepath.ToSlash(rel), Format: strings.TrimPrefix(strings.ToLower(filepath.Ext(input)), "."), Size: info.Size(), SHA256: hash, Status: "queued"}
 		if isBinary(input) {
-			if options.BinaryPolicy == "reject" {
-				return "", fmt.Errorf("binary source rejected: %s", input)
-			}
 			source.Status, source.Reason = "excluded", "binary inventory only"
 		}
 		sources, page = append(sources, source), append(page, source)
@@ -201,7 +208,11 @@ func CreateScalableRun(productRoot string, inputs []string, options CreateOption
 	if err := writeJSON(filepath.Join(runRoot, "mapping.json"), MappingFile{SchemaVersion: scalableSchemaVersion, ImportID: runID}); err != nil {
 		return "", err
 	}
-	return runID, writeJSON(filepath.Join(runRoot, "import-plan.json"), map[string]any{"schema_version": scalableSchemaVersion, "import_id": runID, "status": "draft", "materialization_approved": false})
+	if err := writeJSON(filepath.Join(runRoot, "import-plan.json"), map[string]any{"schema_version": scalableSchemaVersion, "import_id": runID, "status": "draft", "materialization_approved": false}); err != nil {
+		return "", err
+	}
+	published = true
+	return runID, nil
 }
 
 func ImportStatus(productRoot, runID string) (ScalableStatus, error) {
@@ -362,7 +373,7 @@ func matchesAny(path string, patterns []string) bool {
 				return true
 			}
 		}
-		if strings.HasSuffix(pattern, "/**") && strings.Contains(path, strings.TrimSuffix(pattern, "/**")) {
+		if strings.HasSuffix(pattern, "/**") && strings.Contains(path, strings.TrimPrefix(strings.TrimSuffix(pattern, "/**"), "**/")) {
 			return true
 		}
 	}

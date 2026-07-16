@@ -48,6 +48,26 @@ func TestScalableRunRejectsBudgetBeforeCopy(t *testing.T) {
 	}
 }
 
+func TestScalableRunRejectsBinaryBeforeCopyAndHonorsDefaultExcludes(t *testing.T) {
+	root, source := t.TempDir(), t.TempDir()
+	dependency := filepath.Join(source, "node_modules")
+	if err := os.MkdirAll(dependency, 0755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(dependency, "ignored.md"), []byte("ignored"), 0644); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(source, "bad.pdf"), []byte("binary"), 0644); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := CreateScalableRun(root, []string{source}, CreateOptions{MaxFiles: 5, MaxTotalBytes: 100, MaxFileBytes: 100, ChunkSize: 1, BinaryPolicy: "reject"}); err == nil {
+		t.Fatal("binary accepted")
+	}
+	if _, err := os.Stat(filepath.Join(root, "knowledge", "imports", "sources", "IMPORT-001")); !os.IsNotExist(err) {
+		t.Fatal("partial sources preserved after rejected binary")
+	}
+}
+
 func TestScalableReviewRequiresEvidenceAndGuardsMaterialization(t *testing.T) {
 	root, source := t.TempDir(), t.TempDir()
 	file := filepath.Join(source, "a.md")
