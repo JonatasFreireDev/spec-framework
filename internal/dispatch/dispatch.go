@@ -15,6 +15,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/JonatasFreireDev/spec-framework/internal/sourceimport"
 	"github.com/JonatasFreireDev/spec-framework/internal/workflow"
 )
 
@@ -160,6 +161,9 @@ func Return(root, work, id, agent, summary, diffHash string, evidence []string) 
 	if err := write(path, e); err != nil {
 		return e, err
 	}
+	if e.TaskID == "" {
+		return e, nil
+	}
 	return e, workflow.ReleaseLease(root, e.TaskID, agent)
 }
 
@@ -209,6 +213,27 @@ func AssignResearch(root, work, unitPath, agent string) (Envelope, error) {
 	}
 	id := fmt.Sprintf("DISPATCH-%d", time.Now().UTC().UnixNano())
 	e := Envelope{Version: 1, ID: id, WorkspaceID: work, UnitKind: "technical-research", UnitPath: filepath.ToSlash(unitPath), Role: "technical-discovery", Agent: agent, InputHash: hex.EncodeToString(sum[:]), RequiredReading: []string{filepath.ToSlash(unitPath)}, ExpectedEvidence: []string{"sources", "options", "uncertainties"}, Status: "assigned", CreatedAt: time.Now().UTC().Format(time.RFC3339), Forbidden: []string{"decision", "approval", "engineering-proposal", "commit", "push", "merge", "release"}}
+	return e, write(filepath.Join(dir(root, work), id+".json"), e)
+}
+
+// AssignImportChunk claims one existing scalable-import chunk. It cannot record
+// review evidence or materialize mappings; those remain explicit import steps.
+func AssignImportChunk(root, work, run, chunkID, agent string) (Envelope, error) {
+	chunk, err := sourceimport.Resume(root, run, chunkID, agent)
+	if err != nil {
+		return Envelope{}, err
+	}
+	id := fmt.Sprintf("DISPATCH-%d", time.Now().UTC().UnixNano())
+	unit := filepath.Join(root, "knowledge", "imports", "runs", run, "chunks", chunk.ID+".json")
+	data, err := os.ReadFile(unit)
+	if err != nil {
+		return Envelope{}, err
+	}
+	sum := sha256.Sum256(data)
+	if err := os.MkdirAll(dir(root, work), 0755); err != nil {
+		return Envelope{}, err
+	}
+	e := Envelope{Version: 1, ID: id, WorkspaceID: work, UnitKind: "import-chunk", UnitPath: filepath.ToSlash(unit), Role: "artifact-importer", Agent: agent, InputHash: hex.EncodeToString(sum[:]), RequiredReading: []string{filepath.ToSlash(unit)}, ExpectedEvidence: []string{"evidence per source", "gaps"}, Status: "assigned", CreatedAt: time.Now().UTC().Format(time.RFC3339), Forbidden: []string{"materialize", "approval", "mapping-selection", "commit", "push", "merge", "release"}}
 	return e, write(filepath.Join(dir(root, work), id+".json"), e)
 }
 func Observe(root, work string) ([]Envelope, error) {

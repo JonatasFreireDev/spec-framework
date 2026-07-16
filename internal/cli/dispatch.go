@@ -39,6 +39,8 @@ func runDispatch(args []string, out, errout io.Writer) int {
 	max := fs.Int("max-parallel", 1, "maximum concurrent dispatches")
 	diffHash := fs.String("diff-hash", "", "immutable working-tree diff hash")
 	parent := fs.String("parent", "", "returned code-runner dispatch id")
+	runID := fs.String("run", "", "scalable import run")
+	chunk := fs.String("chunk", "", "scalable import chunk")
 	yes := fs.Bool("yes", false, "confirm mutation")
 	if err := fs.Parse(args[1:]); err != nil {
 		return 2
@@ -64,6 +66,19 @@ func runDispatch(args []string, out, errout io.Writer) int {
 		}
 		return 0
 	case "assign":
+		if *role == "artifact-importer" {
+			if !*yes || *work == "" || *runID == "" || *agent == "" {
+				fmt.Fprintln(errout, "artifact-importer assignment requires --work --run --agent --yes")
+				return 2
+			}
+			x, e := dispatch.AssignImportChunk(p, *work, *runID, *chunk, *agent)
+			if e != nil {
+				fmt.Fprintln(errout, e)
+				return 1
+			}
+			fmt.Fprintln(out, "ASSIGNED", x.ID)
+			return 0
+		}
 		if !*yes || *work == "" || *agent == "" || ((*role != "qa" && *role != "code-review" && *role != "security-review") && *task == "") || ((*role == "qa" || *role == "code-review" || *role == "security-review") && *parent == "") {
 			fmt.Fprintln(errout, "dispatch assign requires --work --task --agent --yes")
 			return 2
