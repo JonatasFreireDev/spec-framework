@@ -26,3 +26,8 @@ CHUNK-NNNN`, `--role threat-modeler --task <boundary-path>` e `--role
 technical-discovery --task <question-path>`. Esses três papéis são read-only:
 retornam evidência, opções, ameaças ou lacunas, sem materializar drafts, criar
 decisões, aceitar risco residual ou editar Engineering Proposals.
+
+Para concluir um chunk despachado, use `dispatch return --review-input
+<review.json> --yes`; o JSON é validado e registrado como evidência por fonte.
+O executor também confere os caminhos alterados pelo Git contra o `writeScope`
+da task e falha quando detectar escrita fora do contrato.

@@ -26,6 +26,8 @@ type Envelope struct {
 	TaskID           string   `json:"task_id"`
 	UnitKind         string   `json:"unit_kind"`
 	UnitPath         string   `json:"unit_path,omitempty"`
+	ImportRun        string   `json:"import_run,omitempty"`
+	ImportChunk      string   `json:"import_chunk,omitempty"`
 	Role             string   `json:"role"`
 	Agent            string   `json:"agent"`
 	Graph            string   `json:"graph"`
@@ -207,6 +209,27 @@ func Return(root, work, id, agent, summary, diffHash string, evidence []string) 
 	}
 	return e, workflow.ReleaseLease(root, e.TaskID, agent)
 }
+func ReturnImport(root, work, id, agent, summary string, review sourceimport.ChunkReview) (Envelope, error) {
+	var e Envelope
+	path := filepath.Join(dir(root, work), id+".json")
+	if err := read(path, &e); err != nil {
+		return e, err
+	}
+	if e.UnitKind != "import-chunk" || e.Agent != agent || e.Status != "assigned" {
+		return e, errors.New("dispatch is not an assigned import chunk for this agent")
+	}
+	if strings.TrimSpace(summary) == "" {
+		return e, errors.New("import return requires summary")
+	}
+	if err := sourceimport.RecordChunkReview(root, e.ImportRun, e.ImportChunk, agent, review); err != nil {
+		return e, err
+	}
+	e.Status = "returned"
+	e.Summary = summary
+	e.Evidence = []string{"structured source evidence"}
+	e.ReturnedAt = time.Now().UTC().Format(time.RFC3339)
+	return e, write(path, e)
+}
 
 // AssignReview creates an independent read-only review envelope for the exact
 // diff returned by a code-runner. It never claims write ownership.
@@ -287,7 +310,7 @@ func AssignImportChunk(root, work, run, chunkID, agent string) (Envelope, error)
 	if err := os.MkdirAll(dir(root, work), 0755); err != nil {
 		return Envelope{}, err
 	}
-	e := Envelope{Version: 1, ID: id, WorkspaceID: work, UnitKind: "import-chunk", UnitPath: filepath.ToSlash(unit), Role: "artifact-importer", Agent: agent, InputHash: hex.EncodeToString(sum[:]), RequiredReading: []string{filepath.ToSlash(unit)}, ExpectedEvidence: []string{"evidence per source", "gaps"}, Status: "assigned", CreatedAt: time.Now().UTC().Format(time.RFC3339), Forbidden: []string{"materialize", "approval", "mapping-selection", "commit", "push", "merge", "release"}}
+	e := Envelope{Version: 1, ID: id, WorkspaceID: work, UnitKind: "import-chunk", UnitPath: filepath.ToSlash(unit), ImportRun: run, ImportChunk: chunk.ID, Role: "artifact-importer", Agent: agent, InputHash: hex.EncodeToString(sum[:]), RequiredReading: []string{filepath.ToSlash(unit)}, ExpectedEvidence: []string{"evidence per source", "gaps"}, Status: "assigned", CreatedAt: time.Now().UTC().Format(time.RFC3339), Forbidden: []string{"materialize", "approval", "mapping-selection", "commit", "push", "merge", "release"}}
 	return e, write(filepath.Join(dir(root, work), id+".json"), e)
 }
 func Observe(root, work string) ([]Envelope, error) {
@@ -378,6 +401,11 @@ func Run(root, work, id string, enabled bool, command string, args []string) (Tr
 	cmd := exec.Command(command, args...)
 	cmd.Dir = filepath.Dir(root)
 	output, err := cmd.CombinedOutput()
+	if err == nil {
+		if scopeErr := validateWriteScope(filepath.Dir(root), e.WriteScope); scopeErr != nil {
+			err = scopeErr
+		}
+	}
 	exit := 0
 	if x, ok := err.(*exec.ExitError); ok {
 		exit = x.ExitCode()
@@ -396,6 +424,28 @@ func Run(root, work, id string, enabled bool, command string, args []string) (Tr
 		_ = retainTranscripts(tdir, cfg.TranscriptRetention)
 	}
 	return t, err
+}
+func validateWriteScope(repo string, scopes []string) error {
+	if len(scopes) == 0 {
+		return errors.New("dispatch task has no write scope")
+	}
+	out, err := exec.Command("git", "-C", repo, "diff", "--name-only").CombinedOutput()
+	if err != nil {
+		return err
+	}
+	for _, raw := range strings.Fields(string(out)) {
+		ok := false
+		for _, scope := range scopes {
+			scope = filepath.ToSlash(strings.TrimSuffix(scope, "/"))
+			if raw == scope || strings.HasPrefix(raw, scope+"/") {
+				ok = true
+			}
+		}
+		if !ok {
+			return fmt.Errorf("working-tree path %s escapes dispatch write scope", raw)
+		}
+	}
+	return nil
 }
 func retainTranscripts(path string, max int) error {
 	entries, err := os.ReadDir(path)

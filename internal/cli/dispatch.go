@@ -1,9 +1,11 @@
 package cli
 
 import (
+	"encoding/json"
 	"flag"
 	"fmt"
 	"github.com/JonatasFreireDev/spec-framework/internal/dispatch"
+	"github.com/JonatasFreireDev/spec-framework/internal/sourceimport"
 	"io"
 	"os"
 	"path/filepath"
@@ -41,6 +43,7 @@ func runDispatch(args []string, out, errout io.Writer) int {
 	parent := fs.String("parent", "", "returned code-runner dispatch id")
 	runID := fs.String("run", "", "scalable import run")
 	chunk := fs.String("chunk", "", "scalable import chunk")
+	reviewInput := fs.String("review-input", "", "structured import review JSON")
 	harnesses := fs.String("harnesses", "", "comma-separated allowed harness basenames")
 	enabled := fs.Bool("enabled", false, "enable dispatch capability")
 	retention := fs.Int("transcript-retention", 100, "transcripts to retain per workspace")
@@ -151,6 +154,25 @@ func runDispatch(args []string, out, errout io.Writer) int {
 		if !*yes || *work == "" || *id == "" || *agent == "" {
 			fmt.Fprintln(errout, "dispatch return requires --work --id --agent --yes")
 			return 2
+		}
+		if *reviewInput != "" {
+			data, e := os.ReadFile(*reviewInput)
+			if e != nil {
+				fmt.Fprintln(errout, e)
+				return 1
+			}
+			var review sourceimport.ChunkReview
+			if e = json.Unmarshal(data, &review); e != nil {
+				fmt.Fprintln(errout, e)
+				return 2
+			}
+			x, e := dispatch.ReturnImport(p, *work, *id, *agent, *summary, review)
+			if e != nil {
+				fmt.Fprintln(errout, e)
+				return 1
+			}
+			fmt.Fprintln(out, "RETURNED", x.ID)
+			return 0
 		}
 		x, e := dispatch.Return(p, *work, *id, *agent, *summary, *diffHash, splitCSV(*evidence))
 		if e != nil {
