@@ -27,6 +27,17 @@ type RuntimeState struct {
 	Attempts    int      `json:"attempts"`
 	Blockers    []string `json:"blockers,omitempty"`
 }
+
+// RuntimeEvent is append-only operational evidence. It never changes product
+// artifacts or lifecycle state.
+type RuntimeEvent struct {
+	Version     int               `json:"version"`
+	ID          string            `json:"id"`
+	WorkspaceID string            `json:"workspace_id"`
+	Kind        string            `json:"kind"`
+	OccurredAt  string            `json:"occurred_at"`
+	Details     map[string]string `json:"details,omitempty"`
+}
 type Handoff struct {
 	Version         int      `json:"version"`
 	ID              string   `json:"id"`
@@ -82,6 +93,52 @@ type Integration struct {
 }
 
 func workspaceDir(root, id string) string { return filepath.Join(root, ".product", "workspaces", id) }
+func eventDir(root, id string) string     { return filepath.Join(workspaceDir(root, id), "events") }
+
+func WriteRuntimeEvent(root, workspaceID, kind string, details map[string]string) (RuntimeEvent, error) {
+	if err := validateRuntimeComponent(workspaceID, "workspace"); err != nil {
+		return RuntimeEvent{}, err
+	}
+	if strings.TrimSpace(kind) == "" {
+		return RuntimeEvent{}, errors.New("runtime event kind is required")
+	}
+	dir := eventDir(root, workspaceID)
+	if err := os.MkdirAll(dir, 0755); err != nil {
+		return RuntimeEvent{}, err
+	}
+	id, err := nextID(dir, "EVENT-")
+	if err != nil {
+		return RuntimeEvent{}, err
+	}
+	e := RuntimeEvent{Version: RuntimeVersion, ID: id, WorkspaceID: workspaceID, Kind: kind, OccurredAt: time.Now().UTC().Format(time.RFC3339Nano), Details: details}
+	return e, writeJSON(filepath.Join(dir, id+".json"), e)
+}
+
+func RuntimeEvents(root, workspaceID string) ([]RuntimeEvent, error) {
+	if err := validateRuntimeComponent(workspaceID, "workspace"); err != nil {
+		return nil, err
+	}
+	entries, err := os.ReadDir(eventDir(root, workspaceID))
+	if os.IsNotExist(err) {
+		return []RuntimeEvent{}, nil
+	}
+	if err != nil {
+		return nil, err
+	}
+	items := make([]RuntimeEvent, 0, len(entries))
+	for _, entry := range entries {
+		if entry.IsDir() || filepath.Ext(entry.Name()) != ".json" {
+			continue
+		}
+		var event RuntimeEvent
+		if err := readJSON(filepath.Join(eventDir(root, workspaceID), entry.Name()), &event); err != nil {
+			return nil, fmt.Errorf("read runtime event %s: %w", entry.Name(), err)
+		}
+		items = append(items, event)
+	}
+	sort.Slice(items, func(i, j int) bool { return items[i].ID < items[j].ID })
+	return items, nil
+}
 func LoadWorkspace(root, id string) (Workspace, error) {
 	var w Workspace
 	if err := readJSON(filepath.Join(workspaceDir(root, id), "workspace.json"), &w); err == nil {
@@ -136,14 +193,22 @@ func WriteHandoff(root, id, from, to, summary string) (Handoff, error) {
 	_ = os.MkdirAll(dir, 0755)
 	n, _ := nextID(dir, "HANDOFF-")
 	h := Handoff{Version: 2, ID: n, WorkspaceID: id, From: from, To: to, Summary: summary, CreatedAt: time.Now().UTC().Format(time.RFC3339)}
-	return h, writeJSON(filepath.Join(dir, n+".json"), h)
+	if err := writeJSON(filepath.Join(dir, n+".json"), h); err != nil {
+		return h, err
+	}
+	_, _ = WriteRuntimeEvent(root, id, "handoff.created", map[string]string{"handoff_id": h.ID, "from": from, "to": to})
+	return h, nil
 }
 func WriteCheckpoint(root, id, step, base, input, output string) (Checkpoint, error) {
 	dir := filepath.Join(workspaceDir(root, id), "checkpoints")
 	_ = os.MkdirAll(dir, 0755)
 	n, _ := nextID(dir, "CHECKPOINT-")
 	c := Checkpoint{Version: 2, ID: n, WorkspaceID: id, Step: step, BaseCommit: base, InputHash: input, OutputHash: output, CreatedAt: time.Now().UTC().Format(time.RFC3339)}
-	return c, writeJSON(filepath.Join(dir, n+".json"), c)
+	if err := writeJSON(filepath.Join(dir, n+".json"), c); err != nil {
+		return c, err
+	}
+	_, _ = WriteRuntimeEvent(root, id, "checkpoint.created", map[string]string{"checkpoint_id": c.ID, "step": step})
+	return c, nil
 }
 
 func leasePath(root, task string) string {

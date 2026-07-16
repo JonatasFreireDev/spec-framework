@@ -27,6 +27,10 @@ func TestRuntimeV2WorkspaceResumeAndArtifacts(t *testing.T) {
 	if _, err = WriteCheckpoint(root, w.ID, "use-case", "abc", "in", "out"); err != nil {
 		t.Fatal(err)
 	}
+	events, err := RuntimeEvents(root, w.ID)
+	if err != nil || len(events) != 2 || events[0].Kind != "handoff.created" || events[1].Kind != "checkpoint.created" {
+		t.Fatalf("events=%+v err=%v", events, err)
+	}
 }
 
 func TestRuntimeMigratesLegacyWorkspace(t *testing.T) {
