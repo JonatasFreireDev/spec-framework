@@ -6,6 +6,14 @@ This document contains the operational contract for resumable, parallel, and evi
 
 The runtime coordinates workspaces, task ownership, command plans, execution waves, isolated worktrees, local integration, and recovery. It does not grant product approval, replace task write scopes, or spawn agents.
 
+## Configuration authority
+
+Runtime behavior is determined by the pinned product manifest, approved product
+artifacts, and explicit command flags. It must not read or inherit an ambient
+user configuration file for agent selection, task behavior, gates, approvals,
+or external access. Operator-local caches may retain only non-semantic details
+such as paths or event retention.
+
 ## Workspace and ownership
 
 - Use `.product/workspaces/WORK-NNN/` for concurrent focus; never invent a global active feature.
