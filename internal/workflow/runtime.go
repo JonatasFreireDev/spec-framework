@@ -94,6 +94,52 @@ type Integration struct {
 
 func workspaceDir(root, id string) string { return filepath.Join(root, ".product", "workspaces", id) }
 func eventDir(root, id string) string     { return filepath.Join(workspaceDir(root, id), "events") }
+func memoryDir(root, id string) string    { return filepath.Join(workspaceDir(root, id), "memory") }
+
+// WriteRuntimeMemory stores operational notes only. Canonical requirements,
+// decisions, approvals, and evidence remain in their owning artifacts.
+func WriteRuntimeMemory(root, workspaceID, taskID, content string) (string, error) {
+	if err := validateRuntimeComponent(workspaceID, "workspace"); err != nil {
+		return "", err
+	}
+	if strings.TrimSpace(content) == "" {
+		return "", errors.New("runtime memory content is required")
+	}
+	name := "shared.md"
+	if strings.TrimSpace(taskID) != "" {
+		if err := validateRuntimeComponent(taskID, "task"); err != nil {
+			return "", err
+		}
+		name = filepath.Join("tasks", taskID+".md")
+	}
+	path := filepath.Join(memoryDir(root, workspaceID), name)
+	if err := os.MkdirAll(filepath.Dir(path), 0755); err != nil {
+		return "", err
+	}
+	if err := atomicWrite(path, []byte(content)); err != nil {
+		return "", err
+	}
+	_, _ = WriteRuntimeEvent(root, workspaceID, "memory.updated", map[string]string{"task_id": taskID})
+	return path, nil
+}
+
+func ReadRuntimeMemory(root, workspaceID, taskID string) (string, error) {
+	if err := validateRuntimeComponent(workspaceID, "workspace"); err != nil {
+		return "", err
+	}
+	name := "shared.md"
+	if strings.TrimSpace(taskID) != "" {
+		if err := validateRuntimeComponent(taskID, "task"); err != nil {
+			return "", err
+		}
+		name = filepath.Join("tasks", taskID+".md")
+	}
+	data, err := os.ReadFile(filepath.Join(memoryDir(root, workspaceID), name))
+	if os.IsNotExist(err) {
+		return "", nil
+	}
+	return string(data), err
+}
 
 func WriteRuntimeEvent(root, workspaceID, kind string, details map[string]string) (RuntimeEvent, error) {
 	if err := validateRuntimeComponent(workspaceID, "workspace"); err != nil {

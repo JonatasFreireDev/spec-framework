@@ -50,6 +50,21 @@ func TestRuntimeMigratesLegacyWorkspace(t *testing.T) {
 	}
 }
 
+func TestRuntimeMemorySeparatesSharedAndTaskNotes(t *testing.T) {
+	root := t.TempDir()
+	if _, err := WriteRuntimeMemory(root, "WORK-001", "", "Shared risk: link to DEC-001."); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := WriteRuntimeMemory(root, "WORK-001", "TK-001", "Task-local observation."); err != nil {
+		t.Fatal(err)
+	}
+	shared, _ := ReadRuntimeMemory(root, "WORK-001", "")
+	task, _ := ReadRuntimeMemory(root, "WORK-001", "TK-001")
+	if !strings.Contains(shared, "Shared risk") || !strings.Contains(task, "Task-local") {
+		t.Fatalf("shared=%q task=%q", shared, task)
+	}
+}
+
 func TestLeaseHeartbeatAndRecovery(t *testing.T) {
 	root := t.TempDir()
 	_ = os.MkdirAll(filepath.Join(root, ".product"), 0755)
