@@ -16,3 +16,12 @@ func TestFindingRequiresProvenanceAndValidSeverity(t *testing.T) {
 		t.Fatal("invalid severity accepted")
 	}
 }
+
+func TestFindingRoutesWithoutChangingAuthority(t *testing.T) {
+	if got := (Finding{Scope: "missing security permission check"}).Route(); got != "security-review" {
+		t.Fatalf("route=%s", got)
+	}
+	if got := (Finding{Description: "coverage missing for negative case"}).Route(); got != "qa" {
+		t.Fatalf("route=%s", got)
+	}
+}

@@ -34,3 +34,19 @@ func (f Finding) Validate() error {
 	}
 	return nil
 }
+
+// Route proposes the owning framework skill. It is advisory and never changes
+// a task, review thread, approval, or provider-side state.
+func (f Finding) Route() string {
+	scope := strings.ToLower(f.Scope + " " + f.Description)
+	if strings.Contains(scope, "security") || strings.Contains(scope, "permission") || strings.Contains(scope, "privacy") {
+		return "security-review"
+	}
+	if strings.Contains(scope, "test") || strings.Contains(scope, "coverage") {
+		return "qa"
+	}
+	if strings.Contains(scope, "requirement") || strings.Contains(scope, "decision") || strings.Contains(scope, "scope") {
+		return "product-historian"
+	}
+	return "bug-fixer"
+}
