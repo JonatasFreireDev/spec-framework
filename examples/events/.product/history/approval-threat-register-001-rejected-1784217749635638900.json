@@ -1,0 +1,9 @@
+{
+  "artifact_id": "THREAT-REGISTER-001",
+  "path": "audits/security/threat-register.md",
+  "content_hash": "42ca511ebf58a29322ad5ede1e3de60897a1f6d3d5e3e02111b00c20e8dd4c83",
+  "status_granted": "rejected",
+  "approved_by": "jonatas",
+  "approved_at": "2026-07-16T16:02:29Z",
+  "notes": "asdasdsa"
+}

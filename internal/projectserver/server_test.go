@@ -98,6 +98,22 @@ func TestStatusAndRejectionEndpointsUseProductData(t *testing.T) {
 	if len(status.Documents) != 1 || status.Documents[0].Title != "Tarefa de exemplo" || status.Metrics.Pending != 1 {
 		t.Fatalf("status=%+v", status)
 	}
+	planRequest := bytes.NewBufferString(`{"artifactIds":["TASK-1"]}`)
+	response, err = http.Post(running.URL+"/api/batch-approval-plan", "application/json", planRequest)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer response.Body.Close()
+	if response.StatusCode != http.StatusOK {
+		t.Fatalf("batch plan status=%s", response.Status)
+	}
+	var plan workflow.BatchPlan
+	if err := json.NewDecoder(response.Body).Decode(&plan); err != nil {
+		t.Fatal(err)
+	}
+	if len(plan.ToApprove) != 1 || plan.ToApprove[0].ID != "TASK-1" {
+		t.Fatalf("batch plan=%+v", plan)
+	}
 	body := bytes.NewBufferString(`{"artifactId":"TASK-1","status":"rejected","approvedBy":"Product Owner","notes":"Falta definir os critérios.","confirmed":true}`)
 	response, err = http.Post(running.URL+"/api/transition", "application/json", body)
 	if err != nil {

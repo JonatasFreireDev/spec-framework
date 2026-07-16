@@ -5,7 +5,7 @@
 | Field | Value |
 | --- | --- |
 | ID | `THREAT-REGISTER-001` |
-| Status | `draft` |
+| Status | `rejected` |
 | Owner skill | Threat Modeler AI |
 | Governed by | `FRAMEWORK.md security policy` |
 | Scope | Product/framework adoption baseline |

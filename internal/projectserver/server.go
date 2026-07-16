@@ -160,6 +160,23 @@ func Start(ctx context.Context, config Config) (Running, error) {
 		}
 		writeJSON(w, http.StatusOK, records)
 	})
+	mux.HandleFunc("/api/batch-approval-plan", func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != http.MethodPost {
+			methodNotAllowed(w)
+			return
+		}
+		var request batchApprovalRequest
+		if err := decodeJSON(r, &request); err != nil {
+			writeAPIError(w, http.StatusBadRequest, err)
+			return
+		}
+		plan, err := workflow.BuildBatchApprovalPlan(root, workflow.BatchScope{IDs: request.ArtifactIDs}, "approved")
+		if err != nil {
+			writeAPIError(w, http.StatusUnprocessableEntity, err)
+			return
+		}
+		writeJSON(w, http.StatusOK, plan)
+	})
 
 	httpServer := &http.Server{Handler: mux, ReadHeaderTimeout: 5 * time.Second}
 	done := make(chan error, 1)
