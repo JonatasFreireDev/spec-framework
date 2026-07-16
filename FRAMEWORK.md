@@ -535,6 +535,12 @@ Runtime v2 makes execution resumable and safely parallel. The complete workspace
 
 Runtime commands include `runtime`, `resume`, `handoff`, `checkpoint`, `lease`, `commands`, `schedule`, `integrate`, and local `reviews import`. Imported review findings are immutable, provider-neutral evidence with provenance and an advisory owner route; import cannot resolve a remote review, alter code, or advance an approval.
 
+`dispatch` is an optional supervised orchestration layer. It assigns only ready
+units through persisted envelopes and leases. Independent QA, Code Review and
+Security Review envelopes pin the same returned diff hash and remain read-only.
+Dispatch execution and waves require explicit per-run enablement; they cannot
+approve, commit, push, merge, release, or resolve external reviews.
+
 Skills are specialists. They can operate in modes such as `create`, `update`, `audit`, `evolve`, `explain`, `compare`, and `refactor`, but each must have a clear responsibility.
 
 Definition and planning skills follow the shared Discovery and Challenge contract before substantive creation or material revision. They inspect repository and CLI evidence first, then use the harness-native structured question capability for human choices that cannot be discovered. Each round asks one to three focused questions; meaningful choices present concrete options, trade-offs, a recommendation, and a free-form path. Skills proactively warn about material scope, dependency, usability, security, operability, reversibility, approval, and delivery risks and propose safer alternatives. They must not finalize or hand off while a blocking question is unanswered, and conversational answers never grant formal approval. Harness adapters map the canonical `native_user_question` capability to their default question tool; a concise conversational question is the explicit fallback only when no structured tool is exposed.
