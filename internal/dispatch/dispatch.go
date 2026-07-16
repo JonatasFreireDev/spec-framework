@@ -64,6 +64,11 @@ type WaveResult struct {
 	Transcript *Transcript `json:"transcript,omitempty"`
 	Error      string      `json:"error,omitempty"`
 }
+type Recommendation struct {
+	Kind                 string `json:"kind"`
+	Detail               string `json:"detail"`
+	RequiresConfirmation bool   `json:"requires_confirmation"`
+}
 
 func dir(root, work string) string {
 	return filepath.Join(root, ".product", "workspaces", work, "dispatches")
@@ -300,6 +305,31 @@ func RunWave(root, work string, ids []string, max int, enabled bool, command str
 	}
 	sort.Slice(results, func(i, j int) bool { return results[i].ID < results[j].ID })
 	return results
+}
+
+// Recommend is advisory only; it never assigns, reprioritizes, or executes.
+func Recommend(root, work string, max int) ([]Recommendation, error) {
+	xs, err := Observe(root, work)
+	if err != nil {
+		return nil, err
+	}
+	active := 0
+	var out []Recommendation
+	for _, x := range xs {
+		if x.Status == "assigned" {
+			active++
+		}
+		if x.Status == "returned" && x.Role == "code-runner" {
+			out = append(out, Recommendation{"review-ready", "assign independent QA and Code Review for " + x.ID, true})
+		}
+	}
+	if max > 0 && active >= max {
+		out = append(out, Recommendation{"capacity", "active dispatches reach configured capacity", true})
+	}
+	if active == 0 {
+		out = append(out, Recommendation{"idle", "no active dispatches; inspect dispatch plan", true})
+	}
+	return out, nil
 }
 func mustNodes(graph string) []workflow.Node {
 	var raw struct {

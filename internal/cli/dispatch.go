@@ -10,6 +10,13 @@ import (
 	"strings"
 )
 
+func mustRecommendations(items []dispatch.Recommendation, err error) []dispatch.Recommendation {
+	if err != nil {
+		return []dispatch.Recommendation{{Kind: "unavailable", Detail: err.Error(), RequiresConfirmation: true}}
+	}
+	return items
+}
+
 func runDispatch(args []string, out, errout io.Writer) int {
 	if len(args) == 0 {
 		fmt.Fprintln(errout, "dispatch requires plan, assign, return, observe, or reconcile")
@@ -140,6 +147,15 @@ func runDispatch(args []string, out, errout io.Writer) int {
 			} else {
 				fmt.Fprintln(out, "RAN", r.ID, r.Transcript.OutputHash)
 			}
+		}
+		return 0
+	case "recommend":
+		if *work == "" {
+			fmt.Fprintln(errout, "dispatch recommend requires --work")
+			return 2
+		}
+		for _, r := range mustRecommendations(dispatch.Recommend(p, *work, *max)) {
+			fmt.Fprintln(out, r.Kind, r.Detail)
 		}
 		return 0
 	}
