@@ -41,6 +41,9 @@ func runDispatch(args []string, out, errout io.Writer) int {
 	parent := fs.String("parent", "", "returned code-runner dispatch id")
 	runID := fs.String("run", "", "scalable import run")
 	chunk := fs.String("chunk", "", "scalable import chunk")
+	harnesses := fs.String("harnesses", "", "comma-separated allowed harness basenames")
+	enabled := fs.Bool("enabled", false, "enable dispatch capability")
+	retention := fs.Int("transcript-retention", 100, "transcripts to retain per workspace")
 	yes := fs.Bool("yes", false, "confirm mutation")
 	if err := fs.Parse(args[1:]); err != nil {
 		return 2
@@ -55,6 +58,17 @@ func runDispatch(args []string, out, errout io.Writer) int {
 		g = filepath.Join(p, filepath.FromSlash(g))
 	}
 	switch args[0] {
+	case "configure":
+		if !*yes {
+			fmt.Fprintln(errout, "dispatch configure requires --yes")
+			return 2
+		}
+		if err := dispatch.SaveConfig(p, dispatch.Config{Version: 1, Enabled: *enabled, Harnesses: splitCSV(*harnesses), MaxParallel: *max, TranscriptRetention: *retention}); err != nil {
+			fmt.Fprintln(errout, err)
+			return 1
+		}
+		fmt.Fprintln(out, "DISPATCH CONFIGURED")
+		return 0
 	case "plan":
 		items, e := dispatch.Plan(p, g)
 		if e != nil {

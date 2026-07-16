@@ -72,9 +72,50 @@ type Recommendation struct {
 	Detail               string `json:"detail"`
 	RequiresConfirmation bool   `json:"requires_confirmation"`
 }
+type Config struct {
+	Version             int      `json:"version"`
+	Enabled             bool     `json:"enabled"`
+	Harnesses           []string `json:"harnesses"`
+	MaxParallel         int      `json:"max_parallel"`
+	TranscriptRetention int      `json:"transcript_retention"`
+}
 
 func dir(root, work string) string {
 	return filepath.Join(root, ".product", "workspaces", work, "dispatches")
+}
+func configPath(root string) string { return filepath.Join(root, ".product", "dispatch.json") }
+func LoadConfig(root string) (Config, error) {
+	data, err := os.ReadFile(configPath(root))
+	if os.IsNotExist(err) {
+		return Config{Version: 1, Enabled: false, MaxParallel: 1, TranscriptRetention: 100}, nil
+	}
+	if err != nil {
+		return Config{}, err
+	}
+	var c Config
+	if err := json.Unmarshal(data, &c); err != nil {
+		return Config{}, err
+	}
+	if c.MaxParallel < 1 {
+		c.MaxParallel = 1
+	}
+	return c, nil
+}
+func SaveConfig(root string, c Config) error {
+	if c.Version == 0 {
+		c.Version = 1
+	}
+	if c.MaxParallel < 1 {
+		c.MaxParallel = 1
+	}
+	data, err := json.MarshalIndent(c, "", "  ")
+	if err != nil {
+		return err
+	}
+	if err = os.MkdirAll(filepath.Dir(configPath(root)), 0755); err != nil {
+		return err
+	}
+	return os.WriteFile(configPath(root), append(data, '\n'), 0644)
 }
 func Plan(root, graph string) ([]Candidate, error) {
 	nodes, err := workflow.ReadyUnclaimed(root, graph)
@@ -305,6 +346,22 @@ func Reconcile(root, work string) ([]Finding, error) {
 func Run(root, work, id string, enabled bool, command string, args []string) (Transcript, error) {
 	if !enabled {
 		return Transcript{}, errors.New("supervised dispatch execution is disabled")
+	}
+	cfg, err := LoadConfig(root)
+	if err != nil {
+		return Transcript{}, err
+	}
+	if !cfg.Enabled {
+		return Transcript{}, errors.New("dispatch capability is disabled for this product")
+	}
+	allowed := false
+	for _, h := range cfg.Harnesses {
+		if strings.EqualFold(filepath.Base(command), filepath.Base(h)) {
+			allowed = true
+		}
+	}
+	if !allowed {
+		return Transcript{}, errors.New("command is not an enabled dispatch harness")
 	}
 	var e Envelope
 	path := filepath.Join(dir(root, work), id+".json")
