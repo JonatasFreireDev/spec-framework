@@ -66,6 +66,23 @@ func runDispatch(args []string, out, errout io.Writer) int {
 		}
 		return 0
 	case "assign":
+		if *role == "threat-modeler" {
+			if !*yes || *work == "" || *task == "" || *agent == "" {
+				fmt.Fprintln(errout, "threat-modeler assignment requires --work --task <boundary-path> --agent --yes")
+				return 2
+			}
+			path := *task
+			if !filepath.IsAbs(path) {
+				path = filepath.Join(p, filepath.FromSlash(path))
+			}
+			x, e := dispatch.AssignThreatModel(p, *work, path, *agent)
+			if e != nil {
+				fmt.Fprintln(errout, e)
+				return 1
+			}
+			fmt.Fprintln(out, "ASSIGNED", x.ID)
+			return 0
+		}
 		if *role == "artifact-importer" {
 			if !*yes || *work == "" || *runID == "" || *agent == "" {
 				fmt.Fprintln(errout, "artifact-importer assignment requires --work --run --agent --yes")

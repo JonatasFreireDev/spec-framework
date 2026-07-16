@@ -216,6 +216,19 @@ func AssignResearch(root, work, unitPath, agent string) (Envelope, error) {
 	return e, write(filepath.Join(dir(root, work), id+".json"), e)
 }
 
+// AssignThreatModel is a read-only assignment for one named trust boundary.
+func AssignThreatModel(root, work, boundaryPath, agent string) (Envelope, error) {
+	e, err := AssignResearch(root, work, boundaryPath, agent)
+	if err != nil {
+		return e, err
+	}
+	e.UnitKind = "security-boundary"
+	e.Role = "threat-modeler"
+	e.ExpectedEvidence = []string{"threats", "controls", "residual risks"}
+	e.Forbidden = []string{"risk-acceptance", "approval", "release", "commit", "push", "merge"}
+	return e, write(filepath.Join(dir(root, work), e.ID+".json"), e)
+}
+
 // AssignImportChunk claims one existing scalable-import chunk. It cannot record
 // review evidence or materialize mappings; those remain explicit import steps.
 func AssignImportChunk(root, work, run, chunkID, agent string) (Envelope, error) {
