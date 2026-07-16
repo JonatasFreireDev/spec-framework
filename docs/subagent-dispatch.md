@@ -16,6 +16,11 @@ QA, Code Review e Security Review recebem envelopes read-only presos ao mesmo
 `dispatch run --enable --yes`; ondas usam envelopes já atribuídos e
 `dispatch wave --enable --yes`.
 
+Antes de executar, habilite a capability no produto com `dispatch configure` e
+liste os harnesses permitidos. `dispatch wave` recebe uma `--wave` persistida
+do scheduler, não IDs arbitrários. Transcripts locais seguem a retenção definida
+em `--transcript-retention`.
+
 Também são suportados `--role artifact-importer --run IMPORT-NNN --chunk
 CHUNK-NNNN`, `--role threat-modeler --task <boundary-path>` e `--role
 technical-discovery --task <question-path>`. Esses três papéis são read-only:
