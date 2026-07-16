@@ -59,6 +59,11 @@ type Transcript struct {
 	ExitCode   int    `json:"exit_code"`
 	OutputHash string `json:"output_hash"`
 }
+type WaveResult struct {
+	ID         string      `json:"id"`
+	Transcript *Transcript `json:"transcript,omitempty"`
+	Error      string      `json:"error,omitempty"`
+}
 
 func dir(root, work string) string {
 	return filepath.Join(root, ".product", "workspaces", work, "dispatches")
@@ -267,6 +272,34 @@ func Run(root, work, id string, enabled bool, command string, args []string) (Tr
 		return t, writeErr
 	}
 	return t, err
+}
+
+// RunWave runs already-assigned envelopes with bounded local concurrency.
+func RunWave(root, work string, ids []string, max int, enabled bool, command string, args []string) []WaveResult {
+	if max < 1 {
+		max = 1
+	}
+	sem := make(chan struct{}, max)
+	out := make(chan WaveResult, len(ids))
+	for _, id := range ids {
+		id := id
+		go func() {
+			sem <- struct{}{}
+			defer func() { <-sem }()
+			t, e := Run(root, work, id, enabled, command, args)
+			r := WaveResult{ID: id, Transcript: &t}
+			if e != nil {
+				r.Error = e.Error()
+			}
+			out <- r
+		}()
+	}
+	results := make([]WaveResult, 0, len(ids))
+	for range ids {
+		results = append(results, <-out)
+	}
+	sort.Slice(results, func(i, j int) bool { return results[i].ID < results[j].ID })
+	return results
 }
 func mustNodes(graph string) []workflow.Node {
 	var raw struct {

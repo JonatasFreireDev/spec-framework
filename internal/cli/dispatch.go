@@ -28,6 +28,8 @@ func runDispatch(args []string, out, errout io.Writer) int {
 	evidence := fs.String("evidence", "", "comma-separated evidence")
 	command := fs.String("command", "", "supervised executable")
 	enable := fs.Bool("enable", false, "explicitly enable supervised execution")
+	ids := fs.String("ids", "", "comma-separated assigned dispatch ids")
+	max := fs.Int("max-parallel", 1, "maximum concurrent dispatches")
 	diffHash := fs.String("diff-hash", "", "immutable working-tree diff hash")
 	parent := fs.String("parent", "", "returned code-runner dispatch id")
 	yes := fs.Bool("yes", false, "confirm mutation")
@@ -126,6 +128,19 @@ func runDispatch(args []string, out, errout io.Writer) int {
 			return 1
 		}
 		fmt.Fprintln(out, "RAN", t.DispatchID, t.OutputHash)
+		return 0
+	case "wave":
+		if !*yes || !*enable || *work == "" || *ids == "" || *command == "" {
+			fmt.Fprintln(errout, "dispatch wave requires --work --ids --command --enable --yes")
+			return 2
+		}
+		for _, r := range dispatch.RunWave(p, *work, splitCSV(*ids), *max, *enable, *command, fs.Args()) {
+			if r.Error != "" {
+				fmt.Fprintln(errout, r.ID, r.Error)
+			} else {
+				fmt.Fprintln(out, "RAN", r.ID, r.Transcript.OutputHash)
+			}
+		}
 		return 0
 	}
 	fmt.Fprintln(errout, "unknown dispatch operation")
