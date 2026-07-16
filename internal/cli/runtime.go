@@ -14,7 +14,7 @@ import (
 
 func runRuntime(command string, args []string, out, errout io.Writer) int {
 	op := ""
-	if (command == "lease" || command == "commands" || command == "integrate") && len(args) > 0 && !strings.HasPrefix(args[0], "-") {
+	if (command == "lease" || command == "commands" || command == "integrate" || command == "runtime") && len(args) > 0 && !strings.HasPrefix(args[0], "-") {
 		op, args = args[0], args[1:]
 	}
 	fs := flag.NewFlagSet(command, flag.ContinueOnError)
@@ -37,6 +37,7 @@ func runRuntime(command string, args []string, out, errout io.Writer) int {
 	timeout := fs.Int("timeout", 300, "timeout seconds")
 	max := fs.Int("max-parallel", 4, "maximum parallel tasks")
 	dry := fs.Bool("dry-run", false, "preview migration")
+	jsonOutput := fs.Bool("json", false, "print structured output")
 	yes := fs.Bool("yes", false, "confirm mutation")
 	commits := fs.String("commits", "", "comma-separated commits")
 	isolate := fs.Bool("isolate", false, "create a task Git worktree")
@@ -210,8 +211,29 @@ func runRuntime(command string, args []string, out, errout io.Writer) int {
 		}
 	case "runtime":
 		if *work == "" {
-			fmt.Fprintln(errout, "upgrade runtime requires --work")
+			fmt.Fprintln(errout, "runtime requires --work")
 			return 2
+		}
+		if len(rest) > 0 && (rest[0] == "status" || rest[0] == "watch") {
+			state, e := workflow.Resume(p, *work)
+			if e != nil {
+				fmt.Fprintln(errout, e)
+				return 1
+			}
+			events, e := workflow.RuntimeEvents(p, *work)
+			if e != nil {
+				fmt.Fprintln(errout, e)
+				return 1
+			}
+			if *jsonOutput {
+				fmt.Fprintf(out, "{\"state\":%q,\"phase\":%q,\"events\":%d}\n", state.Status, state.Phase, len(events))
+				return 0
+			}
+			fmt.Fprintf(out, "Workspace %s: %s (%s); %d event(s)\n", state.WorkspaceID, state.Phase, state.Status, len(events))
+			for _, event := range events {
+				fmt.Fprintf(out, "%s %s %s\n", event.OccurredAt, event.ID, event.Kind)
+			}
+			return 0
 		}
 		msg, e := workflow.MigrateWorkspace(p, *work, *dry)
 		if e != nil {
