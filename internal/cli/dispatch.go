@@ -66,6 +66,23 @@ func runDispatch(args []string, out, errout io.Writer) int {
 		}
 		return 0
 	case "assign":
+		if *role == "technical-discovery" {
+			if !*yes || *work == "" || *task == "" || *agent == "" {
+				fmt.Fprintln(errout, "technical-discovery assignment requires --work --task <question-path> --agent --yes")
+				return 2
+			}
+			path := *task
+			if !filepath.IsAbs(path) {
+				path = filepath.Join(p, filepath.FromSlash(path))
+			}
+			x, e := dispatch.AssignResearch(p, *work, path, *agent)
+			if e != nil {
+				fmt.Fprintln(errout, e)
+				return 1
+			}
+			fmt.Fprintln(out, "ASSIGNED", x.ID)
+			return 0
+		}
 		if *role == "threat-modeler" {
 			if !*yes || *work == "" || *task == "" || *agent == "" {
 				fmt.Fprintln(errout, "threat-modeler assignment requires --work --task <boundary-path> --agent --yes")
