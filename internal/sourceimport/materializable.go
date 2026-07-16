@@ -41,6 +41,9 @@ func requireReviewedChunks(productRoot, runID string) error {
 		return err
 	}
 	for _, entry := range entries {
+		if entry.IsDir() || filepath.Ext(entry.Name()) != ".json" {
+			continue
+		}
 		var chunk Chunk
 		if err := readJSONFile(filepath.Join(productRoot, "knowledge", "imports", "runs", runID, "chunks", entry.Name()), &chunk); err != nil {
 			return err

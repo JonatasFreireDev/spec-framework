@@ -231,6 +231,9 @@ func ImportStatus(productRoot, runID string) (ScalableStatus, error) {
 		return status, err
 	}
 	for _, entry := range entries {
+		if entry.IsDir() || filepath.Ext(entry.Name()) != ".json" {
+			continue
+		}
 		var chunk Chunk
 		if readJSONFile(filepath.Join(runRoot, "chunks", entry.Name()), &chunk) != nil {
 			continue
@@ -264,6 +267,9 @@ func Resume(productRoot, runID, chunkID, agent string) (Chunk, error) {
 		return Chunk{}, err
 	}
 	for _, entry := range entries {
+		if entry.IsDir() || filepath.Ext(entry.Name()) != ".json" {
+			continue
+		}
 		var chunk Chunk
 		path := filepath.Join(dir, entry.Name())
 		unlock, lockErr := lockChunk(dir, strings.TrimSuffix(entry.Name(), ".json"))
