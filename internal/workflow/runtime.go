@@ -394,6 +394,25 @@ func CreateTaskWorktree(repoRoot, work, task string) (string, error) {
 	return path, nil
 }
 
+// RemoveTaskWorktree is an explicit cleanup operation for an isolated task.
+// Callers retain failed worktrees until a human/operator chooses cleanup.
+func RemoveTaskWorktree(repoRoot, work, task string) error {
+	if err := validateRuntimeComponent(work, "work"); err != nil {
+		return err
+	}
+	if err := validateRuntimeComponent(task, "task"); err != nil {
+		return err
+	}
+	path := filepath.Join(repoRoot, ".worktrees", work, task)
+	if _, err := os.Stat(path); os.IsNotExist(err) {
+		return nil
+	}
+	if out, err := gitOutput(repoRoot, "worktree", "remove", path); err != nil {
+		return fmt.Errorf("git worktree remove: %s", strings.TrimSpace(out))
+	}
+	return nil
+}
+
 func CreateCommandPlan(root, work, task, cwd, source, risk string, argv []string, timeout int) (CommandPlan, error) {
 	if err := validateRuntimeComponent(work, "work"); err != nil {
 		return CommandPlan{}, err

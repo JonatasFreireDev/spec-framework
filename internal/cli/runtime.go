@@ -99,6 +99,17 @@ func runRuntime(command string, args []string, out, errout io.Writer) int {
 			return 2
 		}
 		switch rest[0] {
+		case "cleanup":
+			if !*yes || !*isolate || *work == "" || *task == "" {
+				fmt.Fprintln(errout, "lease cleanup requires --work, --task, --isolate, and --yes")
+				return 2
+			}
+			if e := workflow.RemoveTaskWorktree(filepath.Dir(p), *work, *task); e != nil {
+				fmt.Fprintln(errout, e)
+				return 1
+			}
+			fmt.Fprintln(out, "WORKTREE CLEANED", *task)
+			return 0
 		case "claim":
 			if *isolate && strings.TrimSpace(*work) == "" {
 				fmt.Fprintln(errout, "lease claim --isolate requires --work")
