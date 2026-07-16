@@ -8,6 +8,7 @@ import (
 	"io"
 	"os"
 	"path/filepath"
+	"strconv"
 	"strings"
 
 	"github.com/JonatasFreireDev/spec-framework/internal/adapters"
@@ -22,6 +23,39 @@ import (
 
 type App struct {
 	version string
+}
+type multiFlag []string
+
+func (m *multiFlag) String() string         { return strings.Join(*m, ",") }
+func (m *multiFlag) Set(value string) error { *m = append(*m, value); return nil }
+
+func absoluteProductRoot(value string) (string, error) {
+	cwd, err := os.Getwd()
+	if err != nil {
+		return "", err
+	}
+	if filepath.IsAbs(value) {
+		return value, nil
+	}
+	return filepath.Join(cwd, value), nil
+}
+func parseByteLimit(value string) (int64, error) {
+	value = strings.ToUpper(strings.TrimSpace(value))
+	multiplier := int64(1)
+	for _, unit := range []struct {
+		suffix string
+		size   int64
+	}{{"GB", 1 << 30}, {"MB", 1 << 20}, {"KB", 1 << 10}, {"B", 1}} {
+		if strings.HasSuffix(value, unit.suffix) {
+			value, multiplier = strings.TrimSpace(strings.TrimSuffix(value, unit.suffix)), unit.size
+			break
+		}
+	}
+	number, err := strconv.ParseInt(value, 10, 64)
+	if err != nil || number < 1 {
+		return 0, fmt.Errorf("invalid byte limit %q", value)
+	}
+	return number * multiplier, nil
 }
 
 func New(version string) App {
@@ -327,8 +361,102 @@ func runGraph(args []string, stdout, stderr io.Writer) int {
 }
 
 func runImport(args []string, stdout, stderr io.Writer) int {
-	if len(args) == 0 || args[0] != "materialize" {
-		fmt.Fprintln(stderr, "usage: spec-framework import materialize --run IMPORT-NNN --approved-by <name> --yes")
+	if len(args) == 0 {
+		fmt.Fprintln(stderr, "usage: spec-framework import create|status|resume|materialize")
+		return 2
+	}
+	if args[0] == "create" {
+		flags := flag.NewFlagSet("import create", flag.ContinueOnError)
+		flags.SetOutput(stderr)
+		productRoot := flags.String("product-root", "product", "product root")
+		include := multiFlag{}
+		exclude := multiFlag{}
+		flags.Var(&include, "include", "include glob (repeatable)")
+		flags.Var(&exclude, "exclude", "exclude glob (repeatable)")
+		maxFiles := flags.Int("max-files", 500, "maximum matched files")
+		maxTotal := flags.String("max-total-bytes", "200MB", "maximum copied bytes")
+		maxFile := flags.String("max-file-bytes", "10MB", "maximum bytes per file")
+		chunkSize := flags.Int("chunk-size", 25, "sources per analysis chunk")
+		binaryPolicy := flags.String("binary-policy", "inventory_only", "inventory_only or reject")
+		if err := flags.Parse(args[1:]); err != nil {
+			return 2
+		}
+		if len(flags.Args()) == 0 {
+			fmt.Fprintln(stderr, "import create requires one or more source paths")
+			return 2
+		}
+		total, err := parseByteLimit(*maxTotal)
+		if err != nil {
+			fmt.Fprintln(stderr, err)
+			return 2
+		}
+		file, err := parseByteLimit(*maxFile)
+		if err != nil {
+			fmt.Fprintln(stderr, err)
+			return 2
+		}
+		root, err := absoluteProductRoot(*productRoot)
+		if err != nil {
+			fmt.Fprintln(stderr, err)
+			return 1
+		}
+		run, err := sourceimport.CreateScalableRun(root, flags.Args(), sourceimport.CreateOptions{Include: include, Exclude: exclude, MaxFiles: *maxFiles, MaxTotalBytes: total, MaxFileBytes: file, ChunkSize: *chunkSize, BinaryPolicy: *binaryPolicy})
+		if err != nil {
+			fmt.Fprintln(stderr, err)
+			return 1
+		}
+		fmt.Fprintln(stdout, "Created scalable import run", run)
+		return 0
+	}
+	if args[0] == "status" || args[0] == "resume" {
+		flags := flag.NewFlagSet("import "+args[0], flag.ContinueOnError)
+		flags.SetOutput(stderr)
+		productRoot := flags.String("product-root", "product", "product root")
+		runID := flags.String("run", "", "import run id")
+		agent := flags.String("agent", "", "importer identity")
+		chunk := flags.String("chunk", "", "chunk id")
+		jsonOutput := flags.Bool("json", false, "structured output")
+		if err := flags.Parse(args[1:]); err != nil {
+			return 2
+		}
+		if strings.TrimSpace(*runID) == "" {
+			fmt.Fprintln(stderr, "import "+args[0]+" requires --run")
+			return 2
+		}
+		root, err := absoluteProductRoot(*productRoot)
+		if err != nil {
+			fmt.Fprintln(stderr, err)
+			return 1
+		}
+		if args[0] == "resume" {
+			claimed, err := sourceimport.Resume(root, *runID, *chunk, *agent)
+			if err != nil {
+				fmt.Fprintln(stderr, err)
+				return 1
+			}
+			if *jsonOutput {
+				data, _ := json.Marshal(claimed)
+				fmt.Fprintln(stdout, string(data))
+			} else {
+				fmt.Fprintln(stdout, "RESUMED", claimed.ID, "for", claimed.Agent)
+			}
+			return 0
+		}
+		status, err := sourceimport.ImportStatus(root, *runID)
+		if err != nil {
+			fmt.Fprintln(stderr, err)
+			return 1
+		}
+		if *jsonOutput {
+			data, _ := json.Marshal(status)
+			fmt.Fprintln(stdout, string(data))
+		} else {
+			fmt.Fprintf(stdout, "%s: %d source(s), %d chunk(s): %d queued, %d reviewing, %d reviewed, %d blocked, %d excluded\n", status.ImportID, status.Sources, status.Chunks, status.Queued, status.Reviewing, status.Reviewed, status.Blocked, status.Excluded)
+		}
+		return 0
+	}
+	if args[0] != "materialize" {
+		fmt.Fprintln(stderr, "usage: spec-framework import create|status|resume|materialize")
 		return 2
 	}
 	flags := flag.NewFlagSet("import materialize", flag.ContinueOnError)
