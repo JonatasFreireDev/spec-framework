@@ -17,6 +17,7 @@ import (
 )
 
 const RuntimeVersion = 2
+const DefaultEventRetention = 500
 
 type RuntimeState struct {
 	Version     int      `json:"version"`
@@ -37,6 +38,12 @@ type RuntimeEvent struct {
 	Kind        string            `json:"kind"`
 	OccurredAt  string            `json:"occurred_at"`
 	Details     map[string]string `json:"details,omitempty"`
+}
+type RuntimeReplay struct {
+	WorkspaceID string         `json:"workspace_id"`
+	Total       int            `json:"total"`
+	ByKind      map[string]int `json:"by_kind"`
+	Latest      *RuntimeEvent  `json:"latest,omitempty"`
 }
 type Handoff struct {
 	Version         int      `json:"version"`
@@ -159,8 +166,11 @@ func WriteRuntimeEvent(root, workspaceID, kind string, details map[string]string
 	if err != nil {
 		return RuntimeEvent{}, err
 	}
-	e := RuntimeEvent{Version: RuntimeVersion, ID: id, WorkspaceID: workspaceID, Kind: kind, OccurredAt: time.Now().UTC().Format(time.RFC3339Nano), Details: details}
-	return e, writeJSON(filepath.Join(dir, id+".json"), e)
+	e := RuntimeEvent{Version: RuntimeVersion, ID: id, WorkspaceID: workspaceID, Kind: kind, OccurredAt: time.Now().UTC().Format(time.RFC3339Nano), Details: redactEventDetails(details)}
+	if err := writeJSON(filepath.Join(dir, id+".json"), e); err != nil {
+		return e, err
+	}
+	return e, retainRuntimeEvents(dir, DefaultEventRetention)
 }
 
 func RuntimeEvents(root, workspaceID string) ([]RuntimeEvent, error) {
@@ -187,6 +197,72 @@ func RuntimeEvents(root, workspaceID string) ([]RuntimeEvent, error) {
 	}
 	sort.Slice(items, func(i, j int) bool { return items[i].ID < items[j].ID })
 	return items, nil
+}
+
+func RuntimeEventsAfter(root, workspaceID, afterID string) ([]RuntimeEvent, error) {
+	events, err := RuntimeEvents(root, workspaceID)
+	if err != nil || strings.TrimSpace(afterID) == "" {
+		return events, err
+	}
+	for index, event := range events {
+		if event.ID == afterID {
+			return events[index+1:], nil
+		}
+	}
+	return nil, fmt.Errorf("runtime event %s is not retained for workspace %s", afterID, workspaceID)
+}
+
+func ReplayRuntimeEvents(root, workspaceID string) (RuntimeReplay, error) {
+	events, err := RuntimeEvents(root, workspaceID)
+	if err != nil {
+		return RuntimeReplay{}, err
+	}
+	replay := RuntimeReplay{WorkspaceID: workspaceID, Total: len(events), ByKind: map[string]int{}}
+	for index := range events {
+		replay.ByKind[events[index].Kind]++
+		replay.Latest = &events[index]
+	}
+	return replay, nil
+}
+
+func redactEventDetails(details map[string]string) map[string]string {
+	if len(details) == 0 {
+		return nil
+	}
+	clean := make(map[string]string, len(details))
+	for key, value := range details {
+		lower := strings.ToLower(key)
+		if strings.Contains(lower, "token") || strings.Contains(lower, "secret") || strings.Contains(lower, "password") || strings.Contains(lower, "authorization") || strings.Contains(lower, "cookie") {
+			clean[key] = "[redacted]"
+		} else {
+			clean[key] = value
+		}
+	}
+	return clean
+}
+
+func retainRuntimeEvents(dir string, max int) error {
+	if max <= 0 {
+		return nil
+	}
+	entries, err := os.ReadDir(dir)
+	if err != nil {
+		return err
+	}
+	var names []string
+	for _, entry := range entries {
+		if !entry.IsDir() && filepath.Ext(entry.Name()) == ".json" {
+			names = append(names, entry.Name())
+		}
+	}
+	sort.Strings(names)
+	for len(names) > max {
+		if err := os.Remove(filepath.Join(dir, names[0])); err != nil {
+			return err
+		}
+		names = names[1:]
+	}
+	return nil
 }
 func LoadWorkspace(root, id string) (Workspace, error) {
 	var w Workspace

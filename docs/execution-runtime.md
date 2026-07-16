@@ -18,6 +18,7 @@ such as paths or event retention.
 
 - Use `.product/workspaces/WORK-NNN/` for concurrent focus; never invent a global active feature.
 - A workspace records identity, state, handoffs, checkpoints, command plans, and evidence.
+- Its optional event ledger is append-only operational evidence at `events/`. It redacts secret-like detail keys and retains the newest 500 events; replay and observation are read-only and never infer an approval or product state.
 - Task ownership is a renewable lease with heartbeat and expiry. A lease does not grant approval or permission beyond the task's `writeScope`.
 - Isolated tasks use `.worktrees/WORK-NNN/TK-NNN` when the graph/runtime contract requires isolation.
 - Resume from `state.json`, the latest checkpoint, and the latest handoff. Legacy `WORK-NNN.json` is read-only until explicit migration.

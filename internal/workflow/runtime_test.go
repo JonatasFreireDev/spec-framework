@@ -33,6 +33,35 @@ func TestRuntimeV2WorkspaceResumeAndArtifacts(t *testing.T) {
 	}
 }
 
+func TestRuntimeEventsRedactSecretsAndReplayIncrementally(t *testing.T) {
+	root := t.TempDir()
+	first, err := WriteRuntimeEvent(root, "WORK-001", "test.started", map[string]string{"token": "do-not-store", "safe": "yes"})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, err = WriteRuntimeEvent(root, "WORK-001", "test.finished", nil); err != nil {
+		t.Fatal(err)
+	}
+	events, err := RuntimeEventsAfter(root, "WORK-001", first.ID)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(events) != 1 || events[0].Kind != "test.finished" {
+		t.Fatalf("events=%+v", events)
+	}
+	all, err := RuntimeEvents(root, "WORK-001")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if all[0].Details["token"] != "[redacted]" || all[0].Details["safe"] != "yes" {
+		t.Fatalf("details=%+v", all[0].Details)
+	}
+	replay, err := ReplayRuntimeEvents(root, "WORK-001")
+	if err != nil || replay.Total != 2 || replay.ByKind["test.started"] != 1 {
+		t.Fatalf("replay=%+v err=%v", replay, err)
+	}
+}
+
 func TestRuntimeMigratesLegacyWorkspace(t *testing.T) {
 	root := setupProduct(t)
 	dir := filepath.Join(root, ".product", "workspaces")
