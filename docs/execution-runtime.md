@@ -31,6 +31,8 @@ Parallel tasks require no dependency path between them and must not overlap in `
 
 Graph lifecycle is `draft -> proposed -> materialized -> approved`. `materialized` is a Graph-specific state: it means canonical task files and the generated index exist; it is not a general artifact lifecycle state.
 
+Scheduling is planning only. `schedule activate <wave>` is a separate, explicit operation and requires `--isolate`, a named agent, and `--yes`; it rechecks readiness against the same approved graph, acquires leases, and then creates only that wave's worktrees. A partial activation releases its newly acquired leases but preserves created worktrees for diagnosis and explicit cleanup.
+
 ## Command execution
 
 Command plans store direct argv rather than shell strings. The command executor initially permits only R0 read-only and R1 local-temporary operations. It refuses stale inputs, scope escapes, conflicting resources, unsupported risk levels, and attempts beyond the configured limit. Human approval is required for remote, destructive, security-sensitive, or otherwise consequential operations.

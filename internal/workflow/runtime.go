@@ -892,6 +892,64 @@ func BuildSchedule(root, work, graph string, max int) (Schedule, error) {
 	_ = os.MkdirAll(dir, 0755)
 	return s, writeJSON(filepath.Join(dir, work+".json"), s)
 }
+
+// ActivateScheduledWave is the explicit bridge between a previously computed
+// wave and isolated worktrees. It never invents work: every task must still be
+// ready in the approved graph and is leased before its worktree is created.
+// On failure it releases leases acquired by this call but preserves any created
+// worktree for diagnosis and explicit cleanup.
+func ActivateScheduledWave(productRoot, work, graph, waveID, agent string) ([]string, error) {
+	if err := validateRuntimeComponent(work, "work"); err != nil {
+		return nil, err
+	}
+	if err := validateRuntimeComponent(agent, "agent"); err != nil {
+		return nil, err
+	}
+	var schedule Schedule
+	if err := readJSON(filepath.Join(productRoot, ".product", "scheduler", "waves", work+".json"), &schedule); err != nil {
+		return nil, err
+	}
+	if filepath.Clean(schedule.Graph) != filepath.Clean(graph) {
+		return nil, errors.New("scheduled wave graph does not match requested graph")
+	}
+	var wave *Wave
+	for index := range schedule.Waves {
+		if schedule.Waves[index].ID == waveID {
+			wave = &schedule.Waves[index]
+			break
+		}
+	}
+	if wave == nil {
+		return nil, fmt.Errorf("scheduled wave %s not found", waveID)
+	}
+	var leased []string
+	var paths []string
+	fail := func(err error) ([]string, error) {
+		for _, task := range leased {
+			_ = ReleaseLease(productRoot, task, agent)
+		}
+		return paths, err
+	}
+	for _, task := range wave.Tasks {
+		readiness, err := CheckTaskReadiness(productRoot, graph, task)
+		if err != nil {
+			return fail(err)
+		}
+		if !readiness.Ready {
+			return fail(fmt.Errorf("task %s is not ready for scheduled activation", task))
+		}
+		if _, err := ClaimLease(productRoot, graph, task, agent, 30*time.Minute); err != nil {
+			return fail(err)
+		}
+		leased = append(leased, task)
+		path, err := CreateTaskWorktree(filepath.Dir(productRoot), work, task)
+		if err != nil {
+			return fail(err)
+		}
+		paths = append(paths, path)
+	}
+	return paths, nil
+}
 func CreateIntegration(root, work, base string, commits []string) (Integration, error) {
 	dir := filepath.Join(root, ".product", "integrations")
 	_ = os.MkdirAll(dir, 0755)

@@ -213,6 +213,21 @@ func runRuntime(command string, args []string, out, errout io.Writer) int {
 			return 0
 		}
 	case "schedule":
+		if len(rest) == 2 && rest[0] == "activate" {
+			if !*yes || !*isolate || *agent == "" {
+				fmt.Fprintln(errout, "schedule activate requires wave id, --agent, --isolate, and --yes")
+				return 2
+			}
+			paths, e := workflow.ActivateScheduledWave(p, *work, g, rest[1], *agent)
+			if e != nil {
+				fmt.Fprintln(errout, e)
+				return 1
+			}
+			for _, path := range paths {
+				fmt.Fprintln(out, "WORKTREE", path)
+			}
+			return 0
+		}
 		s, e := workflow.BuildSchedule(p, *work, g, *max)
 		if e != nil {
 			fmt.Fprintln(errout, e)
