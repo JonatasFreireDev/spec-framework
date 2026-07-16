@@ -168,3 +168,12 @@ func TestCommandPlanRejectsR2(t *testing.T) {
 		t.Fatal("R2 accepted")
 	}
 }
+
+func TestCommandPlanRejectsDeliveryAuthorityCommands(t *testing.T) {
+	root := t.TempDir()
+	for _, operation := range []string{"commit", "push", "merge"} {
+		if _, err := CreateCommandPlan(root, "W", "T", ".", "test", "R1", []string{"git", operation}, 1); err == nil {
+			t.Fatalf("git %s accepted", operation)
+		}
+	}
+}

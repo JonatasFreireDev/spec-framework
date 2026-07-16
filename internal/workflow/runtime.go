@@ -464,6 +464,12 @@ func CreateCommandPlan(root, work, task, cwd, source, risk string, argv []string
 	if len(argv) == 0 {
 		return CommandPlan{}, fmt.Errorf("argv is required")
 	}
+	if strings.EqualFold(filepath.Base(argv[0]), "git") && len(argv) > 1 {
+		switch strings.ToLower(argv[1]) {
+		case "commit", "push", "merge":
+			return CommandPlan{}, fmt.Errorf("command executor cannot run git %s; use the governed delivery owner", argv[1])
+		}
+	}
 	if timeout <= 0 {
 		timeout = 300
 	}
