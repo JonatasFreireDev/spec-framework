@@ -232,6 +232,7 @@ func validate(ctx context.Context, root, frameworkRoot string, strict bool, cand
 	d = append(d, validateDesignArtifacts(snap)...)
 	d = append(d, validateDesignSystem(snap)...)
 	d = append(d, validateEngineeringSystem(snap)...)
+	d = append(d, validateReviewFindings(snap)...)
 	d = append(d, validateTemplateConformance(snap)...)
 	if strict {
 		d = promoteApprovedWarnings(d, snap)

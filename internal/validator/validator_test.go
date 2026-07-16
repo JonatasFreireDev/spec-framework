@@ -64,6 +64,38 @@ func TestImportValidationDetectsChangedSourceAndDuplicateTargets(t *testing.T) {
 	}
 }
 
+func TestReviewFindingValidationRequiresNormalizedEvidence(t *testing.T) {
+	root := t.TempDir()
+	dir := filepath.Join(root, ".product", "reviews", "findings")
+	if err := os.MkdirAll(dir, 0755); err != nil {
+		t.Fatal(err)
+	}
+	write := func(name string, value any) {
+		data, _ := json.Marshal(value)
+		if err := os.WriteFile(filepath.Join(dir, name), data, 0644); err != nil {
+			t.Fatal(err)
+		}
+	}
+	write("one.json", map[string]any{"id": "RF-1", "source": "github", "reference": "https://example.test/1", "severity": "warning", "description": "missing test", "status": "open", "scope": "src/a.go", "evidence": "comment", "owner": "qa"})
+	write("duplicate.json", map[string]any{"id": "RF-1", "source": "github", "reference": "https://example.test/2", "severity": "warning", "description": "missing test", "status": "open", "scope": "src/b.go", "evidence": "comment", "owner": "qa"})
+	write("invalid.json", map[string]any{"id": "RF-2"})
+	result, err := Validate(context.Background(), root, root)
+	if err != nil {
+		t.Fatal(err)
+	}
+	duplicate, invalid := false, false
+	for _, diagnostic := range result.Diagnostics {
+		if diagnostic.Check != "review-findings" {
+			continue
+		}
+		duplicate = duplicate || strings.Contains(diagnostic.Message, "Duplicate")
+		invalid = invalid || strings.Contains(diagnostic.Message, "required")
+	}
+	if !duplicate || !invalid {
+		t.Fatalf("duplicate=%v invalid=%v diagnostics=%+v", duplicate, invalid, result.Diagnostics)
+	}
+}
+
 func TestDeliveryClosureRejectsLegacyAndUnknownHandoffs(t *testing.T) {
 	root := t.TempDir()
 	_ = os.MkdirAll(filepath.Join(root, "framework", "skills", "known"), 0755)
