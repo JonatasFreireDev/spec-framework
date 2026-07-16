@@ -188,6 +188,25 @@ func CreateScalableRun(productRoot string, inputs []string, options CreateOption
 	if err := writeJSON(filepath.Join(runRoot, "inventory", "index.json"), index); err != nil {
 		return "", err
 	}
+	// Compatibility summary for existing bootstrap/readers. The paged index is
+	// authoritative for scalable operations; this summary is never used to
+	// schedule or resume chunks.
+	legacy := Inventory{SchemaVersion: scalableSchemaVersion, ImportID: runID}
+	for _, source := range sources {
+		legacy.Sources = append(legacy.Sources, Source{Path: source.Path, Format: source.Format, Size: source.Size, SHA256: source.SHA256})
+	}
+	if err := writeJSON(filepath.Join(runRoot, "inventory.json"), legacy); err != nil {
+		return "", err
+	}
+	if err := writeJSON(filepath.Join(runRoot, "traceability.json"), Traceability{SchemaVersion: scalableSchemaVersion, ImportID: runID, Status: "chunked"}); err != nil {
+		return "", err
+	}
+	if err := os.WriteFile(filepath.Join(runRoot, "conflicts.md"), []byte("# Import Conflicts\n\nNo conflicts have been classified yet.\n"), 0644); err != nil {
+		return "", err
+	}
+	if err := os.WriteFile(filepath.Join(runRoot, "import-report.md"), []byte("# Import Report\n\nScalable review is organized by chunks.\n"), 0644); err != nil {
+		return "", err
+	}
 	for offset := 0; offset < len(sources); offset += options.ChunkSize {
 		end := offset + options.ChunkSize
 		if end > len(sources) {
