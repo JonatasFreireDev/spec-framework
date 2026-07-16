@@ -16,7 +16,7 @@ Answer these first; if any answer is unclear, stop and ask:
 - **Specialist or orchestrator?** Specialists own exactly one canonical artifact's content. Orchestrators own flow, gates, sequencing, and handoff across artifacts — they never author artifact content themselves.
 - **Which artifact does it own?** A specialist without an owned artifact, or an artifact already owned by another skill, means the skill should not exist — extend the existing owner instead.
 - **Does the owned artifact have a template?** If the artifact is new, a matching template in `framework/template/` must be created in the same change.
-- **Does this change the method?** Adding or reshaping a skill usually alters the framework contract — record an FDR (use the `fdr` skill) unless the change is purely editorial.
+- **Does this change the method?** Adding or reshaping a skill usually alters the framework contract — update `FRAMEWORK.md`, affected contracts, validators, and tests in the same change. Git history is the maintenance record.
 
 ## Canonical SKILL.md structure
 
@@ -55,7 +55,7 @@ description: "<Name> Skill. Use when Codex needs to <responsibility, lowercase c
 - Approved product decisions in the active product root's `knowledge/decisions/` and `.product/decisions.json`.
 
 ## Workflow
-<Numbered steps. Reference gates, statuses, and FDR routing rules where they apply.>
+<Numbered steps. Reference applicable gates, statuses, and routing rules.>
 
 ## Quality checklist
 - [ ] Preserves traceability to affected artifacts.
@@ -86,7 +86,7 @@ After writing the SKILL.md:
 2. Check `FRAMEWORK.md` for skill rosters, flow diagrams, or step tables that must mention it, and `AGENTS.md` / `framework/AGENTS.framework.md` for flow references.
 3. If it owns a new artifact: create the template in `framework/template/`, add the artifact to the canonical flow documentation, and update the readiness/validator rules if the artifact is gate-relevant.
 4. Update the `Handoff` sections of neighboring skills whose flow now includes the new skill.
-5. Record the FDR if the method changed.
+5. When the method changed, verify that `FRAMEWORK.md`, affected contracts, validators, and tests express the new behavior.
 
 No package manifest changes are needed: `assets.go` embeds `framework/skills/` wholesale. Update installer and rendering tests when target-specific metadata changes.
 
