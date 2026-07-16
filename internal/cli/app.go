@@ -713,6 +713,11 @@ func (app App) runInit(args []string, stdout, stderr io.Writer) int {
 	startingPoint := flags.String("starting-point", "new-product", "new-product, existing-product, existing-documents, existing-feature, existing-implementation, or audit-only")
 	sourcesValue := flags.String("sources", "", "comma-separated source files or directories for existing-documents")
 	sourceDir := flags.String("source-dir", "", "source directory for existing-documents")
+	importMaxFiles := flags.Int("import-max-files", 500, "maximum files for existing-documents import")
+	importMaxTotal := flags.String("import-max-total-bytes", "200MB", "maximum copied bytes for existing-documents import")
+	importMaxFile := flags.String("import-max-file-bytes", "10MB", "maximum bytes per imported file")
+	importChunkSize := flags.Int("import-chunk-size", 25, "sources per import review chunk")
+	importBinaryPolicy := flags.String("import-binary-policy", "inventory_only", "inventory_only or reject")
 	force := flags.Bool("force", false, "compatibility flag; never overwrites an existing product directory")
 	installImpeccable := flags.Bool("install-impeccable", false, "install the optional Impeccable adapter after init")
 	impeccableVersion := flags.String("impeccable-version", "", "explicit Impeccable CLI version")
@@ -769,7 +774,17 @@ func (app App) runInit(args []string, stdout, stderr io.Writer) int {
 	if strings.TrimSpace(*sourceDir) != "" {
 		sources = append(sources, *sourceDir)
 	}
-	result, err := install.Init(install.Options{Target: *target, Version: app.version, Agents: agents, StartingPoint: point, Sources: sources, Force: *force})
+	importTotal, err := parseByteLimit(*importMaxTotal)
+	if err != nil {
+		fmt.Fprintln(stderr, err)
+		return 2
+	}
+	importFile, err := parseByteLimit(*importMaxFile)
+	if err != nil {
+		fmt.Fprintln(stderr, err)
+		return 2
+	}
+	result, err := install.Init(install.Options{Target: *target, Version: app.version, Agents: agents, StartingPoint: point, Sources: sources, ImportOptions: sourceimport.CreateOptions{MaxFiles: *importMaxFiles, MaxTotalBytes: importTotal, MaxFileBytes: importFile, ChunkSize: *importChunkSize, BinaryPolicy: *importBinaryPolicy}, Force: *force})
 	if err != nil {
 		fmt.Fprintln(stderr, err)
 		return 1

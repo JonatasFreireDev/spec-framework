@@ -31,6 +31,7 @@ type Options struct {
 	Agents          []Agent
 	StartingPoint   string
 	Sources         []string
+	ImportOptions   sourceimport.CreateOptions
 	Force           bool
 }
 type Result struct {
@@ -141,7 +142,7 @@ func Init(opts Options) (Result, error) {
 	for _, action := range plan.Actions {
 		switch action {
 		case "create-import-run":
-			runID, err := sourceimport.CreateRun(filepath.Join(stagingRoot, "product"), opts.Sources)
+			runID, err := sourceimport.CreateScalableRun(filepath.Join(stagingRoot, "product"), opts.Sources, opts.ImportOptions)
 			if err != nil {
 				return Result{}, err
 			}

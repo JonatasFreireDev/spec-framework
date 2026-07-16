@@ -57,7 +57,7 @@ spec-framework init ../my-product --agents codex,cursor,claude --yes
 | `existing-implementation` | `knowledge/assessments/implementation-assessment.md` plus full Foundation |
 | `audit-only` | Read-only bootstrap; mutating CLI commands are refused |
 
-Use `--starting-point existing-documents` with `--source-dir` or `--sources` to bootstrap from existing product material. This creates an analysis-only import run with a per-source `traceability.json` ledger for an LLM or agent to fill with evidence, extracted claims, destinations, and unmapped gaps; it never treats source prose as approved product truth.
+Use `--starting-point existing-documents` with `--source-dir` or `--sources` to bootstrap from existing product material. This creates a scalable analysis-only import run with paged inventory and review chunks; use `--import-max-files`, `--import-max-total-bytes`, `--import-max-file-bytes`, and `--import-chunk-size` to set the explicit bootstrap budget. It never treats source prose as approved product truth.
 
 For a large document set, create a bounded scalable run with `import create`, inspect it with `import status`, and resume one bounded chunk at a time. Draft materialization remains a separate explicit command after sources/chunks and mappings have been reviewed: `spec-framework import materialize --run IMPORT-001 --approved-by "Product Owner" --yes`.
 
