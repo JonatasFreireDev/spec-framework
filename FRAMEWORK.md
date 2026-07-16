@@ -589,6 +589,7 @@ draft
 proposed
 materialized (Execution Graph only)
 approved
+rejected
 in_progress
 implemented
 validated
@@ -602,6 +603,10 @@ Rules:
 - `draft`: artifact created, still incomplete.
 - `proposed`: ready for human or audit review.
 - `approved`: can feed the next stage.
+- `rejected`: a human reviewed the current content and declined approval with a
+  required rationale. It cannot feed downstream work. A human may reject an
+  approved artifact to reopen it. After revision, it may return to `draft`,
+  `proposed`, or directly to `approved` through a new, recorded human review.
 - `in_progress`: being implemented.
 - `implemented`: code or artifact was produced.
 - `validated`: passed QA, review, Security Review when applicable, and has sufficient evidence.
@@ -615,6 +620,9 @@ Mandatory transitions:
 - `validate --write-registry` preserves `parents`, `children`, `depends_on`, decisions, and delivery dependencies from structured companion `context.md` YAML. Starting-point-specific parents are additive and must not erase the existing product graph.
 - `proposed`: does not require an approval record, but must not advance from an incomplete parent gate.
 - `approved` and later states: require a corresponding approval record in `.product/history/`, with `artifact_id`, `path`, `content_hash`, `status_granted`, `approved_by`, `approved_at`, and `notes`. Validator and operational navigation both require that record to match the current artifact content; editing status prose alone never advances work.
+- Rejection uses the same immutable history record with `status_granted:
+  rejected`; `approved_by` identifies the rejecting human for compatibility
+  with the audit schema, and `notes` must state what requires revision.
 - Human approval may be applied to one artifact with `approve` or to an explicit batch with `approve-batch`. Batch approval must preview the exact paths, IDs, hashes, ignored artifacts, blockers, and next gate first; it requires explicit scope, human identity, and `--yes`, and never includes stale or ineligible artifacts.
 - `approved -> in_progress`: requires an approved task or an explicit prototype/draft exception.
 - `in_progress -> implemented`: requires structured working-tree evidence in the task file: branch, base commit, changed paths, diff hash, tests, and gate results. It does not require a commit.
@@ -747,6 +755,17 @@ The runtime behavior shared by all agents is defined in the pinned `AGENTS.frame
 Installation, CLI update, product upgrade, and removal are separate. Install scripts verify and install the CLI without running `init`; `update` changes the CLI binary; `upgrade` changes the pinned product runtime; `uninstall` removes only managed CLI paths and optional namespaced caches/dispatchers. Product repositories are never searched for or removed by CLI uninstall.
 
 The CLI's generated help is authoritative for command syntax. Git history records how framework boundaries evolved; skills define specialist procedure; templates define artifact structure; `BOOTSTRAP.md` defines the initial route; `context.md` defines local state and handoff.
+
+### Local project-status server
+
+The optional `server` command provides a local-only, browser-based status
+surface for project users. It is not the technical workspace `dashboard`, does
+not expose a remote API, and does not create approvals itself. The interface
+may present eligible approval actions only through the existing approval engine,
+which remains responsible for previews, explicit confirmation, evidence, and
+authorization boundaries. The local process binds to loopback, supports graceful
+shutdown through `Ctrl+C` or `server stop`, and stores only ephemeral connection
+metadata under `.product/`.
 
 ## 16. Final Rule
 

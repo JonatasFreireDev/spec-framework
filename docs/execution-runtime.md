@@ -53,6 +53,26 @@ ACP dispatch is experimental and disabled by default. A run requires explicit en
 
 Extensions are versioned manifests discovered without execution. A capability is usable only when that manifest declares it and the product has a matching versioned record under `.product/extensions/`; discovery itself grants no trust or authority.
 
+## Local project-status server
+
+`spec-framework server` is a local-only, user-facing status surface. It binds
+only to `127.0.0.1`, opens the browser by default, and does not expose a remote
+API. It is deliberately separate from `dashboard`, which is the technical
+workspace view.
+
+Run `spec-framework server start` to start it, `spec-framework server status`
+to print its local URL, and `spec-framework server stop` from another terminal
+to request graceful shutdown. The foreground process also stops on `Ctrl+C`.
+The server stores a short-lived local descriptor under `.product/server.json`;
+it is removed after normal shutdown and never contains approval data.
+
+When the status surface enables review actions, it delegates approval and
+rejection to the same lifecycle engine as the CLI. A rejection requires a
+human identity and revision rationale, writes immutable history, and moves an
+eligible artifact to `rejected`, including an approved artifact that must be
+reopened. A revised rejected artifact may then be directly approved through a
+new recorded human review; the runtime never silently edits product scope.
+
 ## Owning skills
 
 - `execution-graph`: defines and validates the DAG and graph lifecycle.
