@@ -541,6 +541,10 @@ Security Review envelopes pin the same returned diff hash and remain read-only.
 Dispatch execution and waves require explicit per-run enablement; they cannot
 approve, commit, push, merge, release, or resolve external reviews.
 
+`dispatch-orchestrator` owns assignment and observation. `subagent-return-reviewer`
+owns the structured return record and routes gaps without changing product
+lifecycle or approval state.
+
 Skills are specialists. They can operate in modes such as `create`, `update`, `audit`, `evolve`, `explain`, `compare`, and `refactor`, but each must have a clear responsibility.
 
 Definition and planning skills follow the shared Discovery and Challenge contract before substantive creation or material revision. They inspect repository and CLI evidence first, then use the harness-native structured question capability for human choices that cannot be discovered. Each round asks one to three focused questions; meaningful choices present concrete options, trade-offs, a recommendation, and a free-form path. Skills proactively warn about material scope, dependency, usability, security, operability, reversibility, approval, and delivery risks and propose safer alternatives. They must not finalize or hand off while a blocking question is unanswered, and conversational answers never grant formal approval. Harness adapters map the canonical `native_user_question` capability to their default question tool; a concise conversational question is the explicit fallback only when no structured tool is exposed.
