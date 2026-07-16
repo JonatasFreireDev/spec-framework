@@ -141,6 +141,19 @@ func TestApprovedArtifactsRequireCanonicalTemplateSections(t *testing.T) {
 	}
 }
 
+func TestExecutionGraphRejectsLegacyTaskDependencyField(t *testing.T) {
+	s := Snapshot{Text: map[string]string{}, JSON: map[string]any{"execution-graph.json": map[string]any{
+		"status": "draft",
+		"nodes":  []any{map[string]any{"id": "TK-1", "path": "tasks/TK-1.md", "dependsOn": []any{}, "dependencies": []any{"TK-0"}, "writeScope": []any{"src"}}},
+	}}}
+	for _, diagnostic := range validateGraph("execution-graph.json", s.JSON["execution-graph.json"], s) {
+		if strings.Contains(diagnostic.Message, "non-canonical dependencies") {
+			return
+		}
+	}
+	t.Fatal("expected non-canonical dependency diagnostic")
+}
+
 func TestTierLRequiresEngineeringProposalAndReview(t *testing.T) {
 	s := Snapshot{Text: map[string]string{
 		"domains/d/goals/g/features/f/use-cases/u/context.md": "---\nrigor_tier: L\n---\n",

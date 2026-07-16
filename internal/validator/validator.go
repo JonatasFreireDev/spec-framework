@@ -737,6 +737,9 @@ func validateGraph(file string, value any, snap Snapshot) []Diagnostic {
 	}
 	base := filepath.ToSlash(filepath.Dir(file))
 	for id, node := range objects {
+		if _, legacy := node["dependencies"]; legacy {
+			out = append(out, Diagnostic{Error, "execution-graph", file, fmt.Sprintf("Node %s uses non-canonical dependencies.", id), "Keep dependency edges only in dependsOn on the Execution Graph; task files do not own graph edges."})
+		}
 		path, _ := node["path"].(string)
 		if path != "" {
 			full := filepath.ToSlash(filepath.Join(base, path))
