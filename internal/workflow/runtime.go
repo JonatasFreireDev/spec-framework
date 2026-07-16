@@ -17,6 +17,7 @@ import (
 )
 
 const RuntimeVersion = 2
+const DefaultEventRetention = 500
 
 type RuntimeState struct {
 	Version     int      `json:"version"`
@@ -26,6 +27,36 @@ type RuntimeState struct {
 	UpdatedAt   string   `json:"updated_at"`
 	Attempts    int      `json:"attempts"`
 	Blockers    []string `json:"blockers,omitempty"`
+}
+
+// RuntimeEvent is append-only operational evidence. It never changes product
+// artifacts or lifecycle state.
+type RuntimeEvent struct {
+	Version     int               `json:"version"`
+	ID          string            `json:"id"`
+	WorkspaceID string            `json:"workspace_id"`
+	Kind        string            `json:"kind"`
+	OccurredAt  string            `json:"occurred_at"`
+	Details     map[string]string `json:"details,omitempty"`
+}
+type RuntimeReplay struct {
+	WorkspaceID string         `json:"workspace_id"`
+	Total       int            `json:"total"`
+	ByKind      map[string]int `json:"by_kind"`
+	Latest      *RuntimeEvent  `json:"latest,omitempty"`
+}
+type RuntimeObservation struct {
+	State        RuntimeState `json:"state"`
+	Events       int          `json:"events"`
+	Checkpoints  int          `json:"checkpoints"`
+	Evidence     int          `json:"evidence"`
+	ActiveLeases []Lease      `json:"active_leases"`
+}
+type MemoryAssessment struct {
+	Path           string   `json:"path"`
+	Sources        []string `json:"sources"`
+	ActiveRisks    []string `json:"active_risks"`
+	Contradictions []string `json:"contradictions"`
 }
 type Handoff struct {
 	Version         int      `json:"version"`
@@ -80,8 +111,293 @@ type Integration struct {
 	IntegratedDiffHash                             string   `json:"integrated_diff_hash,omitempty"`
 	RequiresIntegratedQA                           bool     `json:"requires_integrated_qa"`
 }
+type RuntimeFinding struct {
+	Kind, Detail, Owner string
+}
 
 func workspaceDir(root, id string) string { return filepath.Join(root, ".product", "workspaces", id) }
+func eventDir(root, id string) string     { return filepath.Join(workspaceDir(root, id), "events") }
+func memoryDir(root, id string) string    { return filepath.Join(workspaceDir(root, id), "memory") }
+
+// WriteRuntimeMemory stores operational notes only. Canonical requirements,
+// decisions, approvals, and evidence remain in their owning artifacts.
+func WriteRuntimeMemory(root, workspaceID, taskID, content string) (string, error) {
+	if err := validateRuntimeComponent(workspaceID, "workspace"); err != nil {
+		return "", err
+	}
+	if strings.TrimSpace(content) == "" {
+		return "", errors.New("runtime memory content is required")
+	}
+	name := "shared.md"
+	if strings.TrimSpace(taskID) != "" {
+		if err := validateRuntimeComponent(taskID, "task"); err != nil {
+			return "", err
+		}
+		name = filepath.Join("tasks", taskID+".md")
+	}
+	path := filepath.Join(memoryDir(root, workspaceID), name)
+	if err := os.MkdirAll(filepath.Dir(path), 0755); err != nil {
+		return "", err
+	}
+	if err := atomicWrite(path, []byte(content)); err != nil {
+		return "", err
+	}
+	_, _ = WriteRuntimeEvent(root, workspaceID, "memory.updated", map[string]string{"task_id": taskID})
+	return path, nil
+}
+
+func ReadRuntimeMemory(root, workspaceID, taskID string) (string, error) {
+	if err := validateRuntimeComponent(workspaceID, "workspace"); err != nil {
+		return "", err
+	}
+	name := "shared.md"
+	if strings.TrimSpace(taskID) != "" {
+		if err := validateRuntimeComponent(taskID, "task"); err != nil {
+			return "", err
+		}
+		name = filepath.Join("tasks", taskID+".md")
+	}
+	data, err := os.ReadFile(filepath.Join(memoryDir(root, workspaceID), name))
+	if os.IsNotExist(err) {
+		return "", nil
+	}
+	return string(data), err
+}
+
+// AssessRuntimeMemory reads memory without granting it product authority.
+// Sources must be explicit Markdown links; approvals and approval history have
+// no place in this operational cache.
+func AssessRuntimeMemory(root, workspaceID, taskID string) (MemoryAssessment, error) {
+	content, err := ReadRuntimeMemory(root, workspaceID, taskID)
+	if err != nil {
+		return MemoryAssessment{}, err
+	}
+	name := "shared.md"
+	if taskID != "" {
+		name = filepath.Join("tasks", taskID+".md")
+	}
+	assessment := MemoryAssessment{Path: filepath.Join(memoryDir(root, workspaceID), name)}
+	for _, line := range strings.Split(content, "\n") {
+		trimmed := strings.TrimSpace(line)
+		if strings.HasPrefix(trimmed, "- risk:") {
+			assessment.ActiveRisks = append(assessment.ActiveRisks, strings.TrimSpace(strings.TrimPrefix(trimmed, "- risk:")))
+		}
+		if strings.HasPrefix(trimmed, "- source:") {
+			value := strings.TrimSpace(strings.TrimPrefix(trimmed, "- source:"))
+			if strings.Contains(value, "](") && strings.HasSuffix(value, ")") {
+				assessment.Sources = append(assessment.Sources, value)
+			} else {
+				assessment.Contradictions = append(assessment.Contradictions, "source lacks Markdown link: "+value)
+			}
+		}
+		lower := strings.ToLower(trimmed)
+		if strings.Contains(lower, "contradiction:") {
+			assessment.Contradictions = append(assessment.Contradictions, trimmed)
+		}
+		if strings.Contains(lower, "approval record") || strings.Contains(lower, "approval history") {
+			assessment.Contradictions = append(assessment.Contradictions, "memory must not contain approval history")
+		}
+	}
+	return assessment, nil
+}
+
+// CompactRuntimeMemory preserves distinct active risks and source links while
+// removing duplicate lines. It refuses to compact contradictory or approval
+// history content so a human can resolve it in the owning product artifact.
+func CompactRuntimeMemory(root, workspaceID, taskID string) (MemoryAssessment, error) {
+	assessment, err := AssessRuntimeMemory(root, workspaceID, taskID)
+	if err != nil {
+		return assessment, err
+	}
+	if len(assessment.Contradictions) > 0 {
+		return assessment, errors.New("runtime memory has contradictions; resolve them before compaction")
+	}
+	content, err := ReadRuntimeMemory(root, workspaceID, taskID)
+	if err != nil {
+		return assessment, err
+	}
+	seen := map[string]bool{}
+	var lines []string
+	for _, line := range strings.Split(content, "\n") {
+		key := strings.TrimSpace(line)
+		if key == "" || !seen[key] {
+			lines = append(lines, line)
+			seen[key] = true
+		}
+	}
+	_, err = WriteRuntimeMemory(root, workspaceID, taskID, strings.TrimRight(strings.Join(lines, "\n"), "\n")+"\n")
+	return assessment, err
+}
+
+func WriteRuntimeEvent(root, workspaceID, kind string, details map[string]string) (RuntimeEvent, error) {
+	if err := validateRuntimeComponent(workspaceID, "workspace"); err != nil {
+		return RuntimeEvent{}, err
+	}
+	if strings.TrimSpace(kind) == "" {
+		return RuntimeEvent{}, errors.New("runtime event kind is required")
+	}
+	dir := eventDir(root, workspaceID)
+	if err := os.MkdirAll(dir, 0755); err != nil {
+		return RuntimeEvent{}, err
+	}
+	id, err := nextID(dir, "EVENT-")
+	if err != nil {
+		return RuntimeEvent{}, err
+	}
+	e := RuntimeEvent{Version: RuntimeVersion, ID: id, WorkspaceID: workspaceID, Kind: kind, OccurredAt: time.Now().UTC().Format(time.RFC3339Nano), Details: redactEventDetails(details)}
+	if err := writeJSON(filepath.Join(dir, id+".json"), e); err != nil {
+		return e, err
+	}
+	return e, retainRuntimeEvents(dir, DefaultEventRetention)
+}
+
+func RuntimeEvents(root, workspaceID string) ([]RuntimeEvent, error) {
+	if err := validateRuntimeComponent(workspaceID, "workspace"); err != nil {
+		return nil, err
+	}
+	entries, err := os.ReadDir(eventDir(root, workspaceID))
+	if os.IsNotExist(err) {
+		return []RuntimeEvent{}, nil
+	}
+	if err != nil {
+		return nil, err
+	}
+	items := make([]RuntimeEvent, 0, len(entries))
+	for _, entry := range entries {
+		if entry.IsDir() || filepath.Ext(entry.Name()) != ".json" {
+			continue
+		}
+		var event RuntimeEvent
+		if err := readJSON(filepath.Join(eventDir(root, workspaceID), entry.Name()), &event); err != nil {
+			return nil, fmt.Errorf("read runtime event %s: %w", entry.Name(), err)
+		}
+		items = append(items, event)
+	}
+	sort.Slice(items, func(i, j int) bool { return items[i].ID < items[j].ID })
+	return items, nil
+}
+
+func RuntimeEventsAfter(root, workspaceID, afterID string) ([]RuntimeEvent, error) {
+	events, err := RuntimeEvents(root, workspaceID)
+	if err != nil || strings.TrimSpace(afterID) == "" {
+		return events, err
+	}
+	for index, event := range events {
+		if event.ID == afterID {
+			return events[index+1:], nil
+		}
+	}
+	return nil, fmt.Errorf("runtime event %s is not retained for workspace %s", afterID, workspaceID)
+}
+
+func ReplayRuntimeEvents(root, workspaceID string) (RuntimeReplay, error) {
+	events, err := RuntimeEvents(root, workspaceID)
+	if err != nil {
+		return RuntimeReplay{}, err
+	}
+	replay := RuntimeReplay{WorkspaceID: workspaceID, Total: len(events), ByKind: map[string]int{}}
+	for index := range events {
+		replay.ByKind[events[index].Kind]++
+		replay.Latest = &events[index]
+	}
+	return replay, nil
+}
+
+// ObserveRuntime produces a read-only local snapshot for status and watch.
+func ObserveRuntime(root, workspaceID string) (RuntimeObservation, error) {
+	state, err := Resume(root, workspaceID)
+	if err != nil {
+		return RuntimeObservation{}, err
+	}
+	events, err := RuntimeEvents(root, workspaceID)
+	if err != nil {
+		return RuntimeObservation{}, err
+	}
+	countJSON := func(dir string) (int, error) {
+		entries, err := os.ReadDir(dir)
+		if os.IsNotExist(err) {
+			return 0, nil
+		}
+		if err != nil {
+			return 0, err
+		}
+		count := 0
+		for _, entry := range entries {
+			if !entry.IsDir() && filepath.Ext(entry.Name()) == ".json" {
+				count++
+			}
+		}
+		return count, nil
+	}
+	checkpoints, err := countJSON(filepath.Join(workspaceDir(root, workspaceID), "checkpoints"))
+	if err != nil {
+		return RuntimeObservation{}, err
+	}
+	evidence, err := countJSON(filepath.Join(workspaceDir(root, workspaceID), "evidence"))
+	if err != nil {
+		return RuntimeObservation{}, err
+	}
+	var active []Lease
+	entries, err := os.ReadDir(filepath.Join(root, ".product", "claims"))
+	if err != nil && !os.IsNotExist(err) {
+		return RuntimeObservation{}, err
+	}
+	for _, entry := range entries {
+		if entry.IsDir() || filepath.Ext(entry.Name()) != ".json" {
+			continue
+		}
+		var lease Lease
+		if readJSON(filepath.Join(root, ".product", "claims", entry.Name()), &lease) != nil {
+			continue
+		}
+		expires, parseErr := time.Parse(time.RFC3339, lease.ExpiresAt)
+		if parseErr == nil && expires.After(time.Now().UTC()) {
+			active = append(active, lease)
+		}
+	}
+	sort.Slice(active, func(i, j int) bool { return active[i].TaskID < active[j].TaskID })
+	return RuntimeObservation{State: state, Events: len(events), Checkpoints: checkpoints, Evidence: evidence, ActiveLeases: active}, nil
+}
+
+func redactEventDetails(details map[string]string) map[string]string {
+	if len(details) == 0 {
+		return nil
+	}
+	clean := make(map[string]string, len(details))
+	for key, value := range details {
+		lower := strings.ToLower(key)
+		if strings.Contains(lower, "token") || strings.Contains(lower, "secret") || strings.Contains(lower, "password") || strings.Contains(lower, "authorization") || strings.Contains(lower, "cookie") {
+			clean[key] = "[redacted]"
+		} else {
+			clean[key] = value
+		}
+	}
+	return clean
+}
+
+func retainRuntimeEvents(dir string, max int) error {
+	if max <= 0 {
+		return nil
+	}
+	entries, err := os.ReadDir(dir)
+	if err != nil {
+		return err
+	}
+	var names []string
+	for _, entry := range entries {
+		if !entry.IsDir() && filepath.Ext(entry.Name()) == ".json" {
+			names = append(names, entry.Name())
+		}
+	}
+	sort.Strings(names)
+	for len(names) > max {
+		if err := os.Remove(filepath.Join(dir, names[0])); err != nil {
+			return err
+		}
+		names = names[1:]
+	}
+	return nil
+}
 func LoadWorkspace(root, id string) (Workspace, error) {
 	var w Workspace
 	if err := readJSON(filepath.Join(workspaceDir(root, id), "workspace.json"), &w); err == nil {
@@ -136,14 +452,22 @@ func WriteHandoff(root, id, from, to, summary string) (Handoff, error) {
 	_ = os.MkdirAll(dir, 0755)
 	n, _ := nextID(dir, "HANDOFF-")
 	h := Handoff{Version: 2, ID: n, WorkspaceID: id, From: from, To: to, Summary: summary, CreatedAt: time.Now().UTC().Format(time.RFC3339)}
-	return h, writeJSON(filepath.Join(dir, n+".json"), h)
+	if err := writeJSON(filepath.Join(dir, n+".json"), h); err != nil {
+		return h, err
+	}
+	_, _ = WriteRuntimeEvent(root, id, "handoff.created", map[string]string{"handoff_id": h.ID, "from": from, "to": to})
+	return h, nil
 }
 func WriteCheckpoint(root, id, step, base, input, output string) (Checkpoint, error) {
 	dir := filepath.Join(workspaceDir(root, id), "checkpoints")
 	_ = os.MkdirAll(dir, 0755)
 	n, _ := nextID(dir, "CHECKPOINT-")
 	c := Checkpoint{Version: 2, ID: n, WorkspaceID: id, Step: step, BaseCommit: base, InputHash: input, OutputHash: output, CreatedAt: time.Now().UTC().Format(time.RFC3339)}
-	return c, writeJSON(filepath.Join(dir, n+".json"), c)
+	if err := writeJSON(filepath.Join(dir, n+".json"), c); err != nil {
+		return c, err
+	}
+	_, _ = WriteRuntimeEvent(root, id, "checkpoint.created", map[string]string{"checkpoint_id": c.ID, "step": step})
+	return c, nil
 }
 
 func leasePath(root, task string) string {
@@ -262,6 +586,85 @@ func RecoverLeases(root string) ([]string, error) {
 	return out, nil
 }
 
+// ReconcileRuntime is read-only: it reports stale or orphaned operational
+// state and deliberately never repairs approval, task, or worktree state.
+func ReconcileRuntime(root, workspaceID string) ([]RuntimeFinding, error) {
+	if err := validateRuntimeComponent(workspaceID, "workspace"); err != nil {
+		return nil, err
+	}
+	findings := []RuntimeFinding{}
+	if _, err := Resume(root, workspaceID); err != nil {
+		findings = append(findings, RuntimeFinding{Kind: "workspace-state", Detail: err.Error(), Owner: "delivery-orchestrator"})
+	}
+	entries, err := os.ReadDir(filepath.Join(root, ".product", "claims"))
+	if err != nil && !os.IsNotExist(err) {
+		return nil, err
+	}
+	now := time.Now().UTC()
+	for _, entry := range entries {
+		var lease Lease
+		if readJSON(filepath.Join(root, ".product", "claims", entry.Name()), &lease) != nil {
+			continue
+		}
+		if lease.Graph == "" {
+			continue
+		}
+		expires, _ := time.Parse(time.RFC3339, lease.ExpiresAt)
+		if !expires.After(now) {
+			findings = append(findings, RuntimeFinding{Kind: "expired-lease", Detail: lease.TaskID, Owner: "delivery-orchestrator"})
+		}
+		graph := lease.Graph
+		if graph != "" && !filepath.IsAbs(graph) {
+			graph = filepath.Join(root, filepath.FromSlash(graph))
+		}
+		if graph != "" {
+			if _, err := os.Stat(graph); err != nil {
+				findings = append(findings, RuntimeFinding{Kind: "stale-graph", Detail: lease.TaskID + ": " + lease.Graph, Owner: "execution-graph"})
+			}
+		}
+	}
+	worktreeRoot := filepath.Join(filepath.Dir(root), ".worktrees", workspaceID)
+	if worktrees, readErr := os.ReadDir(worktreeRoot); readErr == nil {
+		for _, entry := range worktrees {
+			if !entry.IsDir() {
+				continue
+			}
+			if _, err := os.Stat(leasePath(root, entry.Name())); os.IsNotExist(err) {
+				findings = append(findings, RuntimeFinding{Kind: "orphaned-worktree", Detail: entry.Name(), Owner: "delivery-orchestrator"})
+			}
+		}
+	}
+	plans := filepath.Join(workspaceDir(root, workspaceID), "command-plans")
+	if planEntries, readErr := os.ReadDir(plans); readErr == nil {
+		for _, entry := range planEntries {
+			if entry.IsDir() || filepath.Ext(entry.Name()) != ".json" {
+				continue
+			}
+			id := strings.TrimSuffix(entry.Name(), ".json")
+			if _, err := os.Stat(filepath.Join(workspaceDir(root, workspaceID), "evidence", id+".json")); os.IsNotExist(err) {
+				findings = append(findings, RuntimeFinding{Kind: "missing-command-evidence", Detail: id, Owner: "command-executor"})
+			}
+		}
+	}
+	for _, event := range mustRuntimeEvents(root, workspaceID) {
+		if event.Kind == "integration.applied" && strings.TrimSpace(event.Details["diff_hash"]) == "" {
+			findings = append(findings, RuntimeFinding{Kind: "integration-diff-mismatch", Detail: event.ID, Owner: "integration-orchestrator"})
+		}
+	}
+	sort.Slice(findings, func(i, j int) bool {
+		if findings[i].Kind == findings[j].Kind {
+			return findings[i].Detail < findings[j].Detail
+		}
+		return findings[i].Kind < findings[j].Kind
+	})
+	return findings, nil
+}
+
+func mustRuntimeEvents(root, workspaceID string) []RuntimeEvent {
+	events, _ := RuntimeEvents(root, workspaceID)
+	return events
+}
+
 func CreateTaskWorktree(repoRoot, work, task string) (string, error) {
 	if err := validateRuntimeComponent(work, "work"); err != nil {
 		return "", err
@@ -283,6 +686,25 @@ func CreateTaskWorktree(repoRoot, work, task string) (string, error) {
 	return path, nil
 }
 
+// RemoveTaskWorktree is an explicit cleanup operation for an isolated task.
+// Callers retain failed worktrees until a human/operator chooses cleanup.
+func RemoveTaskWorktree(repoRoot, work, task string) error {
+	if err := validateRuntimeComponent(work, "work"); err != nil {
+		return err
+	}
+	if err := validateRuntimeComponent(task, "task"); err != nil {
+		return err
+	}
+	path := filepath.Join(repoRoot, ".worktrees", work, task)
+	if _, err := os.Stat(path); os.IsNotExist(err) {
+		return nil
+	}
+	if out, err := gitOutput(repoRoot, "worktree", "remove", path); err != nil {
+		return fmt.Errorf("git worktree remove: %s", strings.TrimSpace(out))
+	}
+	return nil
+}
+
 func CreateCommandPlan(root, work, task, cwd, source, risk string, argv []string, timeout int) (CommandPlan, error) {
 	if err := validateRuntimeComponent(work, "work"); err != nil {
 		return CommandPlan{}, err
@@ -299,6 +721,12 @@ func CreateCommandPlan(root, work, task, cwd, source, risk string, argv []string
 	}
 	if len(argv) == 0 {
 		return CommandPlan{}, fmt.Errorf("argv is required")
+	}
+	if strings.EqualFold(filepath.Base(argv[0]), "git") && len(argv) > 1 {
+		switch strings.ToLower(argv[1]) {
+		case "commit", "push", "merge":
+			return CommandPlan{}, fmt.Errorf("command executor cannot run git %s; use the governed delivery owner", argv[1])
+		}
 	}
 	if timeout <= 0 {
 		timeout = 300
@@ -463,6 +891,64 @@ func BuildSchedule(root, work, graph string, max int) (Schedule, error) {
 	dir := filepath.Join(root, ".product", "scheduler", "waves")
 	_ = os.MkdirAll(dir, 0755)
 	return s, writeJSON(filepath.Join(dir, work+".json"), s)
+}
+
+// ActivateScheduledWave is the explicit bridge between a previously computed
+// wave and isolated worktrees. It never invents work: every task must still be
+// ready in the approved graph and is leased before its worktree is created.
+// On failure it releases leases acquired by this call but preserves any created
+// worktree for diagnosis and explicit cleanup.
+func ActivateScheduledWave(productRoot, work, graph, waveID, agent string) ([]string, error) {
+	if err := validateRuntimeComponent(work, "work"); err != nil {
+		return nil, err
+	}
+	if err := validateRuntimeComponent(agent, "agent"); err != nil {
+		return nil, err
+	}
+	var schedule Schedule
+	if err := readJSON(filepath.Join(productRoot, ".product", "scheduler", "waves", work+".json"), &schedule); err != nil {
+		return nil, err
+	}
+	if filepath.Clean(schedule.Graph) != filepath.Clean(graph) {
+		return nil, errors.New("scheduled wave graph does not match requested graph")
+	}
+	var wave *Wave
+	for index := range schedule.Waves {
+		if schedule.Waves[index].ID == waveID {
+			wave = &schedule.Waves[index]
+			break
+		}
+	}
+	if wave == nil {
+		return nil, fmt.Errorf("scheduled wave %s not found", waveID)
+	}
+	var leased []string
+	var paths []string
+	fail := func(err error) ([]string, error) {
+		for _, task := range leased {
+			_ = ReleaseLease(productRoot, task, agent)
+		}
+		return paths, err
+	}
+	for _, task := range wave.Tasks {
+		readiness, err := CheckTaskReadiness(productRoot, graph, task)
+		if err != nil {
+			return fail(err)
+		}
+		if !readiness.Ready {
+			return fail(fmt.Errorf("task %s is not ready for scheduled activation", task))
+		}
+		if _, err := ClaimLease(productRoot, graph, task, agent, 30*time.Minute); err != nil {
+			return fail(err)
+		}
+		leased = append(leased, task)
+		path, err := CreateTaskWorktree(filepath.Dir(productRoot), work, task)
+		if err != nil {
+			return fail(err)
+		}
+		paths = append(paths, path)
+	}
+	return paths, nil
 }
 func CreateIntegration(root, work, base string, commits []string) (Integration, error) {
 	dir := filepath.Join(root, ".product", "integrations")

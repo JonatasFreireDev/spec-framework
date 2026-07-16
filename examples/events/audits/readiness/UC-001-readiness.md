@@ -98,7 +98,8 @@ The QR Code Check-in example is structurally ready and no longer has blocking de
 
 ### Task Readiness
 
-- [x] Tasks are small enough to implement and review independently.
+- [x] Tasks are complete vertical outcomes with scope, non-goals, implementation strategy, acceptance checks, and tests/evidence.
+- [x] Tasks are split only at real dependency, safe-parallelism, ownership/toolchain, or rollback/risk boundaries—not by file count, layer, or checklist length.
 - [x] Tasks have acceptance criteria and validation method.
 - [x] No task remains blocked by DEC-001 or DEC-002.
 - [x] No implementation task starts from an unapproved or incomplete specification.

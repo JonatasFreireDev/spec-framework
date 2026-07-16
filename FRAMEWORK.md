@@ -162,7 +162,11 @@ Represents the tasks as a DAG. Each node is an executable unit with explicit dep
 
 ### Task
 
-Executable unit derived from the Specification and the Execution Graph. A task must be small enough for implementation, testing, review, and rollback. Each task lives in its own file at `tasks/<task-id>.md`; this file is the canonical source for status, contract, Delivery Level/Priority, links to code, and evidence. `tasks.md` is only a generated index for human navigation.
+Executable unit derived from the Specification and the Execution Graph. A task is a complete, coherent vertical delivery contract: it states the intended outcome, boundaries and non-goals, applicable decisions, implementation approach, write scope, acceptance checks, tests, rollout or evidence, and handoff. Its file is deliberately rich enough for one agent to implement, test, review, and roll back the slice without reconstructing its contract from a batch of shallow files.
+
+Default to the fewest tasks that preserve real boundaries. Do not split work merely because it touches many files, crosses frontend/backend layers, or produces a long checklist. Split only when a contract or dependency must exist first, when disjoint write scopes enable safe parallelism, when ownership/toolchain boundaries are genuinely separate, or when rollback/risk requires isolation. A task may span many files when those changes form one verifiable outcome.
+
+Each task lives in its own file at `tasks/<task-id>.md`; this file is the canonical source for status, contract, Delivery Level/Priority, links to code, and evidence. `tasks.md` is only a generated index for human navigation.
 
 ### Code Link
 
@@ -529,7 +533,7 @@ Runtime v2 leases live in `.product/claims/<task-id>.json`; `.product/claims.jso
 
 Runtime v2 makes execution resumable and safely parallel. The complete workspace, lease, scheduler, command-plan, worktree, recovery, and integration contract is defined in [`docs/execution-runtime.md`](docs/execution-runtime.md). The runtime does not spawn agents or grant approval.
 
-Runtime commands include `runtime`, `resume`, `handoff`, `checkpoint`, `lease`, `commands`, `schedule`, and `integrate`.
+Runtime commands include `runtime`, `resume`, `handoff`, `checkpoint`, `lease`, `commands`, `schedule`, `integrate`, and local `reviews import`. Imported review findings are immutable, provider-neutral evidence with provenance and an advisory owner route; import cannot resolve a remote review, alter code, or advance an approval.
 
 Skills are specialists. They can operate in modes such as `create`, `update`, `audit`, `evolve`, `explain`, `compare`, and `refactor`, but each must have a clear responsibility.
 

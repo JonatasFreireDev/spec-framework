@@ -68,7 +68,7 @@ func (app App) NewCommand(stdout, stderr io.Writer) *cobra.Command {
 		app.legacyCommand("dashboard", "Show a consolidated workflow dashboard.", func(args []string, out, errout io.Writer) int { return runDashboard(args, out, errout) }, stdout, stderr),
 		app.legacyCommand("decisions", "Check or migrate product decisions.", func(args []string, out, errout io.Writer) int { return runDecisions(args, out, errout) }, stdout, stderr),
 	)
-	for _, name := range []string{"resume", "handoff", "checkpoint", "lease", "commands", "schedule", "integrate", "runtime"} {
+	for _, name := range []string{"resume", "handoff", "checkpoint", "lease", "commands", "schedule", "integrate", "runtime", "reviews"} {
 		command := name
 		root.AddCommand(app.legacyCommand(command, "Operate the resumable runtime.", func(args []string, out, errout io.Writer) int {
 			return runRuntime(command, args, out, errout)

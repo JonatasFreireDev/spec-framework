@@ -1,0 +1,6 @@
+{
+  "required": ["id", "version", "capabilities"],
+  "description": "Discovery is declarative only. A matching product-owned enablement record is required before any capability is usable.",
+  "capabilities": ["artifacts.read", "events.read", "reviews.import", "runtime.dispatch"],
+  "authority": "declarative only; capability does not grant approval, commit, push, merge, or writes outside a separately enforced scope"
+}

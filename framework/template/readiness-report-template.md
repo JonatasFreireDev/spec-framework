@@ -129,7 +129,8 @@ flowchart LR
 
 ### Task Readiness
 
-- [ ] Tasks are small enough to implement and review independently.
+- [ ] Each task is a complete vertical outcome with scope, non-goals, implementation strategy, acceptance checks, and tests/evidence.
+- [ ] Tasks are split only at real dependency, safe-parallelism, ownership/toolchain, or rollback/risk boundaries—not by file count, layer, or checklist length.
 - [ ] Tasks have acceptance criteria and validation method.
 - [ ] Blocked tasks name the blocking decision or dependency.
 - [ ] No implementation task starts from an unapproved or incomplete specification unless explicitly marked exploratory.

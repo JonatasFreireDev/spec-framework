@@ -232,6 +232,7 @@ func validate(ctx context.Context, root, frameworkRoot string, strict bool, cand
 	d = append(d, validateDesignArtifacts(snap)...)
 	d = append(d, validateDesignSystem(snap)...)
 	d = append(d, validateEngineeringSystem(snap)...)
+	d = append(d, validateReviewFindings(snap)...)
 	d = append(d, validateTemplateConformance(snap)...)
 	if strict {
 		d = promoteApprovedWarnings(d, snap)
@@ -737,6 +738,9 @@ func validateGraph(file string, value any, snap Snapshot) []Diagnostic {
 	}
 	base := filepath.ToSlash(filepath.Dir(file))
 	for id, node := range objects {
+		if _, legacy := node["dependencies"]; legacy {
+			out = append(out, Diagnostic{Error, "execution-graph", file, fmt.Sprintf("Node %s uses non-canonical dependencies.", id), "Keep dependency edges only in dependsOn on the Execution Graph; task files do not own graph edges."})
+		}
 		path, _ := node["path"].(string)
 		if path != "" {
 			full := filepath.ToSlash(filepath.Join(base, path))

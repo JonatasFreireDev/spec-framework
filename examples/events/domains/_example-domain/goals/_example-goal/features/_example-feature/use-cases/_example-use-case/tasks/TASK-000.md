@@ -47,9 +47,31 @@
 
 Preserve and execute the migrated task intent from the previous task set.
 
+## Scope And Boundaries
+
+### Included Behavior
+
+- Preserve the structural example task and its navigable task contract.
+
+### Non-Goals
+
+- Do not model real product implementation or split this example into file-level work.
+
+### Assumptions And Constraints
+
+- This is a structural example only; it does not grant delivery readiness.
+
+## Implementation Strategy
+
+- Keep the example as one complete vertical task record, even though it has no executable product scope.
+
 ## Acceptance Checks
 
 - Example task has a visible acceptance check.
+
+## Test And Evidence Strategy
+
+- Validate navigability and template conformance; no product test is applicable.
 
 ## Implementation Links
 
@@ -71,6 +93,17 @@ Preserve and execute the migrated task intent from the previous task set.
 | Screenshots | N/A until validation |
 | QA evidence | N/A until validation |
 | Security review | N/A until validation |
+
+## Working Tree Evidence
+
+| Field | Value |
+| --- | --- |
+| Changed paths | N/A for structural example |
+| Diff hash | N/A for structural example |
+| Narrow test | template/fixture validation |
+| Applicable gates | N/A |
+| Code Review diff hash | N/A |
+| QA diff hash | N/A |
 
 ## Migrated Notes
 

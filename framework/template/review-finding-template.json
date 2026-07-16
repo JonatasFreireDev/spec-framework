@@ -1,0 +1,12 @@
+{
+  "id": "RF-XXX",
+  "source": "github|coderabbit|ci|manual|ai",
+  "reference": "provider URL or immutable local reference",
+  "diff_hash": "optional observed diff hash",
+  "severity": "blocker|required_fix|warning|note",
+  "description": "Concrete finding and expected correction",
+  "status": "open|routed|resolved|wontfix",
+  "scope": "affected task, artifact, path, or product scope",
+  "evidence": "provider payload, log, or reviewed observation",
+  "owner": "bug-fixer|code-runner|qa|security-review|product-historian"
+}

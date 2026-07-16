@@ -12,6 +12,17 @@
 | Source specification | SPEC-TEMPLATE |
 | Source node | TASK-TEMPLATE-001 |
 
+## Navigation
+
+| Artifact | Link |
+| --- | --- |
+| Context | [../context.md](../context.md) |
+| Specification | [../specification.md](../specification.md) |
+| Implementation Plan | [../implementation-plan.md](../implementation-plan.md) |
+| Execution Graph | [../execution-graph.json](../execution-graph.json) |
+| Tasks Index | [../tasks.md](../tasks.md) |
+| Tests | [../tests.md](../tests.md) |
+
 ## Delivery
 
 | Field | Value |
@@ -36,6 +47,38 @@
 | Write scope | src/template-use-case |
 | Shared resources | none |
 | Graph node status | pending |
+
+## Objective
+
+Deliver the first coherent vertical slice for this use case.
+
+## Scope And Boundaries
+
+### Included Behavior
+
+- Implement the behavior, integration, and assigned evidence covered by this graph node.
+
+### Non-Goals
+
+- Do not expand into adjacent nodes or unapproved product scope.
+
+### Assumptions And Constraints
+
+- Preserve approved decisions, declared write scope, dependencies, and shared resources.
+
+## Implementation Strategy
+
+- Use one coherent approach across the declared modules; do not split this task merely by file count or technical layer.
+- Record migration, integration, rollout, and rollback boundaries when applicable.
+
+## Acceptance Checks
+
+- The vertical slice satisfies AC-TEMPLATE-001 and is reviewable as one outcome.
+
+## Test And Evidence Strategy
+
+- Implement TEST-TEMPLATE-001 plus applicable negative and integration coverage.
+- Record relevant validation commands and evidence against the current diff.
 
 ## Implementation Links
 
@@ -68,3 +111,15 @@
 | CI URL | N/A |
 | Screenshots | N/A |
 | QA evidence | N/A until validation |
+
+## Blockers
+
+- None.
+
+## Handoff
+
+| Field | Value |
+| --- | --- |
+| Ready for implementation | no; requires graph/task approval and readiness check |
+| Required next skill | code-runner |
+| Notes | This canonical task contract is intentionally complete; do not divide it only by file count, layer, or checklist length. |

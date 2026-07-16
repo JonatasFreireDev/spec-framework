@@ -27,6 +27,84 @@ func TestRuntimeV2WorkspaceResumeAndArtifacts(t *testing.T) {
 	if _, err = WriteCheckpoint(root, w.ID, "use-case", "abc", "in", "out"); err != nil {
 		t.Fatal(err)
 	}
+	events, err := RuntimeEvents(root, w.ID)
+	if err != nil || len(events) != 2 || events[0].Kind != "handoff.created" || events[1].Kind != "checkpoint.created" {
+		t.Fatalf("events=%+v err=%v", events, err)
+	}
+}
+
+func TestRuntimeEventsRedactSecretsAndReplayIncrementally(t *testing.T) {
+	root := t.TempDir()
+	first, err := WriteRuntimeEvent(root, "WORK-001", "test.started", map[string]string{"token": "do-not-store", "safe": "yes"})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, err = WriteRuntimeEvent(root, "WORK-001", "test.finished", nil); err != nil {
+		t.Fatal(err)
+	}
+	events, err := RuntimeEventsAfter(root, "WORK-001", first.ID)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(events) != 1 || events[0].Kind != "test.finished" {
+		t.Fatalf("events=%+v", events)
+	}
+	all, err := RuntimeEvents(root, "WORK-001")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if all[0].Details["token"] != "[redacted]" || all[0].Details["safe"] != "yes" {
+		t.Fatalf("details=%+v", all[0].Details)
+	}
+	replay, err := ReplayRuntimeEvents(root, "WORK-001")
+	if err != nil || replay.Total != 2 || replay.ByKind["test.started"] != 1 {
+		t.Fatalf("replay=%+v err=%v", replay, err)
+	}
+}
+
+func TestObserveRuntimeIsReadOnlySnapshot(t *testing.T) {
+	root := setupProduct(t)
+	w, err := CreateWorkspace(root, "FT-1", "", "", "", "tester")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, err := WriteCheckpoint(root, w.ID, "task", "", "", ""); err != nil {
+		t.Fatal(err)
+	}
+	observation, err := ObserveRuntime(root, w.ID)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if observation.Checkpoints != 1 || observation.Events != 1 || observation.State.WorkspaceID != w.ID {
+		t.Fatalf("observation=%+v", observation)
+	}
+}
+
+func TestReconcileReportsButDoesNotRepairRuntimeState(t *testing.T) {
+	root := setupProduct(t)
+	w, err := CreateWorkspace(root, "FT-1", "", "", "", "tester")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := os.MkdirAll(filepath.Join(filepath.Dir(root), ".worktrees", w.ID, "TK-001"), 0755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.MkdirAll(filepath.Join(workspaceDir(root, w.ID), "command-plans"), 0755); err != nil {
+		t.Fatal(err)
+	}
+	if err := writeJSON(filepath.Join(workspaceDir(root, w.ID), "command-plans", "CMDPLAN-001.json"), CommandPlan{}); err != nil {
+		t.Fatal(err)
+	}
+	findings, err := ReconcileRuntime(root, w.ID)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(findings) < 2 {
+		t.Fatalf("findings=%+v", findings)
+	}
+	if _, err := os.Stat(filepath.Join(filepath.Dir(root), ".worktrees", w.ID, "TK-001")); err != nil {
+		t.Fatal("reconcile changed worktree")
+	}
 }
 
 func TestRuntimeMigratesLegacyWorkspace(t *testing.T) {
@@ -43,6 +121,39 @@ func TestRuntimeMigratesLegacyWorkspace(t *testing.T) {
 	s, err := Resume(root, "WORK-009")
 	if err != nil || s.Version != 2 {
 		t.Fatalf("%+v %v", s, err)
+	}
+}
+
+func TestRuntimeMemorySeparatesSharedAndTaskNotes(t *testing.T) {
+	root := t.TempDir()
+	if _, err := WriteRuntimeMemory(root, "WORK-001", "", "- risk: dependency may fail\n- source: [decision](knowledge/decisions/DEC-001.md)\n- risk: dependency may fail\n"); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := WriteRuntimeMemory(root, "WORK-001", "TK-001", "Task-local observation."); err != nil {
+		t.Fatal(err)
+	}
+	shared, _ := ReadRuntimeMemory(root, "WORK-001", "")
+	task, _ := ReadRuntimeMemory(root, "WORK-001", "TK-001")
+	if !strings.Contains(shared, "dependency may fail") || !strings.Contains(task, "Task-local") {
+		t.Fatalf("shared=%q task=%q", shared, task)
+	}
+	assessment, err := CompactRuntimeMemory(root, "WORK-001", "")
+	if err != nil || len(assessment.ActiveRisks) != 2 || len(assessment.Sources) != 1 {
+		t.Fatalf("assessment=%+v err=%v", assessment, err)
+	}
+	shared, _ = ReadRuntimeMemory(root, "WORK-001", "")
+	if strings.Count(shared, "dependency may fail") != 1 {
+		t.Fatalf("compact=%q", shared)
+	}
+}
+
+func TestRuntimeMemoryRejectsApprovalHistoryDuringCompaction(t *testing.T) {
+	root := t.TempDir()
+	if _, err := WriteRuntimeMemory(root, "WORK-001", "", "Approval history: approved by someone"); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := CompactRuntimeMemory(root, "WORK-001", ""); err == nil {
+		t.Fatal("approval history compacted")
 	}
 }
 
@@ -147,5 +258,14 @@ func TestCommandPlanRejectsR2(t *testing.T) {
 	_, err := CreateCommandPlan(root, "W", "T", ".", "test", "R2", []string{"go", "test"}, 1)
 	if err == nil {
 		t.Fatal("R2 accepted")
+	}
+}
+
+func TestCommandPlanRejectsDeliveryAuthorityCommands(t *testing.T) {
+	root := t.TempDir()
+	for _, operation := range []string{"commit", "push", "merge"} {
+		if _, err := CreateCommandPlan(root, "W", "T", ".", "test", "R1", []string{"git", operation}, 1); err == nil {
+			t.Fatalf("git %s accepted", operation)
+		}
 	}
 }
