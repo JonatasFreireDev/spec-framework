@@ -92,3 +92,24 @@ func TestScalableReviewRequiresEvidenceAndGuardsMaterialization(t *testing.T) {
 		t.Fatal(err)
 	}
 }
+
+func TestScalableResumeSkipsLockedChunk(t *testing.T) {
+	root, source := t.TempDir(), t.TempDir()
+	file := filepath.Join(source, "a.md")
+	if err := os.WriteFile(file, []byte("content"), 0644); err != nil {
+		t.Fatal(err)
+	}
+	run, err := CreateScalableRun(root, []string{file}, CreateOptions{MaxFiles: 1, MaxTotalBytes: 100, MaxFileBytes: 100, ChunkSize: 1})
+	if err != nil {
+		t.Fatal(err)
+	}
+	dir := filepath.Join(root, "knowledge", "imports", "runs", run, "chunks")
+	unlock, err := lockChunk(dir, "CHUNK-0001")
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer unlock()
+	if _, err := Resume(root, run, "CHUNK-0001", "agent"); err == nil {
+		t.Fatal("locked chunk claimed")
+	}
+}

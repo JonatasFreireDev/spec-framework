@@ -266,20 +266,43 @@ func Resume(productRoot, runID, chunkID, agent string) (Chunk, error) {
 	for _, entry := range entries {
 		var chunk Chunk
 		path := filepath.Join(dir, entry.Name())
+		unlock, lockErr := lockChunk(dir, strings.TrimSuffix(entry.Name(), ".json"))
+		if lockErr != nil {
+			continue
+		}
 		if err := readJSONFile(path, &chunk); err != nil {
+			unlock()
 			return Chunk{}, err
 		}
 		if chunkID != "" && chunk.ID != chunkID {
+			unlock()
 			continue
 		}
 		expired := chunk.LeaseExpires != "" && mustParseTime(chunk.LeaseExpires).Before(time.Now().UTC())
 		if chunk.Status != "queued" && !(chunk.Status == "reviewing" && expired) {
+			unlock()
 			continue
 		}
 		chunk.Status, chunk.Agent, chunk.LeaseExpires = "reviewing", agent, time.Now().UTC().Add(30*time.Minute).Format(time.RFC3339)
-		return chunk, writeJSON(path, chunk)
+		err := writeJSON(path, chunk)
+		unlock()
+		return chunk, err
 	}
 	return Chunk{}, errors.New("no resumable import chunk")
+}
+
+func lockChunk(dir, id string) (func(), error) {
+	lockDir := filepath.Join(dir, ".locks")
+	if err := os.MkdirAll(lockDir, 0755); err != nil {
+		return nil, err
+	}
+	path := filepath.Join(lockDir, id+".lock")
+	file, err := os.OpenFile(path, os.O_CREATE|os.O_EXCL|os.O_WRONLY, 0644)
+	if err != nil {
+		return nil, err
+	}
+	_ = file.Close()
+	return func() { _ = os.Remove(path) }, nil
 }
 
 // RecordChunkReview records evidence for every non-excluded source in a leased
