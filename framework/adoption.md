@@ -45,6 +45,10 @@ After the Artifact Importer fills `mapping.json`, review the selected mappings a
 spec-framework import materialize --run IMPORT-001 --approved-by "Product Owner" --yes
 ```
 
+Materialized files are explicitly marked `provenance.kind: import-draft`. Route each file through its owning skill before approval; the approval gate rejects imported drafts until provenance is changed to `skill-normalized`.
+
+After the owner has completed the structural review, `spec-framework template normalize --artifact <path> --skill <owner-skill>` records that promotion without changing approval status.
+
 For `existing-documents`, the latest run pinned in `product/.product/framework.json` must be materially complete before `spec-framework work` can create a workspace. Materialization authorizes selected draft writes only; review and approve each resulting product artifact through its normal owner and parent gates.
 
 The command rejects missing evidence, paths outside `product/`, duplicate targets, non-draft content, and existing destination files.
@@ -69,6 +73,8 @@ Manual development bootstrap:
 ```bash
 spec-framework validate
 ```
+
+Before approving a delivery artifact, use `spec-framework validate --strict`. Approval previews perform the narrower candidate check automatically and block missing template sections, invalid QA evidence, and applicable delivery metadata before writing approval history.
 
 Direct validator form when debugging:
 

@@ -9,6 +9,7 @@ import (
 	"io"
 	"os"
 	"path/filepath"
+	"regexp"
 	"sort"
 	"strings"
 	"time"
@@ -235,7 +236,8 @@ func Materialize(productRoot, runID, approvedBy string) ([]string, error) {
 			rollback()
 			return nil, err
 		}
-		if err := os.WriteFile(dest, []byte(mapping.DraftContent), 0644); err != nil {
+		content := markImportDraft(mapping.DraftContent, runID)
+		if err := os.WriteFile(dest, []byte(content), 0644); err != nil {
 			rollback()
 			return nil, err
 		}
@@ -258,7 +260,7 @@ func Materialize(productRoot, runID, approvedBy string) ([]string, error) {
 	plan["materialized_paths"] = created
 	hashes := map[string]string{}
 	for _, mapping := range selected {
-		sum := sha256.Sum256([]byte(mapping.DraftContent))
+		sum := sha256.Sum256([]byte(markImportDraft(mapping.DraftContent, runID)))
 		hashes[filepath.ToSlash(mapping.Target)] = hex.EncodeToString(sum[:])
 	}
 	plan["materialized_hashes"] = hashes
@@ -290,6 +292,70 @@ func Materialize(productRoot, runID, approvedBy string) ([]string, error) {
 		}
 	}
 	return created, nil
+}
+
+// markImportDraft makes the intermediate import format machine-readable while
+// preserving the imported body. Normalization skills replace kind with
+// skill-normalized and record their owner before approval.
+func markImportDraft(content, runID string) string {
+	provenance := "provenance:\n  kind: import-draft\n  import_run: " + runID + "\n  normalized_by_skill: \"\"\n"
+	if strings.HasPrefix(content, "---\n") {
+		if end := strings.Index(content[4:], "\n---"); end >= 0 {
+			at := 4 + end
+			return content[:at] + "\n" + provenance + content[at:]
+		}
+	}
+	return "---\n" + provenance + "---\n\n" + content
+}
+
+// NormalizeProvenance promotes an already template-conformant imported
+// artifact without changing its product content or lifecycle status.
+func NormalizeProvenance(content, skill string) (string, error) {
+	skill = strings.TrimSpace(skill)
+	if skill == "" {
+		return "", fmt.Errorf("normalizing skill is required")
+	}
+	if !strings.Contains(content, "kind: import-draft") {
+		return "", fmt.Errorf("artifact is not marked as import-draft")
+	}
+	kindPattern := regexp.MustCompile(`(?m)^(\s*kind:\s*)import-draft\s*$`)
+	updated := kindPattern.ReplaceAllString(content, "${1}skill-normalized")
+	skillPattern := regexp.MustCompile(`(?m)^(\s*normalized_by_skill:\s*).*$`)
+	if !skillPattern.MatchString(updated) {
+		return "", fmt.Errorf("artifact provenance is missing normalized_by_skill")
+	}
+	updated = skillPattern.ReplaceAllString(updated, "${1}"+skill)
+	return updated, nil
+}
+
+// RecordNormalization preserves the original materialization hash while
+// recording the current hash after an owning skill changes the draft.
+func RecordNormalization(productRoot, artifactPath, content string) error {
+	match := regexp.MustCompile(`(?m)^\s*import_run:\s*([^\s]+)`).FindStringSubmatch(content)
+	if len(match) != 2 {
+		return fmt.Errorf("normalized artifact is missing provenance.import_run")
+	}
+	planPath := filepath.Join(productRoot, "knowledge", "imports", "runs", match[1], "import-plan.json")
+	data, err := os.ReadFile(planPath)
+	if err != nil {
+		return err
+	}
+	var plan map[string]any
+	if err := json.Unmarshal(trimBOM(data), &plan); err != nil {
+		return err
+	}
+	rel, err := filepath.Rel(productRoot, artifactPath)
+	if err != nil {
+		return err
+	}
+	hashes, _ := plan["normalized_hashes"].(map[string]any)
+	if hashes == nil {
+		hashes = map[string]any{}
+	}
+	sum := sha256.Sum256([]byte(content))
+	hashes[filepath.ToSlash(rel)] = hex.EncodeToString(sum[:])
+	plan["normalized_hashes"] = hashes
+	return writeJSON(planPath, plan)
 }
 
 func appendUnique(values []string, value string) []string {

@@ -177,8 +177,11 @@ func runApprove(args []string, stdout, stderr io.Writer) int {
 		for _, b := range preview.ParentBlockers {
 			fmt.Fprintf(stdout, "BLOCKED: %s\n", b)
 		}
+		for _, b := range preview.ValidationBlockers {
+			fmt.Fprintf(stdout, "BLOCKED: %s\n", b)
+		}
 		fmt.Fprintln(stdout, "Re-run with --yes to apply.")
-		if len(preview.ParentBlockers) > 0 {
+		if len(preview.ParentBlockers) > 0 || len(preview.ValidationBlockers) > 0 {
 			return 1
 		}
 		return 0
@@ -369,6 +372,7 @@ func runValidate(args []string, stdout, stderr io.Writer) int {
 	frameworkRoot := flags.String("framework-root", "", "framework root; resolved from the versioned user cache by default")
 	writeReport := flags.Bool("write-report", false, "write validation and readiness reports")
 	writeRegistry := flags.Bool("write-registry", false, "rebuild the artifact registry")
+	strict := flags.Bool("strict", false, "promote approved-artifact delivery warnings to errors")
 	if err := flags.Parse(args); err != nil {
 		return 2
 	}
@@ -415,7 +419,12 @@ func runValidate(args []string, stdout, stderr io.Writer) int {
 		rel, _ := filepath.Rel(productPath, path)
 		fmt.Fprintf(stdout, "Wrote %s\n", filepath.ToSlash(rel))
 	}
-	result, err := validator.Validate(context.Background(), productPath, frameworkPath)
+	var result validator.Result
+	if *strict {
+		result, err = validator.ValidateStrict(context.Background(), productPath, frameworkPath)
+	} else {
+		result, err = validator.Validate(context.Background(), productPath, frameworkPath)
+	}
 	if err != nil {
 		fmt.Fprintln(stderr, err)
 		return 1
@@ -445,6 +454,103 @@ func runValidate(args []string, stdout, stderr io.Writer) int {
 		return 1
 	}
 	return 0
+}
+
+func runTemplate(args []string, stdout, stderr io.Writer) int {
+	if len(args) == 0 || (args[0] != "audit" && args[0] != "normalize") {
+		fmt.Fprintln(stderr, "usage: spec-framework template audit|normalize --artifact <path> [--skill <owner-skill>] [--product-root product] [--framework-root <path>]")
+		return 2
+	}
+	flags := flag.NewFlagSet("template audit", flag.ContinueOnError)
+	flags.SetOutput(stderr)
+	productRoot := flags.String("product-root", "product", "product root")
+	frameworkRoot := flags.String("framework-root", "", "framework root; resolved from the versioned user cache by default")
+	artifact := flags.String("artifact", "", "registered artifact path")
+	skill := flags.String("skill", "", "owning skill used for provenance normalization")
+	if err := flags.Parse(args[1:]); err != nil {
+		return 2
+	}
+	if strings.TrimSpace(*artifact) == "" {
+		fmt.Fprintln(stderr, "template audit requires --artifact")
+		return 2
+	}
+	cwd, err := os.Getwd()
+	if err != nil {
+		fmt.Fprintln(stderr, err)
+		return 1
+	}
+	productPath := *productRoot
+	if !filepath.IsAbs(productPath) {
+		productPath = filepath.Join(cwd, productPath)
+	}
+	frameworkPath := *frameworkRoot
+	if frameworkPath == "" {
+		_, _, frameworkPath, _, err = runtimeassets.Resolve(productPath)
+		if err != nil {
+			fmt.Fprintln(stderr, err)
+			return 1
+		}
+	} else if !filepath.IsAbs(frameworkPath) {
+		frameworkPath = filepath.Join(cwd, frameworkPath)
+	}
+	artifactPath := *artifact
+	if !filepath.IsAbs(artifactPath) {
+		artifactPath = filepath.Join(productPath, filepath.FromSlash(artifactPath))
+	}
+	if args[0] == "normalize" {
+		findings, err := validator.AuditTemplate(context.Background(), productPath, frameworkPath, artifactPath)
+		if err != nil {
+			fmt.Fprintln(stderr, err)
+			return 1
+		}
+		if len(findings) > 0 {
+			fmt.Fprintln(stdout, "Template normalization blocked; resolve audit findings first:")
+			for _, finding := range findings {
+				fmt.Fprintf(stdout, "%s %s %s: %s\n", strings.ToUpper(string(finding.Severity)), finding.Check, finding.File, finding.Message)
+			}
+			return 1
+		}
+		data, err := os.ReadFile(artifactPath)
+		if err != nil {
+			fmt.Fprintln(stderr, err)
+			return 1
+		}
+		updated, err := sourceimport.NormalizeProvenance(string(data), *skill)
+		if err != nil {
+			fmt.Fprintln(stderr, err)
+			return 1
+		}
+		tmp := artifactPath + ".normalize.tmp"
+		if err := os.WriteFile(tmp, []byte(updated), 0644); err != nil {
+			fmt.Fprintln(stderr, err)
+			return 1
+		}
+		if err := os.Rename(tmp, artifactPath); err != nil {
+			_ = os.Remove(tmp)
+			fmt.Fprintln(stderr, err)
+			return 1
+		}
+		if err := sourceimport.RecordNormalization(productPath, artifactPath, updated); err != nil {
+			fmt.Fprintln(stderr, err)
+			return 1
+		}
+		fmt.Fprintf(stdout, "Normalized provenance: %s\n- Skill: %s\n", filepath.ToSlash(*artifact), *skill)
+		return 0
+	}
+	findings, err := validator.AuditTemplate(context.Background(), productPath, frameworkPath, artifactPath)
+	if err != nil {
+		fmt.Fprintln(stderr, err)
+		return 1
+	}
+	if len(findings) == 0 {
+		fmt.Fprintf(stdout, "Template audit passed: %s\n", filepath.ToSlash(*artifact))
+		return 0
+	}
+	fmt.Fprintf(stdout, "Template audit blocked: %s\n", filepath.ToSlash(*artifact))
+	for _, finding := range findings {
+		fmt.Fprintf(stdout, "%s %s %s: %s\n", strings.ToUpper(string(finding.Severity)), finding.Check, finding.File, finding.Message)
+	}
+	return 1
 }
 
 func (app App) runInit(args []string, stdout, stderr io.Writer) int {

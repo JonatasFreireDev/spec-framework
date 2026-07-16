@@ -552,13 +552,26 @@ func validateUseCaseBundles(s Snapshot) []Diagnostic {
 	for _, dir := range ordered {
 		contextText := s.Text[dir+"/context.md"]
 		tier := strings.ToUpper(metadata(contextText)["rigor_tier"])
+		maturity := strings.ToLower(metadata(contextText)["maturity"])
 		if tier == "" {
 			out = append(out, Diagnostic{Error, "rigor-tier", dir + "/context.md", "Missing rigor_tier.", "Set rigor_tier to S, M, L, or N/A."})
 		}
 		required := append([]string{}, base...)
-		required = append(required, tierFiles[tier]...)
+		switch maturity {
+		case "declared":
+			required = []string{"context.md", "use-case.md"}
+		case "specified":
+			required = []string{"context.md", "use-case.md", "specification.md", "design.md", "tests.md"}
+		case "implementation-ready":
+			// The rigor tier below adds the applicable L-specific contracts.
+		default:
+			maturity = ""
+		}
+		if maturity == "" || maturity == "implementation-ready" {
+			required = append(required, tierFiles[tier]...)
+		}
 		triggers, _ := engineeringsystem.Triggers(contextText)
-		if tier == "L" || len(triggers) > 0 {
+		if (maturity == "" || maturity == "implementation-ready") && (tier == "L" || len(triggers) > 0) {
 			required = append(required, "engineering-proposal.md", "engineering-review.md")
 		}
 		for _, name := range required {
@@ -1148,6 +1161,100 @@ func validateDeliveryAndRigor(s Snapshot) []Diagnostic {
 		}
 	}
 	return out
+}
+
+// validateTemplateConformance checks the structural contract of canonical
+// Markdown artifacts. Drafts receive actionable warnings; approved artifacts
+// cannot bypass the template contract.
+func validateTemplateConformance(s Snapshot) []Diagnostic {
+	required := map[string][]string{
+		"task":                {"Snapshot", "Navigation", "Delivery", "Task Contract", "Implementation Links", "Working Tree Evidence", "Validation Evidence", "Blockers", "Handoff"},
+		"taskset":             {"Snapshot", "Navigation", "Task Graph", "Task Files", "Canonical Ownership"},
+		"specification":       {"Snapshot", "Navigation", "Contract Applicability"},
+		"design":              {"Snapshot", "Navigation"},
+		"implementation-plan": {"Snapshot", "Navigation"},
+		"tests":               {"Snapshot"},
+		"audit":               {"Snapshot"},
+		"security-review":     {"Snapshot", "Navigation"},
+		"analytics":           {"Snapshot"},
+		"qa-evidence":         {"Snapshot", "Navigation"},
+	}
+	var out []Diagnostic
+	for _, artifact := range artifactList(s) {
+		kind := strings.ReplaceAll(firstString(artifact["type"], ""), "_", "-")
+		sections, ok := required[kind]
+		path := filepath.ToSlash(firstString(artifact["path"], ""))
+		text := s.Text[path]
+		if text == "" {
+			continue
+		}
+		status := strings.ToLower(firstString(artifact["status"], "draft"))
+		if kindValue := importProvenanceKind(text); kindValue == "import-draft" && requiresApproval(status) {
+			out = append(out, Diagnostic{Error, "import-provenance", path, "Imported draft cannot advance as approved while provenance.kind is import-draft.", "Normalize the artifact through its owning skill and record provenance.kind: skill-normalized."})
+		}
+		declared := map[string]string{}
+		if value := strings.ToLower(strings.Trim(strings.TrimSpace(tableFields(text)["status"]), "`")); value != "" {
+			declared["Snapshot"] = value
+		}
+		if value := strings.ToLower(strings.TrimSpace(metadata(text)["status"])); value != "" {
+			declared["frontmatter"] = value
+		}
+		for source, value := range declared {
+			if value != status && value != "n/a" && value != "none" {
+				out = append(out, Diagnostic{Error, "status-coherence", path, fmt.Sprintf("Registered status %q conflicts with %s status %q.", status, source, value), "Keep registry, frontmatter, and Snapshot status synchronized before approval."})
+			}
+		}
+		if !requiresApproval(status) {
+			continue
+		}
+		if !ok {
+			continue
+		}
+		missing := make([]string, 0)
+		for _, section := range sections {
+			pattern := `(?mi)^##\s+(?:[^\n]*?)` + regexp.QuoteMeta(section) + `\s*$`
+			if !regexp.MustCompile(pattern).MatchString(text) {
+				missing = append(missing, section)
+			}
+		}
+		if len(missing) > 0 {
+			out = append(out, Diagnostic{Error, "template-conformance", path, fmt.Sprintf("%s is missing required sections [%s].", path, strings.Join(missing, ", ")), "Regenerate or normalize the artifact with its canonical template before approval."})
+		}
+	}
+	return out
+}
+
+func importProvenanceKind(text string) string {
+	match := regexp.MustCompile(`(?ms)^provenance:\s*\n(?:^[ \t]+[^\n]*\n?)*`).FindString(text)
+	if match == "" {
+		return ""
+	}
+	for _, line := range strings.Split(match, "\n") {
+		parts := strings.SplitN(strings.TrimSpace(line), ":", 2)
+		if len(parts) == 2 && strings.TrimSpace(parts[0]) == "kind" {
+			return strings.Trim(strings.TrimSpace(parts[1]), "`\"")
+		}
+	}
+	return ""
+}
+
+func promoteApprovedWarnings(diagnostics []Diagnostic, s Snapshot) []Diagnostic {
+	approved := map[string]bool{}
+	deliveryTypes := map[string]bool{"task": true, "taskset": true, "specification": true, "implementation-plan": true, "execution-graph": true}
+	for _, artifact := range artifactList(s) {
+		if requiresApproval(firstString(artifact["status"], "")) {
+			kind := strings.ReplaceAll(firstString(artifact["type"], ""), "_", "-")
+			if diagnostics != nil && deliveryTypes[kind] {
+				approved[filepath.ToSlash(firstString(artifact["path"], ""))] = true
+			}
+		}
+	}
+	for i := range diagnostics {
+		if diagnostics[i].Severity == Warning && approved[filepath.ToSlash(diagnostics[i].File)] && (diagnostics[i].Check == "delivery" || diagnostics[i].Check == "template-conformance") {
+			diagnostics[i].Severity = Error
+		}
+	}
+	return diagnostics
 }
 func normalizeDelivery(value, prefix string) string {
 	value = strings.ToUpper(strings.TrimSpace(value))

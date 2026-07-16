@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 )
 
@@ -49,6 +50,20 @@ func TestCreateRunInventoriesMultipleSourcesWithoutMaterializingArtifacts(t *tes
 	}
 	if trace.Status != "unreviewed" || len(trace.Sources) != 2 || trace.Sources[0].ReviewStatus != "unreviewed" {
 		t.Fatalf("unexpected traceability: %+v", trace)
+	}
+}
+
+func TestNormalizeProvenancePromotesOnlyImportDrafts(t *testing.T) {
+	content := "---\nprovenance:\n  kind: import-draft\n  import_run: IMPORT-001\n  normalized_by_skill: \"\"\n---\n\n# Draft\n"
+	updated, err := NormalizeProvenance(content, "specification")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !strings.Contains(updated, "kind: skill-normalized") || !strings.Contains(updated, "normalized_by_skill: specification") {
+		t.Fatalf("unexpected normalized provenance: %s", updated)
+	}
+	if _, err := NormalizeProvenance(strings.Replace(content, "import-draft", "skill-normalized", 1), "specification"); err == nil {
+		t.Fatal("expected non-import draft to be rejected")
 	}
 }
 
@@ -110,6 +125,13 @@ func TestMaterializeRequiresExplicitApprovalAndCreatesDraft(t *testing.T) {
 	}
 	if trace.Status != "materialized_as_draft" || len(trace.Sources[0].MaterializedPaths) != 1 || trace.Sources[0].MaterializedPaths[0] != "domains/payments/domain.md" {
 		t.Fatalf("materialization not reflected in traceability: %+v", trace)
+	}
+	content, err := os.ReadFile(filepath.Join(root, "domains", "payments", "domain.md"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !strings.Contains(string(content), "kind: import-draft") || !strings.Contains(string(content), "import_run: IMPORT-001") {
+		t.Fatalf("materialized draft lacks provenance: %s", content)
 	}
 	if _, err := Materialize(root, runID, "Jonatas"); err == nil {
 		t.Fatal("expected overwrite protection")

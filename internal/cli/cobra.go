@@ -46,6 +46,7 @@ func (app App) NewCommand(stdout, stderr io.Writer) *cobra.Command {
 		app.legacyCommand("migrate", "Preview or apply legacy runtime migration.", app.runMigrate, stdout, stderr),
 		app.legacyCommand("move", "Move an artifact and update references.", func(args []string, out, errout io.Writer) int { return runMove(args, out, errout) }, stdout, stderr),
 		app.legacyCommand("validate", "Validate a product repository.", func(args []string, out, errout io.Writer) int { return runValidate(args, out, errout) }, stdout, stderr),
+		app.legacyCommand("template", "Audit canonical artifact template conformance.", func(args []string, out, errout io.Writer) int { return runTemplate(args, out, errout) }, stdout, stderr),
 		app.legacyCommand("import", "Materialize approved source mappings as drafts.", func(args []string, out, errout io.Writer) int { return runImport(args, out, errout) }, stdout, stderr),
 		app.legacyCommand("design", "Manage Design assets.", func(args []string, out, errout io.Writer) int { return runDesign(args, out, errout) }, stdout, stderr),
 		app.legacyCommand("design-system", "Manage the product Design System.", func(args []string, out, errout io.Writer) int { return runDesignSystem(args, out, errout) }, stdout, stderr),

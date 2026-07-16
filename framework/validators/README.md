@@ -12,6 +12,8 @@ Run the framework validator from the repository root:
 spec-framework validate --write-registry --write-report
 ```
 
+Use `spec-framework validate --strict` at approval or delivery boundaries. It promotes delivery warnings on approved-or-later executable artifacts to errors. The `approve` preview and mutation path run a read-only candidate validation automatically, so missing canonical template sections and invalid approved QA evidence block approval before an approval record is created.
+
 When the product manifest declares `starting_point: audit-only`, run `spec-framework validate` without write flags. The CLI rejects registry and report writes in that mode.
 
 Run validator and move-tool fixture tests with:
@@ -53,10 +55,27 @@ The validator checks:
 - identity policy metadata in `.product/ids.json`;
 - immutable `slug` metadata in `context.md`.
 - concrete QA evidence for approved or later `qa-evidence.md` artifacts.
+- explicit Use Case maturity (`declared`, `specified`, or `implementation-ready`) scopes bundle requirements and avoids reporting implementation blockers for intentionally declared use cases.
+- import provenance: materialized files marked `import-draft` cannot be approved until an owning skill records `skill-normalized`.
+- canonical template sections for approved or later registered Markdown artifacts, including task, task-set, specification, planning, design, review, QA, audit, and analytics contracts.
 - task handoff fields that reference repository-local skills.
 - blocker/high/required_fix findings in approved QA evidence, Code Review, Security Review, and audit artifacts include route and owner.
 
 ## Output
+
+For one actionable structural check, run:
+
+```bash
+spec-framework template audit --artifact domains/<domain>/.../artifact.md
+```
+
+After the owning skill has reviewed and normalized the content, promote only the provenance marker with:
+
+```bash
+spec-framework template normalize --artifact domains/<domain>/.../artifact.md --skill specification
+```
+
+Normalization does not approve the artifact or change its lifecycle status; it fails while the template audit is not clean.
 
 When `--write-report` is provided, the validator writes:
 

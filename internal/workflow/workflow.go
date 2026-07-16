@@ -1,6 +1,7 @@
 package workflow
 
 import (
+	"context"
 	"crypto/sha256"
 	"encoding/hex"
 	"encoding/json"
@@ -14,6 +15,7 @@ import (
 	"time"
 
 	"github.com/JonatasFreireDev/spec-framework/internal/engineeringsystem"
+	"github.com/JonatasFreireDev/spec-framework/internal/validator"
 )
 
 type Artifact struct {
@@ -22,6 +24,7 @@ type Artifact struct {
 	Status          string   `json:"status"`
 	Path            string   `json:"path"`
 	ParentIDs       []string `json:"parentIds"`
+	Maturity        string   `json:"maturity,omitempty"`
 	TargetFeature   string   `json:"targetFeature,omitempty"`
 	ApprovalAdapter string   `json:"approval_adapter,omitempty"`
 }
@@ -59,10 +62,11 @@ type Approval struct {
 	Notes         string `json:"notes"`
 }
 type ApprovalPreview struct {
-	Artifact       Artifact
-	Grant          string
-	CurrentHash    string
-	ParentBlockers []string
+	Artifact           Artifact
+	Grant              string
+	CurrentHash        string
+	ParentBlockers     []string
+	ValidationBlockers []string
 }
 type Claim struct {
 	TaskID    string `json:"task_id"`
@@ -91,6 +95,15 @@ func CreateWorkspace(root, selector, domain, goal, useCase, createdBy string) (W
 	}
 	if err := requireStartingPointApproval(root, r, a); err != nil {
 		return Workspace{}, err
+	}
+	if hasImplementationReadyUseCase(r, a.ID) {
+		missing, gateErr := GateReadiness(root)
+		if gateErr != nil {
+			return Workspace{}, fmt.Errorf("implementation-ready use case requires configured implementation gates: %w", gateErr)
+		}
+		if len(missing) > 0 {
+			return Workspace{}, fmt.Errorf("implementation-ready use case requires configured implementation gates: %s", strings.Join(missing, ", "))
+		}
 	}
 	dir := filepath.Join(root, ".product", "workspaces")
 	if err := os.MkdirAll(dir, 0755); err != nil {
@@ -130,6 +143,15 @@ func CreateWorkspace(root, selector, domain, goal, useCase, createdBy string) (W
 	}
 	_ = writeJSON(filepath.Join(wd, "state.json"), RuntimeState{Version: RuntimeVersion, WorkspaceID: id, Phase: next, Status: "active", UpdatedAt: time.Now().UTC().Format(time.RFC3339), Blockers: blockers})
 	return w, nil
+}
+
+func hasImplementationReadyUseCase(registry Registry, featureID string) bool {
+	for _, artifact := range registry.Artifacts {
+		if artifact.Type == "use-case" && artifact.Maturity == "implementation-ready" && contains(artifact.ParentIDs, featureID) {
+			return true
+		}
+	}
+	return false
 }
 
 func requireStartingPointApproval(root string, registry Registry, selectedFeature Artifact) error {
@@ -283,6 +305,12 @@ func requireLatestImportMaterialized(root string, manifest map[string]any) error
 			recordedHashes[filepath.ToSlash(filepath.Clean(filepath.FromSlash(path)))] = fmt.Sprint(value)
 		}
 	}
+	normalizedHashes := map[string]string{}
+	if raw, ok := plan["normalized_hashes"].(map[string]any); ok {
+		for path, value := range raw {
+			normalizedHashes[filepath.ToSlash(filepath.Clean(filepath.FromSlash(path)))] = fmt.Sprint(value)
+		}
+	}
 	for path, expected := range selected {
 		if !reported[path] {
 			return fmt.Errorf("latest import run %s did not report selected target %s", runID, path)
@@ -290,6 +318,10 @@ func requireLatestImportMaterialized(root string, manifest map[string]any) error
 		data, err := os.ReadFile(filepath.Join(root, filepath.FromSlash(path)))
 		if err != nil {
 			return fmt.Errorf("latest import run %s materialized target %s is missing: %w", runID, path, err)
+		}
+		if normalized, exists := normalizedHashes[path]; exists {
+			_ = normalized // The artifact may legitimately change status after normalization.
+			continue
 		}
 		expectedHash := Hash(expected)
 		if recorded, exists := recordedHashes[path]; exists {
@@ -356,6 +388,16 @@ func PreviewApproval(root, artifactPath, grant string) (ApprovalPreview, error) 
 	if err != nil {
 		return ApprovalPreview{}, err
 	}
+	validation, err := validator.ValidateCandidate(context.Background(), root, root, artifactPath, updated, grant)
+	if err != nil {
+		return ApprovalPreview{}, err
+	}
+	validationBlockers := make([]string, 0)
+	for _, diagnostic := range validation.Diagnostics {
+		if filepath.ToSlash(diagnostic.File) == rel && (diagnostic.Check == "template-conformance" || diagnostic.Check == "import-provenance" || diagnostic.Check == "status-coherence" || diagnostic.Check == "qa-evidence" || diagnostic.Check == "delivery") && diagnostic.Severity == validator.Error {
+			validationBlockers = append(validationBlockers, fmt.Sprintf("%s: %s", diagnostic.Check, diagnostic.Message))
+		}
+	}
 	updates, err := approvalUpdatesForArtifact(root, a, artifactPath, updated, grant)
 	if err != nil {
 		return ApprovalPreview{}, err
@@ -364,7 +406,7 @@ func PreviewApproval(root, artifactPath, grant string) (ApprovalPreview, error) 
 	if err != nil {
 		return ApprovalPreview{}, err
 	}
-	return ApprovalPreview{Artifact: a, Grant: grant, CurrentHash: currentHash, ParentBlockers: blockers}, nil
+	return ApprovalPreview{Artifact: a, Grant: grant, CurrentHash: currentHash, ParentBlockers: blockers, ValidationBlockers: validationBlockers}, nil
 }
 
 func WorkspaceStatus(root, id string) (Status, error) {
@@ -701,8 +743,8 @@ func Approve(root, artifactPath, grant, approvedBy, notes string) (Approval, err
 	if err != nil {
 		return Approval{}, err
 	}
-	if len(preview.ParentBlockers) > 0 {
-		return Approval{}, errors.New(strings.Join(preview.ParentBlockers, "; "))
+	if len(preview.ParentBlockers) > 0 || len(preview.ValidationBlockers) > 0 {
+		return Approval{}, errors.New(strings.Join(append(preview.ParentBlockers, preview.ValidationBlockers...), "; "))
 	}
 	r, err := LoadRegistry(root)
 	if err != nil {

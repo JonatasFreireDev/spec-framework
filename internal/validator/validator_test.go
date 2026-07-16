@@ -128,6 +128,19 @@ func TestValidatedTaskRequiresMatchingDiffHashes(t *testing.T) {
 	}
 }
 
+func TestApprovedArtifactsRequireCanonicalTemplateSections(t *testing.T) {
+	s := Snapshot{
+		Text: map[string]string{"tasks/TK-001.md": "# Task\n\n## Objective\nDo the thing.\n"},
+		JSON: map[string]any{".product/artifacts.json": map[string]any{"artifacts": []any{map[string]any{
+			"id": "TK-001", "type": "task", "status": "approved", "path": "tasks/TK-001.md",
+		}}}},
+	}
+	diagnostics := validateTemplateConformance(s)
+	if len(diagnostics) != 1 || diagnostics[0].Severity != Error || diagnostics[0].Check != "template-conformance" {
+		t.Fatalf("expected one blocking template diagnostic, got %+v", diagnostics)
+	}
+}
+
 func TestTierLRequiresEngineeringProposalAndReview(t *testing.T) {
 	s := Snapshot{Text: map[string]string{
 		"domains/d/goals/g/features/f/use-cases/u/context.md": "---\nrigor_tier: L\n---\n",

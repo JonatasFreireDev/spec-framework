@@ -94,6 +94,10 @@ Is a concrete solution that helps a User Goal. Features can enter, exit, evolve,
 
 Is a verifiable interaction of the feature. The Use Case is the point where product and engineering meet to generate an implementable Specification.
 
+Use cases may declare a maturity: `declared` requires only the use-case definition, `specified` requires Specification, Design, and Tests, and `implementation-ready` requires the complete applicable bundle and configured delivery gates. The validator is scope-aware for these explicit values, so a declared backlog surface does not create bundle noise or masquerade as implementation-ready.
+
+Creating a workspace for a feature with an `implementation-ready` use case is itself gated: implementation gates must already be configured. The Framework Guide surfaces missing gates and scoped validation errors before the planning handoff.
+
 ### Delivery Level
 
 Defines the delivery level at which an artifact must enter. The level answers "when does this need to exist in the product", without replacing priority within the level.
@@ -617,6 +621,8 @@ Mandatory transitions:
 
 Approval records use a SHA-256 hash of the whole file with content normalized to LF and no trailing whitespace per line. They provide auditability and a mechanical gate, not cryptographic proof of human approval.
 
+Approval is also a readiness boundary. `approve` previews the proposed status change through the validator before writing the artifact or approval record; template-conformance, QA-evidence, and applicable delivery blockers prevent the approval. Use `spec-framework validate --strict` for an explicit repository-wide audit that promotes delivery warnings on approved-or-later executable artifacts to errors. Draft artifacts may remain incomplete, but they must pass their canonical template contract before they can become approved.
+
 Staleness is a condition derived by the validator, not an editable status. Downstream artifacts record the hashes of source artifacts in `.product/derivations.json`; if the source content changes, the downstream becomes stale and must not advance through gates until it is regenerated or re-approved.
 
 ## 12. Decisions
@@ -711,6 +717,7 @@ The runtime behavior shared by all agents is defined in the pinned `AGENTS.frame
 - `init` resolves one strict declarative starting-point contract, validates its complete materialization plan, stages it, and atomically publishes `product/`. Data contracts cannot execute arbitrary commands or escape the product root.
 - A starting point changes the initial evidence, registry, bootstrap, and first gate; it never removes later rigor or approval requirements. Existing code and documents remain evidence, not approved truth. `audit-only` remains read-only until an explicit supported transition.
 - `existing-documents` creates an analysis-only import run with `traceability.json` as the dedicated per-source ledger. The Artifact Importer agent reads each source, records evidence, extracted claims, candidate destinations, and unmapped gaps there, then proposes mappings. Human review of inventory, traceability, conflicts, and selected mappings is required before explicit draft materialization; imported artifacts retain their normal owners, parents, and individual approval gates.
+- Materialized import artifacts carry machine-readable `provenance.kind: import-draft` and `provenance.import_run`. The owning normalization skill must replace this with `skill-normalized` and identify itself before approval; import provenance is lineage, not canonical readiness.
 - `init` never overwrites an existing `product/`. `upgrade` refreshes only the pinned runtime, manifest, and selected dispatchers; it never replays initialization over adopter-owned content.
 - Starting-point details belong to `docs/starting-points.md`, `framework/init/`, and generated `BOOTSTRAP.md` rather than this operational summary.
 

@@ -313,6 +313,27 @@ func TestApproveBlocksUnapprovedParent(t *testing.T) {
 		t.Fatal("expected parent blocker")
 	}
 }
+
+func TestApproveBlocksNonConformantApprovedCandidate(t *testing.T) {
+	root := t.TempDir()
+	tasks := filepath.Join(root, "tasks")
+	if err := os.MkdirAll(filepath.Join(root, ".product", "history"), 0755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.MkdirAll(tasks, 0755); err != nil {
+		t.Fatal(err)
+	}
+	path := filepath.Join(tasks, "TK-001.md")
+	if err := os.WriteFile(path, []byte("# Task\n\n| Field | Value |\n| --- | --- |\n| Status | `draft` |\n\n## Objective\nDo the thing.\n"), 0644); err != nil {
+		t.Fatal(err)
+	}
+	if err := writeJSON(filepath.Join(root, ".product", "artifacts.json"), Registry{Artifacts: []Artifact{{ID: "TK-001", Type: "task", Status: "draft", Path: "tasks/TK-001.md"}}}); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := Approve(root, path, "approved", "Human", ""); err == nil || !strings.Contains(err.Error(), "template-conformance") {
+		t.Fatalf("expected template conformance blocker, got %v", err)
+	}
+}
 func TestGateReadiness(t *testing.T) {
 	root := t.TempDir()
 	path := filepath.Join(root, "knowledge", "conventions")

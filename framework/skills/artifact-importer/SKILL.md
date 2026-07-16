@@ -39,7 +39,7 @@ Source documents; product context; existing Domains, User Goals, Features, gloss
 6. Record duplicates, contradictions, ambiguous parents, and open questions; never resolve them silently.
 7. Propose source-to-artifact mappings in `draft` and leave `materialization_approved` false.
 8. Stop for explicit human approval before creating canonical product artifacts.
-9. When approved, materialize only selected mappings as `draft`, preserving `source_documents` traceability and never creating approval records.
+9. When approved, materialize only selected mappings as `draft`, preserving `source_documents` traceability, recording `provenance.kind: import-draft` and `provenance.import_run`, and never creating approval records.
 10. Use `spec-framework import materialize --run IMPORT-NNN --approved-by <human> --yes` for mechanical materialization; do not edit the approval fields manually.
 
 ## Quality checklist
@@ -53,6 +53,7 @@ Source documents; product context; existing Domains, User Goals, Features, gloss
 - [ ] Detects gaps, conflicts, and dependencies.
 - [ ] Records or requests decisions for meaningful changes.
 - [ ] Leaves a clear handoff for the next skill or orchestrator.
+- [ ] Every materialized artifact remains marked `import-draft` until its owning skill records `skill-normalized` provenance.
 
 ## Handoff
 Next: Existing Product Import Orchestrator.

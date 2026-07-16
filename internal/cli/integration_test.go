@@ -168,6 +168,86 @@ func TestCLIExistingDocumentsMaterialization(t *testing.T) {
 	}
 }
 
+func TestCLIExistingDocumentsNormalizeApproveAndWork(t *testing.T) {
+	t.Setenv("SPEC_FRAMEWORK_CACHE", filepath.Join(t.TempDir(), "cache"))
+	t.Setenv("SPEC_FRAMEWORK_AGENT_HOME", filepath.Join(t.TempDir(), "agents"))
+	root := t.TempDir()
+	target := filepath.Join(root, "repo")
+	source := filepath.Join(root, "brief.md")
+	if err := os.WriteFile(source, []byte("# FocusFlow"), 0644); err != nil {
+		t.Fatal(err)
+	}
+	var stdout, stderr bytes.Buffer
+	app := cli.New("integration")
+	if code := app.Run([]string{"init", "--target", target, "--agents", "codex", "--starting-point", "existing-documents", "--sources", source, "--yes"}, &stdout, &stderr); code != 0 {
+		t.Fatalf("init=%d stderr=%s", code, stderr.String())
+	}
+	productRoot := filepath.Join(target, "product")
+	runRoot := filepath.Join(productRoot, "knowledge", "imports", "runs", "IMPORT-001")
+	invData, err := os.ReadFile(filepath.Join(runRoot, "inventory.json"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	var inv map[string]any
+	if err := json.Unmarshal(invData, &inv); err != nil {
+		t.Fatal(err)
+	}
+	sourceRel := inv["sources"].([]any)[0].(map[string]any)["path"].(string)
+	featurePath := "domains/imported/goals/imported/features/imported/context.md"
+	draft := "---\nid: FT-IMPORT-001\ntype: feature\nname: Imported Feature\nstatus: draft\nowner_skill: feature\nslug: imported\nrigor_tier: S\nsource_documents:\n  - " + sourceRel + "\n---\n\n# Imported Feature\n"
+	mapping := map[string]any{"schema_version": 1, "import_id": "IMPORT-001", "mappings": []any{map[string]any{"id": "MAP-001", "target": featurePath, "artifact_type": "feature", "selected": true, "source_documents": []string{sourceRel}, "draft_content": draft}}}
+	data, _ := json.MarshalIndent(mapping, "", "  ")
+	if err := os.WriteFile(filepath.Join(runRoot, "mapping.json"), append(data, '\n'), 0644); err != nil {
+		t.Fatal(err)
+	}
+	stdout.Reset()
+	stderr.Reset()
+	if code := app.Run([]string{"import", "materialize", "--product-root", productRoot, "--run", "IMPORT-001", "--approved-by", "Product Owner", "--yes"}, &stdout, &stderr); code != 0 {
+		t.Fatalf("materialize=%d stdout=%s stderr=%s", code, stdout.String(), stderr.String())
+	}
+	registryPath := filepath.Join(productRoot, ".product", "artifacts.json")
+	registryData, err := os.ReadFile(registryPath)
+	if err != nil {
+		t.Fatal(err)
+	}
+	var registry map[string]any
+	if err := json.Unmarshal(registryData, &registry); err != nil {
+		t.Fatal(err)
+	}
+	artifacts := registry["artifacts"].([]any)
+	artifacts = append(artifacts, map[string]any{"id": "FT-IMPORT-001", "type": "feature", "status": "draft", "path": featurePath, "parentIds": []string{}})
+	registry["artifacts"] = artifacts
+	registryData, _ = json.MarshalIndent(registry, "", "  ")
+	if err := os.WriteFile(registryPath, append(registryData, '\n'), 0644); err != nil {
+		t.Fatal(err)
+	}
+	stdout.Reset()
+	stderr.Reset()
+	if code := app.Run([]string{"approve", "--product-root", productRoot, "--artifact", featurePath, "--grant", "approved", "--approved-by", "Product Owner", "--yes"}, &stdout, &stderr); code == 0 {
+		t.Fatal("import-draft approval unexpectedly succeeded")
+	}
+	stdout.Reset()
+	stderr.Reset()
+	if code := app.Run([]string{"template", "audit", "--product-root", productRoot, "--framework-root", filepath.Join(target, ".spec-framework"), "--artifact", featurePath}, &stdout, &stderr); code != 0 {
+		t.Fatalf("template audit=%d stdout=%s stderr=%s", code, stdout.String(), stderr.String())
+	}
+	stdout.Reset()
+	stderr.Reset()
+	if code := app.Run([]string{"template", "normalize", "--product-root", productRoot, "--framework-root", filepath.Join(target, ".spec-framework"), "--artifact", featurePath, "--skill", "feature"}, &stdout, &stderr); code != 0 {
+		t.Fatalf("template normalize=%d stdout=%s stderr=%s", code, stdout.String(), stderr.String())
+	}
+	stdout.Reset()
+	stderr.Reset()
+	if code := app.Run([]string{"approve", "--product-root", productRoot, "--artifact", featurePath, "--grant", "approved", "--approved-by", "Product Owner", "--yes"}, &stdout, &stderr); code != 0 {
+		t.Fatalf("approve normalized=%d stdout=%s stderr=%s", code, stdout.String(), stderr.String())
+	}
+	stdout.Reset()
+	stderr.Reset()
+	if code := app.Run([]string{"work", "--product-root", productRoot, "--feature", "FT-IMPORT-001", "--created-by", "Product Owner"}, &stdout, &stderr); code != 0 {
+		t.Fatalf("work=%d stdout=%s stderr=%s", code, stdout.String(), stderr.String())
+	}
+}
+
 func TestCLIWorkspaceApprovalGatesAndGraph(t *testing.T) {
 	t.Setenv("SPEC_FRAMEWORK_CACHE", filepath.Join(t.TempDir(), "cache"))
 	t.Setenv("SPEC_FRAMEWORK_AGENT_HOME", filepath.Join(t.TempDir(), "agents"))

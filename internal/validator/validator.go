@@ -138,9 +138,72 @@ func Scan(ctx context.Context, root, frameworkRoot string, workers int) (Snapsho
 }
 
 func Validate(ctx context.Context, root, frameworkRoot string) (Result, error) {
+	return validate(ctx, root, frameworkRoot, false, "", "", "")
+}
+
+// ValidateStrict promotes delivery warnings on approved (or later) artifacts
+// to errors at approval and delivery boundaries.
+func ValidateStrict(ctx context.Context, root, frameworkRoot string) (Result, error) {
+	return validate(ctx, root, frameworkRoot, true, "", "", "")
+}
+
+// ValidateCandidate is read-only and validates an artifact as if its proposed
+// content and status had already been written.
+func ValidateCandidate(ctx context.Context, root, frameworkRoot, artifactPath, content, status string) (Result, error) {
+	return validate(ctx, root, frameworkRoot, true, artifactPath, content, status)
+}
+
+// AuditTemplate returns only structural/provenance findings for one registered
+// artifact, making it suitable for an actionable CLI audit command.
+func AuditTemplate(ctx context.Context, root, frameworkRoot, artifactPath string) ([]Diagnostic, error) {
+	snap, err := Scan(ctx, root, frameworkRoot, 0)
+	if err != nil {
+		return nil, err
+	}
+	rel, err := filepath.Rel(root, artifactPath)
+	if err != nil {
+		return nil, err
+	}
+	rel = filepath.ToSlash(rel)
+	if registry, ok := snap.JSON[".product/artifacts.json"].(map[string]any); ok {
+		if items, ok := registry["artifacts"].([]any); ok {
+			for _, raw := range items {
+				if item, ok := raw.(map[string]any); ok && filepath.ToSlash(fmt.Sprint(item["path"])) == rel {
+					item["status"] = "approved"
+				}
+			}
+		}
+	}
+	var findings []Diagnostic
+	for _, diagnostic := range validateTemplateConformance(snap) {
+		if filepath.ToSlash(diagnostic.File) == rel && diagnostic.Check == "template-conformance" {
+			findings = append(findings, diagnostic)
+		}
+	}
+	return findings, nil
+}
+
+func validate(ctx context.Context, root, frameworkRoot string, strict bool, candidatePath, candidateContent, candidateStatus string) (Result, error) {
 	snap, err := Scan(ctx, root, frameworkRoot, 0)
 	if err != nil {
 		return Result{}, err
+	}
+	if candidatePath != "" {
+		rel, err := filepath.Rel(root, candidatePath)
+		if err != nil {
+			return Result{}, err
+		}
+		rel = filepath.ToSlash(rel)
+		snap.Text[rel] = candidateContent
+		if registry, ok := snap.JSON[".product/artifacts.json"].(map[string]any); ok {
+			if items, ok := registry["artifacts"].([]any); ok {
+				for _, raw := range items {
+					if item, ok := raw.(map[string]any); ok && filepath.ToSlash(fmt.Sprint(item["path"])) == rel {
+						item["status"] = candidateStatus
+					}
+				}
+			}
+		}
 	}
 	var d []Diagnostic
 	for rel, text := range snap.Text {
@@ -169,6 +232,10 @@ func Validate(ctx context.Context, root, frameworkRoot string) (Result, error) {
 	d = append(d, validateDesignArtifacts(snap)...)
 	d = append(d, validateDesignSystem(snap)...)
 	d = append(d, validateEngineeringSystem(snap)...)
+	d = append(d, validateTemplateConformance(snap)...)
+	if strict {
+		d = promoteApprovedWarnings(d, snap)
+	}
 	sort.Slice(d, func(i, j int) bool {
 		a, b := d[i], d[j]
 		if a.Severity != b.Severity {

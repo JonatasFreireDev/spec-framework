@@ -182,6 +182,11 @@ func buildRegistry(s Snapshot) []map[string]any {
 		priority := first(fields["priority"], meta["priority"], companion["priority"], firstSlice(companionLists["delivery_priority"]))
 		rationale := first(fields["rationale"], meta["rationale"], companion["rationale"], firstSlice(companionLists["delivery_rationale"]))
 		artifact := map[string]any{"id": id, "type": strings.ReplaceAll(kind, "_", "-"), "name": name, "status": status, "ownerSkill": owner, "path": path, "parentIds": parents, "childIds": companionLists["children"], "dependsOn": companionLists["depends_on"], "decisions": companionLists["decisions"], "delivery": map[string]any{"level": level, "priority": priority, "depends_on": companionLists["delivery_depends_on"], "rationale": rationale}, "documents": map[string]string{"canonical": path}}
+		if strings.ReplaceAll(kind, "_", "-") == "use-case" {
+			if maturity := strings.ToLower(companion["maturity"]); maturity != "" {
+				artifact["maturity"] = maturity
+			}
+		}
 		if kind == "task" {
 			if taskType := first(fields["task type"], fields["type"]); taskType != "" && taskType != "task" {
 				artifact["taskType"] = taskType

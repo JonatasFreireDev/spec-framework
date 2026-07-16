@@ -1,6 +1,7 @@
 package workflow
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"os"
@@ -9,6 +10,8 @@ import (
 	"sort"
 	"strings"
 	"time"
+
+	"github.com/JonatasFreireDev/spec-framework/internal/validator"
 )
 
 type MaterializeResult struct {
@@ -303,7 +306,22 @@ func WorkspaceGuide(root, id string) (Guide, error) {
 	if err != nil {
 		return Guide{}, err
 	}
-	g := Guide{WorkspaceID: id, FeatureScope: s.Workspace.Scope["feature"], UseCaseScope: s.Workspace.Scope["use_case"], CurrentStep: s.Next, RecommendedSkill: s.Next, Blockers: s.Blockers}
+	g := Guide{WorkspaceID: id, FeatureScope: s.Workspace.Scope["feature"], UseCaseScope: s.Workspace.Scope["use_case"], CurrentStep: s.Next, RecommendedSkill: s.Next, Blockers: append([]string{}, s.Blockers...)}
+	if missing, err := GateReadiness(root); err != nil {
+		g.Blockers = append(g.Blockers, "Prerequisite missing: configure knowledge/conventions/gates.md before implementation planning")
+	} else if len(missing) > 0 {
+		g.Blockers = append(g.Blockers, "Prerequisite missing: configure implementation gates ("+strings.Join(missing, ", ")+") before implementation planning")
+	}
+	if result, err := validator.ValidateStrict(context.Background(), root, root); err == nil {
+		feature := filepath.ToSlash(s.Workspace.Scope["feature"])
+		useCase := filepath.ToSlash(s.Workspace.Scope["use_case"])
+		for _, diagnostic := range result.Diagnostics {
+			path := filepath.ToSlash(diagnostic.File)
+			if diagnostic.Severity == validator.Error && (path == feature || path == useCase || (useCase != "" && strings.HasPrefix(path, strings.TrimSuffix(useCase, "/")+"/"))) {
+				g.Blockers = append(g.Blockers, "Validation: "+diagnostic.Check+" "+path+": "+diagnostic.Message)
+			}
+		}
+	}
 	m := map[string][]string{"use-case": {"feature context", "feature.md"}, "specification": {"use-case context", "use-case.md"}, "ux-ui": {"specification.md", "contracts/"}, "technical-discovery": {"specification.md", "design.md", "engineering/"}, "product-historian": {"technical-discovery.md", "indexed decision domains"}, "engineering-proposal": {"technical-discovery.md", "engineering/", "indexed decision domains"}, "engineering-review": {"engineering-proposal.md", "technical-discovery.md", "engineering/", "indexed decision domains"}, "implementation-planner": {"engineering-proposal.md", "engineering-review.md", "technical-discovery.md", "design.md", "specification.md"}, "execution-graph": {"implementation-plan.md"}, "task-generator": {"execution-graph.json"}, "code-runner": {"task file", "knowledge/conventions/gates.md"}}
 	g.RequiredReading = m[s.Next]
 	g.ExpectedArtifact = map[string]string{"feature": "approved feature scope", "use-case": "use-cases/<slug>/", "specification": "specification.md and contracts/", "ux-ui": "design.md", "technical-discovery": "technical-discovery.md", "product-historian": "resolved Architecture Gate", "engineering-proposal": "engineering-proposal.md", "engineering-review": "engineering-review.md with a current verdict", "implementation-planner": "implementation-plan.md", "execution-graph": "execution-graph.json", "task-generator": "tasks/*.md and tasks.md", "code-runner": "working-tree evidence"}[s.Next]
