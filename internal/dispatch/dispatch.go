@@ -23,6 +23,8 @@ type Envelope struct {
 	ID               string   `json:"id"`
 	WorkspaceID      string   `json:"workspace_id"`
 	TaskID           string   `json:"task_id"`
+	UnitKind         string   `json:"unit_kind"`
+	UnitPath         string   `json:"unit_path,omitempty"`
 	Role             string   `json:"role"`
 	Agent            string   `json:"agent"`
 	Graph            string   `json:"graph"`
@@ -130,7 +132,7 @@ func Assign(root, work, graph, task, role, agent string) (Envelope, error) {
 		return Envelope{}, err
 	}
 	id := fmt.Sprintf("DISPATCH-%d", time.Now().UTC().UnixNano())
-	e := Envelope{Version: 1, ID: id, WorkspaceID: work, TaskID: task, Role: role, Agent: agent, Graph: filepath.ToSlash(graph), TaskPath: filepath.ToSlash(taskPath), InputHash: hex.EncodeToString(sum[:]), RequiredReading: []string{filepath.ToSlash(taskPath), filepath.ToSlash(graph)}, ExpectedEvidence: []string{"diff hash", "test log"}, Status: "assigned", CreatedAt: time.Now().UTC().Format(time.RFC3339), Forbidden: []string{"approval", "commit", "push", "merge", "release", "review-resolution"}}
+	e := Envelope{Version: 1, ID: id, WorkspaceID: work, TaskID: task, UnitKind: "task", UnitPath: filepath.ToSlash(taskPath), Role: role, Agent: agent, Graph: filepath.ToSlash(graph), TaskPath: filepath.ToSlash(taskPath), InputHash: hex.EncodeToString(sum[:]), RequiredReading: []string{filepath.ToSlash(taskPath), filepath.ToSlash(graph)}, ExpectedEvidence: []string{"diff hash", "test log"}, Status: "assigned", CreatedAt: time.Now().UTC().Format(time.RFC3339), Forbidden: []string{"approval", "commit", "push", "merge", "release", "review-resolution"}}
 	for _, node := range mustNodes(graph) {
 		if node.ID == task {
 			e.WriteScope = node.WriteScope
