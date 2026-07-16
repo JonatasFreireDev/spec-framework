@@ -178,17 +178,14 @@ func Materialize(productRoot, runID, approvedBy string) ([]string, error) {
 			return nil, fmt.Errorf("traceability import_id %q does not match %q", traceability.ImportID, runID)
 		}
 	}
-	invData, err := os.ReadFile(filepath.Join(runRoot, "inventory.json"))
+	known, scalable, err := materializableSources(productRoot, runID)
 	if err != nil {
 		return nil, err
 	}
-	var inventory Inventory
-	if err := json.Unmarshal(trimBOM(invData), &inventory); err != nil {
-		return nil, fmt.Errorf("parse inventory: %w", err)
-	}
-	knownSources := map[string]bool{}
-	for _, source := range inventory.Sources {
-		knownSources[source.Path] = true
+	if scalable {
+		if err := requireReviewedChunks(productRoot, runID); err != nil {
+			return nil, err
+		}
 	}
 	var selected []Mapping
 	seen := map[string]bool{}
@@ -200,7 +197,7 @@ func Materialize(productRoot, runID, approvedBy string) ([]string, error) {
 			return nil, fmt.Errorf("mapping %s: %w", mapping.ID, err)
 		}
 		for _, source := range mapping.SourceDocuments {
-			if !knownSources[source] {
+			if !known[source] {
 				return nil, fmt.Errorf("mapping %s references uninventoried source %s", mapping.ID, source)
 			}
 		}

@@ -8,7 +8,19 @@ import (
 	"testing"
 
 	"github.com/JonatasFreireDev/spec-framework/internal/cli"
+	"github.com/JonatasFreireDev/spec-framework/internal/sourceimport"
 )
+
+func reviewInitialImportChunk(t *testing.T, productRoot string) {
+	t.Helper()
+	chunk, err := sourceimport.Resume(productRoot, "IMPORT-001", "CHUNK-0001", "test-importer")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := sourceimport.RecordChunkReview(productRoot, "IMPORT-001", chunk.ID, "test-importer", sourceimport.ChunkReview{SourceEvidence: map[string][]sourceimport.Evidence{"SRC-000001": {{Locator: "line 1", Claim: "fixture reviewed"}}}}); err != nil {
+		t.Fatal(err)
+	}
+}
 
 func TestGoCLIInitValidateUpgradeAndMove(t *testing.T) {
 	t.Setenv("SPEC_FRAMEWORK_CACHE", filepath.Join(t.TempDir(), "cache"))
@@ -160,6 +172,7 @@ func TestCLIExistingDocumentsMaterialization(t *testing.T) {
 	stdout.Reset()
 	stderr.Reset()
 	productRoot := filepath.Join(target, "product")
+	reviewInitialImportChunk(t, productRoot)
 	if code := app.Run([]string{"import", "materialize", "--product-root", productRoot, "--run", "IMPORT-001", "--approved-by", "Product Owner", "--yes"}, &stdout, &stderr); code != 0 {
 		t.Fatalf("materialize=%d stdout=%s stderr=%s", code, stdout.String(), stderr.String())
 	}
@@ -193,6 +206,7 @@ func TestCLIExistingDocumentsNormalizeApproveAndWork(t *testing.T) {
 		t.Fatal(err)
 	}
 	sourceRel := inv["sources"].([]any)[0].(map[string]any)["path"].(string)
+	reviewInitialImportChunk(t, productRoot)
 	featurePath := "domains/imported/goals/imported/features/imported/context.md"
 	draft := "---\nid: FT-IMPORT-001\ntype: feature\nname: Imported Feature\nstatus: draft\nowner_skill: feature\nslug: imported\nrigor_tier: S\nsource_documents:\n  - " + sourceRel + "\n---\n\n# Imported Feature\n"
 	mapping := map[string]any{"schema_version": 1, "import_id": "IMPORT-001", "mappings": []any{map[string]any{"id": "MAP-001", "target": featurePath, "artifact_type": "feature", "selected": true, "source_documents": []string{sourceRel}, "draft_content": draft}}}

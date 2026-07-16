@@ -57,9 +57,9 @@ spec-framework init ../my-product --agents codex,cursor,claude --yes
 | `existing-implementation` | `knowledge/assessments/implementation-assessment.md` plus full Foundation |
 | `audit-only` | Read-only bootstrap; mutating CLI commands are refused |
 
-Use `--starting-point existing-documents` with `--source-dir` or `--sources` to bootstrap from existing product material. This creates an analysis-only import run with a per-source `traceability.json` ledger for an LLM or agent to fill with evidence, extracted claims, destinations, and unmapped gaps; it never treats source prose as approved product truth.
+Use `--starting-point existing-documents` with `--source-dir` or `--sources` to bootstrap from existing product material. This creates a scalable analysis-only import run with paged inventory and review chunks; use `--import-max-files`, `--import-max-total-bytes`, `--import-max-file-bytes`, and `--import-chunk-size` to set the explicit bootstrap budget. It never treats source prose as approved product truth.
 
-Draft materialization is a separate explicit command after the import mappings have been reviewed: `spec-framework import materialize --run IMPORT-001 --approved-by "Product Owner" --yes`.
+For a large document set, create a bounded scalable run with `import create`, inspect it with `import status`, and resume one bounded chunk at a time. Draft materialization remains a separate explicit command after sources/chunks and mappings have been reviewed: `spec-framework import materialize --run IMPORT-001 --approved-by "Product Owner" --yes`.
 
 The generated `product/BOOTSTRAP.md` is rendered from the starting-point map in `framework/init/bootstrap.json`; each step names the user goal, agent reading set, writable draft paths, prompt, gate, and next handoff. For imports it also pins the active run id. `spec-framework work` remains blocked until that latest run records explicit materialization approval and at least one materialized draft path. This gate does not approve the resulting product artifacts.
 

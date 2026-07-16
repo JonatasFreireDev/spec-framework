@@ -86,7 +86,7 @@ The [Framework Guide skill](framework/skills/framework-guide/SKILL.md) is the de
 
 | Intent | Commands |
 | --- | --- |
-| Start or import a product | `init`, `import materialize` |
+| Start or import a product | `init`, `import create/status/resume`, `import materialize` |
 | Navigate and see state | `work`, `status`, `next`, `dashboard`, `guide` |
 | Approve explicitly | `review`, `approve`, `approve-batch`, `approve-stage`, `gates` |
 | Design workflows | `design init/import/register/map/inspect/audit`, `design-system init/inspect/validate/migrate` |
