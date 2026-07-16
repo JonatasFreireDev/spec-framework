@@ -392,7 +392,30 @@ func Run(root, work, id string, enabled bool, command string, args []string) (Tr
 	if writeErr := os.WriteFile(filepath.Join(tdir, id+".json"), append(data, '\n'), 0644); writeErr != nil {
 		return t, writeErr
 	}
+	if cfg.TranscriptRetention > 0 {
+		_ = retainTranscripts(tdir, cfg.TranscriptRetention)
+	}
 	return t, err
+}
+func retainTranscripts(path string, max int) error {
+	entries, err := os.ReadDir(path)
+	if err != nil {
+		return err
+	}
+	var names []string
+	for _, e := range entries {
+		if !e.IsDir() && filepath.Ext(e.Name()) == ".json" {
+			names = append(names, e.Name())
+		}
+	}
+	sort.Strings(names)
+	for len(names) > max {
+		if err := os.Remove(filepath.Join(path, names[0])); err != nil {
+			return err
+		}
+		names = names[1:]
+	}
+	return nil
 }
 
 // RunWave runs already-assigned envelopes with bounded local concurrency.
@@ -421,6 +444,41 @@ func RunWave(root, work string, ids []string, max int, enabled bool, command str
 	}
 	sort.Slice(results, func(i, j int) bool { return results[i].ID < results[j].ID })
 	return results
+}
+
+// WaveIDs derives assigned code-runner envelopes from the persisted scheduler wave.
+func WaveIDs(root, work, wave string) ([]string, error) {
+	data, err := os.ReadFile(filepath.Join(root, ".product", "scheduler", "waves", work+".json"))
+	if err != nil {
+		return nil, err
+	}
+	var schedule workflow.Schedule
+	if err := json.Unmarshal(data, &schedule); err != nil {
+		return nil, err
+	}
+	var tasks map[string]bool = map[string]bool{}
+	for _, w := range schedule.Waves {
+		if w.ID == wave {
+			for _, t := range w.Tasks {
+				tasks[t] = true
+			}
+		}
+	}
+	if len(tasks) == 0 {
+		return nil, errors.New("scheduled wave not found")
+	}
+	xs, err := Observe(root, work)
+	if err != nil {
+		return nil, err
+	}
+	var ids []string
+	for _, e := range xs {
+		if e.Role == "code-runner" && e.Status == "assigned" && tasks[e.TaskID] {
+			ids = append(ids, e.ID)
+		}
+	}
+	sort.Strings(ids)
+	return ids, nil
 }
 
 // Recommend is advisory only; it never assigns, reprioritizes, or executes.
