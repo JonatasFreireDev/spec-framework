@@ -62,6 +62,24 @@ func TestRuntimeEventsRedactSecretsAndReplayIncrementally(t *testing.T) {
 	}
 }
 
+func TestObserveRuntimeIsReadOnlySnapshot(t *testing.T) {
+	root := setupProduct(t)
+	w, err := CreateWorkspace(root, "FT-1", "", "", "", "tester")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, err := WriteCheckpoint(root, w.ID, "task", "", "", ""); err != nil {
+		t.Fatal(err)
+	}
+	observation, err := ObserveRuntime(root, w.ID)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if observation.Checkpoints != 1 || observation.Events != 1 || observation.State.WorkspaceID != w.ID {
+		t.Fatalf("observation=%+v", observation)
+	}
+}
+
 func TestRuntimeMigratesLegacyWorkspace(t *testing.T) {
 	root := setupProduct(t)
 	dir := filepath.Join(root, ".product", "workspaces")

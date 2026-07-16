@@ -45,6 +45,13 @@ type RuntimeReplay struct {
 	ByKind      map[string]int `json:"by_kind"`
 	Latest      *RuntimeEvent  `json:"latest,omitempty"`
 }
+type RuntimeObservation struct {
+	State        RuntimeState `json:"state"`
+	Events       int          `json:"events"`
+	Checkpoints  int          `json:"checkpoints"`
+	Evidence     int          `json:"evidence"`
+	ActiveLeases []Lease      `json:"active_leases"`
+}
 type Handoff struct {
 	Version         int      `json:"version"`
 	ID              string   `json:"id"`
@@ -223,6 +230,62 @@ func ReplayRuntimeEvents(root, workspaceID string) (RuntimeReplay, error) {
 		replay.Latest = &events[index]
 	}
 	return replay, nil
+}
+
+// ObserveRuntime produces a read-only local snapshot for status and watch.
+func ObserveRuntime(root, workspaceID string) (RuntimeObservation, error) {
+	state, err := Resume(root, workspaceID)
+	if err != nil {
+		return RuntimeObservation{}, err
+	}
+	events, err := RuntimeEvents(root, workspaceID)
+	if err != nil {
+		return RuntimeObservation{}, err
+	}
+	countJSON := func(dir string) (int, error) {
+		entries, err := os.ReadDir(dir)
+		if os.IsNotExist(err) {
+			return 0, nil
+		}
+		if err != nil {
+			return 0, err
+		}
+		count := 0
+		for _, entry := range entries {
+			if !entry.IsDir() && filepath.Ext(entry.Name()) == ".json" {
+				count++
+			}
+		}
+		return count, nil
+	}
+	checkpoints, err := countJSON(filepath.Join(workspaceDir(root, workspaceID), "checkpoints"))
+	if err != nil {
+		return RuntimeObservation{}, err
+	}
+	evidence, err := countJSON(filepath.Join(workspaceDir(root, workspaceID), "evidence"))
+	if err != nil {
+		return RuntimeObservation{}, err
+	}
+	var active []Lease
+	entries, err := os.ReadDir(filepath.Join(root, ".product", "claims"))
+	if err != nil && !os.IsNotExist(err) {
+		return RuntimeObservation{}, err
+	}
+	for _, entry := range entries {
+		if entry.IsDir() || filepath.Ext(entry.Name()) != ".json" {
+			continue
+		}
+		var lease Lease
+		if readJSON(filepath.Join(root, ".product", "claims", entry.Name()), &lease) != nil {
+			continue
+		}
+		expires, parseErr := time.Parse(time.RFC3339, lease.ExpiresAt)
+		if parseErr == nil && expires.After(time.Now().UTC()) {
+			active = append(active, lease)
+		}
+	}
+	sort.Slice(active, func(i, j int) bool { return active[i].TaskID < active[j].TaskID })
+	return RuntimeObservation{State: state, Events: len(events), Checkpoints: checkpoints, Evidence: evidence, ActiveLeases: active}, nil
 }
 
 func redactEventDetails(details map[string]string) map[string]string {

@@ -38,6 +38,8 @@ func runRuntime(command string, args []string, out, errout io.Writer) int {
 	cwd := fs.String("cwd", ".", "repository-relative cwd")
 	timeout := fs.Int("timeout", 300, "timeout seconds")
 	max := fs.Int("max-parallel", 4, "maximum parallel tasks")
+	interval := fs.Duration("interval", 2*time.Second, "watch polling interval")
+	count := fs.Int("count", 0, "watch observations before stopping (0 keeps watching)")
 	dry := fs.Bool("dry-run", false, "preview migration")
 	jsonOutput := fs.Bool("json", false, "print structured output")
 	yes := fs.Bool("yes", false, "confirm mutation")
@@ -253,23 +255,31 @@ func runRuntime(command string, args []string, out, errout io.Writer) int {
 			return 2
 		}
 		if len(rest) > 0 && (rest[0] == "status" || rest[0] == "watch") {
-			state, e := workflow.Resume(p, *work)
-			if e != nil {
-				fmt.Fprintln(errout, e)
-				return 1
+			watch := rest[0] == "watch"
+			if *interval <= 0 {
+				fmt.Fprintln(errout, "watch interval must be positive")
+				return 2
 			}
-			events, e := workflow.RuntimeEvents(p, *work)
-			if e != nil {
-				fmt.Fprintln(errout, e)
-				return 1
+			iterations := 1
+			if watch && *count > 0 {
+				iterations = *count
 			}
-			if *jsonOutput {
-				fmt.Fprintf(out, "{\"state\":%q,\"phase\":%q,\"events\":%d}\n", state.Status, state.Phase, len(events))
-				return 0
-			}
-			fmt.Fprintf(out, "Workspace %s: %s (%s); %d event(s)\n", state.WorkspaceID, state.Phase, state.Status, len(events))
-			for _, event := range events {
-				fmt.Fprintf(out, "%s %s %s\n", event.OccurredAt, event.ID, event.Kind)
+			for index := 0; index < iterations || (watch && *count == 0); index++ {
+				observation, e := workflow.ObserveRuntime(p, *work)
+				if e != nil {
+					fmt.Fprintln(errout, e)
+					return 1
+				}
+				if *jsonOutput {
+					data, _ := json.Marshal(observation)
+					fmt.Fprintln(out, string(data))
+				} else {
+					fmt.Fprintf(out, "Workspace %s: %s (%s); %d event(s), %d checkpoint(s), %d evidence record(s), %d active lease(s)\n", observation.State.WorkspaceID, observation.State.Phase, observation.State.Status, observation.Events, observation.Checkpoints, observation.Evidence, len(observation.ActiveLeases))
+				}
+				if !watch || (*count > 0 && index+1 >= *count) {
+					break
+				}
+				time.Sleep(*interval)
 			}
 			return 0
 		}

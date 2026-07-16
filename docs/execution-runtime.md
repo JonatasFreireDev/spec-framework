@@ -41,6 +41,8 @@ Implemented tasks record the required immutable working-tree evidence and curren
 
 Runtime commands include `runtime`, `resume`, `handoff`, `checkpoint`, `lease`, `commands`, `schedule`, `integrate`, and `reviews import`. The latter imports a local JSON array into immutable provider-neutral evidence under `.product/reviews/findings/`; it only proposes a route and cannot resolve external threads, change code, or create approvals. Use the installed CLI help as the authority for exact flags and syntax.
 
+`runtime status` makes one read-only observation. `runtime watch` repeats the same local observation at an explicit interval (and supports a bounded `--count` for automation); neither command writes checkpoints, lease heartbeats, or events.
+
 ## Owning skills
 
 - `execution-graph`: defines and validates the DAG and graph lifecycle.
