@@ -80,6 +80,33 @@ func TestObserveRuntimeIsReadOnlySnapshot(t *testing.T) {
 	}
 }
 
+func TestReconcileReportsButDoesNotRepairRuntimeState(t *testing.T) {
+	root := setupProduct(t)
+	w, err := CreateWorkspace(root, "FT-1", "", "", "", "tester")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := os.MkdirAll(filepath.Join(filepath.Dir(root), ".worktrees", w.ID, "TK-001"), 0755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.MkdirAll(filepath.Join(workspaceDir(root, w.ID), "command-plans"), 0755); err != nil {
+		t.Fatal(err)
+	}
+	if err := writeJSON(filepath.Join(workspaceDir(root, w.ID), "command-plans", "CMDPLAN-001.json"), CommandPlan{}); err != nil {
+		t.Fatal(err)
+	}
+	findings, err := ReconcileRuntime(root, w.ID)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(findings) < 2 {
+		t.Fatalf("findings=%+v", findings)
+	}
+	if _, err := os.Stat(filepath.Join(filepath.Dir(root), ".worktrees", w.ID, "TK-001")); err != nil {
+		t.Fatal("reconcile changed worktree")
+	}
+}
+
 func TestRuntimeMigratesLegacyWorkspace(t *testing.T) {
 	root := setupProduct(t)
 	dir := filepath.Join(root, ".product", "workspaces")

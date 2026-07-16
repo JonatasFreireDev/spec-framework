@@ -282,6 +282,22 @@ func runRuntime(command string, args []string, out, errout io.Writer) int {
 			}
 			return 0
 		}
+		if len(rest) > 0 && rest[0] == "reconcile" {
+			findings, e := workflow.ReconcileRuntime(p, *work)
+			if e != nil {
+				fmt.Fprintln(errout, e)
+				return 1
+			}
+			if *jsonOutput {
+				data, _ := json.Marshal(findings)
+				fmt.Fprintln(out, string(data))
+			} else {
+				for _, finding := range findings {
+					fmt.Fprintf(out, "%s %s -> %s\n", finding.Kind, finding.Detail, finding.Owner)
+				}
+			}
+			return 0
+		}
 		if len(rest) > 0 && (rest[0] == "status" || rest[0] == "watch") {
 			watch := rest[0] == "watch"
 			if *interval <= 0 {

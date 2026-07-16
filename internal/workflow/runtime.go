@@ -613,8 +613,56 @@ func ReconcileRuntime(root, workspaceID string) ([]RuntimeFinding, error) {
 		if !expires.After(now) {
 			findings = append(findings, RuntimeFinding{Kind: "expired-lease", Detail: lease.TaskID, Owner: "delivery-orchestrator"})
 		}
+		graph := lease.Graph
+		if graph != "" && !filepath.IsAbs(graph) {
+			graph = filepath.Join(root, filepath.FromSlash(graph))
+		}
+		if graph != "" {
+			if _, err := os.Stat(graph); err != nil {
+				findings = append(findings, RuntimeFinding{Kind: "stale-graph", Detail: lease.TaskID + ": " + lease.Graph, Owner: "execution-graph"})
+			}
+		}
 	}
+	worktreeRoot := filepath.Join(filepath.Dir(root), ".worktrees", workspaceID)
+	if worktrees, readErr := os.ReadDir(worktreeRoot); readErr == nil {
+		for _, entry := range worktrees {
+			if !entry.IsDir() {
+				continue
+			}
+			if _, err := os.Stat(leasePath(root, entry.Name())); os.IsNotExist(err) {
+				findings = append(findings, RuntimeFinding{Kind: "orphaned-worktree", Detail: entry.Name(), Owner: "delivery-orchestrator"})
+			}
+		}
+	}
+	plans := filepath.Join(workspaceDir(root, workspaceID), "command-plans")
+	if planEntries, readErr := os.ReadDir(plans); readErr == nil {
+		for _, entry := range planEntries {
+			if entry.IsDir() || filepath.Ext(entry.Name()) != ".json" {
+				continue
+			}
+			id := strings.TrimSuffix(entry.Name(), ".json")
+			if _, err := os.Stat(filepath.Join(workspaceDir(root, workspaceID), "evidence", id+".json")); os.IsNotExist(err) {
+				findings = append(findings, RuntimeFinding{Kind: "missing-command-evidence", Detail: id, Owner: "command-executor"})
+			}
+		}
+	}
+	for _, event := range mustRuntimeEvents(root, workspaceID) {
+		if event.Kind == "integration.applied" && strings.TrimSpace(event.Details["diff_hash"]) == "" {
+			findings = append(findings, RuntimeFinding{Kind: "integration-diff-mismatch", Detail: event.ID, Owner: "integration-orchestrator"})
+		}
+	}
+	sort.Slice(findings, func(i, j int) bool {
+		if findings[i].Kind == findings[j].Kind {
+			return findings[i].Detail < findings[j].Detail
+		}
+		return findings[i].Kind < findings[j].Kind
+	})
 	return findings, nil
+}
+
+func mustRuntimeEvents(root, workspaceID string) []RuntimeEvent {
+	events, _ := RuntimeEvents(root, workspaceID)
+	return events
 }
 
 func CreateTaskWorktree(repoRoot, work, task string) (string, error) {

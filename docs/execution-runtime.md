@@ -43,6 +43,8 @@ Runtime commands include `runtime`, `resume`, `handoff`, `checkpoint`, `lease`, 
 
 `runtime status` makes one read-only observation. `runtime watch` repeats the same local observation at an explicit interval (and supports a bounded `--count` for automation); neither command writes checkpoints, lease heartbeats, or events.
 
+`runtime reconcile` is also read-only. It reports expired leases, missing graphs or command evidence, orphaned task worktrees, and incomplete integration event hashes. It never deletes a worktree, frees a claim, replays a command, or edits a product artifact.
+
 Operational memory is optional and has shared (`memory/shared.md`) and task-local (`memory/tasks/<task>.md`) tiers. Its compact form uses `- source: [label](path)` and `- risk: ...` lines. Inspection is read-only; explicit compaction only removes duplicate lines and refuses approval history or flagged contradictions.
 
 ## Owning skills
