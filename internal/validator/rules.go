@@ -1168,7 +1168,7 @@ func validateDeliveryAndRigor(s Snapshot) []Diagnostic {
 // cannot bypass the template contract.
 func validateTemplateConformance(s Snapshot) []Diagnostic {
 	required := map[string][]string{
-		"task":                {"Snapshot", "Navigation", "Delivery", "Task Contract", "Implementation Links", "Working Tree Evidence", "Validation Evidence", "Blockers", "Handoff"},
+		"task":                {"Snapshot", "Navigation", "Delivery", "Task Contract", "Objective", "Scope And Boundaries", "Implementation Strategy", "Acceptance Checks", "Test And Evidence Strategy", "Implementation Links", "Working Tree Evidence", "Validation Evidence", "Blockers", "Handoff"},
 		"taskset":             {"Snapshot", "Navigation", "Task Graph", "Task Files", "Canonical Ownership"},
 		"specification":       {"Snapshot", "Navigation", "Contract Applicability"},
 		"design":              {"Snapshot", "Navigation"},

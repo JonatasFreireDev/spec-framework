@@ -9,7 +9,7 @@ description: "Execution Graph Skill. Use when Codex needs to Convert an implemen
 Planning
 
 ## Responsibility
-Convert an implementation plan into a DAG of executable tasks with explicit dependencies and parallelization boundaries.
+Convert an implementation plan into a DAG of complete vertical task contracts with explicit dependencies and parallelization boundaries. Prefer the fewest nodes that preserve real dependency, safe-parallelism, ownership/toolchain, or rollback/risk boundaries; never partition merely by file count, technical layer, or checklist length.
 
 ## Operating modes
 - create: produce the first version of the artifact.

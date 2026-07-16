@@ -66,11 +66,35 @@
 
 ## Objective
 
-[Explain the smallest useful outcome this task must produce.]
+[Explain the coherent vertical outcome this task must produce.]
+
+## Scope And Boundaries
+
+### Included Behavior
+
+- [Concrete behavior and integration this task closes end-to-end.]
+
+### Non-Goals
+
+- [Adjacent work intentionally excluded from this task.]
+
+### Assumptions And Constraints
+
+- [Approved decision, dependency, compatibility, rollout, or operational constraint.]
+
+## Implementation Strategy
+
+- [Describe the coherent approach across affected modules. Do not divide this task merely by file or technical layer.]
+- [Name contract, migration, integration, or rollback boundaries relevant to implementation.]
 
 ## Acceptance Checks
 
 - [Observable, reviewable check.]
+
+## Test And Evidence Strategy
+
+- [Planned TEST-* coverage or explicit evidence method, including relevant negative and integration cases.]
+- [Applicable validation commands, operational evidence, or visual/accessibility evidence.]
 
 ## Implementation Links
 
@@ -124,6 +148,7 @@
 ## ✅ Agent Verification Checklist
 
 - [ ] The task maps to one graph node, specification scope, delivery level, priority, and owner.
-- [ ] Objective, boundaries, dependencies, acceptance checks, and validation commands are executable.
+- [ ] Objective, scope/non-goals, implementation strategy, dependencies, acceptance checks, tests/evidence, and validation commands are executable.
+- [ ] The task closes one coherent vertical outcome; it was not split merely by file count, layer, or checklist length.
 - [ ] Working-tree and validation evidence use the current branch, base commit, paths, diff hash, and gates.
 - [ ] Status and handoff follow lifecycle rules and do not claim review, QA, commit, or release prematurely.

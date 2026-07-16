@@ -95,6 +95,7 @@ func MaterializeTasks(graphPath string) (MaterializeResult, error) {
 		rel := filepath.ToSlash(fmt.Sprint(n["path"]))
 		path := filepath.Join(base, filepath.FromSlash(rel))
 		body := renderTask(raw, n)
+		body = enrichMaterializedTask(body, raw, n)
 		if err = atomicWrite(path, []byte(body)); err != nil {
 			rollback()
 			return MaterializeResult{}, err
@@ -143,6 +144,39 @@ func renderTask(graph, node map[string]any) string {
 	}
 	delivery, _ := node["delivery"].(map[string]any)
 	return fmt.Sprintf("# Task: %s\n\n## Snapshot\n\n| Field | Value |\n| --- | --- |\n| ID | `%s` |\n| Status | `draft` |\n| Source graph | `%s` |\n| Source specification | `%s` |\n| Source node | `%s` |\n| Owner skill | `%s` |\n| Next skill | `code-runner` |\n\n## Delivery\n\n| Field | Value |\n| --- | --- |\n| Level | `%s` |\n| Priority | `%s` |\n| Depends on | `%s` |\n| Rationale | Inherited from the approved graph. |\n\n## Task Contract\n\n| Field | Value |\n| --- | --- |\n| Title | %s |\n| Type | `%s` |\n| Depends on | `%s` |\n| Source sections | `%s` |\n| Requirements | `%s` |\n| Acceptance criteria | `%s` |\n| Planned tests | `%s` |\n| Applicable decisions | `%s` |\n| Write scope | `%s` |\n| Shared resources | `%s` |\n| Graph node status | `%s` |\n\n## Objective\n\n%s\n\n## Acceptance Checks\n\n- %s\n\n## Blockers\n\n- None.\n\n## Handoff\n\n| Field | Value |\n| --- | --- |\n| Ready for implementation | `no; requires approval and readiness check` |\n| Required next skill | `code-runner` |\n| Notes | Materialized from the proposed execution graph. |\n", title, id, graph["id"], graph["sourceSpecification"], id, node["ownerSkill"], delivery["level"], delivery["priority"], list(node["dependsOn"]), title, node["type"], list(node["dependsOn"]), list(node["sourceSections"]), list(node["requirements"]), list(node["acceptanceCriteria"]), list(node["plannedTests"]), list(node["decisions"]), list(node["writeScope"]), list(node["sharedResources"]), node["status"], title, list(node["acceptanceChecks"]))
+}
+
+func enrichMaterializedTask(body string, graph, node map[string]any) string {
+	specification := fmt.Sprint(graph["sourceSpecification"])
+	navigation := "## Navigation\n\n| Artifact | Link |\n| --- | --- |\n| Specification | `" + specification + "` |\n| Execution Graph | `execution-graph.json` |\n| Tasks Index | `tasks.md` |\n\n"
+	body = strings.Replace(body, "## Delivery\n", navigation+"## Delivery\n", 1)
+
+	objectiveStart := strings.Index(body, "## Objective\n\n")
+	acceptanceStart := strings.Index(body, "\n\n## Acceptance Checks\n")
+	if objectiveStart >= 0 && acceptanceStart > objectiveStart {
+		objectiveEnd := acceptanceStart
+		boundaries := "\n\n## Scope And Boundaries\n\n### Included Behavior\n\n- Implement the behavior, integration, and assigned evidence represented by this graph node.\n\n### Non-Goals\n\n- Do not expand into adjacent graph nodes or unapproved product scope.\n\n### Assumptions And Constraints\n\n- Preserve declared write scope, dependencies, shared resources, and applicable decisions.\n\n## Implementation Strategy\n\n- Use one coherent approach across the declared modules; do not partition this contract merely by file or technical layer.\n- Stop and request a graph update if required work falls outside this task contract."
+		body = body[:objectiveEnd] + boundaries + body[objectiveEnd:]
+	}
+
+	acceptanceEnd := strings.Index(body, "\n\n## Blockers\n")
+	if acceptanceEnd >= 0 {
+		tests := "\n\n## Test And Evidence Strategy\n\n- Planned tests or evidence: " + listTaskField(node["plannedTests"]) + ".\n- Record applicable gate output and implementation evidence against the current diff.\n\n## Implementation Links\n\n| Field | Value |\n| --- | --- |\n| Branch | `N/A until implementation` |\n| Base commit | `N/A until implementation` |\n| Diff hash | `N/A until implementation` |\n| Commits | `N/A until QA and Code Review pass` |\n| PR | `N/A until implementation` |\n| Code paths | `N/A until implementation` |\n\n## Working Tree Evidence\n\n| Field | Value |\n| --- | --- |\n| Changed paths | `N/A until implementation` |\n| Diff hash | `N/A until implementation` |\n| Narrow test | `N/A until implementation` |\n| Applicable gates | `N/A until implementation` |\n| Code Review diff hash | `pending` |\n| QA diff hash | `pending` |\n\n## Validation Evidence\n\n| Field | Value |\n| --- | --- |\n| Test status | `pending` |\n| Gate logs | `N/A until validation` |\n| CI URL | `N/A until validation` |\n| Screenshots | `N/A until validation` |\n| QA evidence | `N/A until validation` |\n| Security review | `N/A until validation` |"
+		body = body[:acceptanceEnd] + tests + body[acceptanceEnd:]
+	}
+	return body
+}
+
+func listTaskField(value any) string {
+	items, _ := value.([]any)
+	if len(items) == 0 {
+		return "explicit evidence method required"
+	}
+	values := make([]string, 0, len(items))
+	for _, item := range items {
+		values = append(values, fmt.Sprint(item))
+	}
+	return strings.Join(values, ", ")
 }
 func renderTaskIndex(graph map[string]any, nodes []any) string {
 	var b strings.Builder

@@ -3,6 +3,7 @@ package workflow
 import (
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 )
 
@@ -22,6 +23,15 @@ func TestMaterializeTasksClosesGraphCycle(t *testing.T) {
 	}
 	if _, err = os.Stat(filepath.Join(root, "tasks", "TK-1.md")); err != nil {
 		t.Fatal(err)
+	}
+	body, err := os.ReadFile(filepath.Join(root, "tasks", "TK-1.md"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, section := range []string{"## Scope And Boundaries", "## Implementation Strategy", "## Test And Evidence Strategy", "## Working Tree Evidence"} {
+		if !strings.Contains(string(body), section) {
+			t.Fatalf("materialized task is missing %s:\n%s", section, body)
+		}
 	}
 	var updated map[string]any
 	_ = readJSON(graph, &updated)
