@@ -52,6 +52,12 @@ type RuntimeObservation struct {
 	Evidence     int          `json:"evidence"`
 	ActiveLeases []Lease      `json:"active_leases"`
 }
+type MemoryAssessment struct {
+	Path           string   `json:"path"`
+	Sources        []string `json:"sources"`
+	ActiveRisks    []string `json:"active_risks"`
+	Contradictions []string `json:"contradictions"`
+}
 type Handoff struct {
 	Version         int      `json:"version"`
 	ID              string   `json:"id"`
@@ -156,6 +162,71 @@ func ReadRuntimeMemory(root, workspaceID, taskID string) (string, error) {
 		return "", nil
 	}
 	return string(data), err
+}
+
+// AssessRuntimeMemory reads memory without granting it product authority.
+// Sources must be explicit Markdown links; approvals and approval history have
+// no place in this operational cache.
+func AssessRuntimeMemory(root, workspaceID, taskID string) (MemoryAssessment, error) {
+	content, err := ReadRuntimeMemory(root, workspaceID, taskID)
+	if err != nil {
+		return MemoryAssessment{}, err
+	}
+	name := "shared.md"
+	if taskID != "" {
+		name = filepath.Join("tasks", taskID+".md")
+	}
+	assessment := MemoryAssessment{Path: filepath.Join(memoryDir(root, workspaceID), name)}
+	for _, line := range strings.Split(content, "\n") {
+		trimmed := strings.TrimSpace(line)
+		if strings.HasPrefix(trimmed, "- risk:") {
+			assessment.ActiveRisks = append(assessment.ActiveRisks, strings.TrimSpace(strings.TrimPrefix(trimmed, "- risk:")))
+		}
+		if strings.HasPrefix(trimmed, "- source:") {
+			value := strings.TrimSpace(strings.TrimPrefix(trimmed, "- source:"))
+			if strings.Contains(value, "](") && strings.HasSuffix(value, ")") {
+				assessment.Sources = append(assessment.Sources, value)
+			} else {
+				assessment.Contradictions = append(assessment.Contradictions, "source lacks Markdown link: "+value)
+			}
+		}
+		lower := strings.ToLower(trimmed)
+		if strings.Contains(lower, "contradiction:") {
+			assessment.Contradictions = append(assessment.Contradictions, trimmed)
+		}
+		if strings.Contains(lower, "approval record") || strings.Contains(lower, "approval history") {
+			assessment.Contradictions = append(assessment.Contradictions, "memory must not contain approval history")
+		}
+	}
+	return assessment, nil
+}
+
+// CompactRuntimeMemory preserves distinct active risks and source links while
+// removing duplicate lines. It refuses to compact contradictory or approval
+// history content so a human can resolve it in the owning product artifact.
+func CompactRuntimeMemory(root, workspaceID, taskID string) (MemoryAssessment, error) {
+	assessment, err := AssessRuntimeMemory(root, workspaceID, taskID)
+	if err != nil {
+		return assessment, err
+	}
+	if len(assessment.Contradictions) > 0 {
+		return assessment, errors.New("runtime memory has contradictions; resolve them before compaction")
+	}
+	content, err := ReadRuntimeMemory(root, workspaceID, taskID)
+	if err != nil {
+		return assessment, err
+	}
+	seen := map[string]bool{}
+	var lines []string
+	for _, line := range strings.Split(content, "\n") {
+		key := strings.TrimSpace(line)
+		if key == "" || !seen[key] {
+			lines = append(lines, line)
+			seen[key] = true
+		}
+	}
+	_, err = WriteRuntimeMemory(root, workspaceID, taskID, strings.TrimRight(strings.Join(lines, "\n"), "\n")+"\n")
+	return assessment, err
 }
 
 func WriteRuntimeEvent(root, workspaceID, kind string, details map[string]string) (RuntimeEvent, error) {

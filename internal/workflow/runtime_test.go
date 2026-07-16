@@ -99,7 +99,7 @@ func TestRuntimeMigratesLegacyWorkspace(t *testing.T) {
 
 func TestRuntimeMemorySeparatesSharedAndTaskNotes(t *testing.T) {
 	root := t.TempDir()
-	if _, err := WriteRuntimeMemory(root, "WORK-001", "", "Shared risk: link to DEC-001."); err != nil {
+	if _, err := WriteRuntimeMemory(root, "WORK-001", "", "- risk: dependency may fail\n- source: [decision](knowledge/decisions/DEC-001.md)\n- risk: dependency may fail\n"); err != nil {
 		t.Fatal(err)
 	}
 	if _, err := WriteRuntimeMemory(root, "WORK-001", "TK-001", "Task-local observation."); err != nil {
@@ -107,8 +107,26 @@ func TestRuntimeMemorySeparatesSharedAndTaskNotes(t *testing.T) {
 	}
 	shared, _ := ReadRuntimeMemory(root, "WORK-001", "")
 	task, _ := ReadRuntimeMemory(root, "WORK-001", "TK-001")
-	if !strings.Contains(shared, "Shared risk") || !strings.Contains(task, "Task-local") {
+	if !strings.Contains(shared, "dependency may fail") || !strings.Contains(task, "Task-local") {
 		t.Fatalf("shared=%q task=%q", shared, task)
+	}
+	assessment, err := CompactRuntimeMemory(root, "WORK-001", "")
+	if err != nil || len(assessment.ActiveRisks) != 2 || len(assessment.Sources) != 1 {
+		t.Fatalf("assessment=%+v err=%v", assessment, err)
+	}
+	shared, _ = ReadRuntimeMemory(root, "WORK-001", "")
+	if strings.Count(shared, "dependency may fail") != 1 {
+		t.Fatalf("compact=%q", shared)
+	}
+}
+
+func TestRuntimeMemoryRejectsApprovalHistoryDuringCompaction(t *testing.T) {
+	root := t.TempDir()
+	if _, err := WriteRuntimeMemory(root, "WORK-001", "", "Approval history: approved by someone"); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := CompactRuntimeMemory(root, "WORK-001", ""); err == nil {
+		t.Fatal("approval history compacted")
 	}
 }
 

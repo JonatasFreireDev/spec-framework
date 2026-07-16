@@ -254,6 +254,34 @@ func runRuntime(command string, args []string, out, errout io.Writer) int {
 			fmt.Fprintln(errout, "runtime requires --work")
 			return 2
 		}
+		if len(rest) > 0 && rest[0] == "memory" {
+			if len(rest) < 2 || (rest[1] != "inspect" && rest[1] != "compact") {
+				fmt.Fprintln(errout, "runtime memory requires inspect or compact")
+				return 2
+			}
+			if rest[1] == "compact" && !*yes {
+				fmt.Fprintln(errout, "runtime memory compact requires --yes")
+				return 2
+			}
+			var assessment workflow.MemoryAssessment
+			var e error
+			if rest[1] == "compact" {
+				assessment, e = workflow.CompactRuntimeMemory(p, *work, *task)
+			} else {
+				assessment, e = workflow.AssessRuntimeMemory(p, *work, *task)
+			}
+			if e != nil {
+				fmt.Fprintln(errout, e)
+				return 1
+			}
+			if *jsonOutput {
+				data, _ := json.Marshal(assessment)
+				fmt.Fprintln(out, string(data))
+			} else {
+				fmt.Fprintf(out, "Memory %s: %d source(s), %d active risk(s), %d contradiction(s)\n", assessment.Path, len(assessment.Sources), len(assessment.ActiveRisks), len(assessment.Contradictions))
+			}
+			return 0
+		}
 		if len(rest) > 0 && (rest[0] == "status" || rest[0] == "watch") {
 			watch := rest[0] == "watch"
 			if *interval <= 0 {
