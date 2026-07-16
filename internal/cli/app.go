@@ -408,13 +408,15 @@ func runImport(args []string, stdout, stderr io.Writer) int {
 		fmt.Fprintln(stdout, "Created scalable import run", run)
 		return 0
 	}
-	if args[0] == "status" || args[0] == "resume" {
+	if args[0] == "status" || args[0] == "resume" || args[0] == "record-review" {
 		flags := flag.NewFlagSet("import "+args[0], flag.ContinueOnError)
 		flags.SetOutput(stderr)
 		productRoot := flags.String("product-root", "product", "product root")
 		runID := flags.String("run", "", "import run id")
 		agent := flags.String("agent", "", "importer identity")
 		chunk := flags.String("chunk", "", "chunk id")
+		input := flags.String("input", "", "review JSON input")
+		yes := flags.Bool("yes", false, "confirm review record")
 		jsonOutput := flags.Bool("json", false, "structured output")
 		if err := flags.Parse(args[1:]); err != nil {
 			return 2
@@ -440,6 +442,28 @@ func runImport(args []string, stdout, stderr io.Writer) int {
 			} else {
 				fmt.Fprintln(stdout, "RESUMED", claimed.ID, "for", claimed.Agent)
 			}
+			return 0
+		}
+		if args[0] == "record-review" {
+			if !*yes || *chunk == "" || *agent == "" || *input == "" {
+				fmt.Fprintln(stderr, "import record-review requires --chunk, --agent, --input, and --yes")
+				return 2
+			}
+			data, err := os.ReadFile(*input)
+			if err != nil {
+				fmt.Fprintln(stderr, err)
+				return 1
+			}
+			var review sourceimport.ChunkReview
+			if err := json.Unmarshal(data, &review); err != nil {
+				fmt.Fprintln(stderr, err)
+				return 2
+			}
+			if err := sourceimport.RecordChunkReview(root, *runID, *chunk, *agent, review); err != nil {
+				fmt.Fprintln(stderr, err)
+				return 1
+			}
+			fmt.Fprintln(stdout, "REVIEWED", *chunk)
 			return 0
 		}
 		status, err := sourceimport.ImportStatus(root, *runID)

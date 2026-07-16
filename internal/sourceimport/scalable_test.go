@@ -47,3 +47,28 @@ func TestScalableRunRejectsBudgetBeforeCopy(t *testing.T) {
 		t.Fatal("source copied after failed budget")
 	}
 }
+
+func TestScalableReviewRequiresEvidenceAndGuardsMaterialization(t *testing.T) {
+	root, source := t.TempDir(), t.TempDir()
+	file := filepath.Join(source, "a.md")
+	if err := os.WriteFile(file, []byte("content"), 0644); err != nil {
+		t.Fatal(err)
+	}
+	run, err := CreateScalableRun(root, []string{file}, CreateOptions{MaxFiles: 1, MaxTotalBytes: 100, MaxFileBytes: 100, ChunkSize: 1})
+	if err != nil {
+		t.Fatal(err)
+	}
+	chunk, err := Resume(root, run, "CHUNK-0001", "agent")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := RecordChunkReview(root, run, chunk.ID, "agent", ChunkReview{}); err == nil {
+		t.Fatal("review without evidence accepted")
+	}
+	if err := RecordChunkReview(root, run, chunk.ID, "agent", ChunkReview{SourceEvidence: map[string][]Evidence{"SRC-000001": {{Locator: "line 1", Claim: "content"}}}}); err != nil {
+		t.Fatal(err)
+	}
+	if err := requireReviewedChunks(root, run); err != nil {
+		t.Fatal(err)
+	}
+}
