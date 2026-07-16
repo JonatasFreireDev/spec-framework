@@ -192,6 +192,25 @@ func AssignReview(root, work, parentID, role, agent string) (Envelope, error) {
 	e.ExpectedEvidence = []string{"review verdict", "findings", "diff hash: " + parent.DiffHash}
 	return e, write(filepath.Join(dir(root, work), id+".json"), e)
 }
+
+// AssignResearch creates a read-only Technical Discovery assignment. Results
+// are proposals with cited evidence, never decisions or Engineering Proposals.
+func AssignResearch(root, work, unitPath, agent string) (Envelope, error) {
+	if strings.TrimSpace(unitPath) == "" || strings.TrimSpace(agent) == "" {
+		return Envelope{}, errors.New("research dispatch requires unit path and agent")
+	}
+	data, err := os.ReadFile(unitPath)
+	if err != nil {
+		return Envelope{}, err
+	}
+	sum := sha256.Sum256(data)
+	if err := os.MkdirAll(dir(root, work), 0755); err != nil {
+		return Envelope{}, err
+	}
+	id := fmt.Sprintf("DISPATCH-%d", time.Now().UTC().UnixNano())
+	e := Envelope{Version: 1, ID: id, WorkspaceID: work, UnitKind: "technical-research", UnitPath: filepath.ToSlash(unitPath), Role: "technical-discovery", Agent: agent, InputHash: hex.EncodeToString(sum[:]), RequiredReading: []string{filepath.ToSlash(unitPath)}, ExpectedEvidence: []string{"sources", "options", "uncertainties"}, Status: "assigned", CreatedAt: time.Now().UTC().Format(time.RFC3339), Forbidden: []string{"decision", "approval", "engineering-proposal", "commit", "push", "merge", "release"}}
+	return e, write(filepath.Join(dir(root, work), id+".json"), e)
+}
 func Observe(root, work string) ([]Envelope, error) {
 	entries, err := os.ReadDir(dir(root, work))
 	if os.IsNotExist(err) {
