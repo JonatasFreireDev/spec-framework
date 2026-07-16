@@ -45,6 +45,12 @@ type Candidate struct {
 	Ready              bool
 	Blockers           []string
 }
+type Finding struct {
+	Kind       string `json:"kind"`
+	DispatchID string `json:"dispatch_id"`
+	Detail     string `json:"detail"`
+	Owner      string `json:"owner"`
+}
 
 func dir(root, work string) string {
 	return filepath.Join(root, ".product", "workspaces", work, "dispatches")
@@ -186,6 +192,34 @@ func Observe(root, work string) ([]Envelope, error) {
 		out = append(out, e)
 	}
 	sort.Slice(out, func(i, j int) bool { return out[i].ID < out[j].ID })
+	return out, nil
+}
+
+// Reconcile is read-only and never changes an envelope, task, or lease.
+func Reconcile(root, work string) ([]Finding, error) {
+	xs, err := Observe(root, work)
+	if err != nil {
+		return nil, err
+	}
+	byID := map[string]Envelope{}
+	for _, x := range xs {
+		byID[x.ID] = x
+	}
+	var out []Finding
+	for _, x := range xs {
+		if x.Role != "code-runner" && x.ParentID != "" {
+			p, ok := byID[x.ParentID]
+			if !ok {
+				out = append(out, Finding{"orphaned-review", x.ID, "parent dispatch missing", "delivery-orchestrator"})
+			} else if p.DiffHash == "" || p.DiffHash != x.DiffHash {
+				out = append(out, Finding{"review-diff-mismatch", x.ID, "review does not match parent diff", "code-review"})
+			}
+		}
+		if x.Status == "assigned" && x.Role != "code-runner" && x.DiffHash == "" {
+			out = append(out, Finding{"review-missing-diff", x.ID, "independent review lacks diff hash", "delivery-orchestrator"})
+		}
+	}
+	sort.Slice(out, func(i, j int) bool { return out[i].DispatchID < out[j].DispatchID })
 	return out, nil
 }
 func mustNodes(graph string) []workflow.Node {

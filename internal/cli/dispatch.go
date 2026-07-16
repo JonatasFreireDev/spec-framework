@@ -12,7 +12,7 @@ import (
 
 func runDispatch(args []string, out, errout io.Writer) int {
 	if len(args) == 0 {
-		fmt.Fprintln(errout, "dispatch requires plan, assign, return, or observe")
+		fmt.Fprintln(errout, "dispatch requires plan, assign, return, observe, or reconcile")
 		return 2
 	}
 	fs := flag.NewFlagSet("dispatch", flag.ContinueOnError)
@@ -97,6 +97,20 @@ func runDispatch(args []string, out, errout io.Writer) int {
 		}
 		for _, x := range xs {
 			fmt.Fprintf(out, "%s %s %s %s\n", x.ID, x.TaskID, x.Role, x.Status)
+		}
+		return 0
+	case "reconcile":
+		if *work == "" {
+			fmt.Fprintln(errout, "dispatch reconcile requires --work")
+			return 2
+		}
+		xs, e := dispatch.Reconcile(p, *work)
+		if e != nil {
+			fmt.Fprintln(errout, e)
+			return 1
+		}
+		for _, x := range xs {
+			fmt.Fprintf(out, "%s %s -> %s\n", x.Kind, x.DispatchID, x.Owner)
 		}
 		return 0
 	}
