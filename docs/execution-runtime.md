@@ -38,7 +38,7 @@ Command plans store direct argv rather than shell strings. The command executor 
 
 Implemented tasks record the required immutable working-tree evidence and current diff hash. Code Review and task QA review the same diff hash before Commit Crafter creates local commits. Validated task commits are integrated locally in DAG order; conflicts stop for human resolution, followed by Integrated QA where applicable.
 
-Runtime commands include `runtime`, `resume`, `handoff`, `checkpoint`, `lease`, `commands`, `schedule`, and `integrate`. Use the installed CLI help as the authority for exact flags and syntax.
+Runtime commands include `runtime`, `resume`, `handoff`, `checkpoint`, `lease`, `commands`, `schedule`, `integrate`, and `reviews import`. The latter imports a local JSON array into immutable provider-neutral evidence under `.product/reviews/findings/`; it only proposes a route and cannot resolve external threads, change code, or create approvals. Use the installed CLI help as the authority for exact flags and syntax.
 
 ## Owning skills
 

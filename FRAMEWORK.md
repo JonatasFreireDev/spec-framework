@@ -533,7 +533,7 @@ Runtime v2 leases live in `.product/claims/<task-id>.json`; `.product/claims.jso
 
 Runtime v2 makes execution resumable and safely parallel. The complete workspace, lease, scheduler, command-plan, worktree, recovery, and integration contract is defined in [`docs/execution-runtime.md`](docs/execution-runtime.md). The runtime does not spawn agents or grant approval.
 
-Runtime commands include `runtime`, `resume`, `handoff`, `checkpoint`, `lease`, `commands`, `schedule`, and `integrate`.
+Runtime commands include `runtime`, `resume`, `handoff`, `checkpoint`, `lease`, `commands`, `schedule`, `integrate`, and local `reviews import`. Imported review findings are immutable, provider-neutral evidence with provenance and an advisory owner route; import cannot resolve a remote review, alter code, or advance an approval.
 
 Skills are specialists. They can operate in modes such as `create`, `update`, `audit`, `evolve`, `explain`, `compare`, and `refactor`, but each must have a clear responsibility.
 

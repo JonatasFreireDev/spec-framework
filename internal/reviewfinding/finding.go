@@ -1,7 +1,13 @@
 package reviewfinding
 
 import (
+	"crypto/sha256"
+	"encoding/hex"
+	"encoding/json"
 	"errors"
+	"fmt"
+	"os"
+	"path/filepath"
 	"strings"
 )
 
@@ -49,4 +55,66 @@ func (f Finding) Route() string {
 		return "product-historian"
 	}
 	return "bug-fixer"
+}
+
+// Import stores a provider-neutral snapshot of review findings. It has no
+// provider client and never resolves a remote thread, edits a task, or changes
+// approval state. Existing immutable snapshots may only be imported again when
+// their complete content matches.
+func Import(root, source string, findings []Finding) ([]Finding, error) {
+	source = strings.TrimSpace(source)
+	if source == "" || strings.ContainsAny(source, `/\\`) {
+		return nil, errors.New("review import source is required and must be a simple provider name")
+	}
+	dir := filepath.Join(root, ".product", "reviews", "findings")
+	if err := os.MkdirAll(dir, 0755); err != nil {
+		return nil, err
+	}
+	seen := map[string]bool{}
+	for _, finding := range findings {
+		if err := finding.Validate(); err != nil {
+			return nil, err
+		}
+		if finding.Source != source {
+			return nil, fmt.Errorf("review finding %s source %q does not match import source %q", finding.ID, finding.Source, source)
+		}
+		if !safeID(finding.ID) {
+			return nil, fmt.Errorf("review finding id %q is unsafe", finding.ID)
+		}
+		if seen[finding.ID] {
+			return nil, fmt.Errorf("duplicate review finding id %s in import", finding.ID)
+		}
+		seen[finding.ID] = true
+		path := filepath.Join(dir, finding.ID+".json")
+		payload, err := json.MarshalIndent(finding, "", "  ")
+		if err != nil {
+			return nil, err
+		}
+		payload = append(payload, '\n')
+		if prior, err := os.ReadFile(path); err == nil {
+			if hash(prior) != hash(payload) {
+				return nil, fmt.Errorf("review finding %s already exists with different immutable evidence", finding.ID)
+			}
+			continue
+		} else if !os.IsNotExist(err) {
+			return nil, err
+		}
+		if err := atomicWrite(path, payload); err != nil {
+			return nil, err
+		}
+	}
+	return findings, nil
+}
+
+func safeID(id string) bool {
+	return id != "" && filepath.Base(id) == id && !strings.ContainsAny(id, `/\\`)
+}
+func hash(data []byte) string { sum := sha256.Sum256(data); return hex.EncodeToString(sum[:]) }
+
+func atomicWrite(path string, data []byte) error {
+	tmp := path + ".tmp"
+	if err := os.WriteFile(tmp, data, 0644); err != nil {
+		return err
+	}
+	return os.Rename(tmp, path)
 }

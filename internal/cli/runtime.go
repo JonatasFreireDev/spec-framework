@@ -1,6 +1,7 @@
 package cli
 
 import (
+	"encoding/json"
 	"flag"
 	"fmt"
 	"io"
@@ -9,12 +10,13 @@ import (
 	"strings"
 	"time"
 
+	"github.com/JonatasFreireDev/spec-framework/internal/reviewfinding"
 	"github.com/JonatasFreireDev/spec-framework/internal/workflow"
 )
 
 func runRuntime(command string, args []string, out, errout io.Writer) int {
 	op := ""
-	if (command == "lease" || command == "commands" || command == "integrate" || command == "runtime") && len(args) > 0 && !strings.HasPrefix(args[0], "-") {
+	if (command == "lease" || command == "commands" || command == "integrate" || command == "runtime" || command == "reviews") && len(args) > 0 && !strings.HasPrefix(args[0], "-") {
 		op, args = args[0], args[1:]
 	}
 	fs := flag.NewFlagSet(command, flag.ContinueOnError)
@@ -41,6 +43,7 @@ func runRuntime(command string, args []string, out, errout io.Writer) int {
 	yes := fs.Bool("yes", false, "confirm mutation")
 	commits := fs.String("commits", "", "comma-separated commits")
 	isolate := fs.Bool("isolate", false, "create a task Git worktree")
+	importFile := fs.String("input", "", "JSON array of normalized review findings")
 	if err := fs.Parse(args); err != nil {
 		return 2
 	}
@@ -58,6 +61,30 @@ func runRuntime(command string, args []string, out, errout io.Writer) int {
 		rest = append([]string{op}, rest...)
 	}
 	switch command {
+	case "reviews":
+		if len(rest) != 1 || rest[0] != "import" || strings.TrimSpace(*source) == "" || strings.TrimSpace(*importFile) == "" {
+			fmt.Fprintln(errout, "reviews import requires --source and --input")
+			return 2
+		}
+		data, e := os.ReadFile(*importFile)
+		if e != nil {
+			fmt.Fprintln(errout, e)
+			return 1
+		}
+		var findings []reviewfinding.Finding
+		if e = json.Unmarshal(data, &findings); e != nil {
+			fmt.Fprintln(errout, "review input must be a JSON array:", e)
+			return 2
+		}
+		imported, e := reviewfinding.Import(p, *source, findings)
+		if e != nil {
+			fmt.Fprintln(errout, e)
+			return 1
+		}
+		for _, finding := range imported {
+			fmt.Fprintf(out, "IMPORTED %s ROUTE %s\n", finding.ID, finding.Route())
+		}
+		return 0
 	case "resume":
 		if *work == "" {
 			fmt.Fprintln(errout, "resume requires --work")
