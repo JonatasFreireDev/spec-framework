@@ -13,7 +13,6 @@ It explains how to do Specification Driven Development. It is not product scope.
 | `FRAMEWORK.md` | Method contract copied from the framework release. |
 | `AGENTS.framework.md` | Agent instructions for using the installed framework without mixing product scope into `.spec-framework/`. |
 | `manifest.json` | Installed framework version and asset map. |
-| `decisions/` | Framework Decision Records copied from the framework release. |
 | `skills/` | Operational agent skills. |
 | `templates/` | Reusable artifact templates. |
 | `validators/` | Mechanical validation gates. |
@@ -25,4 +24,4 @@ Product artifacts live in `../product/`.
 
 Product decisions live in `../product/knowledge/decisions/`.
 
-Framework decisions live in `decisions/`.
+Framework method evolution is incorporated directly into `FRAMEWORK.md`, the affected contracts, validators, and tests. Git history is the maintenance record.

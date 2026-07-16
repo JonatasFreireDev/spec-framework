@@ -33,14 +33,14 @@ Source documents; product context; existing Domains, User Goals, Features, gloss
 ## Workflow
 1. Copy or reference sources without modifying their content and compute a SHA-256 hash for each source.
 2. Inventory source path, format, size, and hash.
-3. Read each imported source and update `traceability.json` with review status, section-level evidence, extracted claims, candidate ids, mapped targets, and gaps. Every source must end as `reviewed`, `partially_mapped`, `mapped`, or `not_applicable`; never leave the reason implicit.
+3. For a scalable run, claim only one `CHUNK-NNNN` with `import resume`, read its sources, then use `import record-review` with section-level evidence for every non-excluded source. For a legacy run, update `traceability.json`. Every source must end as reviewed, partially mapped, mapped, or not applicable; never leave the reason implicit.
 4. Extract candidate Domains, User Goals, Features, rules, decisions, priorities, and dependencies with section-level evidence.
 5. Compare candidates with existing artifacts and the glossary.
 6. Record duplicates, contradictions, ambiguous parents, and open questions; never resolve them silently.
 7. Propose source-to-artifact mappings in `draft` and leave `materialization_approved` false.
 8. Stop for explicit human approval before creating canonical product artifacts.
 9. When approved, materialize only selected mappings as `draft`, preserving `source_documents` traceability, recording `provenance.kind: import-draft` and `provenance.import_run`, and never creating approval records.
-10. Use `spec-framework import materialize --run IMPORT-NNN --approved-by <human> --yes` for mechanical materialization; do not edit the approval fields manually.
+10. Use `spec-framework import materialize --run IMPORT-NNN --approved-by <human> --yes` for mechanical materialization only after every scalable chunk is reviewed or excluded; do not edit the approval fields manually.
 
 ## Quality checklist
 - [ ] Preserves traceability to affected artifacts.

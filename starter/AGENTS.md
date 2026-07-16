@@ -30,7 +30,7 @@ Do not edit framework-owned assets to encode product scope. Put product-specific
 
 ## First Handoff
 
-Start with Framework Guide unless a current CLI result or explicit human request names both the specialist and the concrete artifact or workspace scope. Revalidate persisted handoffs/checkpoints with `dashboard`, `status`, `next`, or `guide` before routing directly. A skill name without scope is only a hint. For a new product, continue through Product Orchestrator, Problem Discovery, Vision, and Strategy before creating domains or features. For `existing-documents`, let Artifact Importer read every inventoried source and complete `traceability.json` and `mapping.json` before requesting materialization.
+Start with Framework Guide unless a current CLI result or explicit human request names both the specialist and the concrete artifact or workspace scope. Revalidate persisted handoffs/checkpoints with `dashboard`, `status`, `next`, or `guide` before routing directly. A skill name without scope is only a hint. For a new product, continue through Product Orchestrator, Problem Discovery, Vision, and Strategy before creating domains or features. For `existing-documents`, let Artifact Importer read every inventoried source and complete `traceability.json` and `mapping.json` before requesting materialization. For a scalable import, claim and review one persisted chunk at a time with source evidence; never mark a chunk reviewed without it.
 
 ## Canonical Delivery Flow
 
