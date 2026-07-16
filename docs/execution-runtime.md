@@ -49,6 +49,8 @@ Operational memory is optional and has shared (`memory/shared.md`) and task-loca
 
 ACP dispatch is experimental and disabled by default. A run requires explicit enablement and per-run acknowledgement, then claims exactly one ready task for its named agent. It records a local transcript hash and releases that lease at the end. It cannot invoke Git delivery commands and has no approval, review-resolution, push, merge, or release authority.
 
+Extensions are versioned manifests discovered without execution. A capability is usable only when that manifest declares it and the product has a matching versioned record under `.product/extensions/`; discovery itself grants no trust or authority.
+
 ## Owning skills
 
 - `execution-graph`: defines and validates the DAG and graph lifecycle.
