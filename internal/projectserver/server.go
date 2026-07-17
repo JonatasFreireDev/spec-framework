@@ -13,6 +13,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"strconv"
 	"strings"
 	"sync"
 	"time"
@@ -65,6 +66,9 @@ func Start(ctx context.Context, config Config) (Running, error) {
 	}
 
 	shutdown := make(chan struct{})
+	watcher := newWorktreeWatcher(root)
+	watcherContext, cancelWatcher := context.WithCancel(ctx)
+	go watcher.Run(watcherContext)
 	var shutdownOnce sync.Once
 	requestShutdown := func() { shutdownOnce.Do(func() { close(shutdown) }) }
 	mux := http.NewServeMux()
@@ -99,6 +103,66 @@ func Start(ctx context.Context, config Config) (Running, error) {
 			return
 		}
 		writeJSON(w, http.StatusOK, status)
+	})
+	mux.HandleFunc("/api/project-view", func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != http.MethodGet {
+			methodNotAllowed(w)
+			return
+		}
+		view, err := readProjectView(root, watcher.Revision())
+		if err != nil {
+			writeAPIError(w, http.StatusInternalServerError, err)
+			return
+		}
+		writeJSON(w, http.StatusOK, view)
+	})
+	mux.HandleFunc("/api/preferences", func(w http.ResponseWriter, r *http.Request) {
+		switch r.Method {
+		case http.MethodGet:
+			preferences, err := readPreferences(root)
+			if err != nil {
+				writeAPIError(w, http.StatusInternalServerError, err)
+				return
+			}
+			writeJSON(w, http.StatusOK, preferences)
+		case http.MethodPut:
+			var preferences userPreferences
+			if err := decodeJSON(r, &preferences); err != nil {
+				writeAPIError(w, http.StatusBadRequest, err)
+				return
+			}
+			preferences.ReviewerName = strings.TrimSpace(preferences.ReviewerName)
+			if len(preferences.ReviewerName) > 120 {
+				writeAPIError(w, http.StatusBadRequest, errors.New("reviewer name must be at most 120 characters"))
+				return
+			}
+			if err := writePreferences(root, preferences); err != nil {
+				writeAPIError(w, http.StatusInternalServerError, err)
+				return
+			}
+			writeJSON(w, http.StatusOK, preferences)
+		default:
+			methodNotAllowed(w)
+		}
+	})
+	mux.HandleFunc("/api/project-view/changes", func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != http.MethodGet {
+			methodNotAllowed(w)
+			return
+		}
+		since, err := strconv.ParseUint(r.URL.Query().Get("since"), 10, 64)
+		if err != nil {
+			writeAPIError(w, http.StatusBadRequest, errors.New("since must be a revision number"))
+			return
+		}
+		wait := 25 * time.Second
+		if requested, e := strconv.Atoi(r.URL.Query().Get("wait")); e == nil && requested >= 0 && requested <= 25 {
+			wait = time.Duration(requested) * time.Second
+		}
+		ctx, cancel := context.WithTimeout(r.Context(), wait)
+		defer cancel()
+		revision := watcher.Wait(ctx, since)
+		writeJSON(w, http.StatusOK, map[string]any{"revision": revision, "changed": revision != since})
 	})
 	mux.HandleFunc("/api/transition", func(w http.ResponseWriter, r *http.Request) {
 		if r.Method != http.MethodPost {
@@ -160,6 +224,31 @@ func Start(ctx context.Context, config Config) (Running, error) {
 		}
 		writeJSON(w, http.StatusOK, records)
 	})
+	mux.HandleFunc("/api/batch-reject", func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != http.MethodPost {
+			methodNotAllowed(w)
+			return
+		}
+		var request batchApprovalRequest
+		if err := decodeJSON(r, &request); err != nil {
+			writeAPIError(w, http.StatusBadRequest, err)
+			return
+		}
+		if !request.Confirmed {
+			writeAPIError(w, http.StatusBadRequest, errors.New("confirmation is required"))
+			return
+		}
+		if strings.TrimSpace(request.ApprovedBy) == "" || strings.TrimSpace(request.Notes) == "" {
+			writeAPIError(w, http.StatusBadRequest, errors.New("approver identity and notes are required"))
+			return
+		}
+		records, err := workflow.RejectBatch(root, request.ArtifactIDs, request.ApprovedBy, request.Notes)
+		if err != nil {
+			writeAPIError(w, http.StatusUnprocessableEntity, err)
+			return
+		}
+		writeJSON(w, http.StatusOK, records)
+	})
 	mux.HandleFunc("/api/batch-approval-plan", func(w http.ResponseWriter, r *http.Request) {
 		if r.Method != http.MethodPost {
 			methodNotAllowed(w)
@@ -195,6 +284,7 @@ func Start(ctx context.Context, config Config) (Running, error) {
 		}
 		shutdownCtx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 		defer cancel()
+		cancelWatcher()
 		_ = httpServer.Shutdown(shutdownCtx)
 		_ = os.Remove(descriptorPath(root))
 	}()

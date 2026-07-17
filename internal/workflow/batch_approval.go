@@ -137,6 +137,61 @@ func ApproveBatch(root string, plan BatchPlan, approvedBy, notes string) ([]Appr
 	return records, nil
 }
 
+// RejectBatch records a request for changes for an explicit set of artifacts.
+// It uses the same snapshot semantics as approval so a partial rejection is
+// never left behind when one artifact cannot transition.
+func RejectBatch(root string, ids []string, approvedBy, notes string) ([]Approval, error) {
+	if strings.TrimSpace(approvedBy) == "" {
+		return nil, fmt.Errorf("reject-batch requires an approver identity")
+	}
+	if strings.TrimSpace(notes) == "" {
+		return nil, fmt.Errorf("reject-batch requires notes")
+	}
+	if len(ids) == 0 {
+		return nil, fmt.Errorf("reject-batch requires at least one artifact")
+	}
+	registry, err := LoadRegistry(root)
+	if err != nil {
+		return nil, err
+	}
+	byID := map[string]Artifact{}
+	for _, artifact := range registry.Artifacts {
+		byID[artifact.ID] = artifact
+	}
+	artifacts := make([]Artifact, 0, len(ids))
+	seen := map[string]bool{}
+	for _, id := range ids {
+		if seen[id] {
+			continue
+		}
+		seen[id] = true
+		artifact, exists := byID[id]
+		if !exists {
+			return nil, fmt.Errorf("artifact not found: %s", id)
+		}
+		if _, err := PreviewApproval(root, filepath.Join(root, filepath.FromSlash(artifact.Path)), "rejected"); err != nil {
+			return nil, fmt.Errorf("cannot request changes for %s: %w", id, err)
+		}
+		artifacts = append(artifacts, artifact)
+	}
+	snapshot, err := snapshotApprovalRoot(root)
+	if err != nil {
+		return nil, err
+	}
+	records := make([]Approval, 0, len(artifacts))
+	for _, artifact := range artifacts {
+		record, err := Approve(root, filepath.Join(root, filepath.FromSlash(artifact.Path)), "rejected", approvedBy, notes)
+		if err != nil {
+			if rollbackErr := snapshot.restore(root); rollbackErr != nil {
+				return records, fmt.Errorf("rejection batch stopped after %d artifact(s): %w; rollback failed: %v", len(records), err, rollbackErr)
+			}
+			return nil, fmt.Errorf("rejection batch rolled back after %d artifact(s): %w", len(records), err)
+		}
+		records = append(records, record)
+	}
+	return records, nil
+}
+
 type approvalSnapshot struct{ Files map[string][]byte }
 
 func snapshotApprovalRoot(root string) (approvalSnapshot, error) {
