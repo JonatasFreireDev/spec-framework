@@ -38,6 +38,8 @@ Follow the shared [Discovery And Challenge contract](../discovery-and-challenge.
 
 Use scripts/invoke-cli.ps1 on Windows or scripts/invoke-cli.sh on macOS/Linux for the CLI operation in this skill's reviewed scope. The wrapper never adds --yes or an approver identity.
 
+Use `scripts/inventory-engineering-evidence.ps1` on Windows or `scripts/inventory-engineering-evidence.sh` on macOS/Linux before authoring the shared baseline. It inventories deterministic engineering evidence and can call `engineering-system validate`; it never changes product or code files.
+
 ## Workflow
 1. Inspect the real product code, tests, configuration, environments, operations evidence, and existing engineering documents. If no code exists, create explicit hypothesis contracts, pending decisions, and intended constraints rather than pretending evidence exists.
 2. Define the covered product and repository boundaries and choose `generate`, `evolve`, or `adopt`.

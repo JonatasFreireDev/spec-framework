@@ -31,6 +31,8 @@ For `starting_point: existing-product`, use Product Baseline -> explicit individ
 
 Follow the shared [Discovery And Challenge contract](../discovery-and-challenge.md) when eliciting foundation choices or resolving a blocking route.
 
+Use `scripts/inventory-product-landscape.ps1` on Windows or `scripts/inventory-product-landscape.sh` on macOS/Linux to collect the declared code-root evidence and invoke validation when requested. The script is read-only; the agent must still map the full product landscape and distinguish evidence from inference.
+
 ## Operating rules
 1. Identify the current artifact status before routing work.
 2. Route work to the smallest specialist skill that owns the next artifact.

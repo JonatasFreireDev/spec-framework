@@ -91,6 +91,8 @@ Follow the shared [Discovery And Challenge contract](../discovery-and-challenge.
 
 For a deterministic workspace snapshot, run `scripts/inspect-workspace.ps1` on Windows or `scripts/inspect-workspace.sh` on macOS/Linux instead of reconstructing the `guide`, `status`, and `dashboard` sequence.
 
+For a declared implementation layout, run `scripts/inspect-code-roots.ps1` on Windows or `scripts/inspect-code-roots.sh` on macOS/Linux. The script inventories deterministic code-root evidence and optionally calls `spec-framework validate`; interpret its output before routing domain work.
+
 When the intent concerns a decision or ADR, first run `spec-framework decisions check --product-root product --json`. Use the indexed `path` and reported domain as the routing evidence. `--strict` is the CI gate; `--fix-links` requires a reviewed preview followed by `--yes` and never creates approval records.
 1. Restate the goal in one sentence and determine whether the request is explanation, inspection, planning, local mutation, approval, remote mutation, or release.
 2. Apply the activation and dispatch boundaries. If active, discover the repository root, product root, pinned version, agents, and starting point from the canonical manifest; do not ask for information the CLI or repository can provide safely.
