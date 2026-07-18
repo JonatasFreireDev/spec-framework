@@ -1,12 +1,12 @@
 {
   "schema_version": 1,
   "id": "existing-documents",
-  "asset_sets": ["product-core", "knowledge", "governance"],
+  "asset_sets": ["product-core", "knowledge", "delivery-design", "delivery-engineering", "governance"],
   "directories": ["knowledge/imports/sources", "knowledge/imports/runs"],
   "files": [],
   "patches": [],
   "registry": {
-    "modules": ["product-core", "knowledge", "governance"],
+    "modules": ["product-core", "knowledge", "delivery-design", "delivery-engineering", "governance"],
     "exclude_types": ["problem", "vision", "product-principles", "north-star", "strategy", "domain", "user-goal", "feature", "use-case"]
   },
   "bootstrap_profile": "existing-documents",

@@ -36,6 +36,27 @@
       "parentIds": ["VISION-TBD", "PRINCIPLES-TBD", "NORTH-STAR-TBD"]
     },
     {
+      "id": "LANDSCAPE-TBD",
+      "type": "product-landscape",
+      "status": "draft",
+      "path": "knowledge/assessments/product-landscape.md",
+      "parentIds": []
+    },
+    {
+      "id": "ENGSYS-001",
+      "type": "engineering-system",
+      "status": "draft",
+      "path": "engineering/engineering-system.md",
+      "parentIds": ["LANDSCAPE-TBD"]
+    },
+    {
+      "id": "DSYS-001",
+      "type": "design-system",
+      "status": "draft",
+      "path": "design/system/design-system.md",
+      "parentIds": ["LANDSCAPE-TBD"]
+    },
+    {
       "id": "DOMAIN-TEMPLATE",
       "type": "domain",
       "status": "draft",

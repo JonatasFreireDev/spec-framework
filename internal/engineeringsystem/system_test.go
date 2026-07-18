@@ -92,6 +92,71 @@ func TestInspectRejectsCatalogIdentityMismatch(t *testing.T) {
 	}
 }
 
+func TestInspectValidatesTechnicalStandardsAndOperationsCatalogs(t *testing.T) {
+	root := t.TempDir()
+	engineering := filepath.Join(root, "engineering")
+	files := map[string]string{
+		"context.md":                        "---\nid: ENGSYS-TEST-001\nstatus: draft\nversion: 1.0.0\norigin_mode: generate\n---\n",
+		"engineering-system.md":             "| Field | Value |\n| --- | --- |\n| ID | `ENGSYS-TEST-001` |\n| Status | `draft` |\n| Version | `1.0.0` |\n",
+		"engineering-system.yaml":           "schema_version: 1\nid: ENGSYS-TEST-001\nstatus: draft\nversion: 1.0.0\norigin_mode: generate\nscope: product\nareas:\n  technical_catalog: {contract: catalog/catalog.yaml, maturity: baseline, evidence: []}\n  standards: {contract: standards/standards.yaml, maturity: baseline, evidence: []}\n  operations: {contract: operations/operations.yaml, maturity: baseline, evidence: []}\n",
+		"catalog/catalog.yaml":              "schema_version: 1\nentities:\n  systems: {SYS-ONE: systems/system.yaml}\n  applications: {APP-ONE: applications/app.yaml}\n  components: {}\n  repositories: {}\n  data_stores: {}\n  interfaces: {}\n  deployments: {}\nrelations:\n  - {id: REL-SYSTEM-APP, type: contains, source: SYS-ONE, target: APP-ONE, evidence: []}\n",
+		"catalog/systems/system.yaml":       "schema_version: 1\nid: SYS-ONE\ntype: system\nstatus: draft\n",
+		"catalog/applications/app.yaml":     "schema_version: 1\nid: APP-ONE\ntype: application\nstatus: draft\n",
+		"standards/standards.yaml":          "schema_version: 1\nprofiles: {PROFILE-DEFAULT: profiles/default.yaml}\nstandards: {STD-API-001: catalog/api.yaml}\nexceptions: {STDEX-001: exceptions/api.yaml}\n",
+		"standards/profiles/default.yaml":   "schema_version: 1\nid: PROFILE-DEFAULT\nversion: 1.0.0\nstatus: draft\nextends: []\nstandards: [STD-API-001]\n",
+		"standards/catalog/api.yaml":        "schema_version: 1\nid: STD-API-001\nversion: 1.0.0\nstatus: active\ncategory: api\nlevel: required\nrules:\n  - id: STD-API-001-R01\n    requirement: APIs publish a contract\n    verification: [schema]\n",
+		"standards/exceptions/api.yaml":     "schema_version: 1\nid: STDEX-001\nstandard: STD-API-001\nscope: [APP-ONE]\nowner: team\nrationale: migration\nresidual_risk: accepted\nmitigation: monitor\nexpires_on: 2099-01-01\nreentry_gate: tests pass\nstatus: open\n",
+		"operations/operations.yaml":        "schema_version: 1\nenvironments: {ENV-PROD: environments/prod.yaml}\ndeployments: {}\nrunbooks: {}\n",
+		"operations/environments/prod.yaml": "schema_version: 1\nid: ENV-PROD\n",
+	}
+	for name, body := range files {
+		path := filepath.Join(engineering, filepath.FromSlash(name))
+		if err := os.MkdirAll(filepath.Dir(path), 0o755); err != nil {
+			t.Fatal(err)
+		}
+		if err := os.WriteFile(path, []byte(body), 0o644); err != nil {
+			t.Fatal(err)
+		}
+	}
+	inspection, err := Inspect(root)
+	if err != nil || len(inspection.Blockers) != 0 {
+		t.Fatalf("inspection=%+v err=%v", inspection, err)
+	}
+}
+
+func TestInspectRejectsInvalidStandardInheritanceAndMissingCatalogRecord(t *testing.T) {
+	root := t.TempDir()
+	engineering := filepath.Join(root, "engineering")
+	files := map[string]string{
+		"context.md":                "---\nid: ENGSYS-TEST-001\nstatus: draft\nversion: 1.0.0\norigin_mode: generate\n---\n",
+		"engineering-system.md":     "| Field | Value |\n| --- | --- |\n| ID | `ENGSYS-TEST-001` |\n| Status | `draft` |\n| Version | `1.0.0` |\n",
+		"engineering-system.yaml":   "schema_version: 1\nid: ENGSYS-TEST-001\nstatus: draft\nversion: 1.0.0\norigin_mode: generate\nscope: product\nareas:\n  technical_catalog: {contract: catalog/catalog.yaml, maturity: baseline, evidence: [], owner_skill: engineering-system}\n  standards: {contract: standards/standards.yaml, maturity: baseline, evidence: []}\n",
+		"catalog/catalog.yaml":      "schema_version: 1\nentities:\n  systems: {BAD-ID: systems/missing.yaml}\nrelations:\n  - {id: REL-BROKEN, type: depends_on, source: SYS-MISSING, target: APP-MISSING}\n",
+		"standards/standards.yaml":  "schema_version: 1\nprofiles: {PROFILE-A: profiles/a.yaml, PROFILE-B: profiles/b.yaml}\nstandards: {}\nexceptions: {}\n",
+		"standards/profiles/a.yaml": "schema_version: 1\nid: PROFILE-A\nversion: 1.0.0\nstatus: draft\nextends: [PROFILE-B]\nstandards: []\n",
+		"standards/profiles/b.yaml": "schema_version: 1\nid: PROFILE-B\nversion: 1.0.0\nstatus: draft\nextends: [PROFILE-A]\nstandards: []\n",
+	}
+	for name, body := range files {
+		path := filepath.Join(engineering, filepath.FromSlash(name))
+		if err := os.MkdirAll(filepath.Dir(path), 0o755); err != nil {
+			t.Fatal(err)
+		}
+		if err := os.WriteFile(path, []byte(body), 0o644); err != nil {
+			t.Fatal(err)
+		}
+	}
+	inspection, err := Inspect(root)
+	if err != nil {
+		t.Fatal(err)
+	}
+	joined := strings.Join(inspection.Blockers, "\n")
+	for _, expected := range []string{"owner_skill must be technical-landscape", "must start with SYS-", "is missing", "unknown source or target", "inheritance cycle"} {
+		if !strings.Contains(joined, expected) {
+			t.Fatalf("expected %q in blockers=%v", expected, inspection.Blockers)
+		}
+	}
+}
+
 func TestMigrateAddsSchemaVersionWithoutChangingOtherFields(t *testing.T) {
 	root := t.TempDir()
 	dir := filepath.Join(root, "engineering")

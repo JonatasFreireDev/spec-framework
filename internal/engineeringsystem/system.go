@@ -33,11 +33,41 @@ var allowedMaturity = map[string]bool{
 	"operated": true,
 }
 
+var technicalEntityPrefixes = map[string]string{
+	"systems": "SYS-", "applications": "APP-", "components": "CMP-",
+	"repositories": "REPO-", "data_stores": "DATA-", "interfaces": "IFACE-", "deployments": "DEPLOY-",
+}
+
+var technicalEntityTypes = map[string]string{
+	"systems": "system", "applications": "application", "components": "component",
+	"repositories": "repository", "data_stores": "data-store", "interfaces": "interface", "deployments": "deployment",
+}
+
+var allowedStandardCategories = map[string]bool{
+	"architecture": true, "code": true, "api": true, "events": true, "data": true,
+	"dependencies": true, "security": true, "observability": true, "testing": true, "delivery": true,
+}
+
+var allowedStandardLevels = map[string]bool{
+	"required": true, "recommended": true, "experimental": true, "deprecated": true,
+}
+
+var expectedAreaOwners = map[string]string{
+	"system_context":    "technical-landscape",
+	"modules":           "technical-landscape",
+	"technical_catalog": "technical-landscape",
+	"standards":         "engineering-standards",
+	"quality":           "engineering-system",
+	"operations":        "operations-baseline",
+	"evidence":          "engineering-evidence",
+}
+
 type Area struct {
-	Name     string `json:"name"`
-	Contract string `json:"contract"`
-	Maturity string `json:"maturity"`
-	Evidence int    `json:"evidence"`
+	Name       string `json:"name"`
+	Contract   string `json:"contract"`
+	Maturity   string `json:"maturity"`
+	Evidence   int    `json:"evidence"`
+	OwnerSkill string `json:"ownerSkill,omitempty"`
 }
 
 type Inspection struct {
@@ -81,9 +111,10 @@ type catalogDocument struct {
 }
 
 type catalogArea struct {
-	Contract string   `yaml:"contract"`
-	Maturity string   `yaml:"maturity"`
-	Evidence []string `yaml:"evidence"`
+	Contract   string   `yaml:"contract"`
+	Maturity   string   `yaml:"maturity"`
+	Evidence   []string `yaml:"evidence"`
+	OwnerSkill string   `yaml:"owner_skill"`
 }
 
 type qualityCatalogDocument struct {
@@ -123,6 +154,83 @@ type qualityExceptionRecord struct {
 	ExpiryOrReview string `yaml:"expiry_or_review"`
 	ReentryGate    string `yaml:"reentry_gate"`
 	Status         string `yaml:"status"`
+}
+
+type technicalCatalogDocument struct {
+	SchemaVersion int                          `yaml:"schema_version"`
+	OwnerSkill    string                       `yaml:"owner_skill"`
+	Entities      map[string]map[string]string `yaml:"entities"`
+	Relations     []technicalRelationDocument  `yaml:"relations"`
+}
+
+type technicalEntityDocument struct {
+	SchemaVersion int    `yaml:"schema_version"`
+	ID            string `yaml:"id"`
+	Type          string `yaml:"type"`
+	Status        string `yaml:"status"`
+}
+
+type technicalRelationDocument struct {
+	ID       string   `yaml:"id"`
+	Type     string   `yaml:"type"`
+	Source   string   `yaml:"source"`
+	Target   string   `yaml:"target"`
+	Evidence []string `yaml:"evidence"`
+}
+
+type standardsCatalogDocument struct {
+	SchemaVersion int               `yaml:"schema_version"`
+	OwnerSkill    string            `yaml:"owner_skill"`
+	Profiles      map[string]string `yaml:"profiles"`
+	Standards     map[string]string `yaml:"standards"`
+	Exceptions    map[string]string `yaml:"exceptions"`
+}
+
+type standardProfileDocument struct {
+	SchemaVersion int      `yaml:"schema_version"`
+	ID            string   `yaml:"id"`
+	Version       string   `yaml:"version"`
+	Status        string   `yaml:"status"`
+	Extends       []string `yaml:"extends"`
+	Standards     []string `yaml:"standards"`
+}
+
+type standardDocument struct {
+	SchemaVersion int                    `yaml:"schema_version"`
+	ID            string                 `yaml:"id"`
+	Version       string                 `yaml:"version"`
+	Status        string                 `yaml:"status"`
+	Category      string                 `yaml:"category"`
+	Level         string                 `yaml:"level"`
+	Rules         []standardRuleDocument `yaml:"rules"`
+}
+
+type standardRuleDocument struct {
+	ID           string   `yaml:"id"`
+	Requirement  string   `yaml:"requirement"`
+	Verification []string `yaml:"verification"`
+}
+
+type standardExceptionDocument struct {
+	SchemaVersion int      `yaml:"schema_version"`
+	ID            string   `yaml:"id"`
+	Standard      string   `yaml:"standard"`
+	Scope         []string `yaml:"scope"`
+	Owner         string   `yaml:"owner"`
+	Rationale     string   `yaml:"rationale"`
+	ResidualRisk  string   `yaml:"residual_risk"`
+	Mitigation    string   `yaml:"mitigation"`
+	ExpiresOn     string   `yaml:"expires_on"`
+	ReentryGate   string   `yaml:"reentry_gate"`
+	Status        string   `yaml:"status"`
+}
+
+type operationsCatalogDocument struct {
+	SchemaVersion int               `yaml:"schema_version"`
+	OwnerSkill    string            `yaml:"owner_skill"`
+	Environments  map[string]string `yaml:"environments"`
+	Deployments   map[string]string `yaml:"deployments"`
+	Runbooks      map[string]string `yaml:"runbooks"`
 }
 
 func Inspect(root string) (Inspection, error) {
@@ -196,7 +304,7 @@ func Inspect(root string) (Inspection, error) {
 		i.Blockers = append(i.Blockers, "catalog areas are missing")
 	}
 	for name, source := range catalog.Areas {
-		area := Area{Name: name, Contract: source.Contract, Maturity: source.Maturity, Evidence: len(source.Evidence)}
+		area := Area{Name: name, Contract: source.Contract, Maturity: source.Maturity, Evidence: len(source.Evidence), OwnerSkill: source.OwnerSkill}
 		i.Areas = append(i.Areas, area)
 		if area.Contract == "" || area.Maturity == "" {
 			i.Blockers = append(i.Blockers, fmt.Sprintf("area %s is missing contract or maturity", name))
@@ -204,6 +312,9 @@ func Inspect(root string) (Inspection, error) {
 		}
 		if !allowedMaturity[area.Maturity] {
 			i.Blockers = append(i.Blockers, fmt.Sprintf("area %s has invalid maturity %s", name, area.Maturity))
+		}
+		if expected := expectedAreaOwners[name]; area.OwnerSkill != "" && expected != "" && area.OwnerSkill != expected {
+			i.Blockers = append(i.Blockers, fmt.Sprintf("area %s owner_skill must be %s", name, expected))
 		}
 		contractPath := filepath.Clean(filepath.Join(dir, filepath.FromSlash(area.Contract)))
 		relative, relErr := filepath.Rel(dir, contractPath)
@@ -229,10 +340,278 @@ func Inspect(root string) (Inspection, error) {
 			i.Blockers = append(i.Blockers, "quality area contract must be quality/quality-system.md or legacy quality/quality-model.md")
 		}
 	}
+	if source, exists := catalog.Areas["technical_catalog"]; exists {
+		i.Blockers = append(i.Blockers, validateTechnicalCatalog(dir, source.Contract)...)
+	}
+	if source, exists := catalog.Areas["standards"]; exists {
+		i.Blockers = append(i.Blockers, validateStandardsCatalog(dir, source.Contract)...)
+	}
+	if source, exists := catalog.Areas["operations"]; exists {
+		i.Blockers = append(i.Blockers, validateOperationsCatalog(dir, source.Contract)...)
+	}
 	sort.Slice(i.Areas, func(left, right int) bool { return i.Areas[left].Name < i.Areas[right].Name })
 	i.Blockers = unique(i.Blockers)
 	sort.Strings(i.Blockers)
 	return i, nil
+}
+
+func validateTechnicalCatalog(engineeringDir, contract string) []string {
+	var catalog technicalCatalogDocument
+	path, blockers := loadEngineeringYAML(engineeringDir, contract, "technical catalog", &catalog)
+	if len(blockers) != 0 {
+		return blockers
+	}
+	if catalog.SchemaVersion != 1 {
+		blockers = append(blockers, "technical catalog schema_version must be 1")
+	}
+	if catalog.OwnerSkill != "" && catalog.OwnerSkill != "technical-landscape" {
+		blockers = append(blockers, "technical catalog owner_skill must be technical-landscape")
+	}
+	for category := range catalog.Entities {
+		if technicalEntityPrefixes[category] == "" {
+			blockers = append(blockers, "technical catalog has unknown entity category "+category)
+		}
+	}
+	entityIDs := map[string]bool{}
+	for category, prefix := range technicalEntityPrefixes {
+		for id, reference := range catalog.Entities[category] {
+			if !regexp.MustCompile(`^[A-Z][A-Z0-9-]+$`).MatchString(id) || !strings.HasPrefix(id, prefix) {
+				blockers = append(blockers, fmt.Sprintf("technical catalog %s id %s must start with %s", category, id, prefix))
+			}
+			entityIDs[id] = true
+			entityPath, refBlockers := resolvedCatalogReference(engineeringDir, filepath.Dir(path), reference, "technical entity "+id)
+			blockers = append(blockers, refBlockers...)
+			if len(refBlockers) != 0 {
+				continue
+			}
+			var entity technicalEntityDocument
+			if err := readYAML(entityPath, &entity); err != nil {
+				blockers = append(blockers, "technical entity "+id+" is invalid YAML")
+				continue
+			}
+			if entity.SchemaVersion != 1 || entity.ID != id || entity.Type != technicalEntityTypes[category] || strings.TrimSpace(entity.Status) == "" {
+				blockers = append(blockers, "technical entity "+id+" has invalid schema, identity, type, or status")
+			}
+		}
+	}
+	seenRelations := map[string]bool{}
+	for _, relation := range catalog.Relations {
+		if !regexp.MustCompile(`^REL-[A-Z0-9-]+$`).MatchString(relation.ID) || strings.TrimSpace(relation.Type) == "" {
+			blockers = append(blockers, "technical relation "+relation.ID+" has invalid identity or type")
+		}
+		if seenRelations[relation.ID] {
+			blockers = append(blockers, "technical relation "+relation.ID+" is duplicated")
+		}
+		seenRelations[relation.ID] = true
+		if !entityIDs[relation.Source] || !entityIDs[relation.Target] {
+			blockers = append(blockers, "technical relation "+relation.ID+" references an unknown source or target")
+		}
+	}
+	return blockers
+}
+
+func validateStandardsCatalog(engineeringDir, contract string) []string {
+	var catalog standardsCatalogDocument
+	path, blockers := loadEngineeringYAML(engineeringDir, contract, "standards catalog", &catalog)
+	if len(blockers) != 0 {
+		return blockers
+	}
+	if catalog.SchemaVersion != 1 {
+		blockers = append(blockers, "standards catalog schema_version must be 1")
+	}
+	if catalog.OwnerSkill != "" && catalog.OwnerSkill != "engineering-standards" {
+		blockers = append(blockers, "standards catalog owner_skill must be engineering-standards")
+	}
+	base := filepath.Dir(path)
+	profiles := map[string]standardProfileDocument{}
+	for id, reference := range catalog.Profiles {
+		if !strings.HasPrefix(id, "PROFILE-") {
+			blockers = append(blockers, "standards profile id "+id+" must start with PROFILE-")
+		}
+		profilePath, refBlockers := resolvedCatalogReference(engineeringDir, base, reference, "standards profile "+id)
+		blockers = append(blockers, refBlockers...)
+		if len(refBlockers) != 0 {
+			continue
+		}
+		var profile standardProfileDocument
+		if err := readYAML(profilePath, &profile); err != nil {
+			blockers = append(blockers, "standards profile "+id+" is invalid YAML")
+			continue
+		}
+		if profile.SchemaVersion != 1 || profile.ID != id || !semanticVersion(profile.Version) {
+			blockers = append(blockers, "standards profile "+id+" has invalid schema, identity, or semantic version")
+		}
+		profiles[id] = profile
+	}
+	for id, reference := range catalog.Standards {
+		if !strings.HasPrefix(id, "STD-") {
+			blockers = append(blockers, "standard id "+id+" must start with STD-")
+		}
+		standardPath, refBlockers := resolvedCatalogReference(engineeringDir, base, reference, "standard "+id)
+		blockers = append(blockers, refBlockers...)
+		if len(refBlockers) != 0 {
+			continue
+		}
+		var standard standardDocument
+		if err := readYAML(standardPath, &standard); err != nil {
+			blockers = append(blockers, "standard "+id+" is invalid YAML")
+			continue
+		}
+		if standard.SchemaVersion != 1 || standard.ID != id || !semanticVersion(standard.Version) {
+			blockers = append(blockers, "standard "+id+" has invalid schema, identity, or semantic version")
+		}
+		if !allowedStandardCategories[standard.Category] {
+			blockers = append(blockers, "standard "+id+" has invalid category "+standard.Category)
+		}
+		if !allowedStandardLevels[standard.Level] {
+			blockers = append(blockers, "standard "+id+" has invalid obligation level "+standard.Level)
+		}
+		if len(standard.Rules) == 0 {
+			blockers = append(blockers, "standard "+id+" must declare at least one verifiable rule")
+		}
+		seenRules := map[string]bool{}
+		for _, rule := range standard.Rules {
+			if !strings.HasPrefix(rule.ID, id+"-R") || strings.TrimSpace(rule.Requirement) == "" || len(rule.Verification) == 0 {
+				blockers = append(blockers, "standard "+id+" has an invalid rule identity, requirement, or verification")
+			}
+			if seenRules[rule.ID] {
+				blockers = append(blockers, "standard "+id+" rule "+rule.ID+" is duplicated")
+			}
+			seenRules[rule.ID] = true
+		}
+	}
+	for id, reference := range catalog.Exceptions {
+		if !strings.HasPrefix(id, "STDEX-") {
+			blockers = append(blockers, "standard exception id "+id+" must start with STDEX-")
+		}
+		exceptionPath, refBlockers := resolvedCatalogReference(engineeringDir, base, reference, "standard exception "+id)
+		blockers = append(blockers, refBlockers...)
+		if len(refBlockers) != 0 {
+			continue
+		}
+		var exception standardExceptionDocument
+		if err := readYAML(exceptionPath, &exception); err != nil {
+			blockers = append(blockers, "standard exception "+id+" is invalid YAML")
+			continue
+		}
+		if exception.SchemaVersion != 1 || exception.ID != id || catalog.Standards[exception.Standard] == "" {
+			blockers = append(blockers, "standard exception "+id+" has invalid schema, identity, or standard reference")
+		}
+		if len(exception.Scope) == 0 || strings.TrimSpace(exception.Owner) == "" || strings.TrimSpace(exception.Rationale) == "" || strings.TrimSpace(exception.ResidualRisk) == "" || strings.TrimSpace(exception.Mitigation) == "" || strings.TrimSpace(exception.ReentryGate) == "" {
+			blockers = append(blockers, "standard exception "+id+" lacks scope, owner, rationale, residual risk, mitigation, or re-entry gate")
+		}
+		if !oneOf(exception.Status, "open", "closed") {
+			blockers = append(blockers, "standard exception "+id+" has invalid status "+exception.Status)
+		}
+		expires, dateErr := time.Parse("2006-01-02", exception.ExpiresOn)
+		if dateErr != nil {
+			blockers = append(blockers, "standard exception "+id+" expires_on must use YYYY-MM-DD")
+		} else if exception.Status == "open" && !expires.After(time.Now().UTC().Truncate(24*time.Hour)) {
+			blockers = append(blockers, "standard exception "+id+" is open but expired")
+		}
+	}
+	for id, profile := range profiles {
+		for _, parent := range profile.Extends {
+			if _, exists := catalog.Profiles[parent]; !exists {
+				blockers = append(blockers, "standards profile "+id+" extends unknown profile "+parent)
+			}
+		}
+		for _, standard := range profile.Standards {
+			if _, exists := catalog.Standards[standard]; !exists {
+				blockers = append(blockers, "standards profile "+id+" references unknown standard "+standard)
+			}
+		}
+	}
+	blockers = append(blockers, validateProfileCycles(profiles)...)
+	return blockers
+}
+
+func validateOperationsCatalog(engineeringDir, contract string) []string {
+	var catalog operationsCatalogDocument
+	path, blockers := loadEngineeringYAML(engineeringDir, contract, "operations catalog", &catalog)
+	if len(blockers) != 0 {
+		return blockers
+	}
+	if catalog.SchemaVersion != 1 {
+		blockers = append(blockers, "operations catalog schema_version must be 1")
+	}
+	if catalog.OwnerSkill != "" && catalog.OwnerSkill != "operations-baseline" {
+		blockers = append(blockers, "operations catalog owner_skill must be operations-baseline")
+	}
+	for category, entries := range map[string]map[string]string{"environment": catalog.Environments, "deployment": catalog.Deployments, "runbook": catalog.Runbooks} {
+		for id, reference := range entries {
+			blockers = append(blockers, validateCatalogReference(engineeringDir, filepath.Dir(path), reference, category+" "+id)...)
+		}
+	}
+	return blockers
+}
+
+func loadEngineeringYAML(engineeringDir, contract, label string, target any) (string, []string) {
+	path, blockers := resolvedCatalogReference(engineeringDir, engineeringDir, contract, label)
+	if len(blockers) != 0 {
+		return path, blockers
+	}
+	if err := readYAML(path, target); err != nil {
+		return path, []string{label + " is invalid YAML"}
+	}
+	return path, nil
+}
+
+func validateCatalogReference(engineeringDir, baseDir, reference, label string) []string {
+	_, blockers := resolvedCatalogReference(engineeringDir, baseDir, reference, label)
+	return blockers
+}
+
+func resolvedCatalogReference(engineeringDir, baseDir, reference, label string) (string, []string) {
+	reference = strings.TrimSpace(reference)
+	path := filepath.Clean(filepath.Join(baseDir, filepath.FromSlash(reference)))
+	relative, err := filepath.Rel(engineeringDir, path)
+	if reference == "" || filepath.IsAbs(filepath.FromSlash(reference)) || err != nil || relative == ".." || strings.HasPrefix(relative, ".."+string(filepath.Separator)) {
+		return path, []string{label + " reference escapes engineering"}
+	}
+	info, statErr := os.Stat(path)
+	if statErr != nil || info.IsDir() {
+		return path, []string{label + " reference " + reference + " is missing"}
+	}
+	return path, nil
+}
+
+func readYAML(path string, target any) error {
+	data, err := os.ReadFile(path)
+	if err != nil {
+		return err
+	}
+	return yaml.Unmarshal(data, target)
+}
+
+func semanticVersion(version string) bool {
+	return regexp.MustCompile(`^[0-9]+\.[0-9]+\.[0-9]+(?:[-+][0-9A-Za-z.-]+)?$`).MatchString(version)
+}
+
+func validateProfileCycles(profiles map[string]standardProfileDocument) []string {
+	state := map[string]int{}
+	var blockers []string
+	var visit func(string)
+	visit = func(id string) {
+		if state[id] == 1 {
+			blockers = append(blockers, "standards profiles contain an inheritance cycle at "+id)
+			return
+		}
+		if state[id] == 2 {
+			return
+		}
+		state[id] = 1
+		for _, parent := range profiles[id].Extends {
+			if _, exists := profiles[parent]; exists {
+				visit(parent)
+			}
+		}
+		state[id] = 2
+	}
+	for id := range profiles {
+		visit(id)
+	}
+	return blockers
 }
 
 func inspectQualityExceptions(engineeringDir string, blockers []string) ([]string, map[string]string, []string) {

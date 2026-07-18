@@ -35,6 +35,8 @@ execution-graph.json; ordered DAG; Delivery Level/Priority on graph and nodes; p
 Follow the shared [Discovery And Challenge contract](../discovery-and-challenge.md) before substantive creation or material revision.
 
 ## Workflow
+Use `scripts/inspect-graph.ps1` on Windows or `scripts/inspect-graph.sh` on macOS/Linux for a read-only graph status snapshot.
+
 1. Read the parent context and confirm the artifact status.
 2. Create the graph as `draft`, validate its DAG and contracts, then move it to `proposed` for human review without requiring task files to exist.
 3. After review, use confirmed graph materialization to create canonical task files and `tasks.md`; never create them ad hoc or overwrite existing tasks.

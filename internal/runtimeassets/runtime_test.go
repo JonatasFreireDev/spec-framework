@@ -38,10 +38,18 @@ func TestEnsureMaterializesVersionedAssets(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	for _, name := range []string{"FRAMEWORK.md", "AGENTS.framework.md", "docs/execution-runtime.md", "docs/engineering-systems.md", "docs/lifecycle-and-approvals.md", "docs/artifact-registry-modules.md", "init/schema.json", "init/catalog.json", "init/bootstrap.json", "init/contracts/new-product.json", "skills/code-runner/SKILL.md", "skills/framework-guide/agents/openai.yaml", "skills/discovery-and-challenge.md", "skills/problem-discovery/assets/interview-note-template.md", "skills/problem-discovery/assets/research-summary-template.md", "skills/specification/assets/specification-template.md", "examples/events/domains/events/domain.md", ".complete"} {
+	for _, name := range []string{"FRAMEWORK.md", "AGENTS.framework.md", "docs/execution-runtime.md", "docs/engineering-systems.md", "docs/lifecycle-and-approvals.md", "docs/artifact-registry-modules.md", "init/schema.json", "init/catalog.json", "init/bootstrap.json", "init/contracts/new-product.json", "skills/code-runner/SKILL.md", "skills/grill-me/SKILL.md", "skills/grill-me/agents/openai.yaml", "skills/framework-guide/agents/openai.yaml", "skills/framework-guide/scripts/inspect-workspace.ps1", "skills/framework-guide/scripts/inspect-workspace.sh", "skills/framework-guide/scripts/inspect-code-roots.ps1", "skills/product-orchestrator/scripts/inventory-product-landscape.sh", "skills/engineering-orchestrator/SKILL.md", "skills/technical-landscape/SKILL.md", "skills/technical-landscape/assets/technical-catalog-template.yaml", "skills/technical-landscape/scripts/inventory-technical-landscape.ps1", "skills/engineering-standards/SKILL.md", "skills/operations-baseline/SKILL.md", "skills/engineering-evidence/SKILL.md", "skills/engineering-evidence/scripts/inventory-engineering-evidence.ps1", "skills/design-system/scripts/inventory-design-evidence.sh", "skills/artifact-importer/scripts/record-review-and-validate.ps1", "skills/documentation-writer/scripts/validate-artifacts.sh", "skills/discovery-and-challenge.md", "skills/problem-discovery/assets/interview-note-template.md", "skills/problem-discovery/assets/research-summary-template.md", "skills/specification/assets/specification-template.md", "examples/events/domains/events/domain.md", ".complete"} {
 		if _, err := os.Stat(filepath.Join(root, filepath.FromSlash(name))); err != nil {
 			t.Fatal(err)
 		}
+	}
+	for _, name := range []string{"skills/engineering-orchestrator/assets/engineering-baseline-handoff-template.json", "skills/subagent-return-reviewer/assets/engineering-specialist-return-template.json"} {
+		if _, err := os.Stat(filepath.Join(root, filepath.FromSlash(name))); err != nil {
+			t.Fatal(err)
+		}
+	}
+	if _, err := os.Stat(filepath.Join(root, "docs", "engineering-catalog-and-standards.md")); err != nil {
+		t.Fatal(err)
 	}
 	data, err := os.ReadFile(filepath.Join(root, "AGENTS.framework.md"))
 	if err != nil || !strings.Contains(string(data), "Common Agent Rules") {

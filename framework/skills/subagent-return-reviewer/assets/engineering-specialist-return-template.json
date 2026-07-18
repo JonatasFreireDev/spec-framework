@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "dispatch_id": "DISPATCH-NNN",
+  "role": "technical-landscape",
+  "summary": "",
+  "outputs": [
+    {
+      "path": "engineering/catalog/catalog.yaml",
+      "sha256": ""
+    }
+  ],
+  "evidence": [],
+  "blockers": [],
+  "decision_candidates": [],
+  "next": "engineering-orchestrator"
+}

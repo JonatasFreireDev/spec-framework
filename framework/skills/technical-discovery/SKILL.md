@@ -25,6 +25,7 @@ Approved specification contracts; approved design or `Not applicable`; stable en
 
 ## Required reading
 - [`engineering-systems.md`](../../docs/engineering-systems.md) for the stable engineering baseline and migration boundaries.
+- [`engineering-catalog-and-standards.md`](../../docs/engineering-catalog-and-standards.md) for technical entity discovery and applicable standards.
 - the framework root's `FRAMEWORK.md`
 - Relevant parent context.md files.
 - This skill owns its generation resources: `assets/technical-discovery-template.md`.

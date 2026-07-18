@@ -1,12 +1,12 @@
 {
   "schema_version": 1,
   "id": "audit-only",
-  "asset_sets": ["product-core", "knowledge-security-baseline", "governance"],
+  "asset_sets": ["product-core", "knowledge-security-baseline", "delivery-design", "delivery-engineering", "governance"],
   "directories": [],
   "files": [],
   "patches": [],
   "registry": {
-    "modules": ["product-core", "knowledge-security-baseline", "governance"],
+    "modules": ["product-core", "knowledge-security-baseline", "delivery-design", "delivery-engineering", "governance"],
     "exclude_types": ["problem", "vision", "product-principles", "north-star", "strategy", "domain", "user-goal", "feature", "use-case"]
   },
   "bootstrap_profile": "audit-only",

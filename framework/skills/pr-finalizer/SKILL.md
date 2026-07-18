@@ -1,4 +1,4 @@
----
+﻿---
 name: pr-finalizer
 description: "PR Finalizer Skill. Use when an agent needs to prepare or open a pull request after gates, QA, Code Review, and Security Review are ready, without merging."
 ---
@@ -47,6 +47,9 @@ PR Finalizer verifies hard preconditions, links evidence, writes PR metadata bac
 - PR body links evidence: tasks, QA Evidence, Code Review, Security Review when applicable, gate logs, screenshots, and CI URL when available.
 
 If any hard precondition fails, stop and report the blocker.
+
+
+Use scripts/invoke-cli.ps1 on Windows or scripts/invoke-cli.sh on macOS/Linux for the CLI operation in this skill's reviewed scope. The wrapper never adds --yes or an approver identity.
 
 ## Workflow
 

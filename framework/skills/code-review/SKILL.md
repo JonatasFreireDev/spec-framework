@@ -50,6 +50,8 @@ Code Review verifies that implementation matches the Specification, tasks, archi
 | `note` | Non-blocking observation or follow-up. |
 
 ## Workflow
+Use `scripts/preview-review.ps1` on Windows or `scripts/preview-review.sh` on macOS/Linux to inspect one stage. The script never supplies `--yes`.
+
 
 1. Confirm the review target and status.
 2. Read the source artifacts and code evidence.

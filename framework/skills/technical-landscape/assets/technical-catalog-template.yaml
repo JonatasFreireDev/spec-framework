@@ -1,0 +1,17 @@
+schema_version: 1
+owner_skill: technical-landscape
+entities:
+  systems: {}
+  applications: {}
+  components: {}
+  repositories: {}
+  data_stores: {}
+  interfaces: {}
+  deployments: {}
+relations: []
+# Example relation materialized on demand:
+# - id: REL-APP-COMPONENT-001
+#   type: contains
+#   source: APP-001
+#   target: CMP-001
+#   evidence: []

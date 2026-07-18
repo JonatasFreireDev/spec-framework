@@ -1,0 +1,54 @@
+{
+  "schema_version": 1,
+  "scope": "product",
+  "mode": "create",
+  "execution": {
+    "mode": "sequential",
+    "context_policy": "minimal",
+    "max_parallel": 1,
+    "fallback": "sequential"
+  },
+  "current_engineering_system": null,
+  "routes": [
+    {
+      "skill": "technical-landscape",
+      "phase": 1,
+      "depends_on": [],
+      "write_scope": ["engineering/architecture", "engineering/catalog"],
+      "status": "pending"
+    },
+    {
+      "skill": "engineering-standards",
+      "phase": 2,
+      "depends_on": ["technical-landscape"],
+      "write_scope": ["engineering/standards"],
+      "status": "pending"
+    },
+    {
+      "skill": "operations-baseline",
+      "phase": 2,
+      "depends_on": ["technical-landscape"],
+      "write_scope": ["engineering/operations"],
+      "status": "pending"
+    },
+    {
+      "skill": "engineering-evidence",
+      "phase": 3,
+      "depends_on": ["engineering-standards", "operations-baseline"],
+      "write_scope": ["engineering/evidence"],
+      "status": "pending"
+    },
+    {
+      "skill": "engineering-system",
+      "phase": 4,
+      "depends_on": ["technical-landscape", "engineering-standards", "operations-baseline", "engineering-evidence"],
+      "write_scope": ["engineering/engineering-system.md", "engineering/engineering-system.yaml", "engineering/quality"],
+      "status": "pending"
+    }
+  ],
+  "completed_contracts": [],
+  "blockers": [],
+  "decision_candidates": [],
+  "approval_required": true,
+  "next": "technical-landscape"
+}

@@ -9,10 +9,11 @@
 | Version | `0.1.0` |
 | Origin | `generate` |
 | Owner skill | Design System |
+| Baseline role | `pre-specification` |
 
 ## Purpose And Principles
 
-Draft shared foundations for use-case Design. Product-specific visual decisions remain open.
+Draft shared foundations for use-case Design. Product-specific visual decisions remain open. When no interface exists, document explicit hypotheses and accessibility principles before any Specification is created.
 
 ## Foundations, Components And Patterns
 

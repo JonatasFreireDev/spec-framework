@@ -4,6 +4,8 @@
 
 Um `starting-point` descreve a situação do produto no momento em que um repositório começa a usar o Spec Framework.
 
+Independentemente do ponto de partida, antes de uma Specification real o produto precisa completar e aprovar três bases: `knowledge/assessments/product-landscape.md`, `engineering/engineering-system.md` e `design/system/design-system.md`. Com código, o Landscape inventaria todas as raízes de código, módulos, superfícies, dados, integrações, regras, testes, configuração e ativos de design; sem código, esses contratos registram hipóteses explícitas e decisões pendentes.
+
 Ele não representa:
 
 - o entrypoint técnico da aplicação, como `main.go` ou `index.ts`;

@@ -4,6 +4,12 @@ This document consolidates the architecture of the AI-driven Product Engineering
 
 The goal is not just to organize documents. The goal is to create a pipeline where product, specification, planning, execution, and audit form a single system.
 
+## 1.1 Pre-Specification Baseline
+
+Before a real Specification is authored, every product establishes a complete Product Landscape and the shared `knowledge/`, `engineering/`, and `design/system/` contracts. With existing code, these documents distinguish observed evidence from inference and inventory every code root, module, interface, data boundary, integration, rule, test, configuration, and design asset before domain modeling. Without code, they are explicit hypotheses with pending human decisions. A delivery Domain, Goal, Feature, or Use Case is derived only after the landscape is complete; a Specification requires the approved Product Landscape, Engineering System, and Design System.
+
+Implementation roots sit beside `product/` and use semantic role names such as `web/`, `api/`, `worker/`, `mobile/`, `infrastructure/`, or `library/`. The framework records them in the manifest rather than embedding application code. When a requested implementation does not exist, the responsible agent first identifies the intended stack and verifies the official scaffolding command before proposing its execution.
+
 ## 1. Thesis
 
 This framework treats documentation as engineering infrastructure.
@@ -138,7 +144,13 @@ The Design System is an optional shared product artifact for products with recur
 
 ### Engineering System
 
-The optional Engineering System versions stable architecture, module and data ownership, integrations, standards, quality attributes, operations, and evidence under `engineering/`. Its detailed versioning, maturity, hashing, migration, and approval contract lives in [`docs/engineering-systems.md`](docs/engineering-systems.md). Specification and approved `DEC-*` records remain authoritative when contracts conflict.
+The optional Engineering System versions stable architecture, module and data ownership, integrations, standards, quality attributes, operations, and evidence under `engineering/`. It models systems, applications, components, repositories, interfaces, data stores, and deployments as independently identified graph entities, so one product may span monorepos, polyrepos, shared components, and multiple deployables without encoding those relations in folder position. Its detailed contracts live in [`docs/engineering-systems.md`](docs/engineering-systems.md) and [`docs/engineering-catalog-and-standards.md`](docs/engineering-catalog-and-standards.md). Specification and approved `DEC-*` records remain authoritative when contracts conflict.
+
+`engineering-orchestrator` governs completeness and sequencing across `technical-landscape`, `engineering-standards`, `operations-baseline`, `engineering-evidence`, and final `engineering-system` consolidation. Each specialist owns its canonical contracts; the orchestrator never authors them, and `engineering-system` aggregates and versions them without absorbing their ownership. The baseline stops at human approval before Domain modeling or delivery-specific Technical Discovery.
+
+Engineering baseline execution supports `sequential` and `delegated` modes. Sequential execution is the compatible default. Delegated execution uses harness-native subagents under persisted dispatch envelopes with minimal context, bounded parallelism, explicit dependency phases, disjoint write scopes, and hash-verified compact returns. `dispatch-orchestrator` owns assignment and observation; `subagent-return-reviewer` validates returns; the CLI persists their contracts but never starts an agent itself. Technical Landscape runs first; Standards and Operations may then run concurrently; Evidence follows their returned contracts; Engineering System aggregates last. If native subagents are unavailable, the declared fallback applies without weakening gates or importing the entire specialist conversation into the parent context.
+
+Engineering standards are versioned, verifiable rules composed through profiles and applied by entity type, capability, or explicit assignment. A more specific contract may add constraints but cannot silently weaken an inherited required standard. Divergence requires a scoped, governed exception or approved decision.
 
 ### Engineering Quality System
 
@@ -209,7 +221,7 @@ An adopter repository owns one framework root, `product/`. Its stable ownership 
 | `knowledge/` | Product rules, conventions, cross-cutting decisions, imports, and durable evidence. |
 | `domains/` | Domain → User Goal → Feature → Use Case hierarchy and delivery artifacts. |
 | `design/` | Shared Design System and product-owned design sources. |
-| `engineering/` | Versioned Engineering System, quality contracts, operations, and evidence. |
+| `engineering/` | Versioned Engineering System, technical entity graph, standards, quality contracts, operations, and evidence. |
 | `audits/` | Readiness, consistency, QA, security, and release findings. |
 | `releases/` | Product release records when materialized. |
 
@@ -553,7 +565,7 @@ Definition and planning skills follow the shared Discovery and Challenge contrac
 | --- | --- |
 | Foundation | Problem Discovery, Vision, Strategy, Domain Architect, and User Goal define evidenced product direction and boundaries. |
 | Product Design | Journey, Feature, Use Case, UX/UI, UX Review, and Design System define value slices and verifiable experience. |
-| Specification and planning | Specification, Engineering System, Technical Discovery, Engineering Proposal, Engineering Review, Implementation Planner, Execution Graph, and Task Generator turn approved intent into executable contracts. |
+| Specification and planning | Specification, Engineering Orchestrator, Technical Landscape, Engineering Standards, Operations Baseline, Engineering Evidence, Engineering System, Technical Discovery, Engineering Proposal, Engineering Review, Implementation Planner, Execution Graph, and Task Generator turn approved intent into executable contracts. |
 | Engineering and validation | Code Runner implements one approved task; QA, Code Review, and Security Review independently verify it; Threat Modeler maintains proactive security context; Commit Crafter and PR Finalizer prepare verified delivery without merging. |
 | Audit and evolution | Gap, Conflict, Dependency, Impact, Evolution, Documentation, and Product Historian skills inspect health and route governed change. |
 
@@ -567,6 +579,7 @@ Orchestrators do not create primary artifacts. They control flow, order, gates, 
 | --- | --- |
 | Framework Guide | Translates intent and current CLI state into the smallest safe route; it does not author artifacts or approve work. |
 | Product | Coordinates the approved Foundation sequence and stops at each human gate. |
+| Engineering | Routes the shared technical landscape, standards, operations, evidence, aggregate Engineering System, and human approval gate without authoring specialist contracts. |
 | Domain Evolution | Compares evidenced feature candidates and requires explicit human selection before handoff. |
 | Existing Product Import | Moves sources through inventory, per-source traceability, conflicts, reviewed mappings, explicit materialization, and draft artifacts without treating sources as truth. |
 | New Feature | Drives an approved feature through Use Cases, Specification, Design, engineering gates, Plan, Graph, and Tasks. |

@@ -20,30 +20,36 @@ import (
 )
 
 type Envelope struct {
-	Version          int      `json:"version"`
-	ID               string   `json:"id"`
-	WorkspaceID      string   `json:"workspace_id"`
-	TaskID           string   `json:"task_id"`
-	UnitKind         string   `json:"unit_kind"`
-	UnitPath         string   `json:"unit_path,omitempty"`
-	ImportRun        string   `json:"import_run,omitempty"`
-	ImportChunk      string   `json:"import_chunk,omitempty"`
-	Role             string   `json:"role"`
-	Agent            string   `json:"agent"`
-	Graph            string   `json:"graph"`
-	TaskPath         string   `json:"task_path"`
-	InputHash        string   `json:"input_hash"`
-	DiffHash         string   `json:"diff_hash,omitempty"`
-	ParentID         string   `json:"parent_id,omitempty"`
-	RequiredReading  []string `json:"required_reading"`
-	WriteScope       []string `json:"write_scope"`
-	ExpectedEvidence []string `json:"expected_evidence"`
-	Status           string   `json:"status"`
-	CreatedAt        string   `json:"created_at"`
-	ReturnedAt       string   `json:"returned_at,omitempty"`
-	Summary          string   `json:"summary,omitempty"`
-	Evidence         []string `json:"evidence,omitempty"`
-	Forbidden        []string `json:"forbidden"`
+	Version            int      `json:"version"`
+	ID                 string   `json:"id"`
+	WorkspaceID        string   `json:"workspace_id"`
+	TaskID             string   `json:"task_id"`
+	UnitKind           string   `json:"unit_kind"`
+	UnitPath           string   `json:"unit_path,omitempty"`
+	ImportRun          string   `json:"import_run,omitempty"`
+	ImportChunk        string   `json:"import_chunk,omitempty"`
+	Role               string   `json:"role"`
+	Agent              string   `json:"agent"`
+	Graph              string   `json:"graph"`
+	TaskPath           string   `json:"task_path"`
+	InputHash          string   `json:"input_hash"`
+	DiffHash           string   `json:"diff_hash,omitempty"`
+	ParentID           string   `json:"parent_id,omitempty"`
+	Dependencies       []string `json:"dependencies,omitempty"`
+	Phase              int      `json:"phase,omitempty"`
+	ContextPolicy      string   `json:"context_policy,omitempty"`
+	RequiredReading    []string `json:"required_reading"`
+	WriteScope         []string `json:"write_scope"`
+	ExpectedEvidence   []string `json:"expected_evidence"`
+	Status             string   `json:"status"`
+	CreatedAt          string   `json:"created_at"`
+	ReturnedAt         string   `json:"returned_at,omitempty"`
+	Summary            string   `json:"summary,omitempty"`
+	Evidence           []string `json:"evidence,omitempty"`
+	OutputHashes       []string `json:"output_hashes,omitempty"`
+	Blockers           []string `json:"blockers,omitempty"`
+	DecisionCandidates []string `json:"decision_candidates,omitempty"`
+	Forbidden          []string `json:"forbidden"`
 }
 type Candidate struct {
 	TaskID, Role, Path string
@@ -82,6 +88,43 @@ type Config struct {
 	TranscriptRetention int      `json:"transcript_retention"`
 }
 
+type engineeringExecution struct {
+	Mode          string `json:"mode"`
+	ContextPolicy string `json:"context_policy"`
+	MaxParallel   int    `json:"max_parallel"`
+	Fallback      string `json:"fallback"`
+}
+
+type engineeringRoute struct {
+	Skill      string   `json:"skill"`
+	Phase      int      `json:"phase"`
+	DependsOn  []string `json:"depends_on"`
+	WriteScope []string `json:"write_scope"`
+	Status     string   `json:"status"`
+}
+
+type engineeringHandoff struct {
+	SchemaVersion int                  `json:"schema_version"`
+	Execution     engineeringExecution `json:"execution"`
+	Routes        []engineeringRoute   `json:"routes"`
+}
+
+var engineeringRoles = map[string]bool{
+	"technical-landscape":   true,
+	"engineering-standards": true,
+	"operations-baseline":   true,
+	"engineering-evidence":  true,
+	"engineering-system":    true,
+}
+
+var engineeringWriteScopes = map[string][]string{
+	"technical-landscape":   {"engineering/architecture", "engineering/catalog"},
+	"engineering-standards": {"engineering/standards"},
+	"operations-baseline":   {"engineering/operations"},
+	"engineering-evidence":  {"engineering/evidence"},
+	"engineering-system":    {"engineering/engineering-system.md", "engineering/engineering-system.yaml", "engineering/quality"},
+}
+
 func dir(root, work string) string {
 	return filepath.Join(root, ".product", "workspaces", work, "dispatches")
 }
@@ -118,6 +161,267 @@ func SaveConfig(root string, c Config) error {
 		return err
 	}
 	return os.WriteFile(configPath(root), append(data, '\n'), 0644)
+}
+
+// AssignEngineering persists one harness-native engineering specialist
+// assignment. The CLI validates the bounded context and write scope but never
+// starts a subagent itself.
+func AssignEngineering(root, work, handoffPath, role, agent string, dependencies []string) (Envelope, error) {
+	if !engineeringRoles[role] {
+		return Envelope{}, errors.New("unsupported engineering specialist role")
+	}
+	if strings.TrimSpace(work) == "" || strings.TrimSpace(agent) == "" || strings.TrimSpace(handoffPath) == "" {
+		return Envelope{}, errors.New("engineering assignment requires work, handoff path, role, and agent")
+	}
+	if err := validateEngineeringHandoffPath(root, work, handoffPath); err != nil {
+		return Envelope{}, err
+	}
+	data, err := os.ReadFile(handoffPath)
+	if err != nil {
+		return Envelope{}, err
+	}
+	var handoff engineeringHandoff
+	if err := json.Unmarshal(data, &handoff); err != nil {
+		return Envelope{}, fmt.Errorf("read engineering handoff: %w", err)
+	}
+	if handoff.SchemaVersion != 1 || handoff.Execution.Mode != "delegated" {
+		return Envelope{}, errors.New("engineering handoff must use schema_version 1 and delegated execution")
+	}
+	if handoff.Execution.ContextPolicy != "minimal" {
+		return Envelope{}, errors.New("delegated engineering context_policy must be minimal")
+	}
+	if handoff.Execution.MaxParallel < 1 {
+		return Envelope{}, errors.New("delegated engineering max_parallel must be at least 1")
+	}
+	var route *engineeringRoute
+	for index := range handoff.Routes {
+		if handoff.Routes[index].Skill == role {
+			route = &handoff.Routes[index]
+			break
+		}
+	}
+	if route == nil {
+		return Envelope{}, errors.New("engineering role is not present in the handoff routes")
+	}
+	if route.Status != "pending" && route.Status != "ready" {
+		return Envelope{}, errors.New("engineering route is not assignable")
+	}
+	if route.Phase < 1 || len(route.WriteScope) == 0 {
+		return Envelope{}, errors.New("engineering route has no write scope")
+	}
+	for _, scope := range route.WriteScope {
+		if !insideAnyScope(scope, engineeringWriteScopes[role]) {
+			return Envelope{}, fmt.Errorf("engineering route write scope %s is not owned by %s", scope, role)
+		}
+	}
+	if err := os.MkdirAll(dir(root, work), 0755); err != nil {
+		return Envelope{}, err
+	}
+	release, err := acquireEngineeringAssignmentLock(root, work)
+	if err != nil {
+		return Envelope{}, err
+	}
+	defer release()
+	resolved, err := validateEngineeringDependencies(root, work, route.DependsOn, dependencies)
+	if err != nil {
+		return Envelope{}, err
+	}
+	active, duplicate, err := activeEngineeringAssignments(root, work, role)
+	if err != nil {
+		return Envelope{}, err
+	}
+	if duplicate {
+		return Envelope{}, errors.New("engineering specialist role already has an active assignment")
+	}
+	if active >= handoff.Execution.MaxParallel {
+		return Envelope{}, errors.New("delegated engineering assignments reached max_parallel")
+	}
+	sum := sha256.Sum256(data)
+	id := fmt.Sprintf("DISPATCH-%d", time.Now().UTC().UnixNano())
+	e := Envelope{
+		Version: 1, ID: id, WorkspaceID: work, UnitKind: "engineering-specialist", UnitPath: filepath.ToSlash(handoffPath),
+		Role: role, Agent: agent, InputHash: hex.EncodeToString(sum[:]), Dependencies: resolved, Phase: route.Phase,
+		ContextPolicy: "minimal", RequiredReading: []string{filepath.ToSlash(handoffPath), "FRAMEWORK.md", "skills/" + role + "/SKILL.md"},
+		WriteScope: route.WriteScope, ExpectedEvidence: []string{"summary", "evidence", "output hashes", "blockers"},
+		Status: "assigned", CreatedAt: time.Now().UTC().Format(time.RFC3339),
+		Forbidden: []string{"approval", "product-decision", "application-code", "commit", "push", "merge", "release", "write-outside-scope"},
+	}
+	return e, write(filepath.Join(dir(root, work), id+".json"), e)
+}
+
+func validateEngineeringDependencies(root, work string, expectedRoles, ids []string) ([]string, error) {
+	if len(expectedRoles) != len(ids) {
+		return nil, errors.New("engineering assignment dependencies do not match the handoff route")
+	}
+	roles := map[string]bool{}
+	resolved := append([]string(nil), ids...)
+	for _, id := range resolved {
+		if !validDispatchID(id) {
+			return nil, errors.New("engineering dependency has invalid dispatch id")
+		}
+		var dependency Envelope
+		if err := read(filepath.Join(dir(root, work), id+".json"), &dependency); err != nil {
+			return nil, fmt.Errorf("read engineering dependency %s: %w", id, err)
+		}
+		if dependency.UnitKind != "engineering-specialist" || dependency.Status != "returned" {
+			return nil, fmt.Errorf("engineering dependency %s is not returned", id)
+		}
+		if len(dependency.Blockers) > 0 {
+			return nil, fmt.Errorf("engineering dependency %s returned blockers", id)
+		}
+		if err := verifyEngineeringOutputs(root, dependency); err != nil {
+			return nil, fmt.Errorf("engineering dependency %s is stale: %w", id, err)
+		}
+		roles[dependency.Role] = true
+	}
+	for _, role := range expectedRoles {
+		if !roles[role] {
+			return nil, fmt.Errorf("engineering dependency role %s is missing", role)
+		}
+	}
+	sort.Strings(resolved)
+	return resolved, nil
+}
+
+func activeEngineeringAssignments(root, work, role string) (int, bool, error) {
+	xs, err := Observe(root, work)
+	if err != nil {
+		return 0, false, err
+	}
+	active := 0
+	duplicate := false
+	for _, item := range xs {
+		if item.UnitKind == "engineering-specialist" && item.Status == "assigned" {
+			active++
+			if item.Role == role {
+				duplicate = true
+			}
+		}
+	}
+	return active, duplicate, nil
+}
+
+func acquireEngineeringAssignmentLock(root, work string) (func(), error) {
+	lock := filepath.Join(dir(root, work), ".engineering-assign.lock")
+	for attempt := 0; attempt < 50; attempt++ {
+		if err := os.Mkdir(lock, 0755); err == nil {
+			return func() { _ = os.Remove(lock) }, nil
+		} else if !os.IsExist(err) {
+			return nil, err
+		}
+		if info, err := os.Stat(lock); err == nil && time.Since(info.ModTime()) > 30*time.Second {
+			_ = os.Remove(lock)
+			continue
+		}
+		time.Sleep(10 * time.Millisecond)
+	}
+	return nil, errors.New("engineering assignment lock is busy")
+}
+
+// ReturnEngineering records a compact specialist result after verifying that
+// every declared output is inside the assignment scope and still matches its
+// SHA-256 hash. It does not grant approval or merge specialist contracts.
+func ReturnEngineering(root, work, id, agent, summary string, evidence, outputHashes, blockers, decisionCandidates []string) (Envelope, error) {
+	var e Envelope
+	if !validDispatchID(id) {
+		return e, errors.New("engineering return has invalid dispatch id")
+	}
+	release, err := acquireEngineeringAssignmentLock(root, work)
+	if err != nil {
+		return e, err
+	}
+	defer release()
+	path := filepath.Join(dir(root, work), id+".json")
+	if err := read(path, &e); err != nil {
+		return e, err
+	}
+	if e.UnitKind != "engineering-specialist" || e.Agent != agent || e.Status != "assigned" {
+		return e, errors.New("dispatch is not an assigned engineering specialist for this agent")
+	}
+	if strings.TrimSpace(summary) == "" || len(evidence) == 0 || len(outputHashes) == 0 {
+		return e, errors.New("engineering return requires summary, evidence, and output hashes")
+	}
+	currentInput, err := os.ReadFile(filepath.FromSlash(e.UnitPath))
+	if err != nil {
+		return e, fmt.Errorf("read current engineering handoff: %w", err)
+	}
+	inputSum := sha256.Sum256(currentInput)
+	if e.InputHash != hex.EncodeToString(inputSum[:]) {
+		return e, errors.New("engineering assignment input handoff is stale")
+	}
+	for _, item := range outputHashes {
+		parts := strings.SplitN(item, "=", 2)
+		if len(parts) != 2 || !insideAnyScope(parts[0], e.WriteScope) {
+			return e, fmt.Errorf("engineering output %s escapes or omits its write scope", item)
+		}
+		data, err := os.ReadFile(filepath.Join(root, filepath.FromSlash(parts[0])))
+		if err != nil {
+			return e, fmt.Errorf("read engineering output %s: %w", parts[0], err)
+		}
+		sum := sha256.Sum256(data)
+		if !strings.EqualFold(parts[1], hex.EncodeToString(sum[:])) {
+			return e, fmt.Errorf("engineering output hash mismatch for %s", parts[0])
+		}
+	}
+	e.Status = "returned"
+	e.Summary = summary
+	e.Evidence = evidence
+	e.OutputHashes = append([]string(nil), outputHashes...)
+	e.Blockers = append([]string(nil), blockers...)
+	e.DecisionCandidates = append([]string(nil), decisionCandidates...)
+	e.ReturnedAt = time.Now().UTC().Format(time.RFC3339)
+	return e, write(path, e)
+}
+
+func insideAnyScope(path string, scopes []string) bool {
+	path = filepath.ToSlash(filepath.Clean(filepath.FromSlash(path)))
+	if path == "." || path == ".." || strings.HasPrefix(path, "../") || filepath.IsAbs(filepath.FromSlash(path)) {
+		return false
+	}
+	for _, scope := range scopes {
+		scope = filepath.ToSlash(strings.TrimSuffix(filepath.Clean(filepath.FromSlash(scope)), "/"))
+		if path == scope || strings.HasPrefix(path, scope+"/") {
+			return true
+		}
+	}
+	return false
+}
+
+func validateEngineeringHandoffPath(root, work, handoffPath string) error {
+	workspace := filepath.Join(root, ".product", "workspaces", work)
+	relative, err := filepath.Rel(workspace, handoffPath)
+	if err != nil || relative == "." || relative == ".." || strings.HasPrefix(relative, ".."+string(filepath.Separator)) || filepath.IsAbs(relative) {
+		return errors.New("engineering handoff must be inside its product workspace")
+	}
+	if strings.ToLower(filepath.Ext(relative)) != ".json" {
+		return errors.New("engineering handoff must be a JSON file")
+	}
+	return nil
+}
+
+func validDispatchID(id string) bool {
+	return strings.HasPrefix(id, "DISPATCH-") && filepath.Base(id) == id && !strings.ContainsAny(id, `/\\`)
+}
+
+func verifyEngineeringOutputs(root string, e Envelope) error {
+	if len(e.OutputHashes) == 0 {
+		return errors.New("returned dependency has no output hashes")
+	}
+	for _, output := range e.OutputHashes {
+		parts := strings.SplitN(output, "=", 2)
+		if len(parts) != 2 || !insideAnyScope(parts[0], e.WriteScope) {
+			return errors.New("returned dependency output is malformed or outside scope")
+		}
+		data, err := os.ReadFile(filepath.Join(root, filepath.FromSlash(parts[0])))
+		if err != nil {
+			return err
+		}
+		sum := sha256.Sum256(data)
+		if !strings.EqualFold(parts[1], hex.EncodeToString(sum[:])) {
+			return errors.New("returned dependency output hash mismatch")
+		}
+	}
+	return nil
 }
 func Plan(root, graph string) ([]Candidate, error) {
 	nodes, err := workflow.ReadyUnclaimed(root, graph)
@@ -356,8 +660,34 @@ func Reconcile(root, work string) ([]Finding, error) {
 				out = append(out, Finding{"review-diff-mismatch", x.ID, "review does not match parent diff", "code-review"})
 			}
 		}
-		if x.Status == "assigned" && x.Role != "code-runner" && x.DiffHash == "" {
+		if x.Status == "assigned" && (x.Role == "qa" || x.Role == "code-review" || x.Role == "security-review") && x.DiffHash == "" {
 			out = append(out, Finding{"review-missing-diff", x.ID, "independent review lacks diff hash", "delivery-orchestrator"})
+		}
+		if x.UnitKind == "engineering-specialist" {
+			for _, dependencyID := range x.Dependencies {
+				dependency, ok := byID[dependencyID]
+				if !ok || dependency.UnitKind != "engineering-specialist" || dependency.Status != "returned" {
+					out = append(out, Finding{"engineering-dependency-not-returned", x.ID, "dependency " + dependencyID + " is missing or no longer returned", "engineering-orchestrator"})
+				}
+			}
+			if x.Status == "returned" {
+				for _, output := range x.OutputHashes {
+					parts := strings.SplitN(output, "=", 2)
+					if len(parts) != 2 || !insideAnyScope(parts[0], x.WriteScope) {
+						out = append(out, Finding{"engineering-output-invalid", x.ID, "returned output hash is malformed", "engineering-orchestrator"})
+						continue
+					}
+					data, err := os.ReadFile(filepath.Join(root, filepath.FromSlash(parts[0])))
+					if err != nil {
+						out = append(out, Finding{"engineering-output-missing", x.ID, "returned output " + parts[0] + " is missing", "engineering-orchestrator"})
+						continue
+					}
+					sum := sha256.Sum256(data)
+					if !strings.EqualFold(parts[1], hex.EncodeToString(sum[:])) {
+						out = append(out, Finding{"engineering-output-stale", x.ID, "returned output " + parts[0] + " changed after return", "engineering-orchestrator"})
+					}
+				}
+			}
 		}
 	}
 	sort.Slice(out, func(i, j int) bool { return out[i].DispatchID < out[j].DispatchID })

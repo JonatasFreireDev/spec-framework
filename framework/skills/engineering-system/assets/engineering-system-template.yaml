@@ -7,14 +7,37 @@ scope: product
 areas:
   system_context:
     contract: architecture/system-context.md
+    owner_skill: technical-landscape
     maturity: baseline
     evidence: []
   modules:
     contract: architecture/modules.md
+    owner_skill: technical-landscape
+    maturity: baseline
+    evidence: []
+  technical_catalog:
+    contract: catalog/catalog.yaml
+    owner_skill: technical-landscape
+    maturity: baseline
+    evidence: []
+  standards:
+    contract: standards/standards.yaml
+    owner_skill: engineering-standards
     maturity: baseline
     evidence: []
   quality:
     contract: quality/quality-system.md
+    owner_skill: engineering-system
+    maturity: baseline
+    evidence: []
+  operations:
+    contract: operations/operations.yaml
+    owner_skill: operations-baseline
+    maturity: baseline
+    evidence: []
+  evidence:
+    contract: evidence/inventory.md
+    owner_skill: engineering-evidence
     maturity: baseline
     evidence: []
 decisions: []

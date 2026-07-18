@@ -36,6 +36,8 @@ QA verdict; test evidence; blocking findings; residual risks; required fixes.
 - Approved decisions are discovered through the active product root's `.product/decisions.json`; resolve each registered `path` from its declared domain root (`knowledge/decisions/`, `design/decisions/`, or `engineering/decisions/`).
 
 ## Workflow
+Run `scripts/check-gates.ps1` on Windows or `scripts/check-gates.sh` on macOS/Linux to validate the product before evaluating evidence. The script is read-only.
+
 1. Read the relevant context and identify artifact status.
 2. Read the active product root's `knowledge/conventions/gates.md` and identify applicable gates for the delivery.
 3. When the Engineering Quality System is configured, verify that `tests.md` pins its current id/version, selects configured environment, data, and platform values, applies its risk, coverage, and evidence policies, and declares `None` or only open, unexpired, in-scope exceptions.

@@ -1,0 +1,6 @@
+schema_version: 1
+id: PROFILE-NAME
+version: 1.0.0
+status: draft
+extends: []
+standards: []

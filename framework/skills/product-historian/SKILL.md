@@ -30,6 +30,8 @@ Decision records; updated decisions index; supersede notes; historical rationale
 - Approved decisions are discovered through the active product root's `.product/decisions.json`; resolve each registered `path` from its declared domain root (`knowledge/decisions/`, `design/decisions/`, or `engineering/decisions/`).
 
 ## Workflow
+Use `scripts/check-decisions.ps1` on Windows or `scripts/check-decisions.sh` on macOS/Linux for the read-only indexed decision check.
+
 1. Classify each DEC as product, architecture, security, data, or delivery; declare artifact/path scope and structured workflow effects in the decision index.
 2. Keep architectural ADRs in the canonical DEC system rather than creating a parallel ADR store.
 3. For legacy indexes, preview the guided migration, require review of ambiguous inferred types/scopes, preserve the original backup, and never change decision content/status or create approval records.

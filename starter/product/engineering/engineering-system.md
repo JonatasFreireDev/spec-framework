@@ -8,23 +8,28 @@
 | Status | `draft` |
 | Version | `0.1.0` |
 | Origin mode | `generate` |
+| Baseline role | `pre-specification` |
 | Mechanical catalog | [engineering-system.yaml](engineering-system.yaml) |
 | Owner skill | `engineering-system` |
 
 ## Scope
 
-Not configured. Inspect the adopter's real repository before defining system boundaries.
+Draft contract. Inspect the adopter's real repository before defining system boundaries. When no code exists, record explicit hypotheses, intended runtime boundaries, quality constraints, and decisions pending human approval before any Specification is created.
 
 ## Architecture
 
-| Area | Contract | Evidence | Maturity |
-| --- | --- | --- | --- |
-| System context | [architecture/system-context.md](architecture/system-context.md) | Not configured | `baseline` |
-| Modules | [architecture/modules.md](architecture/modules.md) | Not configured | `baseline` |
-| Quality | [quality/quality-system.md](quality/quality-system.md) | Not configured | `baseline` |
+| Area | Owner skill | Contract | Evidence | Maturity |
+| --- | --- | --- | --- | --- |
+| System context | `technical-landscape` | [architecture/system-context.md](architecture/system-context.md) | Not configured | `baseline` |
+| Modules | `technical-landscape` | [architecture/modules.md](architecture/modules.md) | Not configured | `baseline` |
+| Technical catalog | `technical-landscape` | [catalog/catalog.yaml](catalog/catalog.yaml) | Not configured | `baseline` |
+| Standards | `engineering-standards` | [standards/standards.yaml](standards/standards.yaml) | Not configured | `baseline` |
+| Quality | `engineering-system` | [quality/quality-system.md](quality/quality-system.md) | Not configured | `baseline` |
+| Operations | `operations-baseline` | [operations/operations.yaml](operations/operations.yaml) | Not configured | `baseline` |
+| Evidence | `engineering-evidence` | [evidence/inventory.md](evidence/inventory.md) | Not configured | `baseline` |
 
 No maturity beyond placeholder baseline is claimed.
 
 ## Handoff
 
-Next: `engineering-system` after the real codebase and operations can be inspected.
+Next: `engineering-orchestrator` after the real codebase and operations can be inspected.

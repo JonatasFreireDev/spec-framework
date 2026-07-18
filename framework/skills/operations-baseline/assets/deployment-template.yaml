@@ -1,0 +1,12 @@
+schema_version: 1
+id: DEPLOY-NAME
+status: draft
+technical_entity: DEPLOY-001
+environment: ENV-NAME
+applications: []
+components: []
+release_strategy: "[strategy or Not configured]"
+rollback_strategy: "[strategy or Not configured]"
+observability: []
+runbooks: []
+evidence: []

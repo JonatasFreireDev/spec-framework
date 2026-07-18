@@ -33,13 +33,14 @@
 
 ## Architecture
 
-| Area | Contract | Evidence | Maturity |
-| --- | --- | --- | --- |
-| System context | [architecture/system-context.md](architecture/system-context.md) | `[code/config/decision path]` | `baseline | mapped | governed | verified | operated` |
-| Modules | [architecture/modules.md](architecture/modules.md) | `[code/test path]` | `baseline | mapped | governed | verified | operated` |
-| Data ownership | `[path or Not configured]` | `[evidence]` | `[maturity]` |
-| Integrations | `[path or Not configured]` | `[evidence]` | `[maturity]` |
-| Deployment | `[path or Not configured]` | `[evidence]` | `[maturity]` |
+| Area | Owner skill | Contract | Evidence | Maturity |
+| --- | --- | --- | --- | --- |
+| System context | `technical-landscape` | [architecture/system-context.md](architecture/system-context.md) | `[code/config/decision path]` | `baseline | mapped | governed | verified | operated` |
+| Modules | `technical-landscape` | [architecture/modules.md](architecture/modules.md) | `[code/test path]` | `baseline | mapped | governed | verified | operated` |
+| Technical catalog | `technical-landscape` | [catalog/catalog.yaml](catalog/catalog.yaml) | `[catalog/entity evidence]` | `baseline | mapped | governed | verified | operated` |
+| Data ownership | `technical-landscape` | `[path or Not configured]` | `[evidence]` | `[maturity]` |
+| Integrations | `technical-landscape` | `[path or Not configured]` | `[evidence]` | `[maturity]` |
+| Deployment | `operations-baseline` | `[path or Not configured]` | `[evidence]` | `[maturity]` |
 
 ## Standards And Quality
 
@@ -50,6 +51,10 @@
 | Test strategy | [quality/test-strategy.md](quality/test-strategy.md) | `[gate/evidence]` |
 | Fitness functions | `[quality/fitness-functions.yaml or Not configured]` | `[command/evidence]` |
 | Engineering standards | `[standards path or Not configured]` | `[gate/evidence]` |
+
+Standards are composed through versioned profiles and applied by entity type,
+capability, or explicit assignment. Required inherited rules may be weakened
+only through a scoped, governed exception or approved decision.
 
 ## Decisions And Deviations
 
@@ -64,6 +69,12 @@
 | Deploy and rollback | `[path or Not configured]` | `[evidence]` | `[maturity]` |
 | Incident response | `[path or Not configured]` | `[evidence]` | `[maturity]` |
 
+## Technical Entity Graph
+
+| Entity | Stable ID | Repositories or components | Standards profiles | Evidence |
+| --- | --- | --- | --- | --- |
+| `[system/application/component/etc.]` | `[ID]` | `[IDs]` | `[PROFILE-*]` | `[path]` |
+
 ## Consumers
 
 | Use case or system | Pinned version | Deviations |
@@ -72,11 +83,11 @@
 
 ## Handoff
 
-Next: `technical-discovery` for delivery-specific work.
+Next: `engineering-orchestrator` for readiness review and the human approval gate.
 
 ## ✅ Agent Verification Checklist
 
 - [ ] Scope, version, origin, mechanical catalog, and architecture boundaries are consistent.
-- [ ] Module, data, integration, standards, quality, security, and operational ownership are explicit.
+- [ ] Technical landscape, standards, operations, evidence, and quality contracts are linked to their specialist owners without duplicated ownership.
 - [ ] Decisions, deviations, migrations, consumers, and compatibility expectations are traceable.
 - [ ] The handoff identifies required downstream pins, evidence, and unresolved system gaps.

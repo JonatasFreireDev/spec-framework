@@ -64,18 +64,18 @@ func TestStartingPointMaterializationProfiles(t *testing.T) {
 		},
 		"existing-feature": {
 			present: []string{"foundation/feature-brief.md", "domains/_template-domain/context.md"},
-			absent:  []string{"foundation/problem/problem.md", "foundation/strategy/strategy.md", "design/system/context.md", "engineering/context.md"},
+			absent:  []string{"foundation/problem/problem.md", "foundation/strategy/strategy.md"},
 		},
 		"existing-documents": {
 			present: []string{"context.md"},
-			absent:  []string{"foundation/README.md", "foundation/problem/problem.md", "domains/_template-domain/context.md", "design/system/context.md", "engineering/context.md"},
+			absent:  []string{"foundation/README.md", "foundation/problem/problem.md", "domains/_template-domain/context.md"},
 		},
 		"existing-implementation": {
 			present: []string{"knowledge/assessments/implementation-assessment.md", "foundation/problem/problem.md", "domains/_template-domain/context.md"},
 		},
 		"audit-only": {
 			present: []string{"audits/README.md", "knowledge/conventions/security-baseline.md"},
-			absent:  []string{"foundation/README.md", "foundation/problem/problem.md", "knowledge/conventions/gates.md", "domains/_template-domain/context.md", "design/system/context.md", "engineering/context.md"},
+			absent:  []string{"foundation/README.md", "foundation/problem/problem.md", "domains/_template-domain/context.md"},
 		},
 	}
 	for point, expected := range tests {

@@ -25,8 +25,8 @@ func TestInitShipsLeanReadmeSurfaceAndUpgradePreservesAdopterReadmes(t *testing.
 	}); err != nil {
 		t.Fatal(err)
 	}
-	if readmes != 18 {
-		t.Fatalf("initialized product has %d READMEs, want 18", readmes)
+	if readmes != 22 {
+		t.Fatalf("initialized product has %d READMEs, want 22", readmes)
 	}
 	obsolete := filepath.Join(product, "knowledge", "prompts", "README.md")
 	if _, err := os.Stat(obsolete); !os.IsNotExist(err) {
@@ -44,6 +44,66 @@ func TestInitShipsLeanReadmeSurfaceAndUpgradePreservesAdopterReadmes(t *testing.
 	data, err := os.ReadFile(obsolete)
 	if err != nil || string(data) != "adopter-owned guidance" {
 		t.Fatalf("upgrade changed adopter README: %q %v", data, err)
+	}
+}
+
+func TestInitDiscoversSiblingCodeRootsAndPreservesThemOnUpgrade(t *testing.T) {
+	t.Setenv("SPEC_FRAMEWORK_CACHE", filepath.Join(t.TempDir(), "cache"))
+	t.Setenv("SPEC_FRAMEWORK_AGENT_HOME", filepath.Join(t.TempDir(), "agents"))
+	target := filepath.Join(t.TempDir(), "product-repo")
+	if err := os.MkdirAll(filepath.Join(target, "web"), 0755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(target, "web", "package.json"), []byte(`{"name":"web"}`), 0644); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := Init(Options{Target: target, Version: "test", Agents: []Agent{Codex}}); err != nil {
+		t.Fatal(err)
+	}
+	manifest, err := os.ReadFile(filepath.Join(target, "product", ".product", "framework.json"))
+	if err != nil || !strings.Contains(string(manifest), `"path": "web"`) || !strings.Contains(string(manifest), `"role": "web"`) {
+		t.Fatalf("code root missing from manifest: %s %v", manifest, err)
+	}
+	landscape, err := os.ReadFile(filepath.Join(target, "product", "knowledge", "assessments", "product-landscape.md"))
+	if err != nil || !strings.Contains(string(landscape), "`web/`") || !strings.Contains(string(landscape), "pending comprehensive inventory") {
+		t.Fatalf("landscape missing discovered root: %s %v", landscape, err)
+	}
+	if _, err := Upgrade(Options{Target: target, Version: "test", Agents: []Agent{Codex}}); err != nil {
+		t.Fatal(err)
+	}
+	manifest, err = os.ReadFile(filepath.Join(target, "product", ".product", "framework.json"))
+	if err != nil || !strings.Contains(string(manifest), `"path": "web"`) {
+		t.Fatalf("upgrade discarded code roots: %s %v", manifest, err)
+	}
+}
+
+func TestUpgradeDoesNotOptLegacyProductsIntoBaselinePolicy(t *testing.T) {
+	t.Setenv("SPEC_FRAMEWORK_CACHE", filepath.Join(t.TempDir(), "cache"))
+	t.Setenv("SPEC_FRAMEWORK_AGENT_HOME", filepath.Join(t.TempDir(), "agents"))
+	target := filepath.Join(t.TempDir(), "product-repo")
+	if _, err := Init(Options{Target: target, Version: "test", Agents: []Agent{Codex}}); err != nil {
+		t.Fatal(err)
+	}
+	manifestPath := filepath.Join(target, "product", ".product", "framework.json")
+	data, err := os.ReadFile(manifestPath)
+	if err != nil {
+		t.Fatal(err)
+	}
+	var manifest map[string]any
+	if err := json.Unmarshal(data, &manifest); err != nil {
+		t.Fatal(err)
+	}
+	delete(manifest, "baseline_policy")
+	updated, _ := json.Marshal(manifest)
+	if err := os.WriteFile(manifestPath, updated, 0644); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := Upgrade(Options{Target: target, Version: "test", Agents: []Agent{Codex}}); err != nil {
+		t.Fatal(err)
+	}
+	data, err = os.ReadFile(manifestPath)
+	if err != nil || strings.Contains(string(data), "baseline_policy") {
+		t.Fatalf("upgrade opted legacy product into policy: %s %v", data, err)
 	}
 }
 
@@ -201,6 +261,57 @@ func TestInitKeepsRuntimeAndDispatchersOutsideRepository(t *testing.T) {
 		if !strings.Contains(contract, "Resolve framework-guide first unless") || !strings.Contains(contract, "concrete artifact or workspace scope") || !strings.Contains(contract, "is not direct-route evidence by itself") {
 			t.Fatalf("dispatcher is not Guide-first: %s", path)
 		}
+	}
+}
+
+func TestInitShipsEngineeringCatalogRootsForEveryAgentTarget(t *testing.T) {
+	t.Setenv("SPEC_FRAMEWORK_CACHE", filepath.Join(t.TempDir(), "cache"))
+	t.Setenv("SPEC_FRAMEWORK_AGENT_HOME", filepath.Join(t.TempDir(), "agents"))
+	target := filepath.Join(t.TempDir(), "product")
+	result, err := Init(Options{Target: target, Version: "test", Agents: []Agent{Codex, Cursor, Claude}})
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, file := range []string{
+		"product/engineering/architecture/topology.yaml",
+		"product/engineering/catalog/catalog.yaml",
+		"product/engineering/standards/standards.yaml",
+		"product/engineering/standards/profiles/product-default.yaml",
+		"product/engineering/operations/operations.yaml",
+		"product/engineering/evidence/inventory.md",
+	} {
+		if _, err := os.Stat(filepath.Join(target, filepath.FromSlash(file))); err != nil {
+			t.Errorf("missing %s: %v", file, err)
+		}
+	}
+	for _, skill := range []string{"engineering-orchestrator", "technical-landscape", "engineering-standards", "operations-baseline", "engineering-evidence", "engineering-system"} {
+		if _, err := os.Stat(filepath.Join(result.SpecRoot, "skills", skill, "SKILL.md")); err != nil {
+			t.Errorf("runtime missing engineering skill %s: %v", skill, err)
+		}
+	}
+	handoff, err := os.ReadFile(filepath.Join(result.SpecRoot, "skills", "engineering-orchestrator", "assets", "engineering-baseline-handoff-template.json"))
+	if err != nil || !strings.Contains(string(handoff), `"mode": "sequential"`) || !strings.Contains(string(handoff), `"context_policy": "minimal"`) || !strings.Contains(string(handoff), `"skill": "engineering-system"`) {
+		t.Fatalf("runtime engineering delegation contract missing: %v", err)
+	}
+	aggregate, err := os.ReadFile(filepath.Join(target, "product", "engineering", "engineering-system.yaml"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, owner := range []string{"technical-landscape", "engineering-standards", "operations-baseline", "engineering-evidence", "engineering-system"} {
+		if !strings.Contains(string(aggregate), "owner_skill: "+owner) {
+			t.Errorf("engineering aggregate missing owner %s", owner)
+		}
+	}
+	owned := filepath.Join(target, "product", "engineering", "catalog", "catalog.yaml")
+	if err := os.WriteFile(owned, []byte("adopter-owned catalog\n"), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := Upgrade(Options{Target: target, Version: "test", Agents: []Agent{Codex, Cursor, Claude}}); err != nil {
+		t.Fatal(err)
+	}
+	data, err := os.ReadFile(owned)
+	if err != nil || string(data) != "adopter-owned catalog\n" {
+		t.Fatalf("upgrade changed adopter engineering catalog: %q %v", data, err)
 	}
 }
 

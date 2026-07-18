@@ -34,4 +34,4 @@ No exceptions are configured. Real exceptions require owner, rationale, residual
 
 ## Handoff
 
-Next: `engineering-system` after real product evidence can be inspected.
+Next: `engineering-orchestrator` after real product evidence can be inspected and specialist contracts are ready.

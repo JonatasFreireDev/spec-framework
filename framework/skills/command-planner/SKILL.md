@@ -30,6 +30,9 @@ CMDPLAN-NNN.json with argv, cwd, source, risk, timeout, expected exit code, hash
 - This skill owns its generation resources: `assets/command-plan-template.json`.
 - Approved decisions are discovered through the active product root's `.product/decisions.json`; resolve each registered `path` from its declared domain root (`knowledge/decisions/`, `design/decisions/`, or `engineering/decisions/`).
 
+
+Use scripts/invoke-cli.ps1 on Windows or scripts/invoke-cli.sh on macOS/Linux for the CLI operation in this skill's reviewed scope. The wrapper never adds --yes or an approver identity.
+
 ## Workflow
 1. Load the workspace, current commit, approved artifacts, and runtime policy.
 2. Validate hashes, ownership, dependencies, attempts, and authority before acting.

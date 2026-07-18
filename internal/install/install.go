@@ -27,12 +27,14 @@ const (
 var agentRoots = map[Agent]string{Codex: "codex", Cursor: "cursor", Claude: "claude"}
 
 type Options struct {
-	Target, Version string
-	Agents          []Agent
-	StartingPoint   string
-	Sources         []string
-	ImportOptions   sourceimport.CreateOptions
-	Force           bool
+	Target, Version      string
+	Agents               []Agent
+	StartingPoint        string
+	Sources              []string
+	CodeRoots            []runtimeassets.CodeRoot
+	EnableBaselinePolicy bool
+	ImportOptions        sourceimport.CreateOptions
+	Force                bool
 }
 type Result struct {
 	Target, SpecRoot string
@@ -127,7 +129,14 @@ func Init(opts Options) (Result, error) {
 	if err := writeInitializationPlan(filepath.Join(stagingRoot, "product"), plan); err != nil {
 		return Result{}, err
 	}
-	result, err := Upgrade(Options{Target: stagingRoot, Version: opts.Version, Agents: opts.Agents, StartingPoint: point, Force: true})
+	codeRoots, err := discoverCodeRoots(target, opts.CodeRoots)
+	if err != nil {
+		return Result{}, err
+	}
+	if err := writeCodeDiscovery(filepath.Join(stagingRoot, "product"), codeRoots); err != nil {
+		return Result{}, err
+	}
+	result, err := Upgrade(Options{Target: stagingRoot, Version: opts.Version, Agents: opts.Agents, StartingPoint: point, CodeRoots: codeRoots, EnableBaselinePolicy: true, Force: true})
 	if err != nil {
 		return Result{}, err
 	}
@@ -196,11 +205,23 @@ func Upgrade(opts Options) (Result, error) {
 	if err != nil {
 		return Result{}, err
 	}
+	codeRoots := opts.CodeRoots
+	if len(codeRoots) == 0 {
+		codeRoots = installedCodeRoots(productManifest)
+	}
+	baselinePolicy := installedBaselinePolicy(productManifest)
+	if opts.EnableBaselinePolicy {
+		baselinePolicy = map[string]any{"pre_specification": "required"}
+	}
 	manifest := map[string]any{
 		"schema_version": 3, "framework": "spec-framework", "version": version, "product_root": ".",
 		"agents": agents, "starting_point": point,
+		"code_roots": codeRoots,
 		"activation": map[string]any{"mode": "manifest-only"},
 		"runtime":    map[string]any{"source": "user-cache", "channel": "stable"},
+	}
+	if len(baselinePolicy) > 0 {
+		manifest["baseline_policy"] = baselinePolicy
 	}
 	if err := writeJSON(productManifest, manifest); err != nil {
 		return Result{}, err
@@ -215,6 +236,34 @@ func Upgrade(opts Options) (Result, error) {
 		}
 	}
 	return Result{Target: target, SpecRoot: spec, SkillCount: 0, StartingPoint: point}, nil
+}
+
+func installedCodeRoots(path string) []runtimeassets.CodeRoot {
+	data, err := os.ReadFile(path)
+	if err != nil {
+		return nil
+	}
+	var value struct {
+		CodeRoots []runtimeassets.CodeRoot `json:"code_roots"`
+	}
+	if json.Unmarshal(data, &value) != nil {
+		return nil
+	}
+	return value.CodeRoots
+}
+
+func installedBaselinePolicy(path string) map[string]any {
+	data, err := os.ReadFile(path)
+	if err != nil {
+		return nil
+	}
+	var value struct {
+		BaselinePolicy map[string]any `json:"baseline_policy"`
+	}
+	if json.Unmarshal(data, &value) != nil {
+		return nil
+	}
+	return value.BaselinePolicy
 }
 
 func installedStartingPoint(path string) string {

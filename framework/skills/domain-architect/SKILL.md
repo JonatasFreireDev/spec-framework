@@ -35,7 +35,7 @@ domain.md files; domain context.md files; ubiquitous language; invariants; comma
 Follow the shared [Discovery And Challenge contract](../discovery-and-challenge.md) before substantive creation or material revision.
 
 ## Workflow
-1. Read the parent context and confirm the artifact status.
+1. Read the parent context, the approved Product Landscape, Engineering System, and Design System, then confirm the artifact status. Stop when any pre-Specification baseline is incomplete.
 2. Identify missing information, assumptions, conflicts, and dependencies.
 3. Partition responsibilities into coherent business areas; do not use the product name, a UI navigation section, or a catch-all domain as the boundary.
 4. Propose the artifact or revision using the matching template, including Owns, Does Not Own, and cross-domain contracts.

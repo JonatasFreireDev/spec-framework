@@ -1403,6 +1403,53 @@ func validateRegistryAndApprovalGates(s Snapshot) []Diagnostic {
 	return out
 }
 
+// validatePreSpecificationBaselines applies only to products initialized with
+// the current explicit policy. Older products remain compatible until they opt
+// in, while new products must establish their knowledge, engineering, and
+// shared Design System before authoring a real Specification.
+func validatePreSpecificationBaselines(s Snapshot) []Diagnostic {
+	manifest, ok := s.JSON[".product/framework.json"].(map[string]any)
+	if !ok {
+		return nil
+	}
+	policy, _ := manifest["baseline_policy"].(map[string]any)
+	if strings.ToLower(firstString(policy["pre_specification"], "")) != "required" {
+		return nil
+	}
+	var hasSpecification bool
+	for _, item := range artifactList(s) {
+		kind := strings.ReplaceAll(firstString(item["type"], ""), "_", "-")
+		path := firstString(item["path"], "")
+		if (kind == "specification" || kind == "specification-contract") && !strings.Contains(path, "_template-") {
+			hasSpecification = true
+			break
+		}
+	}
+	if !hasSpecification {
+		return nil
+	}
+	required := map[string]string{
+		"product-landscape":  "knowledge/assessments/product-landscape.md",
+		"engineering-system": "engineering/engineering-system.md",
+		"design-system":      "design/system/design-system.md",
+	}
+	items := artifactList(s)
+	byType := map[string]map[string]any{}
+	for _, item := range items {
+		byType[strings.ReplaceAll(firstString(item["type"], ""), "_", "-")] = item
+	}
+	var out []Diagnostic
+	for kind, expectedPath := range required {
+		item := byType[kind]
+		status := firstString(item["status"], "missing")
+		path := firstString(item["path"], expectedPath)
+		if item == nil || !feeds(status) {
+			out = append(out, Diagnostic{Error, "pre-specification-baseline", path, kind + " must be approved before a Specification is authored.", "Complete the comprehensive Product Landscape, Engineering System, and Design System baselines, then approve each one."})
+		}
+	}
+	return out
+}
+
 func configuredRequiredArtifacts(s Snapshot) []string {
 	registry, ok := s.JSON[".product/artifacts.json"].(map[string]any)
 	if !ok {

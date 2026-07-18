@@ -33,8 +33,13 @@ Approved Vision and Strategy; personas; brand sources; existing interfaces or co
 
 Follow the shared [Discovery And Challenge contract](../discovery-and-challenge.md) before substantive creation or material revision.
 
+
+Use scripts/invoke-cli.ps1 on Windows or scripts/invoke-cli.sh on macOS/Linux for the CLI operation in this skill's reviewed scope. The wrapper never adds --yes or an approver identity.
+
+Use `scripts/inventory-design-evidence.ps1` on Windows or `scripts/inventory-design-evidence.sh` on macOS/Linux before authoring the shared baseline. It inventories interface and design-system evidence and can call `design-system validate`; it never changes product or code files.
+
 ## Workflow
-1. Confirm whether origin is `generate`, `evolve`, or `adopt`; never promote a reference to canonical authority implicitly.
+1. Confirm whether origin is `generate`, `evolve`, or `adopt`; never promote a reference to canonical authority implicitly. When there is no interface source, establish explicit accessibility and experience hypotheses before Specifications rather than omitting the shared baseline.
 2. Inventory foundations, sources, tokens, themes, components, patterns, consumers, and implementation links.
 3. Create or update `context.md` and `design-system.md` using canonical templates.
 4. Maintain tool-independent tokens in primitive, semantic, and component layers; resolve aliases and reject cycles.

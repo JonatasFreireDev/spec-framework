@@ -1,0 +1,9 @@
+schema_version: 1
+id: EVID-001
+type: "[code | test | config | ci | runtime | external]"
+source: "[path, command, CI, URL, or runtime reference]"
+supports: []
+observed_at: YYYY-MM-DD
+freshness:
+  maximum_age_days: 30
+limitations: []

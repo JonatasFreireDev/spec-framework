@@ -1,0 +1,4 @@
+interface:
+  display_name: "Engineering Orchestrator"
+  short_description: "Route the complete shared engineering baseline"
+  default_prompt: "Use $engineering-orchestrator to route the shared engineering baseline through its specialist owners and approval gate."

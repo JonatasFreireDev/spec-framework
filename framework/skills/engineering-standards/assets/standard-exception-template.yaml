@@ -1,0 +1,11 @@
+schema_version: 1
+id: STDEX-001
+standard: STD-CATEGORY-001
+scope: []
+owner: Unassigned
+rationale: "[why the standard cannot currently be met]"
+residual_risk: "[remaining risk]"
+mitigation: "[temporary mitigation]"
+expires_on: YYYY-MM-DD
+reentry_gate: "[condition required to conform]"
+status: open

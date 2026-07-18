@@ -141,6 +141,7 @@ func TestProjectViewIncludesTypeRelationsWorktreeAndChanges(t *testing.T) {
 	registry := workflow.Registry{Artifacts: []workflow.Artifact{
 		{ID: "FEATURE-1", Type: "feature", Status: "approved", Path: "domains/payments/feature.md"},
 		{ID: "GRAPH-1", Type: "execution-graph", Status: "draft", Path: "domains/payments/execution-graph.json", ParentIDs: []string{"FEATURE-1"}},
+		{ID: "LANDSCAPE-1", Type: "product-landscape", Status: "approved", Path: "knowledge/assessments/product-landscape.md"},
 	}}
 	data, _ := json.Marshal(registry)
 	if err := os.WriteFile(filepath.Join(root, ".product", "artifacts.json"), data, 0o644); err != nil {
@@ -149,10 +150,16 @@ func TestProjectViewIncludesTypeRelationsWorktreeAndChanges(t *testing.T) {
 	if err := os.MkdirAll(filepath.Join(root, "domains", "payments"), 0o755); err != nil {
 		t.Fatal(err)
 	}
+	if err := os.MkdirAll(filepath.Join(root, "knowledge", "assessments"), 0o755); err != nil {
+		t.Fatal(err)
+	}
 	if err := os.WriteFile(filepath.Join(root, "domains", "payments", "feature.md"), []byte("# Pagamentos\n"), 0o644); err != nil {
 		t.Fatal(err)
 	}
 	if err := os.WriteFile(filepath.Join(root, "domains", "payments", "execution-graph.json"), []byte(`{"nodes":[]}`), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(root, "knowledge", "assessments", "product-landscape.md"), []byte("# Product Landscape\n"), 0o644); err != nil {
 		t.Fatal(err)
 	}
 	if err := os.WriteFile(filepath.Join(root, "notes.md"), []byte("não registrado"), 0o644); err != nil {
@@ -181,8 +188,18 @@ func TestProjectViewIncludesTypeRelationsWorktreeAndChanges(t *testing.T) {
 	for _, artifact := range view.Artifacts {
 		byID[artifact.ID] = artifact
 	}
-	if len(view.Artifacts) != 2 || byID["GRAPH-1"].View.Renderer != "graph" {
+	if len(view.Artifacts) != 3 || byID["GRAPH-1"].View.Renderer != "graph" || byID["LANDSCAPE-1"].View.Renderer != "markdown" {
 		t.Fatalf("artifacts=%+v", view.Artifacts)
+	}
+	foundLandscapeType := false
+	for _, config := range view.Types {
+		if config.Type == "product-landscape" && config.Renderer == "markdown" {
+			foundLandscapeType = true
+			break
+		}
+	}
+	if !foundLandscapeType {
+		t.Fatalf("type catalog does not include product-landscape: %+v", view.Types)
 	}
 	if len(byID["FEATURE-1"].Children) != 1 || byID["FEATURE-1"].Children[0] != "GRAPH-1" {
 		t.Fatalf("relations=%+v", byID["FEATURE-1"])

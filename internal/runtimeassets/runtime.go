@@ -12,19 +12,30 @@ import (
 )
 
 type Manifest struct {
-	SchemaVersion int      `json:"schema_version"`
-	Framework     string   `json:"framework"`
-	Version       string   `json:"version"`
-	ProductRoot   string   `json:"product_root"`
-	StartingPoint string   `json:"starting_point"`
-	Agents        []string `json:"agents"`
-	Activation    struct {
+	SchemaVersion  int        `json:"schema_version"`
+	Framework      string     `json:"framework"`
+	Version        string     `json:"version"`
+	ProductRoot    string     `json:"product_root"`
+	StartingPoint  string     `json:"starting_point"`
+	Agents         []string   `json:"agents"`
+	CodeRoots      []CodeRoot `json:"code_roots,omitempty"`
+	BaselinePolicy struct {
+		PreSpecification string `json:"pre_specification,omitempty"`
+	} `json:"baseline_policy,omitempty"`
+	Activation struct {
 		Mode string `json:"mode"`
 	} `json:"activation"`
 	Runtime struct {
 		Source  string `json:"source"`
 		Channel string `json:"channel"`
 	} `json:"runtime"`
+}
+
+// CodeRoot is an implementation area located alongside product/. It records
+// the semantic role rather than coupling the framework to one language.
+type CodeRoot struct {
+	Path string `json:"path"`
+	Role string `json:"role"`
 }
 
 func CacheRoot() (string, error) {
@@ -65,16 +76,17 @@ func Ensure(version string) (string, error) {
 	}
 	defer os.RemoveAll(tmp)
 	assets := map[string]string{
-		"FRAMEWORK.md":                      "FRAMEWORK.md",
-		"docs/artifact-registry-modules.md": "docs/artifact-registry-modules.md",
-		"docs/execution-runtime.md":         "docs/execution-runtime.md",
-		"docs/engineering-systems.md":       "docs/engineering-systems.md",
-		"docs/lifecycle-and-approvals.md":   "docs/lifecycle-and-approvals.md",
-		"framework/AGENTS.framework.md":     "AGENTS.framework.md",
-		"framework/delivery-closure.md":     "delivery-closure.md",
-		"framework/init":                    "init",
-		"framework/skills":                  "skills",
-		"examples/events":                   "examples/events",
+		"FRAMEWORK.md":                              "FRAMEWORK.md",
+		"docs/artifact-registry-modules.md":         "docs/artifact-registry-modules.md",
+		"docs/execution-runtime.md":                 "docs/execution-runtime.md",
+		"docs/engineering-systems.md":               "docs/engineering-systems.md",
+		"docs/engineering-catalog-and-standards.md": "docs/engineering-catalog-and-standards.md",
+		"docs/lifecycle-and-approvals.md":           "docs/lifecycle-and-approvals.md",
+		"framework/AGENTS.framework.md":             "AGENTS.framework.md",
+		"framework/delivery-closure.md":             "delivery-closure.md",
+		"framework/init":                            "init",
+		"framework/skills":                          "skills",
+		"examples/events":                           "examples/events",
 	}
 	for source, dest := range assets {
 		if err := copyTree(source, filepath.Join(tmp, dest)); err != nil {

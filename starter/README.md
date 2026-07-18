@@ -24,7 +24,7 @@ Framework assets live in the versioned user cache and are resolved from `product
 | `product/audits/` | Product validation reports, readiness checks, and security/threat tracking. |
 | `product/releases/` | Release planning and release evidence. |
 | `product/design/` | Product design references. |
-| `product/engineering/` | Product engineering notes, architecture, runbooks, and product-specific gates. |
+| `product/engineering/` | Scalable technical entity graph, architecture, versioned standards, quality, operations, evidence, decisions, and product-specific gates. |
 
 ## First Product Steps
 
@@ -38,7 +38,7 @@ These are the default `new-product` steps. For every initialized repository, rea
 6. Continue through Goal -> Feature -> Use Case -> Specification -> Design -> Technical Discovery -> applicable Engineering Proposal and Engineering Review -> Implementation Plan -> Execution Graph -> Tasks.
 7. Replace product gate placeholders in `product/knowledge/conventions/gates.md` before marking executable work as implemented or validated.
 8. Use `spec-framework work`, then `resume`, leases, checkpoints, and handoffs so execution can be continued without conversation history.
-9. Use `spec-framework engineering-system inspect` for the shared technical baseline, `spec-framework dashboard --work WORK-001` for the consolidated flow, and `spec-framework decisions migrate` to preview legacy decision metadata upgrades.
+9. Use `engineering-orchestrator` to establish the shared technical baseline sequentially or, when explicitly selected and supported by the harness, through minimal-context native subagents backed by dispatch envelopes. Use `spec-framework engineering-system inspect` to inspect its aggregate, `spec-framework dashboard --work WORK-001` for the consolidated flow, and `spec-framework decisions migrate` to preview legacy decision metadata upgrades.
 11. Run `spec-framework decisions check --strict` in CI to validate decision paths, domains, approvals, references, and navigable links.
 10. For `existing-documents`, ask the Artifact Importer agent to read each source and fill `traceability.json` plus proposed `mapping.json` entries before materialization; for a large source set, use bounded import chunks with evidence per source and review unmapped gaps explicitly.
 

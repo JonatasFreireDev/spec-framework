@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "id": "existing-feature",
-  "asset_sets": ["product-core", "knowledge", "delivery-domains", "governance"],
+  "asset_sets": ["product-core", "knowledge", "delivery-domains", "delivery-design", "delivery-engineering", "governance"],
   "directories": [],
   "files": [
     {
@@ -23,7 +23,7 @@
     }
   ],
   "registry": {
-    "modules": ["product-core", "foundation-feature", "knowledge", "delivery-domain", "governance"],
+    "modules": ["product-core", "foundation-feature", "knowledge", "delivery-domain", "delivery-design", "delivery-engineering", "governance"],
     "required_artifacts": [{"type": "feature-brief", "path": "foundation/feature-brief.md"}],
     "exclude_types": ["problem", "vision", "product-principles", "north-star", "strategy"],
     "prepend_artifacts": [

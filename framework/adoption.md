@@ -39,6 +39,16 @@ Initialization plans the complete tree, explicit empty directories, and artifact
 
 For existing documents, use `--starting-point existing-documents` with `--source-dir` or `--sources`. The command inventories sources under `product/knowledge/imports/` but does not create Domains, User Goals, or Features without explicit approval.
 
+## Code-aware initialization
+
+Keep implementation roots beside `product/`, using semantic roles such as `web/`, `api/`, `worker/`, `mobile/`, `infrastructure/`, or `library/`. `init` detects common roots at the repository top level and can receive an explicit mapping when discovery needs help:
+
+```powershell
+spec-framework init . --agents codex --starting-point existing-implementation --code-roots web:web,api:api --yes
+```
+
+The resulting `product/knowledge/assessments/product-landscape.md` is the required comprehensive inventory. Route the shared engineering baseline through `engineering-orchestrator`, complete `engineering/engineering-system.md` and `design/system/design-system.md`, and obtain their human approvals before authoring a real Specification. With no code, these documents are explicit hypotheses; first confirm the intended stack and official scaffold command, then create the semantic sibling root rather than placing code under `product/`.
+
 After the Artifact Importer fills `mapping.json`, review the selected mappings and materialize them explicitly:
 
 ```bash

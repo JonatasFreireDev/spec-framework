@@ -20,7 +20,8 @@ Use the generating skill's own templates whenever a new canonical artifact is cr
 - `domain-template.md`, `goal-template.md`, `feature-template.md`, `use-case-template.md`: product hierarchy artifacts.
 - `journey-template.md`: user journey artifact.
 - `specification-template.md`, `design-template.md`, `design-system-template.md`, `design-component-template.md`, `design-pattern-template.md`, `engineering-system-template.md`, `engineering-proposal-template.md`, `engineering-review-template.md`, `implementation-plan-template.md`: planning, shared Design and Engineering contracts, and independent technical review.
-- `engineering-system-template.yaml`, `quality-system-template.md`, `quality-system-template.yaml`, `quality-model-template.md`, `test-strategy-template.md`, `fitness-functions-template.yaml`: mechanical Engineering System catalog and shared product quality contracts.
+- `technical-landscape/assets/` owns topology, technical catalog, entity, and boundary templates; `engineering-standards/assets/` owns standards, profiles, resolution, exception, and conformance templates; `operations-baseline/assets/` owns operations, environment, deployment, runbook, service-level, release, and rollback templates; `engineering-evidence/assets/` owns evidence, coverage, maturity, gap, and staleness templates.
+- `engineering-system/assets/` owns only the aggregate Engineering System and shared product quality contracts: `engineering-system-template.*`, `quality-system-template.*`, `quality-model-template.md`, `test-strategy-template.md`, and `fitness-functions-template.yaml`.
 - `execution-graph-template.json`, `tasks-template.md`, `tests-template.md`: executable planning artifacts.
 - `qa-evidence-template.md`, `security-review-template.md`, `security-baseline-template.md`, `threat-register-template.md`: validation evidence, security gate, and proactive threat modeling artifacts.
 - `analytics-template.md`, `audit-template.md`, `readiness-report-template.md`: validation and measurement artifacts.
@@ -32,6 +33,8 @@ Use the generating skill's own templates whenever a new canonical artifact is cr
 - `specification-contract-template.md`: reusable structure for modular product, behavior, UX, API, data, security, quality, observability, and rollout contracts.
 - `import-traceability-template.json`, `import-plan-template.json`, `import-mapping-template.json`, `import-report-template.md`: staged source-import evidence, review, selection, and reporting contracts.
 - `command-plan-template.json`, `handoff-template.json`, `runtime-workspace-template.json`, `integration-template.json`: execution-runtime planning, handoff, workspace, and integration state contracts.
+- `engineering-baseline-handoff-template.json`: Engineering Orchestrator execution-mode, dependency, minimal-context, and write-scope contract.
+- `engineering-specialist-return-template.json`: compact engineering return contract owned by Subagent Return Reviewer.
 
 ## Responsibility
 

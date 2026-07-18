@@ -38,6 +38,6 @@ Use `spec-framework init` to copy `starter/product/`, cache embedded framework a
 
 Use `spec-framework upgrade` to refresh the external runtime and manifest without overwriting adopter-owned product content.
 
-The runtime also ships the shared operational contracts [`docs/execution-runtime.md`](../docs/execution-runtime.md), [`docs/engineering-systems.md`](../docs/engineering-systems.md), and [`docs/lifecycle-and-approvals.md`](../docs/lifecycle-and-approvals.md). Skills and orchestrators reference these contracts instead of duplicating their cross-cutting rules.
+The runtime also ships the shared operational contracts [`docs/execution-runtime.md`](../docs/execution-runtime.md), [`docs/engineering-systems.md`](../docs/engineering-systems.md), [`docs/engineering-catalog-and-standards.md`](../docs/engineering-catalog-and-standards.md), and [`docs/lifecycle-and-approvals.md`](../docs/lifecycle-and-approvals.md). Skills and orchestrators reference these contracts instead of duplicating their cross-cutting rules.
 
 For framework development, use `go run ./cmd/spec-framework`; adopters use the precompiled release binary.

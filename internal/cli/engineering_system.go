@@ -67,7 +67,11 @@ func runEngineeringSystem(args []string, stdout, stderr io.Writer) int {
 	} else {
 		fmt.Fprintf(stdout, "Engineering System: %s\n- Status: %s\n- Version: %s\n- Origin: %s\n- Scope: %s\n- Areas: %d\n- Decisions: %d\n- Standards: %d\n- Fitness functions: %d\n", inspection.ID, inspection.Status, inspection.Version, inspection.OriginMode, inspection.Scope, len(inspection.Areas), inspection.Decisions, inspection.Standards, inspection.FitnessFunctions)
 		for _, area := range inspection.Areas {
-			fmt.Fprintf(stdout, "- %s: %s (%s, evidence=%d)\n", area.Name, area.Maturity, area.Contract, area.Evidence)
+			owner := "legacy-or-unspecified"
+			if area.OwnerSkill != "" {
+				owner = area.OwnerSkill
+			}
+			fmt.Fprintf(stdout, "- %s: %s (%s, owner=%s, evidence=%d)\n", area.Name, area.Maturity, area.Contract, owner, area.Evidence)
 		}
 		for _, blocker := range inspection.Blockers {
 			fmt.Fprintln(stdout, "BLOCKED:", blocker)

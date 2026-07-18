@@ -1,5 +1,8 @@
 # Product Architecture
 
+Shared topology and boundary records are owned by `technical-landscape`; the
+Engineering System aggregate references them without duplicating ownership.
+
 ## Purpose
 
 Store stable product architecture knowledge and product ADR references:
