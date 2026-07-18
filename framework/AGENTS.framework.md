@@ -34,6 +34,8 @@ Operational boundaries:
 
 When the product declares `product/design/system/`, route shared foundations, tokens, components, patterns, versions, and sources to the Design System skill. Detailed Design System and UX/UI gates remain in `FRAMEWORK.md` and their owning skills. External visual tools are optional adapters; their installation, output, and availability never grant product approval or replace framework contracts.
 
+Route creation or evolution of `product/engineering/` through Engineering Orchestrator. Technical Landscape owns shared architecture and entity graph contracts; Engineering Standards owns standards and profiles; Operations Baseline owns operational contracts; Engineering Evidence owns evidence and maturity assessments; Engineering System owns only aggregate and Quality System consolidation. Do not let one specialist edit another specialist's subtree without an explicit handoff, and stop for human approval of the current composite hash.
+
 ## Required Reading
 
 Authority order:

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Engineering Evidence"
+  short_description: "Assess engineering evidence, maturity, and staleness"
+  default_prompt: "Use $engineering-evidence to inventory evidence and assess coverage, maturity, gaps, and staleness."

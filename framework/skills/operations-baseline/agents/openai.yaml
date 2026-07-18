@@ -1,0 +1,4 @@
+interface:
+  display_name: "Operations Baseline"
+  short_description: "Model shared operational capability and runbooks"
+  default_prompt: "Use $operations-baseline to model environments, deployments, release, rollback, observability, continuity, and runbooks."

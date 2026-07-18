@@ -1,0 +1,4 @@
+interface:
+  display_name: "Technical Landscape"
+  short_description: "Map the complete technical entity graph"
+  default_prompt: "Use $technical-landscape to map systems, applications, components, repositories, interfaces, data stores, deployments, and relations."

@@ -24,7 +24,7 @@ Human goal; current working directory; canonical `product/.product/framework.jso
 Intent summary; discovered state; recommended command or specialist; mutation preview; gate explanation; result summary; next safe action; explicit blocker when human authority is required.
 
 ## Required reading
-- The pinned runtime contracts: [`execution-runtime.md`](../../docs/execution-runtime.md), [`engineering-systems.md`](../../docs/engineering-systems.md), and [`lifecycle-and-approvals.md`](../../docs/lifecycle-and-approvals.md).
+- The pinned runtime contracts: [`execution-runtime.md`](../../docs/execution-runtime.md), [`engineering-systems.md`](../../docs/engineering-systems.md), [`engineering-catalog-and-standards.md`](../../docs/engineering-catalog-and-standards.md), and [`lifecycle-and-approvals.md`](../../docs/lifecycle-and-approvals.md).
 - The pinned runtime's `AGENTS.framework.md` common agent rules.
 - the framework root's `FRAMEWORK.md`
 - The active product root's `BOOTSTRAP.md` when it exists.
@@ -76,7 +76,8 @@ Intent summary; discovered state; recommended command or specialist; mutation pr
 | Diagnose or install an optional visual adapter | `adapters list/status/doctor`, then version-pinned `install/update --yes` after preview |
 | Inspect a decision change | `impact` |
 | Prepare implementation | `gates`, Graph readiness, then Task readiness |
-| Establish, inspect, or migrate shared engineering contracts | `engineering-system inspect/validate/migrate` plus Engineering System, then Technical Discovery for a delivery |
+| Establish or evolve the shared engineering baseline | `engineering-orchestrator`, which routes Technical Landscape, Engineering Standards, Operations Baseline, Engineering Evidence, and Engineering System consolidation |
+| Inspect, validate, or migrate the aggregate Engineering System | `engineering-system inspect/validate/migrate`, then return to `engineering-orchestrator` for readiness and approval |
 | Review a proposed technical solution | Engineering Proposal, then independent Engineering Review |
 | Execute governed commands | Command Planner, then Command Executor |
 | Validate repository state | `validate` |

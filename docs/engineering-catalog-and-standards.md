@@ -12,6 +12,15 @@ or one deployable application. Repositories, systems, applications, components,
 interfaces, data stores, and deployments are independent entities connected by
 stable identifiers.
 
+Ownership is deliberately split. `technical-landscape` owns the graph,
+`engineering-standards` owns rules and profiles, `operations-baseline` owns
+operational contracts, `engineering-evidence` owns evidence and maturity, and
+`engineering-system` owns only the versioned aggregate and Quality System.
+`engineering-orchestrator` sequences these owners and stops at human approval.
+The aggregate `engineering-system.yaml` declares `owner_skill` for every area,
+and specialist root catalogs repeat their owner. Missing owner metadata remains
+valid for legacy adopters; once declared, mismatched ownership is a blocker.
+
 ## Canonical Structure
 
 ```text
@@ -136,18 +145,20 @@ must not create or overwrite adopter-owned entity records. New starter
 repositories receive empty root catalogs; existing products opt into them by a
 previewable migration or normal skill-driven evolution followed by approval.
 
-## Implementation Plan
+## Skill Flow
 
-1. Make this document and `FRAMEWORK.md` the method-level contract.
-2. Expand the Engineering System skill workflow, outputs, checklist, and owned
-   assets for catalogs, standards, operations, and evidence.
-3. Add human and mechanical templates for technical entities, standards,
-   profiles, exceptions, and root catalogs.
-4. Expand the starter with root catalogs and navigational READMEs only.
-5. Add the catalog, standards, operations, and evidence areas to the starter
-   Engineering System YAML and human summary.
-6. Validate catalog schema versions, safe relative paths, unique IDs, standard
-   obligation levels, and referenced records without rejecting legacy products.
-7. Update embedded assets, runtime documentation, starter guidance, and tests.
-8. Verify init, upgrade preservation, full Go gates, fixture validation, and
-   distribution boundaries before release.
+```text
+engineering-orchestrator
+→ technical-landscape
+→ engineering-standards
+→ operations-baseline
+→ engineering-evidence
+→ engineering-system aggregation and validation
+→ engineering-orchestrator readiness review
+→ human approval
+→ domain-architect or technical-discovery
+```
+
+The orchestrator may revisit only affected specialists during evolution, but it
+must revalidate downstream contracts and the final composite hash before asking
+for approval.

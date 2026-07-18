@@ -75,10 +75,10 @@ spec-framework uninstall --purge --yes
 | --- | --- |
 | **Specification** | The central contract: flow, UI, APIs, data, permissions, analytics, security, and acceptance — written before any code. |
 | **Design flow** | Specification → `design.md` (origin `generate`/`evolve`/`adopt`, versioned visual sources) → independent UX Review → human gate. |
-| **Engineering flow** | Technical Discovery → Engineering Proposal → independent Engineering Review → Implementation Plan. |
+| **Engineering flow** | Shared baseline: Engineering Orchestrator → Technical Landscape → Standards → Operations → Evidence → Engineering System approval. Delivery: Technical Discovery → Engineering Proposal → independent Engineering Review → Implementation Plan. |
 | **Execution Graph** | Complete vertical task contracts as a DAG with explicit `writeScope`; parallel work never overlaps write paths. |
 | **Approval gates** | `draft → proposed → approved → in_progress → implemented → validated → released`, each transition mechanically checked (content hashes, same-diff QA + Code Review, staleness detection). |
-| **Shared systems** | Optional versioned Design System (`design/system/`) and scalable Engineering System (`engineering/`) with graph catalogs, standards, quality, operations, and evidence — pinned per delivery, never self-approving. |
+| **Shared systems** | Optional versioned Design System (`design/system/`) and scalable Engineering System (`engineering/`) whose graph, standards, operations, evidence, aggregate, and quality contracts have explicit specialist owners — pinned per delivery, never self-approving. |
 
 ## CLI At a Glance
 

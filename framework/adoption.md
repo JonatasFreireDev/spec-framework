@@ -47,7 +47,7 @@ Keep implementation roots beside `product/`, using semantic roles such as `web/`
 spec-framework init . --agents codex --starting-point existing-implementation --code-roots web:web,api:api --yes
 ```
 
-The resulting `product/knowledge/assessments/product-landscape.md` is the required comprehensive inventory. Complete it, `engineering/engineering-system.md`, and `design/system/design-system.md` before authoring a real Specification. With no code, these documents are explicit hypotheses; first confirm the intended stack and official scaffold command, then create the semantic sibling root rather than placing code under `product/`.
+The resulting `product/knowledge/assessments/product-landscape.md` is the required comprehensive inventory. Route the shared engineering baseline through `engineering-orchestrator`, complete `engineering/engineering-system.md` and `design/system/design-system.md`, and obtain their human approvals before authoring a real Specification. With no code, these documents are explicit hypotheses; first confirm the intended stack and official scaffold command, then create the semantic sibling root rather than placing code under `product/`.
 
 After the Artifact Importer fills `mapping.json`, review the selected mappings and materialize them explicitly:
 

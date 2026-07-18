@@ -1,0 +1,4 @@
+interface:
+  display_name: "Engineering Standards"
+  short_description: "Govern versioned technical standards and profiles"
+  default_prompt: "Use $engineering-standards to define or audit standards, profiles, effective applicability, and governed exceptions."

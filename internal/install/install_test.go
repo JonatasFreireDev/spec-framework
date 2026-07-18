@@ -268,7 +268,8 @@ func TestInitShipsEngineeringCatalogRootsForEveryAgentTarget(t *testing.T) {
 	t.Setenv("SPEC_FRAMEWORK_CACHE", filepath.Join(t.TempDir(), "cache"))
 	t.Setenv("SPEC_FRAMEWORK_AGENT_HOME", filepath.Join(t.TempDir(), "agents"))
 	target := filepath.Join(t.TempDir(), "product")
-	if _, err := Init(Options{Target: target, Version: "test", Agents: []Agent{Codex, Cursor, Claude}}); err != nil {
+	result, err := Init(Options{Target: target, Version: "test", Agents: []Agent{Codex, Cursor, Claude}})
+	if err != nil {
 		t.Fatal(err)
 	}
 	for _, file := range []string{
@@ -281,6 +282,20 @@ func TestInitShipsEngineeringCatalogRootsForEveryAgentTarget(t *testing.T) {
 	} {
 		if _, err := os.Stat(filepath.Join(target, filepath.FromSlash(file))); err != nil {
 			t.Errorf("missing %s: %v", file, err)
+		}
+	}
+	for _, skill := range []string{"engineering-orchestrator", "technical-landscape", "engineering-standards", "operations-baseline", "engineering-evidence", "engineering-system"} {
+		if _, err := os.Stat(filepath.Join(result.SpecRoot, "skills", skill, "SKILL.md")); err != nil {
+			t.Errorf("runtime missing engineering skill %s: %v", skill, err)
+		}
+	}
+	aggregate, err := os.ReadFile(filepath.Join(target, "product", "engineering", "engineering-system.yaml"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, owner := range []string{"technical-landscape", "engineering-standards", "operations-baseline", "engineering-evidence", "engineering-system"} {
+		if !strings.Contains(string(aggregate), "owner_skill: "+owner) {
+			t.Errorf("engineering aggregate missing owner %s", owner)
 		}
 	}
 	owned := filepath.Join(target, "product", "engineering", "catalog", "catalog.yaml")

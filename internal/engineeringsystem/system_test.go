@@ -130,7 +130,7 @@ func TestInspectRejectsInvalidStandardInheritanceAndMissingCatalogRecord(t *test
 	files := map[string]string{
 		"context.md":                "---\nid: ENGSYS-TEST-001\nstatus: draft\nversion: 1.0.0\norigin_mode: generate\n---\n",
 		"engineering-system.md":     "| Field | Value |\n| --- | --- |\n| ID | `ENGSYS-TEST-001` |\n| Status | `draft` |\n| Version | `1.0.0` |\n",
-		"engineering-system.yaml":   "schema_version: 1\nid: ENGSYS-TEST-001\nstatus: draft\nversion: 1.0.0\norigin_mode: generate\nscope: product\nareas:\n  technical_catalog: {contract: catalog/catalog.yaml, maturity: baseline, evidence: []}\n  standards: {contract: standards/standards.yaml, maturity: baseline, evidence: []}\n",
+		"engineering-system.yaml":   "schema_version: 1\nid: ENGSYS-TEST-001\nstatus: draft\nversion: 1.0.0\norigin_mode: generate\nscope: product\nareas:\n  technical_catalog: {contract: catalog/catalog.yaml, maturity: baseline, evidence: [], owner_skill: engineering-system}\n  standards: {contract: standards/standards.yaml, maturity: baseline, evidence: []}\n",
 		"catalog/catalog.yaml":      "schema_version: 1\nentities:\n  systems: {BAD-ID: systems/missing.yaml}\nrelations:\n  - {id: REL-BROKEN, type: depends_on, source: SYS-MISSING, target: APP-MISSING}\n",
 		"standards/standards.yaml":  "schema_version: 1\nprofiles: {PROFILE-A: profiles/a.yaml, PROFILE-B: profiles/b.yaml}\nstandards: {}\nexceptions: {}\n",
 		"standards/profiles/a.yaml": "schema_version: 1\nid: PROFILE-A\nversion: 1.0.0\nstatus: draft\nextends: [PROFILE-B]\nstandards: []\n",
@@ -150,7 +150,7 @@ func TestInspectRejectsInvalidStandardInheritanceAndMissingCatalogRecord(t *test
 		t.Fatal(err)
 	}
 	joined := strings.Join(inspection.Blockers, "\n")
-	for _, expected := range []string{"must start with SYS-", "is missing", "unknown source or target", "inheritance cycle"} {
+	for _, expected := range []string{"owner_skill must be technical-landscape", "must start with SYS-", "is missing", "unknown source or target", "inheritance cycle"} {
 		if !strings.Contains(joined, expected) {
 			t.Fatalf("expected %q in blockers=%v", expected, inspection.Blockers)
 		}

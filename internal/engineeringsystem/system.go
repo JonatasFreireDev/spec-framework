@@ -52,11 +52,22 @@ var allowedStandardLevels = map[string]bool{
 	"required": true, "recommended": true, "experimental": true, "deprecated": true,
 }
 
+var expectedAreaOwners = map[string]string{
+	"system_context":    "technical-landscape",
+	"modules":           "technical-landscape",
+	"technical_catalog": "technical-landscape",
+	"standards":         "engineering-standards",
+	"quality":           "engineering-system",
+	"operations":        "operations-baseline",
+	"evidence":          "engineering-evidence",
+}
+
 type Area struct {
-	Name     string `json:"name"`
-	Contract string `json:"contract"`
-	Maturity string `json:"maturity"`
-	Evidence int    `json:"evidence"`
+	Name       string `json:"name"`
+	Contract   string `json:"contract"`
+	Maturity   string `json:"maturity"`
+	Evidence   int    `json:"evidence"`
+	OwnerSkill string `json:"ownerSkill,omitempty"`
 }
 
 type Inspection struct {
@@ -100,9 +111,10 @@ type catalogDocument struct {
 }
 
 type catalogArea struct {
-	Contract string   `yaml:"contract"`
-	Maturity string   `yaml:"maturity"`
-	Evidence []string `yaml:"evidence"`
+	Contract   string   `yaml:"contract"`
+	Maturity   string   `yaml:"maturity"`
+	Evidence   []string `yaml:"evidence"`
+	OwnerSkill string   `yaml:"owner_skill"`
 }
 
 type qualityCatalogDocument struct {
@@ -146,6 +158,7 @@ type qualityExceptionRecord struct {
 
 type technicalCatalogDocument struct {
 	SchemaVersion int                          `yaml:"schema_version"`
+	OwnerSkill    string                       `yaml:"owner_skill"`
 	Entities      map[string]map[string]string `yaml:"entities"`
 	Relations     []technicalRelationDocument  `yaml:"relations"`
 }
@@ -167,6 +180,7 @@ type technicalRelationDocument struct {
 
 type standardsCatalogDocument struct {
 	SchemaVersion int               `yaml:"schema_version"`
+	OwnerSkill    string            `yaml:"owner_skill"`
 	Profiles      map[string]string `yaml:"profiles"`
 	Standards     map[string]string `yaml:"standards"`
 	Exceptions    map[string]string `yaml:"exceptions"`
@@ -213,6 +227,7 @@ type standardExceptionDocument struct {
 
 type operationsCatalogDocument struct {
 	SchemaVersion int               `yaml:"schema_version"`
+	OwnerSkill    string            `yaml:"owner_skill"`
 	Environments  map[string]string `yaml:"environments"`
 	Deployments   map[string]string `yaml:"deployments"`
 	Runbooks      map[string]string `yaml:"runbooks"`
@@ -289,7 +304,7 @@ func Inspect(root string) (Inspection, error) {
 		i.Blockers = append(i.Blockers, "catalog areas are missing")
 	}
 	for name, source := range catalog.Areas {
-		area := Area{Name: name, Contract: source.Contract, Maturity: source.Maturity, Evidence: len(source.Evidence)}
+		area := Area{Name: name, Contract: source.Contract, Maturity: source.Maturity, Evidence: len(source.Evidence), OwnerSkill: source.OwnerSkill}
 		i.Areas = append(i.Areas, area)
 		if area.Contract == "" || area.Maturity == "" {
 			i.Blockers = append(i.Blockers, fmt.Sprintf("area %s is missing contract or maturity", name))
@@ -297,6 +312,9 @@ func Inspect(root string) (Inspection, error) {
 		}
 		if !allowedMaturity[area.Maturity] {
 			i.Blockers = append(i.Blockers, fmt.Sprintf("area %s has invalid maturity %s", name, area.Maturity))
+		}
+		if expected := expectedAreaOwners[name]; area.OwnerSkill != "" && expected != "" && area.OwnerSkill != expected {
+			i.Blockers = append(i.Blockers, fmt.Sprintf("area %s owner_skill must be %s", name, expected))
 		}
 		contractPath := filepath.Clean(filepath.Join(dir, filepath.FromSlash(area.Contract)))
 		relative, relErr := filepath.Rel(dir, contractPath)
@@ -345,6 +363,9 @@ func validateTechnicalCatalog(engineeringDir, contract string) []string {
 	}
 	if catalog.SchemaVersion != 1 {
 		blockers = append(blockers, "technical catalog schema_version must be 1")
+	}
+	if catalog.OwnerSkill != "" && catalog.OwnerSkill != "technical-landscape" {
+		blockers = append(blockers, "technical catalog owner_skill must be technical-landscape")
 	}
 	for category := range catalog.Entities {
 		if technicalEntityPrefixes[category] == "" {
@@ -397,6 +418,9 @@ func validateStandardsCatalog(engineeringDir, contract string) []string {
 	}
 	if catalog.SchemaVersion != 1 {
 		blockers = append(blockers, "standards catalog schema_version must be 1")
+	}
+	if catalog.OwnerSkill != "" && catalog.OwnerSkill != "engineering-standards" {
+		blockers = append(blockers, "standards catalog owner_skill must be engineering-standards")
 	}
 	base := filepath.Dir(path)
 	profiles := map[string]standardProfileDocument{}
@@ -510,6 +534,9 @@ func validateOperationsCatalog(engineeringDir, contract string) []string {
 	}
 	if catalog.SchemaVersion != 1 {
 		blockers = append(blockers, "operations catalog schema_version must be 1")
+	}
+	if catalog.OwnerSkill != "" && catalog.OwnerSkill != "operations-baseline" {
+		blockers = append(blockers, "operations catalog owner_skill must be operations-baseline")
 	}
 	for category, entries := range map[string]map[string]string{"environment": catalog.Environments, "deployment": catalog.Deployments, "runbook": catalog.Runbooks} {
 		for id, reference := range entries {

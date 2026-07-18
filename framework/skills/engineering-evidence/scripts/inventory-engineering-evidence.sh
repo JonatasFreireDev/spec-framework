@@ -9,8 +9,8 @@ roots="$(awk -F '"' '/^[[:space:]]*"path"[[:space:]]*:/ { path=$4 } /^[[:space:]
 while IFS=$'\t' read -r path role; do
   [[ -n "$path" ]] || continue; root="$repo/$path"; echo; echo "## $path ($role)"
   [[ -d "$root" ]] || { echo "MISSING"; continue; }
-  while IFS= read -r file; do echo "repository-contract: ${file#"$repo/"}"; done < <(find "$root" -maxdepth 1 -type f \( -name go.mod -o -name package.json -o -name pyproject.toml -o -name Cargo.toml -o -name pom.xml -o -name build.gradle -o -name settings.gradle -o -name '*.sln' -o -name '*.csproj' -o -name '*.fsproj' \) -print)
-  while IFS= read -r file; do echo "evidence: ${file#"$repo/"}"; done < <(find "$root" -type f \( -name Dockerfile -o -name 'docker-compose*' -o -name Makefile -o -name README.md -o -name go.mod -o -name package.json -o -name pyproject.toml -o -name Cargo.toml -o -name pom.xml -o -name build.gradle -o -name settings.gradle -o -name '*.sln' -o -name '*.csproj' -o -name '*.fsproj' -o -name '*.yml' -o -name '*.yaml' -o -name '*.tf' -o -iname '*test*' -o -iname '*spec*' -o -ipath '*deploy*' -o -ipath '*infra*' -o -ipath '*runbook*' \) -print)
+  while IFS= read -r file; do echo "repository-contract: ${file#"$repo/"}"; done < <(find "$root" -maxdepth 1 -type f \( -name go.mod -o -name package.json -o -name pyproject.toml -o -name Cargo.toml -o -name pom.xml -o -name build.gradle -o -name settings.gradle -o -name '*.sln' -o -name '*.csproj' -o -name '*.fsproj' \) -print | sort)
+  while IFS= read -r file; do echo "evidence: ${file#"$repo/"}"; done < <(find "$root" -type f \( -name Dockerfile -o -name 'docker-compose*' -o -name Makefile -o -name README.md -o -name go.mod -o -name package.json -o -name pyproject.toml -o -name Cargo.toml -o -name pom.xml -o -name build.gradle -o -name settings.gradle -o -name '*.sln' -o -name '*.csproj' -o -name '*.fsproj' -o -name '*.yml' -o -name '*.yaml' -o -name '*.tf' -o -iname '*test*' -o -iname '*spec*' -o -ipath '*deploy*' -o -ipath '*infra*' -o -ipath '*runbook*' \) -print | sort)
 done <<< "$roots"
 if $validate; then
   spec-framework engineering-system validate --product-root "$repo/$product_root"

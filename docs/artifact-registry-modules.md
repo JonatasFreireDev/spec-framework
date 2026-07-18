@@ -25,7 +25,7 @@ This document is the canonical maintenance map for composing the initial artifac
 | `foundation-strategy` | Strategy | O starting point preserva apenas estratégia |
 | `delivery-domain` | Domain, Goal, Feature, Use Case | O produto está pronto para modelar entrega |
 | `delivery-design` | Design System, Design, componentes, padrões | O produto possui interface ou sistema visual |
-| `delivery-engineering` | Engineering System, Quality System, Engineering Proposal, Review | O produto precisa de contratos técnicos compartilhados |
+| `delivery-engineering` | Engineering System aggregate, technical landscape, standards, operations, evidence, Quality System, Engineering Proposal, Review | O produto precisa de contratos técnicos compartilhados |
 | `delivery-validation` | Tests, QA Evidence, Security Review, Audit | A entrega avançou para validação |
 | `delivery-execution` | Execution Graph, Task Set, Task | A especificação está pronta para implementação |
 | `governance` | Decisions, approvals, releases, audits | Sempre que houver governança aplicável |
@@ -40,7 +40,7 @@ The approval engine remains generic. Adapters are only for side effects or compo
 | --- | --- |
 | `generic` | Update document, registry, and approval record |
 | `foundation-context` | Synchronize the canonical document status with its `context.md` |
-| `engineering-system` | Synchronize context, YAML, technical entity graph, standards, operations, Quality System, evidence, and composite hash |
+| `engineering-system` | Synchronize aggregate context, YAML, specialist contract references, Quality System, and composite hash |
 | `design-system` | Validate tokens/catalog when applicable |
 | `feature-brief` | Validate `targetFeature` and the selected feature |
 

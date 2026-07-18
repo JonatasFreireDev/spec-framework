@@ -10,6 +10,8 @@ Its scalable entity and standards model is defined in [`engineering-catalog-and-
 
 The standards system composes versioned rules through profiles. Consumers pin applicable profiles and standards. A narrower scope may add constraints but may not silently weaken inherited contracts. Exceptions require a stable ID, exact scope, owner, rationale, residual risk, mitigation, expiry or review date, re-entry gate, status, and approval where required.
 
+The shared baseline is coordinated by `engineering-orchestrator`. It routes `technical-landscape`, `engineering-standards`, `operations-baseline`, and `engineering-evidence`, then asks `engineering-system` to consolidate the aggregate and Quality System. Specialist contracts remain independently owned even though the Engineering System composite approval hash governs their use together.
+
 Engineering System approval hashes its complete contract surface deterministically. A change to an approved shared contract makes its approval stale and requires human re-approval. Specification and approved product decisions remain authoritative when contracts conflict.
 
 ## Engineering Quality System
@@ -26,7 +28,12 @@ Legacy products without the new contract remain compatible until they explicitly
 
 ## Owning skills
 
-- `engineering-system`: creates, adopts, evolves, validates, and migrates shared engineering contracts.
+- `engineering-orchestrator`: controls completeness, sequencing, blockers, and the human approval handoff.
+- `technical-landscape`: owns the technical entity graph, topology, entities, relations, and boundary assessments.
+- `engineering-standards`: owns standards, profiles, resolutions, conformance, and governed exceptions.
+- `operations-baseline`: owns environments, deployments, runbooks, service levels, release, rollback, and continuity contracts.
+- `engineering-evidence`: owns evidence inventory, coverage, maturity, gap, and staleness assessments.
+- `engineering-system`: consolidates, versions, validates, and migrates the aggregate and Engineering Quality System.
 - `technical-discovery`: maps delivery requirements to the codebase and stable engineering baseline.
 - `engineering-proposal`: translates approved delivery contracts into an intended technical solution.
 - `engineering-review`: independently reviews the proposal and its alignment with the pinned systems.

@@ -30,4 +30,4 @@ This placeholder does not describe a real product architecture. Replace it from 
 
 ## Handoff
 
-Next: `engineering-system` to establish the product baseline.
+Next: `engineering-orchestrator` to route the complete product engineering baseline.

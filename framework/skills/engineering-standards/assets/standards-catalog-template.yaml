@@ -1,4 +1,5 @@
 schema_version: 1
+owner_skill: engineering-standards
 profiles:
   PROFILE-PRODUCT-DEFAULT: profiles/product-default.yaml
 standards: {}

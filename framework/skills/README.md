@@ -31,8 +31,8 @@ Use a skill-owned `scripts/` resource only for a deterministic, repeatable seque
 
 - `<skill-name>/SKILL.md`: one skill per folder.
 - `<skill-name>/agents/openai.yaml`: optional UI metadata for discovery surfaces.
-- Specialist skills: problem, vision, strategy, domain, goal, journey, feature, use case, Design System, UX/UI, specification, Engineering System, technical discovery, engineering proposal, engineering review, implementation planning, graph, task, code runner, bug fixer, QA, code review, security review, threat modeler, commit crafter, PR finalizer, audit, documentation, history, artifact import, and subagent return review.
-- Orchestrator skills: product, domain evolution, existing product import, new feature, audit, evolution, documentation, release, delivery, execution scheduling, integration, and dispatch.
+- Specialist skills: problem, vision, strategy, domain, goal, journey, feature, use case, Design System, UX/UI, specification, Technical Landscape, Engineering Standards, Operations Baseline, Engineering Evidence, Engineering System aggregation and quality, technical discovery, engineering proposal, engineering review, implementation planning, graph, task, code runner, bug fixer, QA, code review, security review, threat modeler, commit crafter, PR finalizer, audit, documentation, history, artifact import, and subagent return review.
+- Orchestrator skills: product, engineering, domain evolution, existing product import, new feature, audit, evolution, documentation, release, delivery, execution scheduling, integration, and dispatch.
 - Guidance skills: Framework Guide translates human goals into current CLI state, the smallest safe command, and the correct specialist or approval handoff without authoring artifacts. `grill-me` stress-tests a plan or proposal one decision at a time before it reaches its owning skill.
 
 Runtime v2 also includes the `command-planner` and `command-executor` operational skills. The planner owns immutable argv-based plans; the executor is restricted to local R0/R1 plans.
@@ -49,6 +49,8 @@ Skills and orchestrators must read the shared contract that matches their respon
 Use `framework-guide` as the default conversational entry point when no verified specialist route exists. A direct specialist route requires current CLI guidance or an explicit human request that names both the specialist and concrete scope. Persisted handoffs/checkpoints must first be revalidated with `dashboard`, `status`, `next`, or `guide`; a skill name without scope is only a hint. Framework Guide activates product operations only from a valid `product/.product/framework.json`, routes bootstrap/init before activation when explicitly requested, resolves pinned specialist contracts with `spec-framework skill path`, reads CLI state first, and routes governed runtime execution back through Command Planner and Command Executor.
 
 Delivery Orchestrator reports through the consolidated dashboard model. Product Historian owns review of guided legacy decision migration; the migration tool only updates `.product/decisions.json` metadata and never edits DEC content or approvals.
+
+Engineering Orchestrator owns shared-baseline sequencing across Technical Landscape, Engineering Standards, Operations Baseline, Engineering Evidence, and Engineering System consolidation. It never authors their contracts or grants approval.
 
 Vision AI owns a three-artifact package with exclusive content boundaries: `vision.md` contains direction and strategic boundaries, `principles.md` contains product decision rules and trade-offs, and `north-star.md` contains the outcome metric and guardrails. The artifacts link to one another instead of duplicating canonical content.
 

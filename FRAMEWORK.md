@@ -146,6 +146,8 @@ The Design System is an optional shared product artifact for products with recur
 
 The optional Engineering System versions stable architecture, module and data ownership, integrations, standards, quality attributes, operations, and evidence under `engineering/`. It models systems, applications, components, repositories, interfaces, data stores, and deployments as independently identified graph entities, so one product may span monorepos, polyrepos, shared components, and multiple deployables without encoding those relations in folder position. Its detailed contracts live in [`docs/engineering-systems.md`](docs/engineering-systems.md) and [`docs/engineering-catalog-and-standards.md`](docs/engineering-catalog-and-standards.md). Specification and approved `DEC-*` records remain authoritative when contracts conflict.
 
+`engineering-orchestrator` governs completeness and sequencing across `technical-landscape`, `engineering-standards`, `operations-baseline`, `engineering-evidence`, and final `engineering-system` consolidation. Each specialist owns its canonical contracts; the orchestrator never authors them, and `engineering-system` aggregates and versions them without absorbing their ownership. The baseline stops at human approval before Domain modeling or delivery-specific Technical Discovery.
+
 Engineering standards are versioned, verifiable rules composed through profiles and applied by entity type, capability, or explicit assignment. A more specific contract may add constraints but cannot silently weaken an inherited required standard. Divergence requires a scoped, governed exception or approved decision.
 
 ### Engineering Quality System
@@ -561,7 +563,7 @@ Definition and planning skills follow the shared Discovery and Challenge contrac
 | --- | --- |
 | Foundation | Problem Discovery, Vision, Strategy, Domain Architect, and User Goal define evidenced product direction and boundaries. |
 | Product Design | Journey, Feature, Use Case, UX/UI, UX Review, and Design System define value slices and verifiable experience. |
-| Specification and planning | Specification, Engineering System, Technical Discovery, Engineering Proposal, Engineering Review, Implementation Planner, Execution Graph, and Task Generator turn approved intent into executable contracts. |
+| Specification and planning | Specification, Engineering Orchestrator, Technical Landscape, Engineering Standards, Operations Baseline, Engineering Evidence, Engineering System, Technical Discovery, Engineering Proposal, Engineering Review, Implementation Planner, Execution Graph, and Task Generator turn approved intent into executable contracts. |
 | Engineering and validation | Code Runner implements one approved task; QA, Code Review, and Security Review independently verify it; Threat Modeler maintains proactive security context; Commit Crafter and PR Finalizer prepare verified delivery without merging. |
 | Audit and evolution | Gap, Conflict, Dependency, Impact, Evolution, Documentation, and Product Historian skills inspect health and route governed change. |
 
@@ -575,6 +577,7 @@ Orchestrators do not create primary artifacts. They control flow, order, gates, 
 | --- | --- |
 | Framework Guide | Translates intent and current CLI state into the smallest safe route; it does not author artifacts or approve work. |
 | Product | Coordinates the approved Foundation sequence and stops at each human gate. |
+| Engineering | Routes the shared technical landscape, standards, operations, evidence, aggregate Engineering System, and human approval gate without authoring specialist contracts. |
 | Domain Evolution | Compares evidenced feature candidates and requires explicit human selection before handoff. |
 | Existing Product Import | Moves sources through inventory, per-source traceability, conflicts, reviewed mappings, explicit materialization, and draft artifacts without treating sources as truth. |
 | New Feature | Drives an approved feature through Use Cases, Specification, Design, engineering gates, Plan, Graph, and Tasks. |

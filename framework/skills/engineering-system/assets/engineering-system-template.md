@@ -33,14 +33,14 @@
 
 ## Architecture
 
-| Area | Contract | Evidence | Maturity |
-| --- | --- | --- | --- |
-| System context | [architecture/system-context.md](architecture/system-context.md) | `[code/config/decision path]` | `baseline | mapped | governed | verified | operated` |
-| Modules | [architecture/modules.md](architecture/modules.md) | `[code/test path]` | `baseline | mapped | governed | verified | operated` |
-| Technical catalog | [catalog/catalog.yaml](catalog/catalog.yaml) | `[catalog/entity evidence]` | `baseline | mapped | governed | verified | operated` |
-| Data ownership | `[path or Not configured]` | `[evidence]` | `[maturity]` |
-| Integrations | `[path or Not configured]` | `[evidence]` | `[maturity]` |
-| Deployment | `[path or Not configured]` | `[evidence]` | `[maturity]` |
+| Area | Owner skill | Contract | Evidence | Maturity |
+| --- | --- | --- | --- | --- |
+| System context | `technical-landscape` | [architecture/system-context.md](architecture/system-context.md) | `[code/config/decision path]` | `baseline | mapped | governed | verified | operated` |
+| Modules | `technical-landscape` | [architecture/modules.md](architecture/modules.md) | `[code/test path]` | `baseline | mapped | governed | verified | operated` |
+| Technical catalog | `technical-landscape` | [catalog/catalog.yaml](catalog/catalog.yaml) | `[catalog/entity evidence]` | `baseline | mapped | governed | verified | operated` |
+| Data ownership | `technical-landscape` | `[path or Not configured]` | `[evidence]` | `[maturity]` |
+| Integrations | `technical-landscape` | `[path or Not configured]` | `[evidence]` | `[maturity]` |
+| Deployment | `operations-baseline` | `[path or Not configured]` | `[evidence]` | `[maturity]` |
 
 ## Standards And Quality
 
@@ -83,11 +83,11 @@ only through a scoped, governed exception or approved decision.
 
 ## Handoff
 
-Next: `technical-discovery` for delivery-specific work.
+Next: `engineering-orchestrator` for readiness review and the human approval gate.
 
 ## ✅ Agent Verification Checklist
 
 - [ ] Scope, version, origin, mechanical catalog, and architecture boundaries are consistent.
-- [ ] Module, data, integration, standards, quality, security, and operational ownership are explicit.
+- [ ] Technical landscape, standards, operations, evidence, and quality contracts are linked to their specialist owners without duplicated ownership.
 - [ ] Decisions, deviations, migrations, consumers, and compatibility expectations are traceable.
 - [ ] The handoff identifies required downstream pins, evidence, and unresolved system gaps.

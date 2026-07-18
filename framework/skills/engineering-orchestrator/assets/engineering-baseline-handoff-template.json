@@ -1,0 +1,12 @@
+{
+  "schema_version": 1,
+  "scope": "product",
+  "mode": "create",
+  "current_engineering_system": null,
+  "routes": [],
+  "completed_contracts": [],
+  "blockers": [],
+  "decision_candidates": [],
+  "approval_required": true,
+  "next": "technical-landscape"
+}

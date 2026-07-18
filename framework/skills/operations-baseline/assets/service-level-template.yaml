@@ -1,0 +1,9 @@
+schema_version: 1
+id: SLO-001
+status: draft
+scope: []
+indicator: "[measurable indicator]"
+objective: "[target and period]"
+measurement_source: "[evidence reference]"
+owner: Unassigned
+exceptions: []

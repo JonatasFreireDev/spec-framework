@@ -14,7 +14,7 @@
         {"id":"strategy","title":"Define the strategy","goal":"Choose the first scoped delivery bet.","read":["product/foundation/vision/vision.md","product/foundation/vision/principles.md","product/foundation/vision/north-star.md","product/foundation/strategy/context.md"],"write":["product/foundation/strategy/strategy.md","product/foundation/strategy/personas.md","product/foundation/strategy/metrics.md","product/foundation/strategy/roadmap.md"],"prompt":"Propose strategy, target segments, trade-offs, metrics, roadmap, and delivery levels using the approved Foundation. Ask before making material scope decisions. Stop before approval.","gate":"Approve Strategy before modeling delivery domains.","next":"First domain"}
       ],
       "rules":["Read the nearest context.md before changing an artifact.","Write drafts only after showing the proposed change.","Never change status manually or create approval records.","Record assumptions, gaps, and decisions separately."],
-      "after":"Complete and approve the Product Landscape, Engineering System, and shared Design System before modeling the complete domain map. Then create Domain -> User Goal -> Feature -> Use Case; do not create a Specification or workspace until the pre-Specification baselines are approved."
+      "after":"Complete and approve the Product Landscape, route the shared engineering baseline through Engineering Orchestrator, and approve the Engineering System and shared Design System before modeling the complete domain map. Then create Domain -> User Goal -> Feature -> Use Case; do not create a Specification or workspace until the pre-Specification baselines are approved."
     },
     "existing-product": {
       "title": "Document an operating product",
@@ -26,7 +26,7 @@
         {"id":"strategy","title":"Define future direction","goal":"Turn the current baseline into explicit future bets.","read":["product/foundation/product-baseline.md","product/foundation/strategy/context.md","existing decisions and metrics"],"write":["product/foundation/strategy/strategy.md","product/foundation/strategy/personas.md","product/foundation/strategy/metrics.md","product/foundation/strategy/roadmap.md"],"prompt":"Read the approved Product Baseline and propose future bets, trade-offs, segments, metrics, and roadmap. Ask before inferring strategic intent from implementation evidence. Stop before approval.","gate":"Approve Strategy before delivery modeling.","next":"First domain"}
       ],
       "rules":["Separate observed current state from future intent.","Cite repository or operational evidence.","Do not rewrite product history or approval records.","Escalate to full Foundation when audience, value, or direction is uncertain."],
-      "after":"Complete and approve the Product Landscape, Engineering System, and shared Design System before modeling the complete domain map and the first Domain -> User Goal -> Feature -> Use Case slice."
+      "after":"Complete and approve the Product Landscape, route the shared engineering baseline through Engineering Orchestrator, and approve the Engineering System and shared Design System before modeling the complete domain map and the first Domain -> User Goal -> Feature -> Use Case slice."
     },
     "existing-documents": {
       "title": "Bring existing documents into the framework",
@@ -52,7 +52,7 @@
         {"id":"walking-skeleton","title":"Model the bounded delivery slice","goal":"Create one Domain -> User Goal -> Feature -> Use Case chain that fits the brief.","read":["approved product/foundation/feature-brief.md","pinned examples/events/ reference","relevant context.md files"],"write":["product/domains/<domain>/... draft artifacts"],"prompt":"Use the approved Feature Brief and the examples/events reference. Propose the smallest domain, goal, feature, and use case chain that delivers the brief. Preserve parent and non-ownership boundaries. Stop before approval.","gate":"Approve the relevant artifacts through their normal owners and parents.","next":"Specification"}
       ],
       "rules":["Keep the scope bounded to the Feature Brief.","Do not invent product-wide strategy.","Do not create a workspace before the Feature Brief gate.","Do not skip the walking skeleton."],
-      "after":"Complete and approve the Product Landscape, Engineering System, and shared Design System before creating a Specification; then continue through Design when applicable, planning, tasks, and delivery gates."
+      "after":"Complete and approve the Product Landscape, route the shared engineering baseline through Engineering Orchestrator, and approve the Engineering System and shared Design System before creating a Specification; then continue through Design when applicable, planning, tasks, and delivery gates."
     },
     "existing-implementation": {
       "title": "Understand an existing codebase",
@@ -64,7 +64,7 @@
         {"id":"foundation","title":"Recover product intent carefully","goal":"Use the assessment as evidence for the full Foundation sequence.","read":["approved implementation-assessment.md","product/foundation/*/context.md","relevant decisions"],"write":["foundation/problem/problem.md","foundation/vision/*","foundation/strategy/*"],"prompt":"Propose Problem, Vision, Principles, North Star, and Strategy one artifact at a time. Ask questions wherever implementation evidence does not prove user intent. Preserve the distinction between observed behavior and approved product direction.","gate":"Approve each Foundation artifact individually.","next":"First domain"}
       ],
       "rules":["Code is evidence, not approved product scope.","Do not change application code during bootstrap.","Separate observed behavior from inferred intent.","Require the full Foundation before delivery work."],
-      "after":"Complete and approve the Product Landscape, Engineering System, and shared Design System before domain modeling, then read the examples/events reference and continue through the first domain walking skeleton."
+      "after":"Complete and approve the Product Landscape, route the shared engineering baseline through Engineering Orchestrator, and approve the Engineering System and shared Design System before domain modeling, then read the examples/events reference and continue through the first domain walking skeleton."
     },
     "audit-only": {
       "title": "Inspect without changing the product",
