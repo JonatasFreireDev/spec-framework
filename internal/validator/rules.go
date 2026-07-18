@@ -120,6 +120,15 @@ func validateImportRuns(s Snapshot) []Diagnostic {
 				out = append(out, Diagnostic{Error, "imports", runDir + "/mapping.json", "Selected mapping " + id + " has no target.", "Add a product-relative target."})
 				continue
 			}
+			if relation, _ := m["relation"].(string); relation != "" {
+				allowed := map[string]bool{"new": true, "extends": true, "evolves": true, "supersedes": true, "decision": true, "rule": true, "bug": true, "technical": true, "unresolved": true}
+				if !allowed[strings.ToLower(strings.TrimSpace(relation))] {
+					out = append(out, Diagnostic{Error, "imports", runDir + "/mapping.json", "Selected mapping " + id + " has unsupported demand relation " + relation + ".", "Use new, extends, evolves, supersedes, decision, rule, bug, technical, or unresolved."})
+				}
+			}
+			if targetType, _ := m["target_type"].(string); targetType == "" && m["relation"] != nil {
+				out = append(out, Diagnostic{Warning, "imports", runDir + "/mapping.json", "Selected mapping " + id + " has a demand relation without target_type.", "Name the proposed destination type before materialization or record the classification as unresolved."})
+			}
 			clean := filepath.ToSlash(filepath.Clean(filepath.FromSlash(target)))
 			if clean == ".." || strings.HasPrefix(clean, "../") || filepath.IsAbs(filepath.FromSlash(target)) {
 				out = append(out, Diagnostic{Error, "imports", runDir + "/mapping.json", "Selected mapping " + id + " escapes the product root.", "Use a safe product-relative target."})
@@ -510,6 +519,11 @@ func tableFields(text string) map[string]string {
 func validateContextFull(file, text string) []Diagnostic {
 	meta := metadata(text)
 	var out []Diagnostic
+	if strings.Contains(text, "relations:") || strings.Contains(text, "traceability:") || strings.Contains(text, "evolution:") {
+		if _, err := parseContextEvolution(text); err != nil {
+			out = append(out, Diagnostic{Error, "context-relations", file, "Invalid evolution metadata in context.md: " + err.Error(), "Use arrays for reuses, depends_on, impacts, supersedes, source_documents, and source_decisions; use scalar values for extends and source_demand."})
+		}
+	}
 	for _, field := range []string{"id", "type", "name", "status", "owner_skill", "slug"} {
 		if meta[field] == "" {
 			check := "context"
@@ -1425,8 +1439,21 @@ func validatePreSpecificationBaselines(s Snapshot) []Diagnostic {
 			break
 		}
 	}
+	var out []Diagnostic
+	discovery, _ := manifest["code_root_discovery"].(map[string]any)
+	discoveryMode := strings.ToLower(firstString(discovery["mode"], ""))
+	discoveryStatus := strings.ToLower(firstString(discovery["status"], ""))
+	if discoveryMode == "cli-fallback" || discoveryStatus == "needs-agent-review" {
+		severity := Warning
+		message := "CLI code-root candidates still require agent review."
+		if hasSpecification {
+			severity = Error
+			message = "Agent-confirmed code-root discovery is required before a Specification is authored."
+		}
+		out = append(out, Diagnostic{severity, "code-root-discovery", ".product/framework.json", message, "Inspect the complete repository, then run upgrade with --code-roots path:role,... or --no-code-roots and update Product Landscape from the confirmed evidence."})
+	}
 	if !hasSpecification {
-		return nil
+		return out
 	}
 	required := map[string]string{
 		"product-landscape":  "knowledge/assessments/product-landscape.md",
@@ -1438,7 +1465,6 @@ func validatePreSpecificationBaselines(s Snapshot) []Diagnostic {
 	for _, item := range items {
 		byType[strings.ReplaceAll(firstString(item["type"], ""), "_", "-")] = item
 	}
-	var out []Diagnostic
 	for kind, expectedPath := range required {
 		item := byType[kind]
 		status := firstString(item["status"], "missing")

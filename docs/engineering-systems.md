@@ -12,6 +12,8 @@ The standards system composes versioned rules through profiles. Consumers pin ap
 
 The shared baseline is coordinated by `engineering-orchestrator`. It routes `technical-landscape`, `engineering-standards`, `operations-baseline`, and `engineering-evidence`, then asks `engineering-system` to consolidate the aggregate and Quality System. Specialist contracts remain independently owned even though the Engineering System composite approval hash governs their use together.
 
+The orchestrator accepts only agent-confirmed implementation roots from the product manifest. Discovery marked `cli-fallback`, `legacy-unclassified`, or `needs-agent-review` returns to Framework Guide before specialist execution. This prevents a shallow marker heuristic from defining system, repository, application, or ownership boundaries.
+
 The orchestrator may execute these owners sequentially or delegate them through harness-native subagents. Delegation is phased rather than unrestricted: Technical Landscape first; Standards and Operations concurrently only while their scopes do not overlap; Evidence after both; and Engineering System aggregation last. Each delegated return is compact and hash-verifiable so the parent context retains conclusions and blockers instead of full specialist exploration.
 
 Engineering System approval hashes its complete contract surface deterministically. A change to an approved shared contract makes its approval stale and requires human re-approval. Specification and approved product decisions remain authoritative when contracts conflict.

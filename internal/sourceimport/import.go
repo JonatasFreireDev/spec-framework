@@ -32,6 +32,11 @@ type Mapping struct {
 	ID              string   `json:"id"`
 	Target          string   `json:"target"`
 	ArtifactType    string   `json:"artifact_type"`
+	TargetType      string   `json:"target_type,omitempty"`
+	Relation        string   `json:"relation,omitempty"`
+	Extends         string   `json:"extends,omitempty"`
+	Reuses          []string `json:"reuses,omitempty"`
+	Impacts         []string `json:"impacts,omitempty"`
 	Selected        bool     `json:"selected"`
 	SourceDocuments []string `json:"source_documents"`
 	DraftContent    string   `json:"draft_content"`
@@ -373,6 +378,12 @@ func validateMapping(mapping Mapping) error {
 	}
 	if len(mapping.SourceDocuments) == 0 {
 		return fmt.Errorf("source_documents is required")
+	}
+	if mapping.Relation != "" {
+		allowed := map[string]bool{"new": true, "extends": true, "evolves": true, "supersedes": true, "decision": true, "rule": true, "bug": true, "technical": true, "unresolved": true}
+		if !allowed[strings.ToLower(strings.TrimSpace(mapping.Relation))] {
+			return fmt.Errorf("unsupported relation %q", mapping.Relation)
+		}
 	}
 	content := strings.TrimSpace(mapping.DraftContent)
 	if content == "" {

@@ -18,7 +18,7 @@ Break a feature into concrete, prioritized, verifiable interactions that can bec
 - explain: summarize the artifact and why it exists.
 
 ## Inputs
-Approved feature; UX states; business rules; technical constraints; edge cases.
+Approved feature; UX states; business rules; technical constraints; edge cases; approved demand classification; related Use Cases.
 
 ## Outputs
 use-case.md files; use-case context.md files; inherited Delivery Level and Priority; acceptance intent; open questions.
@@ -34,12 +34,13 @@ use-case.md files; use-case context.md files; inherited Delivery Level and Prior
 Follow the shared [Discovery And Challenge contract](../discovery-and-challenge.md) before substantive creation or material revision.
 
 ## Workflow
-1. Read the parent context and confirm the artifact status.
-2. Identify missing information, assumptions, conflicts, and dependencies.
-3. Propose the artifact or revision using the matching template.
-4. Record decision candidates for high-impact or hard-to-reverse choices.
-5. Ask for approval before moving the artifact to the next ladder step.
-6. Update context.md with new links, dependencies, questions, and status changes.
+1. Read the parent Feature context, sibling Use Cases, related Specifications, and confirm artifact status.
+2. Identify whether the demand extends an existing interaction or requires a new verifiable interaction.
+3. Identify missing information, assumptions, conflicts, and dependencies.
+4. Propose the artifact or revision using the matching template, preserving reusable decisions and shared system references.
+5. Record decision candidates for high-impact or hard-to-reverse choices.
+6. Ask for approval before moving the artifact to the next ladder step.
+7. Update context.md with `relations`, `traceability`, links, dependencies, questions, and status changes.
 
 ## Quality checklist
 - [ ] Preserves traceability to the parent artifact.

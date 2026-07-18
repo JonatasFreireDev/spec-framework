@@ -6,6 +6,11 @@
       "id": "MAP-001",
       "target": "domains/example/context.md",
       "artifact_type": "domain-context",
+      "target_type": "domain",
+      "relation": "new",
+      "extends": null,
+      "reuses": [],
+      "impacts": [],
       "selected": false,
       "source_documents": [
         "knowledge/imports/sources/example.md"

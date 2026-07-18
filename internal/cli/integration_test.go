@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 
 	"github.com/JonatasFreireDev/spec-framework/internal/cli"
@@ -92,6 +93,58 @@ func TestGoCLIInitValidateUpgradeAndMove(t *testing.T) {
 	stderr.Reset()
 	if code := app.Run([]string{"upgrade", "--target", target, "--agents", "codex,cursor,claude", "--yes"}, &stdout, &stderr); code != 0 {
 		t.Fatalf("upgrade=%d stderr=%s", code, stderr.String())
+	}
+}
+
+func TestCLIAgentLedCodeRootDiscovery(t *testing.T) {
+	t.Setenv("SPEC_FRAMEWORK_CACHE", filepath.Join(t.TempDir(), "cache"))
+	t.Setenv("SPEC_FRAMEWORK_AGENT_HOME", filepath.Join(t.TempDir(), "agents"))
+	root := t.TempDir()
+	target := filepath.Join(root, "repo")
+	if err := os.MkdirAll(filepath.Join(target, "web"), 0755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(target, "web", "package.json"), []byte(`{"name":"web"}`), 0644); err != nil {
+		t.Fatal(err)
+	}
+	var stdout, stderr bytes.Buffer
+	app := cli.New("integration")
+	if code := app.Run([]string{"init", "--target", target, "--agents", "codex", "--code-roots", "web:frontend", "--yes"}, &stdout, &stderr); code != 0 {
+		t.Fatalf("init=%d stdout=%s stderr=%s", code, stdout.String(), stderr.String())
+	}
+	manifestPath := filepath.Join(target, "product", ".product", "framework.json")
+	manifest, err := os.ReadFile(manifestPath)
+	if err != nil || !bytes.Contains(manifest, []byte(`"mode": "agent-declared"`)) || !bytes.Contains(manifest, []byte(`"role": "frontend"`)) {
+		t.Fatalf("agent discovery missing from manifest: %s %v", manifest, err)
+	}
+	if !bytes.Contains(stdout.Bytes(), []byte("agent-declared (confirmed)")) {
+		t.Fatalf("init did not report discovery authority: %s", stdout.String())
+	}
+	stdout.Reset()
+	stderr.Reset()
+	if code := app.Run([]string{"upgrade", "--target", target, "--code-roots", "web:web-client", "--yes"}, &stdout, &stderr); code != 0 {
+		t.Fatalf("upgrade=%d stdout=%s stderr=%s", code, stdout.String(), stderr.String())
+	}
+	manifest, err = os.ReadFile(manifestPath)
+	if err != nil || !bytes.Contains(manifest, []byte(`"role": "web-client"`)) || !bytes.Contains(stdout.Bytes(), []byte("agent-declared (confirmed)")) {
+		t.Fatalf("upgrade did not replace confirmed roots: %s stdout=%s err=%v", manifest, stdout.String(), err)
+	}
+
+	noCode := filepath.Join(root, "no-code")
+	if err := os.MkdirAll(filepath.Join(noCode, "tooling"), 0755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(noCode, "tooling", "package.json"), []byte(`{"private":true}`), 0644); err != nil {
+		t.Fatal(err)
+	}
+	stdout.Reset()
+	stderr.Reset()
+	if code := app.Run([]string{"init", "--target", noCode, "--agents", "codex", "--no-code-roots", "--yes"}, &stdout, &stderr); code != 0 || !strings.Contains(stdout.String(), "agent-confirmed-none (confirmed)") {
+		t.Fatalf("confirmed no-code=%d stdout=%s stderr=%s", code, stdout.String(), stderr.String())
+	}
+	manifest, err = os.ReadFile(filepath.Join(noCode, "product", ".product", "framework.json"))
+	if err != nil || bytes.Contains(manifest, []byte(`"path": "tooling"`)) {
+		t.Fatalf("CLI candidate overrode agent no-code decision: %s %v", manifest, err)
 	}
 }
 

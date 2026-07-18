@@ -47,6 +47,7 @@ Use `scripts/inventory-design-evidence.ps1` on Windows or `scripts/inventory-des
 6. Record compatibility and migration consequences before removing or changing approved tokens, components, patterns, or external dependencies.
 7. Route product, architecture, accessibility, or dependency changes to a human decision gate.
 8. Run Design System validation and independent UX Review; never create approval records.
+9. When implementation roots exist, inspect design evidence across every agent-confirmed root, including tokens, themes, components, assets, typography, interaction patterns, accessibility conventions, and duplicated or divergent systems. Do not derive a shared Design System from CLI fallback candidates.
 9. Hand the approved id/version and supported tokens/components/patterns to UX/UI.
 
 ## Quality checklist

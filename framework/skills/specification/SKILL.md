@@ -18,7 +18,7 @@ Create the implementation contract that unifies product, UX, rules, data, APIs, 
 - explain: summarize the artifact and why it exists.
 
 ## Inputs
-Approved use case; feature context; business rules; design notes; engineering constraints; decisions.
+Approved use case; local and parent context.md files; sibling Specifications; business rules; design notes; Engineering System; Design System; decisions; approved demand classification.
 
 ## Outputs
 `specification.md` root contract; applicable `contracts/*.md`; stable `REQ-*` and `AC-*` coverage; Delivery Level/Priority rationale; unresolved questions; decision candidates; context.md updates.
@@ -34,12 +34,14 @@ Approved use case; feature context; business rules; design notes; engineering co
 Follow the shared [Discovery And Challenge contract](../discovery-and-challenge.md) before substantive creation or material revision.
 
 ## Workflow
-1. Read the parent context and confirm the artifact status.
-2. Identify missing information, assumptions, conflicts, and dependencies.
-3. Propose the artifact or revision using the matching template.
-4. Record decision candidates for high-impact or hard-to-reverse choices.
-5. Ask for approval before moving the artifact to the next ladder step.
-6. Update context.md with new links, dependencies, questions, and status changes.
+1. Read the local Use Case context, the complete parent chain, sibling Use Cases and Specifications, and confirm the artifact status.
+2. Load reusable approved decisions, Engineering System contracts, Design System references, and code evidence named by the context.
+3. Confirm whether the demand extends an existing contract or creates a new interaction; do not duplicate an existing requirement.
+4. Identify missing information, assumptions, conflicts, and dependencies.
+5. Propose the artifact or revision using the matching template and preserve source-demand traceability.
+6. Record decision candidates for high-impact or hard-to-reverse choices.
+7. Ask for approval before moving the artifact to the next ladder step.
+8. Update context.md with new relations, reuse references, impacts, links, dependencies, questions, and status changes.
 7. Keep `specification.md` as the canonical index; split concerns into product, behavior, UX, API, data, security, quality, observability, and rollout contracts according to rigor.
 8. Give every testable requirement and acceptance criterion a stable ID and reject duplicate or orphan IDs.
 

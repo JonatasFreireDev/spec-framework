@@ -79,6 +79,54 @@ func TestExistingFeatureWorkspaceRequiresCurrentFeatureBriefApproval(t *testing.
 	}
 }
 
+func TestExistingFeatureWorkspaceRequiresSharedBaselines(t *testing.T) {
+	root := setupProduct(t)
+	if err := writeJSON(filepath.Join(root, ".product", "framework.json"), map[string]any{"starting_point": "existing-feature"}); err != nil {
+		t.Fatal(err)
+	}
+	registry, err := LoadRegistry(root)
+	if err != nil {
+		t.Fatal(err)
+	}
+	baselines := []Artifact{
+		{ID: "FEATURE-BRIEF-1", Type: "feature-brief", Status: "approved", Path: "foundation/feature-brief.md", TargetFeature: "FT-1"},
+		{ID: "LANDSCAPE-1", Type: "product-landscape", Status: "draft", Path: "knowledge/assessments/product-landscape.md"},
+		{ID: "ENGSYS-1", Type: "engineering-system", Status: "approved", Path: "engineering/engineering-system.md"},
+		{ID: "DSYS-1", Type: "design-system", Status: "approved", Path: "design/system/design-system.md"},
+	}
+	registry.RequiredArtifacts = []ArtifactRequirement{
+		{Type: "feature-brief", Path: "foundation/feature-brief.md"},
+		{Type: "product-landscape", Path: "knowledge/assessments/product-landscape.md"},
+		{Type: "engineering-system", Path: "engineering/engineering-system.md"},
+		{Type: "design-system", Path: "design/system/design-system.md"},
+	}
+	registry.Artifacts = append(baselines, registry.Artifacts...)
+	if err := writeJSON(filepath.Join(root, ".product", "artifacts.json"), registry); err != nil {
+		t.Fatal(err)
+	}
+	for _, artifact := range baselines {
+		path := filepath.Join(root, filepath.FromSlash(artifact.Path))
+		if err := os.MkdirAll(filepath.Dir(path), 0755); err != nil {
+			t.Fatal(err)
+		}
+		text := "id: " + artifact.ID + "\nstatus: " + artifact.Status + "\n"
+		if artifact.Type == "feature-brief" {
+			text = "| ID | FEATURE-BRIEF-1 |\n| Status | approved |\n| Target Feature | FT-1 |\n"
+		}
+		if err := os.WriteFile(path, []byte(text), 0644); err != nil {
+			t.Fatal(err)
+		}
+		if artifact.Status == "approved" {
+			if err := writeJSON(filepath.Join(root, ".product", "history", "approval-"+strings.ToLower(artifact.ID)+".json"), Approval{ArtifactID: artifact.ID, Path: artifact.Path, ContentHash: Hash(text), StatusGranted: artifact.Status, ApprovedBy: "Test Owner"}); err != nil {
+				t.Fatal(err)
+			}
+		}
+	}
+	if _, err := CreateWorkspace(root, "FT-1", "", "", "", "tester"); err == nil || !strings.Contains(err.Error(), "product landscape lacks current approval evidence") {
+		t.Fatalf("expected Product Landscape blocker, got %v", err)
+	}
+}
+
 func TestFeatureTargetMatchesCanonicalAndContextPaths(t *testing.T) {
 	feature := Artifact{ID: "FT-1", Path: "domains/d/goals/g/features/f/context.md"}
 	for _, target := range []string{"FT-1", "domains/d/goals/g/features/f/context.md", "domains/d/goals/g/features/f/feature.md"} {

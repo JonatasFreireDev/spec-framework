@@ -10,6 +10,8 @@ Before a real Specification is authored, every product establishes a complete Pr
 
 Implementation roots sit beside `product/` and use semantic role names such as `web/`, `api/`, `worker/`, `mobile/`, `infrastructure/`, or `library/`. The framework records them in the manifest rather than embedding application code. When a requested implementation does not exist, the responsible agent first identifies the intended stack and verifies the official scaffolding command before proposing its execution.
 
+Code-root discovery is agent-led. Before `init`, the agent inventories the complete repository, identifies nested projects and repository/application boundaries, classifies each implementation root by semantic role, resolves material ambiguity with the human, and passes the confirmed map through `--code-roots`. If inspection confirms that no implementation exists, the agent passes `--no-code-roots`. CLI marker detection is a compatibility fallback only: it is persisted as `cli-fallback` with `needs-agent-review`, must not be treated as a semantic ownership decision, and cannot unlock a real Specification. The agent can correct a fallback manifest with `upgrade --code-roots ...` or `upgrade --no-code-roots` without overwriting adopter-owned product content.
+
 ## 1. Thesis
 
 This framework treats documentation as engineering infrastructure.
@@ -725,6 +727,12 @@ Residual risk
 ## 14. Evolution Engine
 
 The framework must allow continuous evolution. Improvements do not go directly into the product; they become candidates.
+
+### Demand evolution and reuse
+
+An incoming demand is classified before it creates or changes a canonical artifact. The agent reads the nearest `context.md`, its complete parent chain, sibling Features and Use Cases, approved decisions, the shared Engineering System, the shared Design System, and relevant code evidence. It proposes one of these destinations: extension of an existing Use Case, new Use Case within an existing Feature, new Feature within an existing Goal, new Goal, new Domain, or a non-delivery decision, rule, bug, or technical item. Ambiguous classification stops for human selection.
+
+The existing hierarchy and folders remain unchanged. `context.md` is the continuity index: its optional `relations` (`extends`, `reuses`, `depends_on`, `impacts`, `supersedes`), `traceability` (`source_demand`, `source_documents`, `source_decisions`), and `evolution` (`type`, `previous_version`, `change_summary`) fields connect the new demand to approved context without copying it. Imported demands remain drafts with import provenance until the owning skill normalizes and approves them. A Specification must reuse approved contracts and create only the delta; it must not duplicate an existing requirement.
 
 Flow:
 

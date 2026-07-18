@@ -83,7 +83,7 @@ func TestBuildRegistryUsesOnlyFeatureBriefForExistingFeature(t *testing.T) {
 		"foundation/problem/problem.md":           "| ID | PROBLEM-1 |\n| Type | problem |\n| Status | draft |\n",
 		"foundation/feature-brief.md":             "| ID | FEATURE-BRIEF-1 |\n| Type | feature-brief |\n| Status | draft |\n| Target Feature | FT-1 |\n",
 		"domains/d/goals/g/features/f/feature.md": "| ID | FT-1 |\n| Status | draft |\n",
-		"domains/d/goals/g/features/f/context.md": "```yaml\nid: FT-1\ntype: feature\nparents:\n  - GOAL-1\nchildren:\n  - UC-1\ndepends_on:\n  - ../goal.md\ndecisions:\n  - DEC-1\ndelivery:\n  depends_on:\n    - GOAL-1\n```\n",
+		"domains/d/goals/g/features/f/context.md": "```yaml\nid: FT-1\ntype: feature\nparents:\n  - GOAL-1\nchildren:\n  - UC-1\ndepends_on:\n  - ../goal.md\ndecisions:\n  - DEC-1\nrelations:\n  extends: FT-0\n  reuses:\n    - DEC-2\n  impacts:\n    - services/api\ntraceability:\n  source_demand: DEM-1\nevolution:\n  type: extends\n  previous_version: v1\ndelivery:\n  depends_on:\n    - GOAL-1\n```\n",
 	}, JSON: map[string]any{
 		".product/framework.json": map[string]any{"starting_point": "existing-feature"},
 	}}
@@ -105,6 +105,12 @@ func TestBuildRegistryUsesOnlyFeatureBriefForExistingFeature(t *testing.T) {
 			decisions, _ := artifact["decisions"].([]string)
 			if len(children) != 1 || children[0] != "UC-1" || len(dependsOn) != 1 || len(decisions) != 1 {
 				t.Fatalf("context relationships were not preserved: %+v", artifact)
+			}
+			relations, _ := artifact["relations"].(map[string]any)
+			reuses, _ := relations["reuses"].([]string)
+			impacts, _ := relations["impacts"].([]string)
+			if len(reuses) != 1 || reuses[0] != "DEC-2" || len(impacts) != 1 || impacts[0] != "services/api" {
+				t.Fatalf("evolution relations were not preserved: %+v", artifact)
 			}
 			return
 		}

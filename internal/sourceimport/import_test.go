@@ -138,6 +138,38 @@ func TestMaterializeRequiresExplicitApprovalAndCreatesDraft(t *testing.T) {
 	}
 }
 
+func TestDemandMappingRelationsAreValidatedAndPersisted(t *testing.T) {
+	mapping := Mapping{
+		ID:              "MAP-001",
+		Target:          "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/history/context.md",
+		TargetType:      "use-case",
+		Relation:        "extends",
+		Extends:         "UC-001",
+		Reuses:          []string{"DEC-002"},
+		Impacts:         []string{"services/api"},
+		SourceDocuments: []string{"knowledge/imports/sources/demand.md"},
+		DraftContent:    "status: draft\nsource_documents: []\n",
+	}
+	if err := validateMapping(mapping); err != nil {
+		t.Fatalf("valid demand mapping rejected: %v", err)
+	}
+	raw, err := json.Marshal(mapping)
+	if err != nil {
+		t.Fatal(err)
+	}
+	var roundTrip Mapping
+	if err := json.Unmarshal(raw, &roundTrip); err != nil {
+		t.Fatal(err)
+	}
+	if roundTrip.Relation != "extends" || roundTrip.Extends != "UC-001" || len(roundTrip.Reuses) != 1 || len(roundTrip.Impacts) != 1 {
+		t.Fatalf("demand relation metadata was not persisted: %+v", roundTrip)
+	}
+	mapping.Relation = "invented"
+	if err := validateMapping(mapping); err == nil {
+		t.Fatal("unsupported demand relation should be rejected")
+	}
+}
+
 func TestMaterializeAcceptsUTF8BOMJSON(t *testing.T) {
 	root := t.TempDir()
 	source := filepath.Join(t.TempDir(), "epic.md")

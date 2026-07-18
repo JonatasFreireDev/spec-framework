@@ -28,15 +28,15 @@ irm https://raw.githubusercontent.com/JonatasFreireDev/spec-framework/master/scr
 curl -fsSL https://raw.githubusercontent.com/JonatasFreireDev/spec-framework/master/scripts/install.sh | sh
 ```
 
-When you are ready to prepare a product, run:
+When you are ready to prepare a product, ask the agent to inspect the complete repository, identify every implementation root and semantic role, and initialize the product. The agent should execute an explicit command such as:
 
 ```bash
-spec-framework init ../my-product
+spec-framework init ../my-product --agents codex --code-roots web:web,services/api:api --yes
 ```
 
-The interactive wizard asks what already exists and selects the appropriate starting point. The initialized repository receives **only `product/`** — the method (skills, templates, validators) lives in a versioned user cache, pinned by `product/.product/framework.json`. No `.spec-framework/`, generated skill trees, or CI files are added to the adopter repository.
+If inspection confirms that no implementation exists, the agent uses `--no-code-roots`. The interactive wizard remains available for manual use, but omitted root information invokes only a CLI fallback marked for agent review; it cannot unlock a Specification. The initialized repository receives **only `product/`** — the method (skills, templates, validators) lives in a versioned user cache, pinned by `product/.product/framework.json`. No `.spec-framework/`, generated skill trees, or CI files are added to the adopter repository.
 
-For automation, the same choices are available through explicit flags. Run `spec-framework init --help` for the current options.
+For automation, the same choices are available through explicit flags. Run `spec-framework init --help` for the current options. A fallback root map can be corrected without overwriting product content through `spec-framework upgrade --code-roots path:role,... --yes`.
 
 ### Choose the right starting point
 
@@ -50,7 +50,7 @@ Each choice resolves a versioned declarative contract that selects the required 
 | `existing-product` | A real product is operating with users, releases, metrics, or support evidence | Product Baseline → Strategy |
 | `existing-implementation` | Code exists, but its product intent or operating history is unclear | Implementation Assessment → full Foundation |
 | `existing-documents` | PRDs, Jira, Confluence, wikis, or other documents are the main source | Inventory → mapping → conflict review → draft materialization |
-| `existing-feature` | One small, well-bounded delivery is already understood | Feature Brief → target Feature |
+| `existing-feature` | One small, well-bounded delivery is already understood | Feature Brief → shared baselines → target Feature |
 | `audit-only` | The goal is to identify gaps without changing product state | Inspect → validate → report gaps |
 
 Read the generated `product/BOOTSTRAP.md`; it names the current gate and next action. See the [starting-point guide](docs/starting-points.md) for examples, comparisons, and selection guidance.
@@ -87,6 +87,7 @@ The [Framework Guide skill](framework/skills/framework-guide/SKILL.md) is the de
 | Intent | Commands |
 | --- | --- |
 | Start or import a product | `init`, `import create/status/resume`, `import materialize` |
+| Evolve an existing delivery | Read `context.md`, classify the demand, then route through `evolution` and the owning Feature/Use Case/Specification skill |
 | Navigate and see state | `work`, `status`, `next`, `dashboard`, `guide` |
 | Approve explicitly | `review`, `approve`, `approve-batch`, `approve-stage`, `gates` |
 | Design workflows | `design init/import/register/map/inspect/audit`, `design-system init/inspect/validate/migrate` |

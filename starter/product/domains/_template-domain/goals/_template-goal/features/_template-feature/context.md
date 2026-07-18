@@ -20,6 +20,23 @@ used_by: []
 related:
   - feature.md
 
+relations:
+  extends: null
+  reuses: []
+  depends_on: []
+  impacts: []
+  supersedes: []
+
+traceability:
+  source_demand: null
+  source_documents: []
+  source_decisions: []
+
+evolution:
+  type: new
+  previous_version: null
+  change_summary: null
+
 documents:
   canonical: feature.md
   use_cases: use-cases/

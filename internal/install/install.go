@@ -27,20 +27,23 @@ const (
 var agentRoots = map[Agent]string{Codex: "codex", Cursor: "cursor", Claude: "claude"}
 
 type Options struct {
-	Target, Version      string
-	Agents               []Agent
-	StartingPoint        string
-	Sources              []string
-	CodeRoots            []runtimeassets.CodeRoot
-	EnableBaselinePolicy bool
-	ImportOptions        sourceimport.CreateOptions
-	Force                bool
+	Target, Version       string
+	Agents                []Agent
+	StartingPoint         string
+	Sources               []string
+	CodeRoots             []runtimeassets.CodeRoot
+	CodeRootDiscoveryMode string
+	CodeRootsResolved     bool
+	EnableBaselinePolicy  bool
+	ImportOptions         sourceimport.CreateOptions
+	Force                 bool
 }
 type Result struct {
-	Target, SpecRoot string
-	SkillCount       int
-	StartingPoint    string
-	ImportID         string
+	Target, SpecRoot  string
+	SkillCount        int
+	StartingPoint     string
+	ImportID          string
+	CodeRootDiscovery runtimeassets.CodeRootDiscovery
 }
 
 var StartingPoints = []string{"new-product", "existing-product", "existing-documents", "existing-feature", "existing-implementation", "audit-only"}
@@ -129,14 +132,14 @@ func Init(opts Options) (Result, error) {
 	if err := writeInitializationPlan(filepath.Join(stagingRoot, "product"), plan); err != nil {
 		return Result{}, err
 	}
-	codeRoots, err := discoverCodeRoots(target, opts.CodeRoots)
+	codeRoots, discovery, err := resolveCodeRoots(target, opts.CodeRoots, opts.CodeRootDiscoveryMode)
 	if err != nil {
 		return Result{}, err
 	}
-	if err := writeCodeDiscovery(filepath.Join(stagingRoot, "product"), codeRoots); err != nil {
+	if err := writeCodeDiscovery(filepath.Join(stagingRoot, "product"), codeRoots, discovery); err != nil {
 		return Result{}, err
 	}
-	result, err := Upgrade(Options{Target: stagingRoot, Version: opts.Version, Agents: opts.Agents, StartingPoint: point, CodeRoots: codeRoots, EnableBaselinePolicy: true, Force: true})
+	result, err := Upgrade(Options{Target: stagingRoot, Version: opts.Version, Agents: opts.Agents, StartingPoint: point, CodeRoots: codeRoots, CodeRootDiscoveryMode: discovery.Mode, CodeRootsResolved: true, EnableBaselinePolicy: true, Force: true})
 	if err != nil {
 		return Result{}, err
 	}
@@ -148,6 +151,7 @@ func Init(opts Options) (Result, error) {
 		return Result{}, err
 	}
 	result.StartingPoint = point
+	result.CodeRootDiscovery = discovery
 	for _, action := range plan.Actions {
 		switch action {
 		case "create-import-run":
@@ -206,12 +210,25 @@ func Upgrade(opts Options) (Result, error) {
 		return Result{}, err
 	}
 	codeRoots := opts.CodeRoots
-	if len(codeRoots) == 0 {
+	discovery := runtimeassets.CodeRootDiscovery{}
+	if strings.TrimSpace(opts.CodeRootDiscoveryMode) == "" {
 		codeRoots = installedCodeRoots(productManifest)
+		discovery = installedCodeRootDiscovery(productManifest)
+	} else if opts.CodeRootsResolved {
+		// Init already resolved roots against the real repository before staging.
+		discovery = discoveryForMode(opts.CodeRootDiscoveryMode)
+	} else {
+		codeRoots, discovery, err = resolveCodeRoots(target, opts.CodeRoots, opts.CodeRootDiscoveryMode)
+		if err != nil {
+			return Result{}, err
+		}
 	}
 	baselinePolicy := installedBaselinePolicy(productManifest)
 	if opts.EnableBaselinePolicy {
 		baselinePolicy = map[string]any{"pre_specification": "required"}
+	}
+	if discovery.Mode == "" && len(baselinePolicy) > 0 {
+		discovery = runtimeassets.CodeRootDiscovery{Mode: "legacy-unclassified", Status: "needs-agent-review"}
 	}
 	manifest := map[string]any{
 		"schema_version": 3, "framework": "spec-framework", "version": version, "product_root": ".",
@@ -219,6 +236,9 @@ func Upgrade(opts Options) (Result, error) {
 		"code_roots": codeRoots,
 		"activation": map[string]any{"mode": "manifest-only"},
 		"runtime":    map[string]any{"source": "user-cache", "channel": "stable"},
+	}
+	if discovery.Mode != "" {
+		manifest["code_root_discovery"] = discovery
 	}
 	if len(baselinePolicy) > 0 {
 		manifest["baseline_policy"] = baselinePolicy
@@ -235,7 +255,7 @@ func Upgrade(opts Options) (Result, error) {
 			return Result{}, fmt.Errorf("install %s dispatcher: %w", agent, err)
 		}
 	}
-	return Result{Target: target, SpecRoot: spec, SkillCount: 0, StartingPoint: point}, nil
+	return Result{Target: target, SpecRoot: spec, SkillCount: 0, StartingPoint: point, CodeRootDiscovery: discovery}, nil
 }
 
 func installedCodeRoots(path string) []runtimeassets.CodeRoot {
@@ -250,6 +270,20 @@ func installedCodeRoots(path string) []runtimeassets.CodeRoot {
 		return nil
 	}
 	return value.CodeRoots
+}
+
+func installedCodeRootDiscovery(path string) runtimeassets.CodeRootDiscovery {
+	data, err := os.ReadFile(path)
+	if err != nil {
+		return runtimeassets.CodeRootDiscovery{}
+	}
+	var value struct {
+		Discovery runtimeassets.CodeRootDiscovery `json:"code_root_discovery"`
+	}
+	if json.Unmarshal(data, &value) != nil {
+		return runtimeassets.CodeRootDiscovery{}
+	}
+	return value.Discovery
 }
 
 func installedBaselinePolicy(path string) map[string]any {

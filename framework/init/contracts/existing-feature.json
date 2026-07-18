@@ -24,7 +24,12 @@
   ],
   "registry": {
     "modules": ["product-core", "foundation-feature", "knowledge", "delivery-domain", "delivery-design", "delivery-engineering", "governance"],
-    "required_artifacts": [{"type": "feature-brief", "path": "foundation/feature-brief.md"}],
+    "required_artifacts": [
+      {"type": "feature-brief", "path": "foundation/feature-brief.md"},
+      {"type": "product-landscape", "path": "knowledge/assessments/product-landscape.md"},
+      {"type": "engineering-system", "path": "engineering/engineering-system.md"},
+      {"type": "design-system", "path": "design/system/design-system.md"}
+    ],
     "exclude_types": ["problem", "vision", "product-principles", "north-star", "strategy"],
     "prepend_artifacts": [
       {
