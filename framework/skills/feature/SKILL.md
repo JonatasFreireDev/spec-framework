@@ -18,7 +18,7 @@ Define features that serve a user goal while keeping scope, Delivery Level, Prio
 - explain: summarize the artifact and why it exists.
 
 ## Inputs
-Approved goal and journey; opportunity list; constraints; related features.
+Approved goal and journey; opportunity list; constraints; related features; approved demand classification; existing Feature context.
 
 ## Outputs
 feature.md; feature context.md; Delivery Level; Priority; explicit delivery slice; scope/non-goals; related use-case candidates.
@@ -35,11 +35,13 @@ Follow the shared [Discovery And Challenge contract](../discovery-and-challenge.
 
 ## Workflow
 1. Read the parent context and confirm the artifact status.
-2. Identify missing information, assumptions, conflicts, and dependencies.
-3. Propose the artifact or revision using the matching template.
-4. Record decision candidates for high-impact or hard-to-reverse choices.
-5. Ask for approval before moving the artifact to the next ladder step.
-6. Update context.md with new links, dependencies, questions, and status changes.
+2. Read sibling Features and related Use Cases before creating or revising scope.
+3. Identify missing information, assumptions, conflicts, and dependencies.
+4. For an incoming demand, confirm that it belongs to this Goal and record whether it extends this Feature or creates a sibling Feature.
+5. Propose the artifact or revision using the matching template.
+6. Record decision candidates for high-impact or hard-to-reverse choices.
+7. Ask for approval before moving the artifact to the next ladder step.
+8. Update context.md with `relations`, `traceability`, links, dependencies, questions, and status changes.
 
 ## Quality checklist
 - [ ] Preserves traceability to the parent artifact.

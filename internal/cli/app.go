@@ -713,6 +713,7 @@ func (app App) runInit(args []string, stdout, stderr io.Writer) int {
 	startingPoint := flags.String("starting-point", "new-product", "new-product, existing-product, existing-documents, existing-feature, existing-implementation, or audit-only")
 	sourcesValue := flags.String("sources", "", "comma-separated source files or directories for existing-documents")
 	codeRootsValue := flags.String("code-roots", "", "comma-separated implementation roots as path:role (for example web:web,api:api)")
+	noCodeRoots := flags.Bool("no-code-roots", false, "confirm that the agent inspected the repository and found no implementation roots")
 	sourceDir := flags.String("source-dir", "", "source directory for existing-documents")
 	importMaxFiles := flags.Int("import-max-files", 500, "maximum files for existing-documents import")
 	importMaxTotal := flags.String("import-max-total-bytes", "200MB", "maximum copied bytes for existing-documents import")
@@ -777,6 +778,16 @@ func (app App) runInit(args []string, stdout, stderr io.Writer) int {
 		fmt.Fprintln(stderr, err)
 		return 2
 	}
+	if *noCodeRoots && len(codeRoots) > 0 {
+		fmt.Fprintln(stderr, "--no-code-roots cannot be combined with --code-roots")
+		return 2
+	}
+	discoveryMode := install.CodeRootDiscoveryCLIFallback
+	if len(codeRoots) > 0 {
+		discoveryMode = install.CodeRootDiscoveryAgentDeclared
+	} else if *noCodeRoots {
+		discoveryMode = install.CodeRootDiscoveryAgentConfirmedNone
+	}
 	if strings.TrimSpace(*sourceDir) != "" {
 		sources = append(sources, *sourceDir)
 	}
@@ -790,7 +801,7 @@ func (app App) runInit(args []string, stdout, stderr io.Writer) int {
 		fmt.Fprintln(stderr, err)
 		return 2
 	}
-	result, err := install.Init(install.Options{Target: *target, Version: app.version, Agents: agents, StartingPoint: point, Sources: sources, CodeRoots: codeRoots, ImportOptions: sourceimport.CreateOptions{MaxFiles: *importMaxFiles, MaxTotalBytes: importTotal, MaxFileBytes: importFile, ChunkSize: *importChunkSize, BinaryPolicy: *importBinaryPolicy}, Force: *force})
+	result, err := install.Init(install.Options{Target: *target, Version: app.version, Agents: agents, StartingPoint: point, Sources: sources, CodeRoots: codeRoots, CodeRootDiscoveryMode: discoveryMode, ImportOptions: sourceimport.CreateOptions{MaxFiles: *importMaxFiles, MaxTotalBytes: importTotal, MaxFileBytes: importFile, ChunkSize: *importChunkSize, BinaryPolicy: *importBinaryPolicy}, Force: *force})
 	if err != nil {
 		fmt.Fprintln(stderr, err)
 		return 1
@@ -799,7 +810,12 @@ func (app App) runInit(args []string, stdout, stderr io.Writer) int {
 	if result.ImportID != "" {
 		fmt.Fprintf(stdout, "- Import inventory: product/knowledge/imports/runs/%s\n", result.ImportID)
 	}
-	if len(codeRoots) > 0 {
+	if result.CodeRootDiscovery.Mode == install.CodeRootDiscoveryCLIFallback {
+		fmt.Fprintln(stdout, "- Code-root discovery: CLI fallback; agent review required before Specification")
+	} else {
+		fmt.Fprintf(stdout, "- Code-root discovery: %s (confirmed)\n", result.CodeRootDiscovery.Mode)
+	}
+	if len(result.CodeRootDiscovery.Mode) > 0 && len(codeRoots) > 0 {
 		fmt.Fprintln(stdout, "- Declared code roots: product/knowledge/assessments/product-landscape.md")
 	}
 	if *installImpeccable {
@@ -903,6 +919,8 @@ func (app App) runUpgrade(args []string, stdout, stderr io.Writer) int {
 	flags.SetOutput(stderr)
 	target := flags.String("target", ".", "target directory")
 	agentsValue := flags.String("agents", "", "comma-separated agents; defaults to the installed manifest")
+	codeRootsValue := flags.String("code-roots", "", "replace implementation roots with an agent-confirmed path:role list")
+	noCodeRoots := flags.Bool("no-code-roots", false, "confirm that the agent inspected the repository and found no implementation roots")
 	yes := flags.Bool("yes", false, "confirm upgrade")
 	if err := flags.Parse(args); err != nil {
 		return 2
@@ -922,12 +940,30 @@ func (app App) runUpgrade(args []string, stdout, stderr io.Writer) int {
 		fmt.Fprintln(stderr, err)
 		return 2
 	}
-	result, err := install.Upgrade(install.Options{Target: *target, Version: app.version, Agents: agents})
+	codeRoots, err := parseCodeRoots(*codeRootsValue)
+	if err != nil {
+		fmt.Fprintln(stderr, err)
+		return 2
+	}
+	if *noCodeRoots && len(codeRoots) > 0 {
+		fmt.Fprintln(stderr, "--no-code-roots cannot be combined with --code-roots")
+		return 2
+	}
+	discoveryMode := ""
+	if len(codeRoots) > 0 {
+		discoveryMode = install.CodeRootDiscoveryAgentDeclared
+	} else if *noCodeRoots {
+		discoveryMode = install.CodeRootDiscoveryAgentConfirmedNone
+	}
+	result, err := install.Upgrade(install.Options{Target: *target, Version: app.version, Agents: agents, CodeRoots: codeRoots, CodeRootDiscoveryMode: discoveryMode})
 	if err != nil {
 		fmt.Fprintln(stderr, err)
 		return 1
 	}
 	fmt.Fprintf(stdout, "Upgraded Spec Framework runtime at %s\n- Product root preserved: product\n- Framework runtime: %s\n- Version: %s\n", result.Target, result.SpecRoot, app.version)
+	if discoveryMode != "" {
+		fmt.Fprintf(stdout, "- Code-root discovery: %s (confirmed)\n", result.CodeRootDiscovery.Mode)
+	}
 	return 0
 }
 

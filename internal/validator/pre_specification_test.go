@@ -39,3 +39,33 @@ func TestPreSpecificationBaselineBlocksRealSpecification(t *testing.T) {
 		t.Fatalf("baseline diagnostics=%d, want 3: %#v", found, result.Diagnostics)
 	}
 }
+
+func TestPreSpecificationBaselineRequiresAgentConfirmedCodeRoots(t *testing.T) {
+	root := t.TempDir()
+	for _, path := range []string{".product", "knowledge/assessments", "engineering", "design/system", "domains/live"} {
+		if err := os.MkdirAll(filepath.Join(root, path), 0755); err != nil {
+			t.Fatal(err)
+		}
+	}
+	write := func(path, data string) {
+		if err := os.WriteFile(filepath.Join(root, path), []byte(data), 0644); err != nil {
+			t.Fatal(err)
+		}
+	}
+	write(".product/framework.json", `{"baseline_policy":{"pre_specification":"required"},"code_root_discovery":{"mode":"cli-fallback","status":"needs-agent-review"}}`)
+	write("knowledge/assessments/product-landscape.md", "# Landscape\n")
+	write("engineering/engineering-system.md", "# Engineering\n")
+	write("design/system/design-system.md", "# Design\n")
+	write("domains/live/specification.md", "# Specification\n")
+	write(".product/artifacts.json", `{"artifacts":[{"id":"SPEC-1","type":"specification","status":"draft","path":"domains/live/specification.md"},{"id":"LANDSCAPE","type":"product-landscape","status":"approved","path":"knowledge/assessments/product-landscape.md"},{"id":"ENG","type":"engineering-system","status":"approved","path":"engineering/engineering-system.md"},{"id":"DS","type":"design-system","status":"approved","path":"design/system/design-system.md"}]}`)
+	result, err := Validate(context.Background(), root, ".")
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, diagnostic := range result.Diagnostics {
+		if diagnostic.Check == "code-root-discovery" && diagnostic.Severity == Error {
+			return
+		}
+	}
+	t.Fatalf("missing blocking code-root discovery diagnostic: %#v", result.Diagnostics)
+}

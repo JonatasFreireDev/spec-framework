@@ -60,10 +60,10 @@ Intent summary; discovered state; recommended command or specialist; mutation pr
 | Install without an existing CLI | Download and inspect `scripts/install.ps1` or `scripts/install.sh`, then run the chosen bootstrap; installation does not initialize a product, and piping a remote script remains an explicit user choice |
 | Update or remove the installed CLI | Use `spec-framework update [--check | --version <version>]` or preview `spec-framework uninstall [--purge]`; mutations require `--yes` and never remove product repositories |
 | Start a product interactively | `spec-framework init <repository-path>` |
-| Start a product headlessly | `spec-framework init <repository-path> --agents <agents> --yes`; declare known sibling implementation roots with `--code-roots web:web,api:api` |
+| Start a product headlessly | Inspect the complete repository first, then run `spec-framework init <repository-path> --agents <agents> --code-roots web:web,api:api --yes`; use `--no-code-roots` only after inspection confirms no implementation |
 | Bring existing documents | `init --starting-point existing-documents`, review the latest run, then `import materialize`; resulting artifacts remain draft |
 | Adopt a code-first operating product | `init --starting-point existing-product`, approve `foundation/product-baseline.md`, then approve Strategy |
-| Deliver one bounded existing feature | `init --starting-point existing-feature`, complete and individually approve `foundation/feature-brief.md`, then `work` |
+| Deliver one bounded existing feature | Inspect and declare code roots, run `init --starting-point existing-feature`, approve Feature Brief, Product Landscape, Engineering System, and Design System, then create the bounded slice and `work` |
 | Adopt an existing implementation | `init --starting-point existing-implementation`, approve `knowledge/assessments/implementation-assessment.md`, then derive and approve the full Foundation |
 | Resolve a specialized skill | `spec-framework skill path <skill-name>` after manifest activation |
 | Upgrade the pinned external runtime | Inspect current manifest and version, then `spec-framework upgrade --yes` |
@@ -92,7 +92,7 @@ Follow the shared [Discovery And Challenge contract](../discovery-and-challenge.
 
 For a deterministic workspace snapshot, run `scripts/inspect-workspace.ps1` on Windows or `scripts/inspect-workspace.sh` on macOS/Linux instead of reconstructing the `guide`, `status`, and `dashboard` sequence.
 
-For a declared implementation layout, run `scripts/inspect-code-roots.ps1` on Windows or `scripts/inspect-code-roots.sh` on macOS/Linux. The script inventories deterministic code-root evidence and optionally calls `spec-framework validate`; interpret its output before routing domain work.
+Before `init`, inspect the repository with native read-only search and file tools. When the framework source or a resolved runtime is available, also run `scripts/inspect-code-roots.ps1` on Windows or `scripts/inspect-code-roots.sh` on macOS/Linux against the repository root. Inspect all candidate projects, nested repositories, applications, libraries, workers, mobile clients, infrastructure, shared packages, and cross-root flows; the script supplies deterministic marker evidence but never owns semantic classification. Resolve material ambiguity with the human, then pass the complete confirmed map through `--code-roots path:role,...`, or pass `--no-code-roots` only after confirming that no implementation exists. After `init`, the same script inventories evidence under the declared roots and may call validation.
 
 When the intent concerns a decision or ADR, first run `spec-framework decisions check --product-root product --json`. Use the indexed `path` and reported domain as the routing evidence. `--strict` is the CI gate; `--fix-links` requires a reviewed preview followed by `--yes` and never creates approval records.
 1. Restate the goal in one sentence and determine whether the request is explanation, inspection, planning, local mutation, approval, remote mutation, or release.
@@ -104,12 +104,13 @@ When the intent concerns a decision or ADR, first run `spec-framework decisions 
 7. For `existing-implementation`, route through the registered Implementation Assessment before full Foundation. Treat code, tests, configuration, and history as evidence rather than approved product intent.
 8. For `existing-product`, consolidate evidenced current state in Product Baseline and keep future Strategy separate. Escalate to full Foundation when current audience, value, or direction is uncertain.
 9. Before any delivery Domain, Goal, Feature, Use Case, or Specification, read `knowledge/assessments/product-landscape.md`, `engineering/engineering-system.md`, and `design/system/design-system.md`. For code roots declared in the manifest, inventory every root comprehensively and separate observed evidence from inferred intent. For no-code products, establish these as explicit draft hypotheses and identify the intended stack and official scaffold command before proposing implementation creation.
-10. Keep implementation projects as semantic sibling roots beside `product/` (`web/`, `api/`, `worker/`, `mobile/`, `infrastructure/`, or `library/`); never place application code inside `product/`.
-11. For `audit-only`, use terminal-output inspection commands without write flags. Do not create reports, registry changes, approvals, workspaces, migrations, or delivery state; request an explicit starting-point transition before product work.
-12. Require explicit human identity and confirmation for approval commands. For batch approval, preview the exact artifact list and hashes with `approve-batch` before applying `--yes`; ask the human which scope to approve and never convert conversational agreement into unrelated product approval records.
-13. Route artifact authorship to the owner skill named by `guide` or `dashboard`; do not generate the artifact yourself.
-14. After a command, report exit status, changed artifacts, blockers, and the next safe command. Re-read mechanical state instead of assuming success.
-15. Stop on stale parents, missing approvals, ambiguous scope, unsafe remote/destructive action, missing gate configuration, or conflicts requiring a decision.
+10. Treat `code_root_discovery.mode: cli-fallback` or `status: needs-agent-review` as a blocking discovery handoff. Reinspect the complete repository and correct the manifest through `upgrade --code-roots ...` or `upgrade --no-code-roots` before creating a Specification.
+11. Keep implementation projects as semantic sibling roots beside `product/` (`web/`, `api/`, `worker/`, `mobile/`, `infrastructure/`, or `library/`); never place application code inside `product/`.
+12. For `audit-only`, use terminal-output inspection commands without write flags. Do not create reports, registry changes, approvals, workspaces, migrations, or delivery state; request an explicit starting-point transition before product work.
+13. Require explicit human identity and confirmation for approval commands. For batch approval, preview the exact artifact list and hashes with `approve-batch` before applying `--yes`; ask the human which scope to approve and never convert conversational agreement into unrelated product approval records.
+14. Route artifact authorship to the owner skill named by `guide` or `dashboard`; do not generate the artifact yourself.
+15. After a command, report exit status, changed artifacts, blockers, and the next safe command. Re-read mechanical state instead of assuming success.
+16. Stop on stale parents, missing approvals, ambiguous scope, unsafe remote/destructive action, missing gate configuration, or conflicts requiring a decision.
 
 ## Runtime and repository cleanliness
 

@@ -181,7 +181,7 @@ func buildRegistry(s Snapshot) []map[string]any {
 		level := first(fields["delivery level"], fields["level"], meta["level"], companion["level"], firstSlice(companionLists["delivery_level"]))
 		priority := first(fields["priority"], meta["priority"], companion["priority"], firstSlice(companionLists["delivery_priority"]))
 		rationale := first(fields["rationale"], meta["rationale"], companion["rationale"], firstSlice(companionLists["delivery_rationale"]))
-		artifact := map[string]any{"id": id, "type": strings.ReplaceAll(kind, "_", "-"), "name": name, "status": status, "ownerSkill": owner, "path": path, "parentIds": parents, "childIds": companionLists["children"], "dependsOn": companionLists["depends_on"], "decisions": companionLists["decisions"], "delivery": map[string]any{"level": level, "priority": priority, "depends_on": companionLists["delivery_depends_on"], "rationale": rationale}, "documents": map[string]string{"canonical": path}}
+		artifact := map[string]any{"id": id, "type": strings.ReplaceAll(kind, "_", "-"), "name": name, "status": status, "ownerSkill": owner, "path": path, "parentIds": parents, "childIds": companionLists["children"], "dependsOn": companionLists["depends_on"], "decisions": companionLists["decisions"], "relations": map[string]any{"extends": firstSlice(companionLists["relations_extends"]), "reuses": companionLists["relations_reuses"], "depends_on": companionLists["relations_depends_on"], "impacts": companionLists["relations_impacts"], "supersedes": companionLists["relations_supersedes"]}, "traceability": map[string]any{"source_demand": firstSlice(companionLists["source_demand"]), "source_documents": companionLists["source_documents"], "source_decisions": companionLists["source_decisions"]}, "evolution": map[string]any{"type": firstSlice(companionLists["evolution_type"]), "previous_version": firstSlice(companionLists["previous_version"]), "change_summary": firstSlice(companionLists["change_summary"])}, "delivery": map[string]any{"level": level, "priority": priority, "depends_on": companionLists["delivery_depends_on"], "rationale": rationale}, "documents": map[string]string{"canonical": path}}
 		if strings.ReplaceAll(kind, "_", "-") == "use-case" {
 			if maturity := strings.ToLower(companion["maturity"]); maturity != "" {
 				artifact["maturity"] = maturity
@@ -283,7 +283,24 @@ func contextLists(text string) map[string][]string {
 		Children  []string `yaml:"children"`
 		DependsOn []string `yaml:"depends_on"`
 		Decisions []string `yaml:"decisions"`
-		Delivery  struct {
+		Relations struct {
+			Extends    string   `yaml:"extends"`
+			Reuses     []string `yaml:"reuses"`
+			DependsOn  []string `yaml:"depends_on"`
+			Impacts    []string `yaml:"impacts"`
+			Supersedes []string `yaml:"supersedes"`
+		} `yaml:"relations"`
+		Traceability struct {
+			SourceDemand    string   `yaml:"source_demand"`
+			SourceDocuments []string `yaml:"source_documents"`
+			SourceDecisions []string `yaml:"source_decisions"`
+		} `yaml:"traceability"`
+		Evolution struct {
+			Type            string `yaml:"type"`
+			PreviousVersion string `yaml:"previous_version"`
+			ChangeSummary   string `yaml:"change_summary"`
+		} `yaml:"evolution"`
+		Delivery struct {
 			Level     string   `yaml:"level"`
 			Priority  string   `yaml:"priority"`
 			DependsOn []string `yaml:"depends_on"`
@@ -301,7 +318,56 @@ func contextLists(text string) map[string][]string {
 	out["delivery_priority"] = []string{value.Delivery.Priority}
 	out["delivery_depends_on"] = value.Delivery.DependsOn
 	out["delivery_rationale"] = []string{value.Delivery.Rationale}
+	out["relations_extends"] = []string{value.Relations.Extends}
+	out["relations_reuses"] = value.Relations.Reuses
+	out["relations_depends_on"] = value.Relations.DependsOn
+	out["relations_impacts"] = value.Relations.Impacts
+	out["relations_supersedes"] = value.Relations.Supersedes
+	out["source_demand"] = []string{value.Traceability.SourceDemand}
+	out["source_documents"] = value.Traceability.SourceDocuments
+	out["source_decisions"] = value.Traceability.SourceDecisions
+	out["evolution_type"] = []string{value.Evolution.Type}
+	out["previous_version"] = []string{value.Evolution.PreviousVersion}
+	out["change_summary"] = []string{value.Evolution.ChangeSummary}
 	return out
+}
+
+func parseContextEvolution(text string) (map[string]any, error) {
+	start := strings.Index(text, "```yaml")
+	if start < 0 {
+		return nil, nil
+	}
+	body := text[start+len("```yaml"):]
+	if end := strings.Index(body, "```"); end >= 0 {
+		body = body[:end]
+	}
+	var value struct {
+		Relations struct {
+			Extends    any      `yaml:"extends"`
+			Reuses     []string `yaml:"reuses"`
+			DependsOn  []string `yaml:"depends_on"`
+			Impacts    []string `yaml:"impacts"`
+			Supersedes []string `yaml:"supersedes"`
+		} `yaml:"relations"`
+		Traceability struct {
+			SourceDemand    any      `yaml:"source_demand"`
+			SourceDocuments []string `yaml:"source_documents"`
+			SourceDecisions []string `yaml:"source_decisions"`
+		} `yaml:"traceability"`
+		Evolution struct {
+			Type            string `yaml:"type"`
+			PreviousVersion any    `yaml:"previous_version"`
+			ChangeSummary   any    `yaml:"change_summary"`
+		} `yaml:"evolution"`
+	}
+	if err := yaml.Unmarshal([]byte(body), &value); err != nil {
+		return nil, err
+	}
+	return map[string]any{
+		"relations":    value.Relations,
+		"traceability": value.Traceability,
+		"evolution":    value.Evolution,
+	}, nil
 }
 
 func containsString(values []string, target string) bool {

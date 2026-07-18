@@ -6,6 +6,8 @@ import (
 	"path/filepath"
 	"strings"
 	"testing"
+
+	"github.com/JonatasFreireDev/spec-framework/internal/runtimeassets"
 )
 
 func TestInitShipsLeanReadmeSurfaceAndUpgradePreservesAdopterReadmes(t *testing.T) {
@@ -61,7 +63,7 @@ func TestInitDiscoversSiblingCodeRootsAndPreservesThemOnUpgrade(t *testing.T) {
 		t.Fatal(err)
 	}
 	manifest, err := os.ReadFile(filepath.Join(target, "product", ".product", "framework.json"))
-	if err != nil || !strings.Contains(string(manifest), `"path": "web"`) || !strings.Contains(string(manifest), `"role": "web"`) {
+	if err != nil || !strings.Contains(string(manifest), `"path": "web"`) || !strings.Contains(string(manifest), `"role": "web"`) || !strings.Contains(string(manifest), `"mode": "cli-fallback"`) || !strings.Contains(string(manifest), `"status": "needs-agent-review"`) {
 		t.Fatalf("code root missing from manifest: %s %v", manifest, err)
 	}
 	landscape, err := os.ReadFile(filepath.Join(target, "product", "knowledge", "assessments", "product-landscape.md"))
@@ -74,6 +76,91 @@ func TestInitDiscoversSiblingCodeRootsAndPreservesThemOnUpgrade(t *testing.T) {
 	manifest, err = os.ReadFile(filepath.Join(target, "product", ".product", "framework.json"))
 	if err != nil || !strings.Contains(string(manifest), `"path": "web"`) {
 		t.Fatalf("upgrade discarded code roots: %s %v", manifest, err)
+	}
+}
+
+func TestInitUsesAgentDeclaredRootsAsAuthoritative(t *testing.T) {
+	t.Setenv("SPEC_FRAMEWORK_CACHE", filepath.Join(t.TempDir(), "cache"))
+	t.Setenv("SPEC_FRAMEWORK_AGENT_HOME", filepath.Join(t.TempDir(), "agents"))
+	target := filepath.Join(t.TempDir(), "product-repo")
+	for _, root := range []string{"web", "services/api"} {
+		if err := os.MkdirAll(filepath.Join(target, filepath.FromSlash(root)), 0755); err != nil {
+			t.Fatal(err)
+		}
+	}
+	if err := os.WriteFile(filepath.Join(target, "web", "package.json"), []byte(`{"name":"web"}`), 0644); err != nil {
+		t.Fatal(err)
+	}
+	result, err := Init(Options{
+		Target: target, Version: "test", Agents: []Agent{Codex},
+		CodeRoots:             []runtimeassets.CodeRoot{{Path: "services/api", Role: "api"}},
+		CodeRootDiscoveryMode: CodeRootDiscoveryAgentDeclared,
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if result.CodeRootDiscovery.Mode != CodeRootDiscoveryAgentDeclared || result.CodeRootDiscovery.Status != "confirmed" {
+		t.Fatalf("unexpected discovery result: %+v", result.CodeRootDiscovery)
+	}
+	manifest, err := os.ReadFile(filepath.Join(target, "product", ".product", "framework.json"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !strings.Contains(string(manifest), `"path": "services/api"`) || strings.Contains(string(manifest), `"path": "web"`) || !strings.Contains(string(manifest), `"mode": "agent-declared"`) {
+		t.Fatalf("agent-declared roots were not authoritative: %s", manifest)
+	}
+}
+
+func TestInitAgentConfirmedNoCodeOverridesCLICandidates(t *testing.T) {
+	t.Setenv("SPEC_FRAMEWORK_CACHE", filepath.Join(t.TempDir(), "cache"))
+	t.Setenv("SPEC_FRAMEWORK_AGENT_HOME", filepath.Join(t.TempDir(), "agents"))
+	target := filepath.Join(t.TempDir(), "product-repo")
+	if err := os.MkdirAll(filepath.Join(target, "web"), 0755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(target, "web", "package.json"), []byte(`{"name":"web"}`), 0644); err != nil {
+		t.Fatal(err)
+	}
+	result, err := Init(Options{Target: target, Version: "test", Agents: []Agent{Codex}, CodeRootDiscoveryMode: CodeRootDiscoveryAgentConfirmedNone})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if result.CodeRootDiscovery.Mode != CodeRootDiscoveryAgentConfirmedNone || result.CodeRootDiscovery.Status != "confirmed" {
+		t.Fatalf("agent no-code decision was not authoritative: %+v", result.CodeRootDiscovery)
+	}
+	manifest, err := os.ReadFile(filepath.Join(target, "product", ".product", "framework.json"))
+	if err != nil || strings.Contains(string(manifest), `"path": "web"`) {
+		t.Fatalf("CLI candidate leaked into agent-confirmed no-code map: %s %v", manifest, err)
+	}
+}
+
+func TestUpgradeConfirmsFallbackRootsWithoutOverwritingLandscape(t *testing.T) {
+	t.Setenv("SPEC_FRAMEWORK_CACHE", filepath.Join(t.TempDir(), "cache"))
+	t.Setenv("SPEC_FRAMEWORK_AGENT_HOME", filepath.Join(t.TempDir(), "agents"))
+	target := filepath.Join(t.TempDir(), "product-repo")
+	if err := os.MkdirAll(filepath.Join(target, "web"), 0755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(target, "web", "package.json"), []byte(`{"name":"web"}`), 0644); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := Init(Options{Target: target, Version: "test", Agents: []Agent{Codex}}); err != nil {
+		t.Fatal(err)
+	}
+	landscape := filepath.Join(target, "product", "knowledge", "assessments", "product-landscape.md")
+	if err := os.WriteFile(landscape, []byte("adopter-owned landscape\n"), 0644); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := Upgrade(Options{Target: target, Version: "test", Agents: []Agent{Codex}, CodeRoots: []runtimeassets.CodeRoot{{Path: "web", Role: "frontend"}}, CodeRootDiscoveryMode: CodeRootDiscoveryAgentDeclared}); err != nil {
+		t.Fatal(err)
+	}
+	manifest, err := os.ReadFile(filepath.Join(target, "product", ".product", "framework.json"))
+	if err != nil || !strings.Contains(string(manifest), `"role": "frontend"`) || !strings.Contains(string(manifest), `"mode": "agent-declared"`) {
+		t.Fatalf("upgrade did not confirm roots: %s %v", manifest, err)
+	}
+	data, err := os.ReadFile(landscape)
+	if err != nil || string(data) != "adopter-owned landscape\n" {
+		t.Fatalf("upgrade overwrote Product Landscape: %q %v", data, err)
 	}
 }
 
@@ -104,6 +191,36 @@ func TestUpgradeDoesNotOptLegacyProductsIntoBaselinePolicy(t *testing.T) {
 	data, err = os.ReadFile(manifestPath)
 	if err != nil || strings.Contains(string(data), "baseline_policy") {
 		t.Fatalf("upgrade opted legacy product into policy: %s %v", data, err)
+	}
+}
+
+func TestUpgradeMarksPolicyEnabledLegacyDiscoveryForAgentReview(t *testing.T) {
+	t.Setenv("SPEC_FRAMEWORK_CACHE", filepath.Join(t.TempDir(), "cache"))
+	t.Setenv("SPEC_FRAMEWORK_AGENT_HOME", filepath.Join(t.TempDir(), "agents"))
+	target := filepath.Join(t.TempDir(), "product-repo")
+	if _, err := Init(Options{Target: target, Version: "test", Agents: []Agent{Codex}}); err != nil {
+		t.Fatal(err)
+	}
+	manifestPath := filepath.Join(target, "product", ".product", "framework.json")
+	data, err := os.ReadFile(manifestPath)
+	if err != nil {
+		t.Fatal(err)
+	}
+	var manifest map[string]any
+	if err := json.Unmarshal(data, &manifest); err != nil {
+		t.Fatal(err)
+	}
+	delete(manifest, "code_root_discovery")
+	legacy, _ := json.Marshal(manifest)
+	if err := os.WriteFile(manifestPath, legacy, 0644); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := Upgrade(Options{Target: target, Version: "test", Agents: []Agent{Codex}}); err != nil {
+		t.Fatal(err)
+	}
+	data, err = os.ReadFile(manifestPath)
+	if err != nil || !strings.Contains(string(data), `"mode": "legacy-unclassified"`) || !strings.Contains(string(data), `"status": "needs-agent-review"`) {
+		t.Fatalf("legacy discovery was not marked for review: %s %v", data, err)
 	}
 }
 

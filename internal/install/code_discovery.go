@@ -3,6 +3,7 @@ package install
 import (
 	"fmt"
 	"os"
+	pathpkg "path"
 	"path/filepath"
 	"sort"
 	"strings"
@@ -19,18 +20,76 @@ var codeMarkers = map[string]string{
 	"build.gradle.kts": "service",
 }
 
-// discoverCodeRoots inventories immediate repository siblings. Explicit roots
-// supplement discovery and let an adopter choose a semantic role such as api,
-// web, worker, mobile, infrastructure, or library.
-func discoverCodeRoots(target string, explicit []runtimeassets.CodeRoot) ([]runtimeassets.CodeRoot, error) {
+const (
+	CodeRootDiscoveryAgentDeclared      = "agent-declared"
+	CodeRootDiscoveryAgentConfirmedNone = "agent-confirmed-none"
+	CodeRootDiscoveryCLIFallback        = "cli-fallback"
+)
+
+// resolveCodeRoots makes agent declarations authoritative. The CLI heuristic
+// remains a compatible fallback, but its result is explicitly unconfirmed.
+func resolveCodeRoots(target string, explicit []runtimeassets.CodeRoot, mode string) ([]runtimeassets.CodeRoot, runtimeassets.CodeRootDiscovery, error) {
+	mode = strings.TrimSpace(mode)
+	switch mode {
+	case CodeRootDiscoveryAgentDeclared:
+		roots, err := normalizeCodeRoots(explicit)
+		if err != nil {
+			return nil, runtimeassets.CodeRootDiscovery{}, err
+		}
+		if len(roots) == 0 {
+			return nil, runtimeassets.CodeRootDiscovery{}, fmt.Errorf("agent-declared code-root discovery requires at least one --code-roots entry")
+		}
+		for _, root := range roots {
+			info, statErr := os.Stat(filepath.Join(target, filepath.FromSlash(root.Path)))
+			if statErr != nil || !info.IsDir() {
+				return nil, runtimeassets.CodeRootDiscovery{}, fmt.Errorf("agent-declared code root %q does not exist as a directory", root.Path)
+			}
+		}
+		return roots, discoveryForMode(mode), nil
+	case CodeRootDiscoveryAgentConfirmedNone:
+		return []runtimeassets.CodeRoot{}, discoveryForMode(mode), nil
+	case "", CodeRootDiscoveryCLIFallback:
+		roots, err := detectCodeRoots(target)
+		return roots, discoveryForMode(CodeRootDiscoveryCLIFallback), err
+	default:
+		return nil, runtimeassets.CodeRootDiscovery{}, fmt.Errorf("unsupported code-root discovery mode %q", mode)
+	}
+}
+
+func discoveryForMode(mode string) runtimeassets.CodeRootDiscovery {
+	status := "confirmed"
+	if mode == CodeRootDiscoveryCLIFallback || mode == "" {
+		mode = CodeRootDiscoveryCLIFallback
+		status = "needs-agent-review"
+	}
+	return runtimeassets.CodeRootDiscovery{Mode: mode, Status: status}
+}
+
+func normalizeCodeRoots(explicit []runtimeassets.CodeRoot) ([]runtimeassets.CodeRoot, error) {
 	byPath := map[string]runtimeassets.CodeRoot{}
 	for _, root := range explicit {
-		path := filepath.ToSlash(strings.Trim(strings.TrimSpace(root.Path), "/"))
+		rawPath := strings.TrimSpace(root.Path)
+		slashPath := strings.ReplaceAll(rawPath, "\\", "/")
+		path := pathpkg.Clean(slashPath)
 		role := strings.ToLower(strings.TrimSpace(root.Role))
-		if path == "" || role == "" || path == "product" || strings.HasPrefix(path, "../") || filepath.IsAbs(path) {
+		if rawPath == "" || path == "." && slashPath != "." || role == "" || path == "product" || path == ".." || strings.HasPrefix(path, "../") || strings.HasPrefix(slashPath, "/") || filepath.IsAbs(rawPath) || filepath.VolumeName(rawPath) != "" {
 			return nil, fmt.Errorf("invalid code root %q; use a repository-relative sibling path with a role", root.Path)
 		}
+		if previous, exists := byPath[path]; exists {
+			return nil, fmt.Errorf("duplicate code root %q has roles %q and %q; declare one semantic owner", path, previous.Role, role)
+		}
 		byPath[path] = runtimeassets.CodeRoot{Path: path, Role: role}
+	}
+	return sortedCodeRoots(byPath), nil
+}
+
+// detectCodeRoots inventories immediate repository siblings only. It produces
+// candidates for compatibility; the agent-owned pre-init inventory is the
+// canonical semantic discovery path.
+func detectCodeRoots(target string) ([]runtimeassets.CodeRoot, error) {
+	byPath := map[string]runtimeassets.CodeRoot{}
+	if role := detectCodeRole(target); role != "" {
+		byPath["."] = runtimeassets.CodeRoot{Path: ".", Role: role}
 	}
 	entries, err := os.ReadDir(target)
 	if err != nil {
@@ -49,12 +108,16 @@ func discoverCodeRoots(target string, explicit []runtimeassets.CodeRoot) ([]runt
 			}
 		}
 	}
+	return sortedCodeRoots(byPath), nil
+}
+
+func sortedCodeRoots(byPath map[string]runtimeassets.CodeRoot) []runtimeassets.CodeRoot {
 	roots := make([]runtimeassets.CodeRoot, 0, len(byPath))
 	for _, root := range byPath {
 		roots = append(roots, root)
 	}
 	sort.Slice(roots, func(i, j int) bool { return roots[i].Path < roots[j].Path })
-	return roots, nil
+	return roots
 }
 
 func detectCodeRole(root string) string {
@@ -75,7 +138,7 @@ func detectCodeRole(root string) string {
 	return ""
 }
 
-func writeCodeDiscovery(productRoot string, roots []runtimeassets.CodeRoot) error {
+func writeCodeDiscovery(productRoot string, roots []runtimeassets.CodeRoot, discovery runtimeassets.CodeRootDiscovery) error {
 	path := filepath.Join(productRoot, "knowledge", "assessments", "product-landscape.md")
 	if _, err := os.Stat(path); err != nil {
 		return err
@@ -87,6 +150,10 @@ func writeCodeDiscovery(productRoot string, roots []runtimeassets.CodeRoot) erro
 	} else {
 		b.WriteString("observed-code")
 	}
+	b.WriteString("` |\n| Discovery mode | `")
+	b.WriteString(discovery.Mode)
+	b.WriteString("` |\n| Discovery status | `")
+	b.WriteString(discovery.Status)
 	b.WriteString("` |\n\n## Code Roots\n\n")
 	if len(roots) == 0 {
 		b.WriteString("No implementation root was detected. Define the intended product surface, language, framework, and official scaffold command before creating code.\n")

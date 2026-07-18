@@ -34,6 +34,23 @@ related:
   - tasks.md
   - tests.md
 
+relations:
+  extends: null
+  reuses: []
+  depends_on: []
+  impacts: []
+  supersedes: []
+
+traceability:
+  source_demand: null
+  source_documents: []
+  source_decisions: []
+
+evolution:
+  type: new
+  previous_version: null
+  change_summary: null
+
 documents:
   canonical: use-case.md
   specification: specification.md

@@ -12,14 +12,15 @@ import (
 )
 
 type Manifest struct {
-	SchemaVersion  int        `json:"schema_version"`
-	Framework      string     `json:"framework"`
-	Version        string     `json:"version"`
-	ProductRoot    string     `json:"product_root"`
-	StartingPoint  string     `json:"starting_point"`
-	Agents         []string   `json:"agents"`
-	CodeRoots      []CodeRoot `json:"code_roots,omitempty"`
-	BaselinePolicy struct {
+	SchemaVersion     int               `json:"schema_version"`
+	Framework         string            `json:"framework"`
+	Version           string            `json:"version"`
+	ProductRoot       string            `json:"product_root"`
+	StartingPoint     string            `json:"starting_point"`
+	Agents            []string          `json:"agents"`
+	CodeRoots         []CodeRoot        `json:"code_roots,omitempty"`
+	CodeRootDiscovery CodeRootDiscovery `json:"code_root_discovery,omitempty"`
+	BaselinePolicy    struct {
 		PreSpecification string `json:"pre_specification,omitempty"`
 	} `json:"baseline_policy,omitempty"`
 	Activation struct {
@@ -36,6 +37,14 @@ type Manifest struct {
 type CodeRoot struct {
 	Path string `json:"path"`
 	Role string `json:"role"`
+}
+
+// CodeRootDiscovery records who established the semantic implementation-root
+// map. CLI heuristics are evidence for an agent, never a confirmed ownership
+// decision.
+type CodeRootDiscovery struct {
+	Mode   string `json:"mode,omitempty"`
+	Status string `json:"status,omitempty"`
 }
 
 func CacheRoot() (string, error) {

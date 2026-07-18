@@ -27,6 +27,7 @@ Do not write framework-method decisions into any product decision domain.
 
 Operational boundaries:
 
+- Code-root discovery is agent-led. Before `init`, inspect the complete repository and pass the confirmed semantic map with `--code-roots`, or `--no-code-roots` only after confirming that no implementation exists. Treat manifest discovery marked `cli-fallback` or `needs-agent-review` as unresolved evidence; correct it with `upgrade` before Specification.
 - Use `.product/workspaces/WORK-NNN/` for concurrent focus; never invent a global active feature.
 - Resume from `state.json`, the latest checkpoint, and the latest handoff. Legacy `WORK-NNN.json` is read-only until explicit migration.
 - Follow the detailed implementation prerequisites, evidence, status, and approval gates in `FRAMEWORK.md` and the owning skills; this file defines only their cross-agent boundaries.
@@ -35,6 +36,8 @@ Operational boundaries:
 When the product declares `product/design/system/`, route shared foundations, tokens, components, patterns, versions, and sources to the Design System skill. Detailed Design System and UX/UI gates remain in `FRAMEWORK.md` and their owning skills. External visual tools are optional adapters; their installation, output, and availability never grant product approval or replace framework contracts.
 
 Route creation or evolution of `product/engineering/` through Engineering Orchestrator. Technical Landscape owns shared architecture and entity graph contracts; Engineering Standards owns standards and profiles; Operations Baseline owns operational contracts; Engineering Evidence owns evidence and maturity assessments; Engineering System owns only aggregate and Quality System consolidation. Do not let one specialist edit another specialist's subtree without an explicit handoff, and stop for human approval of the current composite hash.
+
+For product demand evolution, preserve the existing Domain -> Goal -> Feature -> Use Case hierarchy. Read the nearest `context.md`, its parents and siblings, then record proposed `relations`, `traceability`, and `evolution` metadata before routing to the owning skill. Imported demands remain drafts until their source mapping and destination are reviewed.
 
 Engineering Orchestrator may use harness-native subagents only when its persisted handoff selects `delegated` execution. Keep `sequential` as the compatible default. In delegated mode, give each specialist only its dispatch envelope and required reading, enforce declared dependencies and write scope, bound concurrency, verify output hashes, and reconcile compact returns in the parent context. If native subagents are unavailable, apply the declared fallback; the CLI itself never spawns agents.
 

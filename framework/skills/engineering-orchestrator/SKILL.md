@@ -46,6 +46,7 @@ Follow the shared [Discovery And Challenge contract](../discovery-and-challenge.
 
 ## Workflow
 1. Revalidate the product manifest, Product Landscape, code roots, current Engineering System hash, approvals, and persisted workspace state.
+   Stop when code-root discovery is `cli-fallback` or `needs-agent-review`; route back to Framework Guide for agent-led discovery and manifest correction before assigning specialists.
 2. Classify the route as create, update, adopt, or audit and identify affected specialist contracts without assuming one repository, application, or deployment.
 3. Persist the execution mode, minimal-context policy, fallback, maximum parallelism, specialist phases, dependencies, and non-overlapping write scopes in the engineering handoff.
 4. In delegated mode, route supervised envelope creation to `dispatch-orchestrator` before spawning specialists. Do not inherit the full conversation; pass only the envelope and its `required_reading`. In sequential mode, follow the same phases without creating subagents.

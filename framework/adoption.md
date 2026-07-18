@@ -33,19 +33,23 @@ Initialization plans the complete tree, explicit empty directories, and artifact
 | `new-product` | Full Foundation: Problem -> Vision -> Principles/North Star -> Strategy. |
 | `existing-product` | Product Baseline -> Strategy. Escalate to full Foundation when current audience or value is uncertain. |
 | `existing-documents` | Review the latest import run -> materialize selected drafts -> route them through normal owners and gates. |
-| `existing-feature` | Feature Brief bound to one Target Feature -> workspace. |
+| `existing-feature` | Feature Brief -> complete Product Landscape -> Engineering and Design System baselines -> Target Feature -> workspace. |
 | `existing-implementation` | Implementation Assessment -> full Foundation -> workspace. |
 | `audit-only` | Read-only inspection. Registry, reports, approvals, workspaces, imports, and delivery mutations are blocked. |
 
 For existing documents, use `--starting-point existing-documents` with `--source-dir` or `--sources`. The command inventories sources under `product/knowledge/imports/` but does not create Domains, User Goals, or Features without explicit approval.
 
+When importing a new demand into an existing product, review its proposed destination against the nearest `context.md`, parent chain, sibling Features and Use Cases, approved decisions, and shared Engineering and Design baselines. Record whether it extends an existing interaction, creates a new Use Case or Feature, or remains a non-delivery item before materialization. The existing hierarchy is preserved; `context.md` carries optional `relations`, `traceability`, and `evolution` metadata.
+
 ## Code-aware initialization
 
-Keep implementation roots beside `product/`, using semantic roles such as `web/`, `api/`, `worker/`, `mobile/`, `infrastructure/`, or `library/`. `init` detects common roots at the repository top level and can receive an explicit mapping when discovery needs help:
+Keep implementation roots beside `product/`, using semantic roles such as `web/`, `api/`, `worker/`, `mobile/`, `infrastructure/`, or `library/`. Before `init`, the agent inspects the complete repository—including nested projects—and passes the authoritative semantic map explicitly:
 
 ```powershell
 spec-framework init . --agents codex --starting-point existing-implementation --code-roots web:web,api:api --yes
 ```
+
+Use `--no-code-roots` only when that inspection confirms no implementation. Omitting both options activates a backward-compatible CLI heuristic marked `needs-agent-review`; it is evidence, not a confirmed ownership map, and must be corrected before Specification.
 
 The resulting `product/knowledge/assessments/product-landscape.md` is the required comprehensive inventory. Route the shared engineering baseline through `engineering-orchestrator`, complete `engineering/engineering-system.md` and `design/system/design-system.md`, and obtain their human approvals before authoring a real Specification. With no code, these documents are explicit hypotheses; first confirm the intended stack and official scaffold command, then create the semantic sibling root rather than placing code under `product/`.
 

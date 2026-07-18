@@ -54,7 +54,7 @@ por uma skill quando a entrega realmente precisar deles.
 | `existing-product` | Product Baseline e Strategy | Sim | Domains, Design e Engineering | Sim |
 | `existing-implementation` | Implementation Assessment e Foundation completa | Sim | Domains, Design e Engineering | Sim |
 | `existing-documents` | Somente artefatos selecionados na materialização do import | Imports | Não inicialmente | Sim |
-| `existing-feature` | Feature Brief | Sim | Domains | Sim |
+| `existing-feature` | Feature Brief e bases compartilhadas | Sim | Domains, Design e Engineering | Sim |
 | `audit-only` | Nenhuma | Security Baseline mínimo | Não | Relatórios mínimos |
 
 Essa matriz controla a estrutura inicial, mas não remove skills, validações,
@@ -70,7 +70,7 @@ inicial.
 | `existing-product` | Existe um produto real em operação | Product Baseline e depois Strategy |
 | `existing-implementation` | Existe código, mas não há certeza sobre produto, intenção ou operação | Implementation Assessment e depois Foundation completa |
 | `existing-documents` | Existem documentos que precisam entrar no framework | Import run, revisão dos mapeamentos e materialização como drafts |
-| `existing-feature` | Existe uma entrega pequena e claramente delimitada | Feature Brief vinculado à feature alvo |
+| `existing-feature` | Existe uma entrega pequena e claramente delimitada | Feature Brief, Product Landscape e bases compartilhadas antes da feature alvo |
 | `audit-only` | A intenção é somente inspecionar o estado atual | Validação e diagnóstico sem mutações |
 
 ## Como escolher
@@ -111,6 +111,14 @@ Leitura resumida:
 - uma única entrega proporcional e delimitada: `existing-feature`;
 - inspeção sem alterações: `audit-only`;
 - nenhuma das situações anteriores: `new-product`.
+
+Antes de inicializar qualquer ponto de partida, o agente inventaria o repositório completo e classifica semanticamente as raízes de implementação. Ele passa o mapa confirmado por `--code-roots path:role,...`, ou usa `--no-code-roots` depois de confirmar que não existe implementação. A descoberta de marcadores pela CLI é apenas um fallback de compatibilidade, fica marcada para revisão do agente e não libera o gate pré-Specification.
+
+## Evolucao de uma demanda existente
+
+Depois do bootstrap, uma nova demanda nao precisa criar uma nova hierarquia. O agente deve ler o `context.md` local, a cadeia de pais, Features e Use Cases irmaos, decisoes aprovadas, os contratos compartilhados de Engenharia e Design e a evidencia de codigo relacionada. Em seguida, propoe se a demanda estende um Use Case, cria um Use Case na Feature existente, cria uma Feature no Goal atual, ou exige um novo Goal/Domain. Ambiguidade para antes da criacao de artefatos.
+
+Demandas externas seguem `existing-documents` e o Artifact Importer: inventario, rastreabilidade, mapeamento, revisao humana e materializacao como draft. Demandas que ja pertencem ao produto seguem Evolution e a skill proprietaria do proximo artefato. Os campos opcionais `relations`, `traceability` e `evolution` no `context.md` registram reutilizacao, impactos, origem e historico sem alterar a estrutura de diretorios.
 
 ## `new-product`
 
@@ -334,11 +342,13 @@ Um e-commerce existente quer permitir pagamento via PIX. A mudança está concen
 
 ```text
 Feature Brief
-  -> Domain
-    -> User Goal
-      -> Feature
-        -> Use Case
-          -> Specification
+  -> Product Landscape completo
+    -> Engineering System e Design System compartilhados
+      -> Domain
+        -> User Goal
+          -> Feature
+            -> Use Case
+              -> Specification
 ```
 
 Principal artefato inicial:
@@ -349,7 +359,7 @@ product/foundation/feature-brief.md
 
 ### Por que atende
 
-O Feature Brief reúne proporcionalmente o problema, resultado desejado, escopo, não objetivos, restrições, evidências, sinal de sucesso e estratégia da entrega.
+O Feature Brief reúne proporcionalmente o problema, resultado desejado, escopo, não objetivos, restrições, evidências, sinal de sucesso e estratégia da entrega. Quando há código, o agente primeiro confirma todas as raízes e carrega delas o Product Landscape, a engenharia e o Design System observados; essas bases são aprovadas antes da Specification e não ficam limitadas ao escopo da feature.
 
 ### Quando não usar
 
@@ -419,5 +429,5 @@ Em uma frase:
 | `existing-product` | Que produto realmente existe hoje? |
 | `existing-implementation` | O que este código realmente demonstra? |
 | `existing-documents` | Como transformar documentos existentes em drafts rastreáveis? |
-| `existing-feature` | Como entregar esta feature delimitada sem modelar o produto inteiro? |
+| `existing-feature` | Como entregar esta feature delimitada sem reconstruir a Foundation completa, preservando as bases compartilhadas do produto? |
 | `audit-only` | Quais gaps existem sem alterar nada? |

@@ -34,7 +34,7 @@ Do not use `examples/events/` as the canonical starter. It contains worked produ
 
 ## Next Step
 
-Use `spec-framework init` to copy `starter/product/`, cache embedded framework assets, install namespaced user dispatchers, and record the adopted version.
+Before `spec-framework init`, the agent inventories the complete repository and supplies confirmed semantic implementation roots with `--code-roots`, or `--no-code-roots` after confirming no implementation exists. `init` then copies `starter/product/`, caches embedded framework assets, installs namespaced user dispatchers, and records the adopted version. CLI marker discovery remains an explicitly unconfirmed compatibility fallback.
 
 Use `spec-framework upgrade` to refresh the external runtime and manifest without overwriting adopter-owned product content.
 

@@ -357,6 +357,28 @@ func TestUnknownEngineeringTriggerIsRejected(t *testing.T) {
 	}
 }
 
+func TestContextEvolutionRelationsRequireListValues(t *testing.T) {
+	text := "```yaml\nid: UC-1\ntype: use-case\nname: Example\nstatus: draft\nowner_skill: Use Case AI\nslug: u\nrelations:\n  extends: UC-0\n  reuses: not-a-list\n  impacts:\n    - services/api\n```\n"
+	find := false
+	for _, diagnostic := range validateContextFull("domains/d/goals/g/features/f/use-cases/u/context.md", text) {
+		if diagnostic.Check == "context-relations" {
+			find = true
+		}
+	}
+	if !find {
+		t.Fatal("expected invalid evolution relation diagnostic")
+	}
+}
+
+func TestContextEvolutionRelationsRemainOptional(t *testing.T) {
+	text := "```yaml\nid: UC-1\ntype: use-case\nname: Example\nstatus: draft\nowner_skill: Use Case AI\nslug: u\n```\n\n## Handoff\n"
+	for _, diagnostic := range validateContextFull("domains/d/goals/g/features/f/use-cases/u/context.md", text) {
+		if diagnostic.Check == "context-relations" {
+			t.Fatalf("legacy context should remain compatible: %+v", diagnostic)
+		}
+	}
+}
+
 func TestStructuredNotApplicableRequiresRationale(t *testing.T) {
 	s := Snapshot{Text: map[string]string{
 		"domains/d/use-cases/u/design.md": "| Field | Value |\n| --- | --- |\n| Status | not_applicable |\n| Rationale | TBD |\n",
