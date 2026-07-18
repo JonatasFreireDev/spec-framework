@@ -206,12 +206,45 @@ func TestProjectViewIncludesTypeRelationsWorktreeAndChanges(t *testing.T) {
 	}
 }
 
+func TestProjectViewSeparatesMarkdownFrontmatterFromContent(t *testing.T) {
+	root := t.TempDir()
+	if err := os.MkdirAll(filepath.Join(root, ".product"), 0o755); err != nil {
+		t.Fatal(err)
+	}
+	registryData, _ := json.Marshal(workflow.Registry{Artifacts: []workflow.Artifact{{ID: "SPEC-1", Type: "specification", Status: "draft", Path: "docs/spec.md"}}})
+	if err := os.WriteFile(filepath.Join(root, ".product", "artifacts.json"), registryData, 0o644); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.MkdirAll(filepath.Join(root, "docs"), 0o755); err != nil {
+		t.Fatal(err)
+	}
+	content := "---\nstatus: draft\nmaturity: mockup\ndelivery:\n  level: L1\n---\n# Especificação\n\nConteúdo visível.\n"
+	if err := os.WriteFile(filepath.Join(root, "docs", "spec.md"), []byte(content), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	view, err := readProjectView(root, 1)
+	if err != nil {
+		t.Fatal(err)
+	}
+	artifact := view.Artifacts[0]
+	if strings.Contains(artifact.Content, "maturity:") || !strings.Contains(artifact.Content, "Conteúdo visível") {
+		t.Fatalf("content=%q", artifact.Content)
+	}
+	if artifact.Frontmatter["maturity"] != "mockup" || artifact.Frontmatter["delivery.level"] != "L1" {
+		t.Fatalf("frontmatter=%+v", artifact.Frontmatter)
+	}
+}
+
 func TestDashboardProvidesTheApprovedDocumentationFlows(t *testing.T) {
 	for _, expected := range []string{
 		"Buscar documentação",
 		"Revisão de documentação",
 		"Solicitar ajustes",
+		"Recusar",
+		"Recusar documentos",
 		"Revisão em lote",
+		"Mais filtros",
+		"Abrir →",
 		"/api/project-view",
 		"/api/batch-approve",
 	} {

@@ -14,6 +14,7 @@ import (
 	"time"
 
 	"github.com/JonatasFreireDev/spec-framework/internal/workflow"
+	"go.yaml.in/yaml/v3"
 )
 
 // projectView is the UI contract. It deliberately translates framework records
@@ -53,6 +54,7 @@ type artifactView struct {
 	Children        []string           `json:"children"`
 	Updated         string             `json:"updated,omitempty"`
 	Content         string             `json:"content,omitempty"`
+	Frontmatter     map[string]string  `json:"frontmatter,omitempty"`
 	DerivedStatus   string             `json:"derivedStatus"`
 	Blockers        []string           `json:"blockers"`
 	LatestApproval  *approvalSummary   `json:"latestApproval,omitempty"`
@@ -197,8 +199,8 @@ func readProjectView(root string, revision uint64) (projectView, error) {
 			item.DerivedStatus = "missing"
 			item.Blockers = []string{"artifact file is missing or unreadable"}
 		} else {
-			item.Content = string(content)
-			item.Title = titleFor(a, content)
+			item.Content, item.Frontmatter = splitFrontmatter(string(content))
+			item.Title = titleFor(a, []byte(item.Content))
 			item.Updated = info.ModTime().UTC().Format(time.RFC3339)
 		}
 		if stale[a.ID] {
@@ -438,6 +440,65 @@ func titleFor(a workflow.Artifact, content []byte) string {
 		}
 	}
 	return a.ID
+}
+
+// splitFrontmatter removes the optional YAML header from Markdown content and
+// exposes its values separately so product users can inspect metadata without
+// reading configuration syntax in the document viewer.
+func splitFrontmatter(content string) (string, map[string]string) {
+	content = strings.TrimPrefix(content, "\ufeff")
+	if !strings.HasPrefix(content, "---\n") && !strings.HasPrefix(content, "---\r\n") {
+		return content, nil
+	}
+	lines := strings.Split(strings.ReplaceAll(content, "\r\n", "\n"), "\n")
+	end := -1
+	for i := 1; i < len(lines); i++ {
+		if strings.TrimSpace(lines[i]) == "---" {
+			end = i
+			break
+		}
+	}
+	if end < 0 {
+		return content, nil
+	}
+	var source map[string]any
+	if err := yaml.Unmarshal([]byte(strings.Join(lines[1:end], "\n")), &source); err != nil {
+		return content, nil
+	}
+	fields := map[string]string{}
+	flattenFrontmatter(fields, "", source)
+	if len(fields) == 0 {
+		fields = nil
+	}
+	return strings.TrimPrefix(strings.Join(lines[end+1:], "\n"), "\n"), fields
+}
+
+func flattenFrontmatter(target map[string]string, prefix string, source map[string]any) {
+	keys := make([]string, 0, len(source))
+	for key := range source {
+		keys = append(keys, key)
+	}
+	sort.Strings(keys)
+	for _, key := range keys {
+		name := key
+		if prefix != "" {
+			name = prefix + "." + key
+		}
+		switch value := source[key].(type) {
+		case map[string]any:
+			flattenFrontmatter(target, name, value)
+		case []any:
+			parts := make([]string, 0, len(value))
+			for _, item := range value {
+				parts = append(parts, fmt.Sprint(item))
+			}
+			target[name] = strings.Join(parts, ", ")
+		case nil:
+			continue
+		default:
+			target[name] = fmt.Sprint(value)
+		}
+	}
 }
 func folderFor(path string) string {
 	f := filepath.ToSlash(filepath.Dir(path))
