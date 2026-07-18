@@ -38,6 +38,9 @@ tasks.md; task files or task records with Delivery Level/Priority; acceptance ch
 
 Follow the shared [Discovery And Challenge contract](../discovery-and-challenge.md) before substantive creation or material revision.
 
+
+Use scripts/invoke-cli.ps1 on Windows or scripts/invoke-cli.sh on macOS/Linux for the CLI operation in this skill's reviewed scope. The wrapper never adds --yes or an approver identity.
+
 ## Workflow
 1. Read the parent context and confirm the artifact status.
 2. Identify missing information, assumptions, conflicts, and dependencies.

@@ -33,6 +33,9 @@ Approved domain; goals; journeys; strategy; roadmap; evidence; metrics; decision
 
 Follow the shared [Discovery And Challenge contract](../discovery-and-challenge.md) when comparing candidates or requesting human selection.
 
+
+Use scripts/invoke-cli.ps1 on Windows or scripts/invoke-cli.sh on macOS/Linux for the CLI operation in this skill's reviewed scope. The wrapper never adds --yes or an approver identity.
+
 ## Workflow
 1. Confirm the Domain and relevant Goals are approved.
 2. Route missing user intent to User Goal and missing journeys to Journey.

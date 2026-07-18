@@ -33,6 +33,9 @@ Approved Vision and Strategy; personas; brand sources; existing interfaces or co
 
 Follow the shared [Discovery And Challenge contract](../discovery-and-challenge.md) before substantive creation or material revision.
 
+
+Use scripts/invoke-cli.ps1 on Windows or scripts/invoke-cli.sh on macOS/Linux for the CLI operation in this skill's reviewed scope. The wrapper never adds --yes or an approver identity.
+
 ## Workflow
 1. Confirm whether origin is `generate`, `evolve`, or `adopt`; never promote a reference to canonical authority implicitly.
 2. Inventory foundations, sources, tokens, themes, components, patterns, consumers, and implementation links.

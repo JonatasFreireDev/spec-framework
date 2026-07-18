@@ -36,6 +36,9 @@ Security verdict; threat model summary; control checklist; blocking findings; re
 - Related `tests.md`, `qa-evidence.md`, and `audit.md` when present.
 - Failure routing in `FRAMEWORK.md`.
 
+
+Use scripts/invoke-cli.ps1 on Windows or scripts/invoke-cli.sh on macOS/Linux for the CLI operation in this skill's reviewed scope. The wrapper never adds --yes or an approver identity.
+
 ## Workflow
 1. Read the local context and identify artifact status, delivery level, priority, and release intent.
 2. Read the product security baseline and active threat register entries that affect the artifact.

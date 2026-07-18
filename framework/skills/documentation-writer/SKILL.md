@@ -27,6 +27,7 @@ Updated docs; updated context.md files; index updates; changelog notes.
 - the framework root's `FRAMEWORK.md`
 - Relevant parent context.md files.
 - This skill owns its generation resources: `assets/context-template.md` and `assets/derivation-record-template.json`; read `references/template-authoring.md` before changing template conventions.
+- Use `scripts/validate-artifacts.ps1` on Windows or `scripts/validate-artifacts.sh` on macOS/Linux for repeatable validation; pass `--write-registry` only after reviewing the intended registry change.
 - Approved decisions are discovered through the active product root's `.product/decisions.json`; resolve each registered `path` from its declared domain root (`knowledge/decisions/`, `design/decisions/`, or `engineering/decisions/`).
 
 ## Workflow

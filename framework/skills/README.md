@@ -23,6 +23,10 @@ Skills are written to work in both this framework repository and adopter reposit
 
 When a skill mentions a product-relative path such as `knowledge/conventions/gates.md`, `.product/decisions.json`, `domains/`, `audits/`, or `releases/`, resolve it under the active product root. Each skill owns the templates it generates in its own `assets/` directory and its detailed guidance in `references/`; resolve those paths relative to the skill directory. Resolve shared framework assets such as `FRAMEWORK.md` or `validators/` under the framework root.
 
+## Scripts
+
+Use a skill-owned `scripts/` resource only for a deterministic, repeatable sequence. Every shipped script has a `.ps1` implementation for Windows and a `.sh` implementation for macOS/Linux. Scripts may call the CLI, but they must not bypass its validation, approval, or persisted-state boundaries.
+
 ## Expected Files
 
 - `<skill-name>/SKILL.md`: one skill per folder.

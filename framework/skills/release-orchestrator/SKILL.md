@@ -23,6 +23,8 @@ Orchestrator. Controls workflow, gates, handoffs, and approval checkpoints. It s
 Gap Finder -> Conflict Finder -> UX/UI audit when UI exists -> QA -> Code Review -> Security Review when sensitive -> Documentation Writer
 
 ## Operating rules
+Use `scripts/check-release-gates.ps1` on Windows or `scripts/check-release-gates.sh` on macOS/Linux for a strict, read-only release-gate check before requesting approval.
+
 1. Identify the current artifact status before routing work.
 2. Route work to the smallest specialist skill that owns the next artifact.
 3. Stop at approval gates when scope, architecture, data, security, roadmap, or release risk changes.

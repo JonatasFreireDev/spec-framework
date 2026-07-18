@@ -31,6 +31,8 @@ Versioned wave plan; ready/serialized tasks; conflict rationale; capability gaps
 - Approved decisions are discovered through the active product root's `.product/decisions.json`; resolve each registered `path` from its declared domain root (`knowledge/decisions/`, `design/decisions/`, or `engineering/decisions/`).
 
 ## Workflow
+Use `scripts/preview-schedule.ps1` on Windows or `scripts/preview-schedule.sh` on macOS/Linux for a mandatory dry-run; it cannot submit a scheduling mutation.
+
 1. Load the workspace, current commit, approved artifacts, and runtime policy.
 2. Validate hashes, ownership, dependencies, attempts, and authority before acting.
 3. Refuse stale inputs, scope escapes, conflicting resources, and unsupported risk levels.

@@ -35,6 +35,9 @@ Product context; real code and test tree; deployment and operations configuratio
 
 Follow the shared [Discovery And Challenge contract](../discovery-and-challenge.md) before substantive creation or material revision.
 
+
+Use scripts/invoke-cli.ps1 on Windows or scripts/invoke-cli.sh on macOS/Linux for the CLI operation in this skill's reviewed scope. The wrapper never adds --yes or an approver identity.
+
 ## Workflow
 1. Inspect the real product code, tests, configuration, environments, operations evidence, and existing engineering documents.
 2. Define the covered product and repository boundaries and choose `generate`, `evolve`, or `adopt`.

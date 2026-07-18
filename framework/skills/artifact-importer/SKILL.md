@@ -28,6 +28,7 @@ Source documents; product context; existing Domains, User Goals, Features, gloss
 - Relevant parent context.md files.
 - This skill owns its generation resources: the import-run resources in `assets/`.
 - `framework/skills/artifact-importer/assets/import-traceability-template.json` when normalizing the traceability ledger.
+- Use `scripts/record-review-and-validate.ps1` on Windows or `scripts/record-review-and-validate.sh` on macOS/Linux to record one reviewed chunk and rebuild the registry. The script does not materialize or approve artifacts.
 - Approved decisions are discovered through the active product root's `.product/decisions.json`; resolve each registered `path` from its declared domain root (`knowledge/decisions/`, `design/decisions/`, or `engineering/decisions/`).
 
 ## Workflow

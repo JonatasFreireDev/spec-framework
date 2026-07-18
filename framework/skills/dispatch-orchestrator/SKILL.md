@@ -29,6 +29,9 @@ Persisted envelopes; dispatch plan; wave observation; reconciliation findings; h
 - Read the return template owned by Subagent Return Reviewer when validating or routing a completed assignment.
 - Approved product decisions in the active product root's `knowledge/decisions/` and `.product/decisions.json`.
 
+
+Use scripts/invoke-cli.ps1 on Windows or scripts/invoke-cli.sh on macOS/Linux for the CLI operation in this skill's reviewed scope. The wrapper never adds --yes or an approver identity.
+
 ## Workflow
 1. Read current graph/chunk readiness and dispatch configuration.
 2. Plan only canonical units with no dependency or scope conflict.
