@@ -33,7 +33,7 @@ Use a skill-owned `scripts/` resource only for a deterministic, repeatable seque
 - `<skill-name>/agents/openai.yaml`: optional UI metadata for discovery surfaces.
 - Specialist skills: problem, vision, strategy, domain, goal, journey, feature, use case, Design System, UX/UI, specification, Engineering System, technical discovery, engineering proposal, engineering review, implementation planning, graph, task, code runner, bug fixer, QA, code review, security review, threat modeler, commit crafter, PR finalizer, audit, documentation, history, artifact import, and subagent return review.
 - Orchestrator skills: product, domain evolution, existing product import, new feature, audit, evolution, documentation, release, delivery, execution scheduling, integration, and dispatch.
-- Guidance skill: Framework Guide translates human goals into current CLI state, the smallest safe command, and the correct specialist or approval handoff without authoring artifacts.
+- Guidance skills: Framework Guide translates human goals into current CLI state, the smallest safe command, and the correct specialist or approval handoff without authoring artifacts. `grill-me` stress-tests a plan or proposal one decision at a time before it reaches its owning skill.
 
 Runtime v2 also includes the `command-planner` and `command-executor` operational skills. The planner owns immutable argv-based plans; the executor is restricted to local R0/R1 plans.
 
