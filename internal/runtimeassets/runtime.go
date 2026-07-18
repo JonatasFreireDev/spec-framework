@@ -12,19 +12,30 @@ import (
 )
 
 type Manifest struct {
-	SchemaVersion int      `json:"schema_version"`
-	Framework     string   `json:"framework"`
-	Version       string   `json:"version"`
-	ProductRoot   string   `json:"product_root"`
-	StartingPoint string   `json:"starting_point"`
-	Agents        []string `json:"agents"`
-	Activation    struct {
+	SchemaVersion  int        `json:"schema_version"`
+	Framework      string     `json:"framework"`
+	Version        string     `json:"version"`
+	ProductRoot    string     `json:"product_root"`
+	StartingPoint  string     `json:"starting_point"`
+	Agents         []string   `json:"agents"`
+	CodeRoots      []CodeRoot `json:"code_roots,omitempty"`
+	BaselinePolicy struct {
+		PreSpecification string `json:"pre_specification,omitempty"`
+	} `json:"baseline_policy,omitempty"`
+	Activation struct {
 		Mode string `json:"mode"`
 	} `json:"activation"`
 	Runtime struct {
 		Source  string `json:"source"`
 		Channel string `json:"channel"`
 	} `json:"runtime"`
+}
+
+// CodeRoot is an implementation area located alongside product/. It records
+// the semantic role rather than coupling the framework to one language.
+type CodeRoot struct {
+	Path string `json:"path"`
+	Role string `json:"role"`
 }
 
 func CacheRoot() (string, error) {

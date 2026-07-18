@@ -19,7 +19,7 @@ Orchestrator. Controls workflow, gates, handoffs, and approval checkpoints. It s
 - Approved decisions are discovered through the active product root's `.product/decisions.json`; resolve each registered `path` from its declared domain root.
 
 ## Default sequence
-Problem Discovery -> Vision -> Strategy -> Domain Architect -> User Goal -> Roadmap alignment
+Problem Discovery -> Vision -> Strategy -> Product Landscape -> Knowledge, Engineering System, and Design System baselines -> Domain Architect -> User Goal -> Roadmap alignment
 
 For a repository whose canonical manifest declares `starting_point: existing-feature`, replace that sequence with Feature Brief -> explicit individual approval -> existing Feature selection -> workspace. Escalate to the default sequence when the feature cannot be bounded without product-wide decisions.
 
@@ -41,6 +41,9 @@ Follow the shared [Discovery And Challenge contract](../discovery-and-challenge.
 7. Do not require or synthesize full Foundation artifacts for a bounded `existing-feature` route; own `foundation/feature-brief.md` as the proportional entry contract.
 8. For `existing-implementation`, own `knowledge/assessments/implementation-assessment.md`, do not modify application code during assessment, and retain the full Foundation sequence before workspace creation.
 9. For `existing-product`, own `foundation/product-baseline.md`, keep uncertain intent visible, and promote to the full Foundation sequence when the baseline cannot establish audience and delivered value confidently.
+10. Before Domain modeling, inventory every declared code root comprehensively in `knowledge/assessments/product-landscape.md`; cover modules, user surfaces, data, integrations, business rules, tests, configuration, design assets, and operational constraints. Do not collapse a broad product into one feature-sized domain.
+11. Establish `knowledge/`, `engineering/`, and `design/system/` as evidence-backed baselines when code exists, or as explicit draft hypotheses when it does not. Their approval is required before a Specification.
+12. Keep implementation repositories as semantic siblings of `product/`; when code must be created, route stack selection and official scaffold-command verification before any implementation action.
 
 ## Outputs
 foundation artifacts; domain map; initial goal catalog; roadmap with Delivery Levels and Priorities; open decisions; next recommended feature slices.

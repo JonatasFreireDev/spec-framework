@@ -47,6 +47,66 @@ func TestInitShipsLeanReadmeSurfaceAndUpgradePreservesAdopterReadmes(t *testing.
 	}
 }
 
+func TestInitDiscoversSiblingCodeRootsAndPreservesThemOnUpgrade(t *testing.T) {
+	t.Setenv("SPEC_FRAMEWORK_CACHE", filepath.Join(t.TempDir(), "cache"))
+	t.Setenv("SPEC_FRAMEWORK_AGENT_HOME", filepath.Join(t.TempDir(), "agents"))
+	target := filepath.Join(t.TempDir(), "product-repo")
+	if err := os.MkdirAll(filepath.Join(target, "web"), 0755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(target, "web", "package.json"), []byte(`{"name":"web"}`), 0644); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := Init(Options{Target: target, Version: "test", Agents: []Agent{Codex}}); err != nil {
+		t.Fatal(err)
+	}
+	manifest, err := os.ReadFile(filepath.Join(target, "product", ".product", "framework.json"))
+	if err != nil || !strings.Contains(string(manifest), `"path": "web"`) || !strings.Contains(string(manifest), `"role": "web"`) {
+		t.Fatalf("code root missing from manifest: %s %v", manifest, err)
+	}
+	landscape, err := os.ReadFile(filepath.Join(target, "product", "knowledge", "assessments", "product-landscape.md"))
+	if err != nil || !strings.Contains(string(landscape), "`web/`") || !strings.Contains(string(landscape), "pending comprehensive inventory") {
+		t.Fatalf("landscape missing discovered root: %s %v", landscape, err)
+	}
+	if _, err := Upgrade(Options{Target: target, Version: "test", Agents: []Agent{Codex}}); err != nil {
+		t.Fatal(err)
+	}
+	manifest, err = os.ReadFile(filepath.Join(target, "product", ".product", "framework.json"))
+	if err != nil || !strings.Contains(string(manifest), `"path": "web"`) {
+		t.Fatalf("upgrade discarded code roots: %s %v", manifest, err)
+	}
+}
+
+func TestUpgradeDoesNotOptLegacyProductsIntoBaselinePolicy(t *testing.T) {
+	t.Setenv("SPEC_FRAMEWORK_CACHE", filepath.Join(t.TempDir(), "cache"))
+	t.Setenv("SPEC_FRAMEWORK_AGENT_HOME", filepath.Join(t.TempDir(), "agents"))
+	target := filepath.Join(t.TempDir(), "product-repo")
+	if _, err := Init(Options{Target: target, Version: "test", Agents: []Agent{Codex}}); err != nil {
+		t.Fatal(err)
+	}
+	manifestPath := filepath.Join(target, "product", ".product", "framework.json")
+	data, err := os.ReadFile(manifestPath)
+	if err != nil {
+		t.Fatal(err)
+	}
+	var manifest map[string]any
+	if err := json.Unmarshal(data, &manifest); err != nil {
+		t.Fatal(err)
+	}
+	delete(manifest, "baseline_policy")
+	updated, _ := json.Marshal(manifest)
+	if err := os.WriteFile(manifestPath, updated, 0644); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := Upgrade(Options{Target: target, Version: "test", Agents: []Agent{Codex}}); err != nil {
+		t.Fatal(err)
+	}
+	data, err = os.ReadFile(manifestPath)
+	if err != nil || strings.Contains(string(data), "baseline_policy") {
+		t.Fatalf("upgrade opted legacy product into policy: %s %v", data, err)
+	}
+}
+
 func TestInitExistingFeatureActivatesOnlyFeatureBriefFoundation(t *testing.T) {
 	t.Setenv("SPEC_FRAMEWORK_CACHE", filepath.Join(t.TempDir(), "cache"))
 	t.Setenv("SPEC_FRAMEWORK_AGENT_HOME", filepath.Join(t.TempDir(), "agents"))

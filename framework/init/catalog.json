@@ -14,8 +14,8 @@
     "delivery-validation": {"asset_sets": [], "artifact_types": ["tests", "qa-evidence", "security-review", "audit"]},
     "delivery-execution": {"asset_sets": [], "artifact_types": ["execution-graph", "taskset", "task"]},
     "governance": {"asset_sets": ["governance"], "artifact_types": ["decision", "release"]},
-    "knowledge": {"asset_sets": ["knowledge"], "artifact_types": []},
-    "knowledge-security-baseline": {"asset_sets": ["knowledge-security-baseline"], "artifact_types": ["security-baseline"]}
+    "knowledge": {"asset_sets": ["knowledge"], "artifact_types": ["product-landscape"]},
+    "knowledge-security-baseline": {"asset_sets": ["knowledge-security-baseline"], "artifact_types": ["security-baseline", "product-landscape"]}
   },
   "sets": {
     "product-core": [
@@ -37,7 +37,8 @@
       { "source": "starter/product/knowledge", "target": "knowledge" }
     ],
     "knowledge-security-baseline": [
-      { "source": "starter/product/knowledge/conventions/security-baseline.md", "target": "knowledge/conventions/security-baseline.md" }
+      { "source": "starter/product/knowledge/conventions/security-baseline.md", "target": "knowledge/conventions/security-baseline.md" },
+      { "source": "starter/product/knowledge/assessments/product-landscape.md", "target": "knowledge/assessments/product-landscape.md" }
     ],
     "delivery-domains": [
       { "source": "starter/product/domains", "target": "domains" }

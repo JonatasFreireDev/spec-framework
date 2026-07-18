@@ -225,6 +225,7 @@ func validate(ctx context.Context, root, frameworkRoot string, strict bool, cand
 	d = append(d, validateSkillReferences(snap)...)
 	d = append(d, validateDeliveryAndRigor(snap)...)
 	d = append(d, validateRegistryAndApprovalGates(snap)...)
+	d = append(d, validatePreSpecificationBaselines(snap)...)
 	d = append(d, validateImportRuns(snap)...)
 	d = append(d, validateDeliveryClosure(snap)...)
 	d = append(d, validateSkillDiscoveryContracts(snap)...)
@@ -865,6 +866,9 @@ func validateMarkdownLinks(s Snapshot) []Diagnostic {
 			}
 			candidate := filepath.Clean(filepath.Join(s.Root, filepath.Dir(filepath.FromSlash(rel)), filepath.FromSlash(target)))
 			if _, err := os.Stat(candidate); err != nil {
+				if relocatedHistoricalTemplate(s, target) {
+					continue
+				}
 				out = append(out, Diagnostic{Error, "links", rel, "Broken Markdown link: " + target, "Create the target or update the link."})
 			} else if fragment != "" {
 				targetText, readErr := os.ReadFile(candidate)
@@ -875,6 +879,22 @@ func validateMarkdownLinks(s Snapshot) []Diagnostic {
 		}
 	}
 	return out
+}
+
+// Historical approved decisions may cite the pre-normalization template tree.
+// Keep those citations valid without rewriting human-approved evidence records.
+func relocatedHistoricalTemplate(s Snapshot, target string) bool {
+	legacy := map[string]string{
+		"approval-record-template.json":   "framework/skills/product-historian/assets/approval-record-template.json",
+		"derivation-record-template.json": "framework/skills/documentation-writer/assets/derivation-record-template.json",
+	}
+	for name, current := range legacy {
+		if strings.HasSuffix(filepath.ToSlash(target), "/framework/template/"+name) {
+			_, err := os.Stat(filepath.Join(s.FrameworkRoot, filepath.FromSlash(current)))
+			return err == nil
+		}
+	}
+	return false
 }
 
 var markdownHeading = regexp.MustCompile(`(?m)^#{1,6}\s+(.+?)\s*#*\s*$`)

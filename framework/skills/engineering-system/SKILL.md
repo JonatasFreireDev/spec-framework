@@ -39,7 +39,7 @@ Follow the shared [Discovery And Challenge contract](../discovery-and-challenge.
 Use scripts/invoke-cli.ps1 on Windows or scripts/invoke-cli.sh on macOS/Linux for the CLI operation in this skill's reviewed scope. The wrapper never adds --yes or an approver identity.
 
 ## Workflow
-1. Inspect the real product code, tests, configuration, environments, operations evidence, and existing engineering documents.
+1. Inspect the real product code, tests, configuration, environments, operations evidence, and existing engineering documents. If no code exists, create explicit hypothesis contracts, pending decisions, and intended constraints rather than pretending evidence exists.
 2. Define the covered product and repository boundaries and choose `generate`, `evolve`, or `adopt`.
 3. Inventory modules, ownership, data, integrations, standards, quality attributes, test strategy, gates, environments, test data, runbooks, and consumers with evidence paths.
 4. Maintain `engineering/quality/quality-system.md` and `quality-system.yaml` together with the quality model, test strategy, and fitness functions. Keep commands canonical in `knowledge/conventions/gates.md`.

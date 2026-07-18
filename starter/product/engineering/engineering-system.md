@@ -8,12 +8,13 @@
 | Status | `draft` |
 | Version | `0.1.0` |
 | Origin mode | `generate` |
+| Baseline role | `pre-specification` |
 | Mechanical catalog | [engineering-system.yaml](engineering-system.yaml) |
 | Owner skill | `engineering-system` |
 
 ## Scope
 
-Not configured. Inspect the adopter's real repository before defining system boundaries.
+Draft contract. Inspect the adopter's real repository before defining system boundaries. When no code exists, record explicit hypotheses, intended runtime boundaries, quality constraints, and decisions pending human approval before any Specification is created.
 
 ## Architecture
 

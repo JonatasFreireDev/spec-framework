@@ -4,6 +4,12 @@ This document consolidates the architecture of the AI-driven Product Engineering
 
 The goal is not just to organize documents. The goal is to create a pipeline where product, specification, planning, execution, and audit form a single system.
 
+## 1.1 Pre-Specification Baseline
+
+Before a real Specification is authored, every product establishes a complete Product Landscape and the shared `knowledge/`, `engineering/`, and `design/system/` contracts. With existing code, these documents distinguish observed evidence from inference and inventory every code root, module, interface, data boundary, integration, rule, test, configuration, and design asset before domain modeling. Without code, they are explicit hypotheses with pending human decisions. A delivery Domain, Goal, Feature, or Use Case is derived only after the landscape is complete; a Specification requires the approved Product Landscape, Engineering System, and Design System.
+
+Implementation roots sit beside `product/` and use semantic role names such as `web/`, `api/`, `worker/`, `mobile/`, `infrastructure/`, or `library/`. The framework records them in the manifest rather than embedding application code. When a requested implementation does not exist, the responsible agent first identifies the intended stack and verifies the official scaffolding command before proposing its execution.
+
 ## 1. Thesis
 
 This framework treats documentation as engineering infrastructure.

@@ -712,6 +712,7 @@ func (app App) runInit(args []string, stdout, stderr io.Writer) int {
 	agentsValue := flags.String("agents", "", "comma-separated agents")
 	startingPoint := flags.String("starting-point", "new-product", "new-product, existing-product, existing-documents, existing-feature, existing-implementation, or audit-only")
 	sourcesValue := flags.String("sources", "", "comma-separated source files or directories for existing-documents")
+	codeRootsValue := flags.String("code-roots", "", "comma-separated implementation roots as path:role (for example web:web,api:api)")
 	sourceDir := flags.String("source-dir", "", "source directory for existing-documents")
 	importMaxFiles := flags.Int("import-max-files", 500, "maximum files for existing-documents import")
 	importMaxTotal := flags.String("import-max-total-bytes", "200MB", "maximum copied bytes for existing-documents import")
@@ -771,6 +772,11 @@ func (app App) runInit(args []string, stdout, stderr io.Writer) int {
 		return 2
 	}
 	sources := splitCSV(*sourcesValue)
+	codeRoots, err := parseCodeRoots(*codeRootsValue)
+	if err != nil {
+		fmt.Fprintln(stderr, err)
+		return 2
+	}
 	if strings.TrimSpace(*sourceDir) != "" {
 		sources = append(sources, *sourceDir)
 	}
@@ -784,7 +790,7 @@ func (app App) runInit(args []string, stdout, stderr io.Writer) int {
 		fmt.Fprintln(stderr, err)
 		return 2
 	}
-	result, err := install.Init(install.Options{Target: *target, Version: app.version, Agents: agents, StartingPoint: point, Sources: sources, ImportOptions: sourceimport.CreateOptions{MaxFiles: *importMaxFiles, MaxTotalBytes: importTotal, MaxFileBytes: importFile, ChunkSize: *importChunkSize, BinaryPolicy: *importBinaryPolicy}, Force: *force})
+	result, err := install.Init(install.Options{Target: *target, Version: app.version, Agents: agents, StartingPoint: point, Sources: sources, CodeRoots: codeRoots, ImportOptions: sourceimport.CreateOptions{MaxFiles: *importMaxFiles, MaxTotalBytes: importTotal, MaxFileBytes: importFile, ChunkSize: *importChunkSize, BinaryPolicy: *importBinaryPolicy}, Force: *force})
 	if err != nil {
 		fmt.Fprintln(stderr, err)
 		return 1
@@ -792,6 +798,9 @@ func (app App) runInit(args []string, stdout, stderr io.Writer) int {
 	fmt.Fprintf(stdout, "Initialized Spec Framework product at %s\n- Product root: product\n- Framework runtime: %s\n- Repository-local agent trees: none\n- Starting point: %s\n", result.Target, result.SpecRoot, result.StartingPoint)
 	if result.ImportID != "" {
 		fmt.Fprintf(stdout, "- Import inventory: product/knowledge/imports/runs/%s\n", result.ImportID)
+	}
+	if len(codeRoots) > 0 {
+		fmt.Fprintln(stdout, "- Declared code roots: product/knowledge/assessments/product-landscape.md")
 	}
 	if *installImpeccable {
 		fmt.Fprintln(stdout, "[1/3] Resolving Impeccable version...")
@@ -875,6 +884,18 @@ func splitCSV(value string) []string {
 		}
 	}
 	return out
+}
+
+func parseCodeRoots(value string) ([]runtimeassets.CodeRoot, error) {
+	var roots []runtimeassets.CodeRoot
+	for _, item := range splitCSV(value) {
+		parts := strings.SplitN(item, ":", 2)
+		if len(parts) != 2 || strings.TrimSpace(parts[0]) == "" || strings.TrimSpace(parts[1]) == "" {
+			return nil, fmt.Errorf("invalid --code-roots entry %q; use path:role", item)
+		}
+		roots = append(roots, runtimeassets.CodeRoot{Path: strings.TrimSpace(parts[0]), Role: strings.TrimSpace(parts[1])})
+	}
+	return roots, nil
 }
 
 func (app App) runUpgrade(args []string, stdout, stderr io.Writer) int {

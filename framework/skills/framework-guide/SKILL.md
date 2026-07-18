@@ -60,7 +60,7 @@ Intent summary; discovered state; recommended command or specialist; mutation pr
 | Install without an existing CLI | Download and inspect `scripts/install.ps1` or `scripts/install.sh`, then run the chosen bootstrap; installation does not initialize a product, and piping a remote script remains an explicit user choice |
 | Update or remove the installed CLI | Use `spec-framework update [--check | --version <version>]` or preview `spec-framework uninstall [--purge]`; mutations require `--yes` and never remove product repositories |
 | Start a product interactively | `spec-framework init <repository-path>` |
-| Start a product headlessly | `spec-framework init <repository-path> --agents <agents> --yes` |
+| Start a product headlessly | `spec-framework init <repository-path> --agents <agents> --yes`; declare known sibling implementation roots with `--code-roots web:web,api:api` |
 | Bring existing documents | `init --starting-point existing-documents`, review the latest run, then `import materialize`; resulting artifacts remain draft |
 | Adopt a code-first operating product | `init --starting-point existing-product`, approve `foundation/product-baseline.md`, then approve Strategy |
 | Deliver one bounded existing feature | `init --starting-point existing-feature`, complete and individually approve `foundation/feature-brief.md`, then `work` |
@@ -100,11 +100,13 @@ When the intent concerns a decision or ADR, first run `spec-framework decisions 
 6. For `existing-feature`, route through the registered Feature Brief instead of the full product Foundation. Escalate to Problem, Vision, Product Principles, North Star, and Strategy when the requested work reveals broad or uncertain product direction.
 7. For `existing-implementation`, route through the registered Implementation Assessment before full Foundation. Treat code, tests, configuration, and history as evidence rather than approved product intent.
 8. For `existing-product`, consolidate evidenced current state in Product Baseline and keep future Strategy separate. Escalate to full Foundation when current audience, value, or direction is uncertain.
-9. For `audit-only`, use terminal-output inspection commands without write flags. Do not create reports, registry changes, approvals, workspaces, migrations, or delivery state; request an explicit starting-point transition before product work.
-10. Require explicit human identity and confirmation for approval commands. For batch approval, preview the exact artifact list and hashes with `approve-batch` before applying `--yes`; ask the human which scope to approve and never convert conversational agreement into unrelated product approval records.
-11. Route artifact authorship to the owner skill named by `guide` or `dashboard`; do not generate the artifact yourself.
-12. After a command, report exit status, changed artifacts, blockers, and the next safe command. Re-read mechanical state instead of assuming success.
-13. Stop on stale parents, missing approvals, ambiguous scope, unsafe remote/destructive action, missing gate configuration, or conflicts requiring a decision.
+9. Before any delivery Domain, Goal, Feature, Use Case, or Specification, read `knowledge/assessments/product-landscape.md`, `engineering/engineering-system.md`, and `design/system/design-system.md`. For code roots declared in the manifest, inventory every root comprehensively and separate observed evidence from inferred intent. For no-code products, establish these as explicit draft hypotheses and identify the intended stack and official scaffold command before proposing implementation creation.
+10. Keep implementation projects as semantic sibling roots beside `product/` (`web/`, `api/`, `worker/`, `mobile/`, `infrastructure/`, or `library/`); never place application code inside `product/`.
+11. For `audit-only`, use terminal-output inspection commands without write flags. Do not create reports, registry changes, approvals, workspaces, migrations, or delivery state; request an explicit starting-point transition before product work.
+12. Require explicit human identity and confirmation for approval commands. For batch approval, preview the exact artifact list and hashes with `approve-batch` before applying `--yes`; ask the human which scope to approve and never convert conversational agreement into unrelated product approval records.
+13. Route artifact authorship to the owner skill named by `guide` or `dashboard`; do not generate the artifact yourself.
+14. After a command, report exit status, changed artifacts, blockers, and the next safe command. Re-read mechanical state instead of assuming success.
+15. Stop on stale parents, missing approvals, ambiguous scope, unsafe remote/destructive action, missing gate configuration, or conflicts requiring a decision.
 
 ## Runtime and repository cleanliness
 
