@@ -43,6 +43,7 @@ Skills and orchestrators must read the shared contract that matches their respon
 
 - [`execution-runtime.md`](../../docs/execution-runtime.md): workspaces, leases, graph scheduling, command plans, and integration.
 - [`engineering-systems.md`](../../docs/engineering-systems.md): Engineering System and Engineering Quality System versioning, migration, evidence, and approval boundaries.
+- [`engineering-catalog-and-standards.md`](../../docs/engineering-catalog-and-standards.md): scalable technical entity graph, standards profiles, inheritance, exceptions, operations catalogs, and evidence contracts.
 - [`lifecycle-and-approvals.md`](../../docs/lifecycle-and-approvals.md): lifecycle states, approval records, staleness, authority, and failure routing.
 
 Use `framework-guide` as the default conversational entry point when no verified specialist route exists. A direct specialist route requires current CLI guidance or an explicit human request that names both the specialist and concrete scope. Persisted handoffs/checkpoints must first be revalidated with `dashboard`, `status`, `next`, or `guide`; a skill name without scope is only a hint. Framework Guide activates product operations only from a valid `product/.product/framework.json`, routes bootstrap/init before activation when explicitly requested, resolves pinned specialist contracts with `spec-framework skill path`, reads CLI state first, and routes governed runtime execution back through Command Planner and Command Executor.

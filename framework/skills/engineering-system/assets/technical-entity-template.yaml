@@ -1,0 +1,19 @@
+schema_version: 1
+id: "[stable entity ID]"
+type: "[system | application | component | repository | data-store | interface | deployment]"
+status: draft
+name: "[name]"
+capabilities: []
+repositories: []
+components: []
+depends_on: []
+interfaces: []
+data_stores: []
+deployments: []
+standards:
+  profiles: []
+  additional: []
+  exceptions: []
+ownership:
+  technical: Unassigned
+evidence: []

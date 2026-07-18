@@ -40,7 +40,7 @@ The approval engine remains generic. Adapters are only for side effects or compo
 | --- | --- |
 | `generic` | Update document, registry, and approval record |
 | `foundation-context` | Synchronize the canonical document status with its `context.md` |
-| `engineering-system` | Synchronize context, YAML, Quality System, and composite hash |
+| `engineering-system` | Synchronize context, YAML, technical entity graph, standards, operations, Quality System, evidence, and composite hash |
 | `design-system` | Validate tokens/catalog when applicable |
 | `feature-brief` | Validate `targetFeature` and the selected feature |
 

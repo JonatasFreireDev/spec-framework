@@ -16,7 +16,7 @@ Product-owned specifications, decisions, plans, and evidence live here. Framewor
 | `domains/` | Domains, goals, features, use cases, and delivery artifacts. |
 | `knowledge/` | Product rules, decisions, conventions, and imports. |
 | `design/` | Shared and use-case design sources. |
-| `engineering/` | Product Engineering System and operational evidence. |
+| `engineering/` | Product Engineering System, technical entity graph, standards, quality, operations, and evidence. |
 | `audits/` | Readiness, security, QA, and consistency findings. |
 
 `BOOTSTRAP.md` and `context.md` are authoritative for sequencing; this README is navigation only.

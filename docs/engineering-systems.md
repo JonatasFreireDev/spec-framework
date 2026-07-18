@@ -6,6 +6,10 @@ This document contains the detailed contract for the shared Engineering System a
 
 The Engineering System versions stable architecture, module and data ownership, integrations, standards, quality attributes, operations, and evidence under `engineering/`. `engineering-system.md` is the human contract and `engineering-system.yaml` is the mechanical catalog. Origin is `generate`, `evolve`, or `adopt`; maturity records evidence and never grants approval.
 
+Its scalable entity and standards model is defined in [`engineering-catalog-and-standards.md`](engineering-catalog-and-standards.md). Systems, applications, components, repositories, interfaces, data stores, and deployments are independent graph entities. Root catalogs are initialized once; entity records are created only from evidence or explicit hypotheses.
+
+The standards system composes versioned rules through profiles. Consumers pin applicable profiles and standards. A narrower scope may add constraints but may not silently weaken inherited contracts. Exceptions require a stable ID, exact scope, owner, rationale, residual risk, mitigation, expiry or review date, re-entry gate, status, and approval where required.
+
 Engineering System approval hashes its complete contract surface deterministically. A change to an approved shared contract makes its approval stale and requires human re-approval. Specification and approved product decisions remain authoritative when contracts conflict.
 
 ## Engineering Quality System

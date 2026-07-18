@@ -25,6 +25,7 @@ Approved Specification; Design; approved Technical Discovery; `engineering-propo
 
 ## Required reading
 - [`engineering-systems.md`](../../docs/engineering-systems.md) for shared contract versioning, hashes, and review boundaries.
+- [`engineering-catalog-and-standards.md`](../../docs/engineering-catalog-and-standards.md) for entity graph, standards inheritance, exceptions, and operations conformance.
 - the framework root's `FRAMEWORK.md`
 - Relevant parent context.md files.
 - This skill owns its generation resources: `assets/engineering-review-template.md`.

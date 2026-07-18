@@ -22,7 +22,11 @@ Draft contract. Inspect the adopter's real repository before defining system bou
 | --- | --- | --- | --- |
 | System context | [architecture/system-context.md](architecture/system-context.md) | Not configured | `baseline` |
 | Modules | [architecture/modules.md](architecture/modules.md) | Not configured | `baseline` |
+| Technical catalog | [catalog/catalog.yaml](catalog/catalog.yaml) | Not configured | `baseline` |
+| Standards | [standards/standards.yaml](standards/standards.yaml) | Not configured | `baseline` |
 | Quality | [quality/quality-system.md](quality/quality-system.md) | Not configured | `baseline` |
+| Operations | [operations/operations.yaml](operations/operations.yaml) | Not configured | `baseline` |
+| Evidence | [evidence/inventory.md](evidence/inventory.md) | Not configured | `baseline` |
 
 No maturity beyond placeholder baseline is claimed.
 

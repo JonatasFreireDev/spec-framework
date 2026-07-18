@@ -13,8 +13,24 @@ areas:
     contract: architecture/modules.md
     maturity: baseline
     evidence: []
+  technical_catalog:
+    contract: catalog/catalog.yaml
+    maturity: baseline
+    evidence: []
+  standards:
+    contract: standards/standards.yaml
+    maturity: baseline
+    evidence: []
   quality:
     contract: quality/quality-system.md
+    maturity: baseline
+    evidence: []
+  operations:
+    contract: operations/operations.yaml
+    maturity: baseline
+    evidence: []
+  evidence:
+    contract: evidence/inventory.md
     maturity: baseline
     evidence: []
 decisions: []

@@ -25,8 +25,8 @@ func TestInitShipsLeanReadmeSurfaceAndUpgradePreservesAdopterReadmes(t *testing.
 	}); err != nil {
 		t.Fatal(err)
 	}
-	if readmes != 18 {
-		t.Fatalf("initialized product has %d READMEs, want 18", readmes)
+	if readmes != 22 {
+		t.Fatalf("initialized product has %d READMEs, want 22", readmes)
 	}
 	obsolete := filepath.Join(product, "knowledge", "prompts", "README.md")
 	if _, err := os.Stat(obsolete); !os.IsNotExist(err) {
@@ -261,6 +261,38 @@ func TestInitKeepsRuntimeAndDispatchersOutsideRepository(t *testing.T) {
 		if !strings.Contains(contract, "Resolve framework-guide first unless") || !strings.Contains(contract, "concrete artifact or workspace scope") || !strings.Contains(contract, "is not direct-route evidence by itself") {
 			t.Fatalf("dispatcher is not Guide-first: %s", path)
 		}
+	}
+}
+
+func TestInitShipsEngineeringCatalogRootsForEveryAgentTarget(t *testing.T) {
+	t.Setenv("SPEC_FRAMEWORK_CACHE", filepath.Join(t.TempDir(), "cache"))
+	t.Setenv("SPEC_FRAMEWORK_AGENT_HOME", filepath.Join(t.TempDir(), "agents"))
+	target := filepath.Join(t.TempDir(), "product")
+	if _, err := Init(Options{Target: target, Version: "test", Agents: []Agent{Codex, Cursor, Claude}}); err != nil {
+		t.Fatal(err)
+	}
+	for _, file := range []string{
+		"product/engineering/architecture/topology.yaml",
+		"product/engineering/catalog/catalog.yaml",
+		"product/engineering/standards/standards.yaml",
+		"product/engineering/standards/profiles/product-default.yaml",
+		"product/engineering/operations/operations.yaml",
+		"product/engineering/evidence/inventory.md",
+	} {
+		if _, err := os.Stat(filepath.Join(target, filepath.FromSlash(file))); err != nil {
+			t.Errorf("missing %s: %v", file, err)
+		}
+	}
+	owned := filepath.Join(target, "product", "engineering", "catalog", "catalog.yaml")
+	if err := os.WriteFile(owned, []byte("adopter-owned catalog\n"), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := Upgrade(Options{Target: target, Version: "test", Agents: []Agent{Codex, Cursor, Claude}}); err != nil {
+		t.Fatal(err)
+	}
+	data, err := os.ReadFile(owned)
+	if err != nil || string(data) != "adopter-owned catalog\n" {
+		t.Fatalf("upgrade changed adopter engineering catalog: %q %v", data, err)
 	}
 }
 

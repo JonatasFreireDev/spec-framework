@@ -24,7 +24,7 @@ Framework assets live in the versioned user cache and are resolved from `product
 | `product/audits/` | Product validation reports, readiness checks, and security/threat tracking. |
 | `product/releases/` | Release planning and release evidence. |
 | `product/design/` | Product design references. |
-| `product/engineering/` | Product engineering notes, architecture, runbooks, and product-specific gates. |
+| `product/engineering/` | Scalable technical entity graph, architecture, versioned standards, quality, operations, evidence, decisions, and product-specific gates. |
 
 ## First Product Steps
 

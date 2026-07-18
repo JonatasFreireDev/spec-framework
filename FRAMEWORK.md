@@ -144,7 +144,9 @@ The Design System is an optional shared product artifact for products with recur
 
 ### Engineering System
 
-The optional Engineering System versions stable architecture, module and data ownership, integrations, standards, quality attributes, operations, and evidence under `engineering/`. Its detailed versioning, maturity, hashing, migration, and approval contract lives in [`docs/engineering-systems.md`](docs/engineering-systems.md). Specification and approved `DEC-*` records remain authoritative when contracts conflict.
+The optional Engineering System versions stable architecture, module and data ownership, integrations, standards, quality attributes, operations, and evidence under `engineering/`. It models systems, applications, components, repositories, interfaces, data stores, and deployments as independently identified graph entities, so one product may span monorepos, polyrepos, shared components, and multiple deployables without encoding those relations in folder position. Its detailed contracts live in [`docs/engineering-systems.md`](docs/engineering-systems.md) and [`docs/engineering-catalog-and-standards.md`](docs/engineering-catalog-and-standards.md). Specification and approved `DEC-*` records remain authoritative when contracts conflict.
+
+Engineering standards are versioned, verifiable rules composed through profiles and applied by entity type, capability, or explicit assignment. A more specific contract may add constraints but cannot silently weaken an inherited required standard. Divergence requires a scoped, governed exception or approved decision.
 
 ### Engineering Quality System
 
@@ -215,7 +217,7 @@ An adopter repository owns one framework root, `product/`. Its stable ownership 
 | `knowledge/` | Product rules, conventions, cross-cutting decisions, imports, and durable evidence. |
 | `domains/` | Domain → User Goal → Feature → Use Case hierarchy and delivery artifacts. |
 | `design/` | Shared Design System and product-owned design sources. |
-| `engineering/` | Versioned Engineering System, quality contracts, operations, and evidence. |
+| `engineering/` | Versioned Engineering System, technical entity graph, standards, quality contracts, operations, and evidence. |
 | `audits/` | Readiness, consistency, QA, security, and release findings. |
 | `releases/` | Product release records when materialized. |
 

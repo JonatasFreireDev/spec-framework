@@ -37,6 +37,7 @@
 | --- | --- | --- | --- |
 | System context | [architecture/system-context.md](architecture/system-context.md) | `[code/config/decision path]` | `baseline | mapped | governed | verified | operated` |
 | Modules | [architecture/modules.md](architecture/modules.md) | `[code/test path]` | `baseline | mapped | governed | verified | operated` |
+| Technical catalog | [catalog/catalog.yaml](catalog/catalog.yaml) | `[catalog/entity evidence]` | `baseline | mapped | governed | verified | operated` |
 | Data ownership | `[path or Not configured]` | `[evidence]` | `[maturity]` |
 | Integrations | `[path or Not configured]` | `[evidence]` | `[maturity]` |
 | Deployment | `[path or Not configured]` | `[evidence]` | `[maturity]` |
@@ -51,6 +52,10 @@
 | Fitness functions | `[quality/fitness-functions.yaml or Not configured]` | `[command/evidence]` |
 | Engineering standards | `[standards path or Not configured]` | `[gate/evidence]` |
 
+Standards are composed through versioned profiles and applied by entity type,
+capability, or explicit assignment. Required inherited rules may be weakened
+only through a scoped, governed exception or approved decision.
+
 ## Decisions And Deviations
 
 | Decision or deviation | Scope | Status | Evidence |
@@ -63,6 +68,12 @@
 | --- | --- | --- | --- |
 | Deploy and rollback | `[path or Not configured]` | `[evidence]` | `[maturity]` |
 | Incident response | `[path or Not configured]` | `[evidence]` | `[maturity]` |
+
+## Technical Entity Graph
+
+| Entity | Stable ID | Repositories or components | Standards profiles | Evidence |
+| --- | --- | --- | --- | --- |
+| `[system/application/component/etc.]` | `[ID]` | `[IDs]` | `[PROFILE-*]` | `[path]` |
 
 ## Consumers
 

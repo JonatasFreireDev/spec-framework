@@ -18,10 +18,15 @@ This placeholder does not describe a real product architecture. Replace it from 
 - [engineering-system.yaml](engineering-system.yaml)
 - [architecture/system-context.md](architecture/system-context.md)
 - [architecture/modules.md](architecture/modules.md)
+- [architecture/topology.yaml](architecture/topology.yaml)
+- [catalog/catalog.yaml](catalog/catalog.yaml)
+- [standards/standards.yaml](standards/standards.yaml)
 - [quality/quality-model.md](quality/quality-model.md)
 - [quality/quality-system.md](quality/quality-system.md)
 - [quality/quality-system.yaml](quality/quality-system.yaml)
 - [quality/test-strategy.md](quality/test-strategy.md)
+- [operations/operations.yaml](operations/operations.yaml)
+- [evidence/inventory.md](evidence/inventory.md)
 
 ## Handoff
 

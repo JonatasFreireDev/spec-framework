@@ -1,0 +1,5 @@
+schema_version: 1
+profiles:
+  PROFILE-PRODUCT-DEFAULT: profiles/product-default.yaml
+standards: {}
+exceptions: {}

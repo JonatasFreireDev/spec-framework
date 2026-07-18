@@ -25,6 +25,7 @@ Approved Specification; approved Design or `Not applicable`; approved Technical 
 
 ## Required reading
 - [`engineering-systems.md`](../../docs/engineering-systems.md) for the pinned Engineering System and Quality System contracts.
+- [`engineering-catalog-and-standards.md`](../../docs/engineering-catalog-and-standards.md) for applicable entity, profile, standard, exception, and operations contracts.
 - the framework root's `FRAMEWORK.md`
 - Relevant parent context.md files.
 - This skill owns its generation resources: `assets/engineering-proposal-template.md`.

@@ -76,16 +76,17 @@ func Ensure(version string) (string, error) {
 	}
 	defer os.RemoveAll(tmp)
 	assets := map[string]string{
-		"FRAMEWORK.md":                      "FRAMEWORK.md",
-		"docs/artifact-registry-modules.md": "docs/artifact-registry-modules.md",
-		"docs/execution-runtime.md":         "docs/execution-runtime.md",
-		"docs/engineering-systems.md":       "docs/engineering-systems.md",
-		"docs/lifecycle-and-approvals.md":   "docs/lifecycle-and-approvals.md",
-		"framework/AGENTS.framework.md":     "AGENTS.framework.md",
-		"framework/delivery-closure.md":     "delivery-closure.md",
-		"framework/init":                    "init",
-		"framework/skills":                  "skills",
-		"examples/events":                   "examples/events",
+		"FRAMEWORK.md":                              "FRAMEWORK.md",
+		"docs/artifact-registry-modules.md":         "docs/artifact-registry-modules.md",
+		"docs/execution-runtime.md":                 "docs/execution-runtime.md",
+		"docs/engineering-systems.md":               "docs/engineering-systems.md",
+		"docs/engineering-catalog-and-standards.md": "docs/engineering-catalog-and-standards.md",
+		"docs/lifecycle-and-approvals.md":           "docs/lifecycle-and-approvals.md",
+		"framework/AGENTS.framework.md":             "AGENTS.framework.md",
+		"framework/delivery-closure.md":             "delivery-closure.md",
+		"framework/init":                            "init",
+		"framework/skills":                          "skills",
+		"examples/events":                           "examples/events",
 	}
 	for source, dest := range assets {
 		if err := copyTree(source, filepath.Join(tmp, dest)); err != nil {

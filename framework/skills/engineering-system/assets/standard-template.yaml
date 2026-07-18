@@ -1,0 +1,21 @@
+schema_version: 1
+id: STD-CATEGORY-001
+title: "[title]"
+version: 1.0.0
+status: draft
+category: "[architecture | code | api | events | data | dependencies | security | observability | testing | delivery]"
+level: "[required | recommended | experimental | deprecated]"
+applies_to:
+  entity_types: []
+  capabilities: []
+rules:
+  - id: STD-CATEGORY-001-R01
+    requirement: "[verifiable requirement]"
+    verification:
+      - "[test, schema, review, command, or evidence]"
+evidence:
+  required: []
+exceptions:
+  allowed: true
+  approval_required: true
+  maximum_duration_days: 90

@@ -44,7 +44,7 @@ The validator checks:
 - decision index paths in `.product/decisions.json`;
 - visual Design source identity, immutable versions, authority, screen inventories, snapshot paths, origin mode, maturity, fidelity policy, source references, and requirement coverage values;
 - canonical Design System identity, status, semantic version, token schema, aliases and cycles, plus proposed-or-later Design consumer pins;
-- canonical Engineering System identity, semantic version, origin, catalog areas, maturity evidence, contract paths, and structured delivery triggers;
+- canonical Engineering System identity, semantic version, origin, catalog areas, technical entity graph, standards profiles and exceptions, operations references, maturity evidence, contract paths, and structured delivery triggers;
 - Engineering Proposal consumer pins, Engineering Review proposal hashes, and current approval evidence for operational navigation;
 - decision references against `.product/decisions.json`, including approved delivery dependencies;
 - visual Mermaid standards for flowcharts;

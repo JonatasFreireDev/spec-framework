@@ -43,6 +43,9 @@ func TestEnsureMaterializesVersionedAssets(t *testing.T) {
 			t.Fatal(err)
 		}
 	}
+	if _, err := os.Stat(filepath.Join(root, "docs", "engineering-catalog-and-standards.md")); err != nil {
+		t.Fatal(err)
+	}
 	data, err := os.ReadFile(filepath.Join(root, "AGENTS.framework.md"))
 	if err != nil || !strings.Contains(string(data), "Common Agent Rules") {
 		t.Fatalf("runtime common agent rules missing: %v", err)

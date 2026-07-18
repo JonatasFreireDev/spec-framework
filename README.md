@@ -78,7 +78,7 @@ spec-framework uninstall --purge --yes
 | **Engineering flow** | Technical Discovery → Engineering Proposal → independent Engineering Review → Implementation Plan. |
 | **Execution Graph** | Complete vertical task contracts as a DAG with explicit `writeScope`; parallel work never overlaps write paths. |
 | **Approval gates** | `draft → proposed → approved → in_progress → implemented → validated → released`, each transition mechanically checked (content hashes, same-diff QA + Code Review, staleness detection). |
-| **Shared systems** | Optional versioned Design System (`design/system/`) and Engineering System (`engineering/`) — pinned per delivery, never self-approving. |
+| **Shared systems** | Optional versioned Design System (`design/system/`) and scalable Engineering System (`engineering/`) with graph catalogs, standards, quality, operations, and evidence — pinned per delivery, never self-approving. |
 
 ## CLI At a Glance
 

@@ -9,7 +9,7 @@ description: "Engineering System Skill. Use when an agent needs to create, adopt
 Planning
 
 ## Responsibility
-Own the shared `engineering/engineering-system.md` and `engineering-system.yaml` contracts. Maintain stable product engineering knowledge without making product decisions, planning a specific delivery, or writing application code.
+Own the shared `engineering/engineering-system.md` and `engineering-system.yaml` contracts, technical entity graph, standards, operations catalogs, quality policy, and evidence index. Maintain stable product engineering knowledge without making product decisions, planning a specific delivery, or writing application code.
 
 ## Operating modes
 - create: establish the first evidence-backed Engineering System.
@@ -22,13 +22,14 @@ Own the shared `engineering/engineering-system.md` and `engineering-system.yaml`
 Product context; real code and test tree; deployment and operations configuration; approved decisions; conventions; runbooks; dependency evidence.
 
 ## Outputs
-`engineering/engineering-system.md`; `engineering/engineering-system.yaml`; architecture, standards, quality, runbook, and evidence links; decision candidates; version and compatibility notes.
+`engineering/engineering-system.md`; `engineering/engineering-system.yaml`; root technical catalog; on-demand system, application, component, repository, interface, data-store, and deployment records; standards catalog, profiles, standards, and exceptions; architecture, quality, operations, runbook, and evidence links; decision candidates; version and compatibility notes.
 
 ## Required reading
 - [`engineering-systems.md`](../../docs/engineering-systems.md) for shared Engineering System and Quality System versioning, migration, and approval boundaries.
+- [`engineering-catalog-and-standards.md`](../../docs/engineering-catalog-and-standards.md) for the scalable entity graph, standards inheritance, exceptions, and materialization boundary.
 - the framework root's `FRAMEWORK.md`
 - Relevant parent context.md files.
-- This skill owns its generation resources: the engineering-system, quality-system, quality-model, test-strategy, and fitness-function resources in `assets/`.
+- This skill owns every generation resource in `assets/`: Engineering System, technical catalog and entity, standards catalog, standard, profile, exception, quality system and model, test strategy, fitness functions, operations catalog, and evidence inventory.
 - Approved decisions are discovered through the active product root's `.product/decisions.json`; resolve each registered `path` from its declared domain root (`knowledge/decisions/`, `design/decisions/`, or `engineering/decisions/`).
 
 ## Discovery and challenge
@@ -43,12 +44,14 @@ Use `scripts/inventory-engineering-evidence.ps1` on Windows or `scripts/inventor
 ## Workflow
 1. Inspect the real product code, tests, configuration, environments, operations evidence, and existing engineering documents. If no code exists, create explicit hypothesis contracts, pending decisions, and intended constraints rather than pretending evidence exists.
 2. Define the covered product and repository boundaries and choose `generate`, `evolve`, or `adopt`.
-3. Inventory modules, ownership, data, integrations, standards, quality attributes, test strategy, gates, environments, test data, runbooks, and consumers with evidence paths.
-4. Maintain `engineering/quality/quality-system.md` and `quality-system.yaml` together with the quality model, test strategy, and fitness functions. Keep commands canonical in `knowledge/conventions/gates.md`.
-5. Declare maturity per area only when its required evidence exists; maturity never implies approval.
-6. Link approved `DEC-*` records for governed choices and record candidates for missing structural, data, security, or operational decisions.
-7. Update the human contract and mechanical catalogs together, applying semantic versioning and compatibility notes.
-8. Stop before inventing architecture, editing application code, or creating approval records.
+3. Inventory systems, applications, components, repositories, ownership, data stores, interfaces, deployments, standards, quality attributes, environments, runbooks, and consumers with evidence paths. Model stable IDs and graph relations instead of inferring them from folders.
+4. Initialize only root catalogs. Materialize entity records, standards, profiles, exceptions, environments, deployments, and runbooks on demand from evidence or explicit hypotheses.
+5. Compose standards through profiles selected by entity type, capability, or explicit assignment. A narrower contract may add constraints but requires a governed exception or decision to weaken an inherited required rule.
+6. Maintain `engineering/quality/quality-system.md` and `quality-system.yaml` together with the quality model, test strategy, and fitness functions. Keep commands canonical in `knowledge/conventions/gates.md`.
+7. Declare maturity per area only when its required evidence exists; maturity never implies approval.
+8. Link approved `DEC-*` records for governed choices and record candidates for missing structural, data, security, standards, or operational decisions.
+9. Update the human contract and every affected mechanical catalog together, applying semantic versioning and compatibility notes.
+10. Stop before inventing architecture, editing application code, or creating approval records.
 
 ## Quality checklist
 - [ ] Preserves traceability to affected artifacts.
@@ -60,6 +63,10 @@ Use `scripts/inventory-engineering-evidence.ps1` on Windows or `scripts/inventor
 - [ ] Quality exceptions identify scope, owner, rationale, residual risk, mitigation, expiry or review date, re-entry gate, and status.
 - [ ] Only open, unexpired, in-scope exceptions are passed to delivery consumers.
 - [ ] Stable knowledge is not duplicated into delivery proposals.
+- [ ] Repository, application, component, and deployment relations use stable IDs and support monorepo and polyrepo shapes.
+- [ ] Standards declare version, obligation level, applicability, verification, evidence, and exception policy.
+- [ ] Profiles do not contain cycles and consumers cannot silently weaken inherited required standards.
+- [ ] Optional records are materialized only when evidence or explicit hypotheses require them.
 - [ ] Detects gaps, conflicts, and dependencies.
 - [ ] Records or requests decisions for meaningful changes.
 - [ ] Leaves a clear handoff for the next skill or orchestrator.
