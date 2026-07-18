@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="description" content="Guia visual do Spec Framework: método, skills, gates, fluxos de design, engenharia e entrega, e referência de CLI.">
+<meta name="description" content="Guia visual do Spec Framework: método, gates, bases de produto, portal de revisão, fluxos de design, engenharia e referência de CLI.">
 <title>Spec Framework — Guia</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📐</text></svg>">
 </head>
@@ -553,8 +553,10 @@ h2.section-title{
   letter-spacing:.03em;
 }
 .level p{margin:6px 0 0;font-size:13px;color:var(--ink-soft);}
+.portal-shot{margin:28px 0;border:1px solid var(--line);background:var(--bg-raised);}
+.portal-shot img{display:block;width:100%;height:auto;}
+.portal-shot figcaption{padding:10px 14px;font-size:13px;color:var(--ink-soft);border-top:1px solid var(--line);}
 
-/* ---------- skills catalog ---------- */
 .cat-block{margin-bottom:34px;}
 .cat-block:last-child{margin-bottom:0;}
 .cat-block > h3{
@@ -573,27 +575,6 @@ h2.section-title{
   margin:-4px 0 14px;
   max-width:70ch;
 }
-.skill-grid{
-  display:grid;
-  grid-template-columns:repeat(auto-fill,minmax(260px,1fr));
-  gap:12px;
-}
-.skill{
-  border:1px solid var(--line);
-  border-radius:var(--radius);
-  padding:13px 15px;
-  background:var(--bg-raised);
-}
-.skill .name{
-  font-weight:600;
-  font-size:14px;
-  margin-bottom:4px;
-}
-.skill .desc{
-  font-size:13px;
-  color:var(--ink-soft);
-}
-
 /* ---------- design page ---------- */
 .dims-grid{
   display:grid;
@@ -975,8 +956,8 @@ footer{
 }
 
 @media (prefers-reduced-motion:no-preference){
-  .pillar,.skill,.level,.rung{transition:border-color .15s ease;}
-  .pillar:hover,.skill:hover,.level:hover{border-color:var(--accent);}
+  .pillar,.level,.rung{transition:border-color .15s ease;}
+  .pillar:hover,.level:hover{border-color:var(--accent);}
 }
 </style>
 
@@ -991,7 +972,6 @@ footer{
         <a href="#gates" data-page="gates">Gates</a>
       </span>
       <span class="nav-group"><span class="nav-label">Execução</span>
-        <a href="#skills" data-page="skills">Skills</a>
         <a href="#design" data-page="design">Design</a>
         <a href="#engenharia" data-page="engenharia">Engenharia</a>
         <a href="#entrega" data-page="entrega">Entrega</a>
@@ -1000,6 +980,7 @@ footer{
         <a href="#comecar" data-page="comecar">Começar</a>
         <a href="#exemplo" data-page="exemplo">Exemplo</a>
         <a href="#guia" data-page="guia">Guia</a>
+        <a href="#portal" data-page="portal">Portal</a>
         <a href="#cli" data-page="cli">CLI</a>
       </span>
     </nav>
@@ -1059,11 +1040,6 @@ footer{
   <div class="toc-section">
     <p class="kicker">Execução</p>
     <div class="toc-grid">
-      <a class="toc-card" href="#skills" data-page="skills">
-        <span class="toc-kicker">Catálogo</span>
-        <span class="toc-title">As skills</span>
-        <span class="toc-desc">As 49 pastas de skills e os contratos compartilhados do framework, organizados por camada — fundação, design, engenharia, auditoria.</span>
-      </a>
       <a class="toc-card" href="#design" data-page="design">
         <span class="toc-kicker">Experiência</span>
         <span class="toc-title">Fluxo de Design</span>
@@ -1118,6 +1094,7 @@ footer{
     <div class="page-toc">
       <a href="#comecar-instalar">Instalar a CLI</a>
       <a href="#comecar-ponto">Ponto de partida</a>
+      <a href="#comecar-bases">Bases antes das specs</a>
       <a href="#comecar-bootstrap">Ler o Bootstrap</a>
     </div>
 
@@ -1173,7 +1150,17 @@ footer{
     </div>
 
     <div class="cat-block" style="margin-top:48px;">
-      <h3 class="block-title" id="comecar-bootstrap">3. Leia o Bootstrap e peça ajuda ao agente</h3>
+      <h3 class="block-title" id="comecar-bases">3. Bases antes das specs</h3>
+      <p class="lead">Antes de criar uma Specification, o framework estabelece o Product Landscape e os contratos compartilhados de <code>knowledge/</code>, <code>engineering/</code> e <code>design/system/</code>.</p>
+      <div class="starting-point-meta">
+        <div><b>Com código existente</b>mapeia raízes, módulos, regras, integrações, dados, testes, configurações e ativos de design; observação e inferência ficam separadas.</div>
+        <div><b>Sem código</b>cria os mesmos contratos como hipóteses revisáveis, com decisões pendentes de aprovação humana.</div>
+        <div><b>Depois da base</b>o produto segue para Domain → Goal → Feature → Use Case → Specification sem inventar arquitetura, qualidade ou experiência local.</div>
+      </div>
+    </div>
+
+    <div class="cat-block" style="margin-top:48px;">
+      <h3 class="block-title" id="comecar-bootstrap">4. Leia o Bootstrap e peça ajuda ao agente</h3>
       <p class="lead" style="margin-bottom:20px;">Depois do <code>init</code>, o arquivo <code>product/BOOTSTRAP.md</code> explica o caminho escolhido para o seu produto. Leia esse arquivo antes de preencher documentos ou executar outros comandos.</p>
       <div class="starting-point-meta">
         <div><b>O Bootstrap mostra</b>o que o seu ponto de partida significa, qual é o próximo passo, quais arquivos o agente deve ler e qual gate depende da sua decisão.</div>
@@ -1352,7 +1339,7 @@ footer{
     </div>
   </section>
 
-  <section id="skills" class="page">
+  <template id="skills-catalog-removed">
     <div class="section-head">
       <h2 class="section-title">As skills</h2>
       <div class="section-note">Especialistas com responsabilidade única — modos como <span class="tag">create</span> <span class="tag">audit</span> <span class="tag">evolve</span></div>
@@ -1468,7 +1455,7 @@ footer{
         <div class="skill"><div class="name">Release Orchestrator</div><div class="desc">Checagem final: QA, review, security review e evidências antes de liberar.</div></div>
       </div>
     </div>
-  </section>
+  </template>
 
   <section id="design" class="page">
     <div class="section-head">
@@ -1992,6 +1979,31 @@ footer{
     </div>
   </section>
 
+  <section id="portal" class="page">
+    <div class="section-head">
+      <h2 class="section-title">Portal local de revisão</h2>
+      <div class="section-note">A visão visual da documentação que vive no seu próprio projeto.</div>
+    </div>
+    <p class="lead">Abra a árvore de documentação no navegador para ver o que está pendente, bloqueado, aprovado ou recusado. Selecione um documento para ler o conteúdo, conferir detalhes e dependências e tomar a decisão permitida.</p>
+    <h3 class="block-title">Revisão de um arquivo</h3>
+    <figure class="portal-shot">
+      <img src="assets/portal-review.png" alt="Portal local com árvore de documentação, itens pendentes de decisão, conteúdo do artefato e painel lateral de revisão.">
+      <figcaption>O portal local apresenta contexto, conteúdo e a decisão permitida no mesmo fluxo.</figcaption>
+    </figure>
+    <h3 class="block-title">Revisão de uma pasta</h3>
+    <figure class="portal-shot">
+      <img src="assets/portal-folder-review.png" alt="Portal local com a pasta domains selecionada, tabela de documentos, status, seleção em lote e painel de revisão em lote.">
+      <figcaption>Ao selecionar uma pasta, a revisão em lote mostra os documentos, sua elegibilidade e as decisões disponíveis.</figcaption>
+    </figure>
+    <div class="pillars pillars-row">
+      <div class="pillar"><h3>Navegação contextual</h3><p>Árvore de pastas, busca, filtros e dependências levam diretamente ao documento relevante.</p></div>
+      <div class="pillar"><h3>Decisão governada</h3><p>Aprovação e recusa respeitam elegibilidade, status e o nome localmente salvo de quem revisa.</p></div>
+      <div class="pillar"><h3>Revisão em lote</h3><p>Pastas exibem documentos selecionáveis para aprovar ou recusar em conjunto quando a regra permitir.</p></div>
+    </div>
+    <div class="cli-scroll" style="margin-top:28px;"><pre class="cli"><span class="cmd">spec-framework dashboard</span></pre></div>
+    <p class="note">O portal roda localmente e lê apenas o diretório <code>product/</code>. Ele não envia sua documentação para um serviço externo.</p>
+  </section>
+
   <section id="cli" class="page">
     <div class="section-head">
       <h2 class="section-title">Referência de comandos — CLI</h2>
@@ -2154,7 +2166,7 @@ footer{
 
   var titles = {
     inicio:'Início', comecar:'Primeiros passos', oque:'O que é',
-    escada:'A escada de entrega', skills:'As skills', design:'Fluxo de Design',
+    escada:'A escada de entrega', design:'Fluxo de Design', portal:'Portal local de revisão',
     engenharia:'Fluxo de Engenharia', gates:'Gates de aprovação', entrega:'Da task à entrega',
     exemplo:'Exemplo ponta a ponta', guia:'O Framework Guide', cli:'Referência de comandos'
   };
