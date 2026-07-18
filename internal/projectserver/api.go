@@ -387,7 +387,7 @@ func readGitState(root string) gitState {
 	return out
 }
 func allTypeConfigs() []artifactTypeConfig {
-	keys := []string{"problem", "vision", "product-principles", "north-star", "strategy", "feature-brief", "product-baseline", "implementation-assessment", "domain", "user-goal", "feature", "use-case", "design", "design-system", "engineering-system", "engineering-proposal", "engineering-review", "tests", "qa-evidence", "security-review", "audit", "execution-graph", "taskset", "task", "decision", "release", "security-baseline"}
+	keys := []string{"problem", "vision", "product-principles", "north-star", "strategy", "feature-brief", "product-baseline", "implementation-assessment", "product-landscape", "domain", "user-goal", "feature", "use-case", "design", "design-system", "engineering-system", "engineering-proposal", "engineering-review", "tests", "qa-evidence", "security-review", "audit", "execution-graph", "taskset", "task", "decision", "release", "security-baseline"}
 	out := make([]artifactTypeConfig, 0, len(keys))
 	for _, key := range keys {
 		out = append(out, typeConfig(key))
