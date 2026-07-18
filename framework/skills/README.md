@@ -8,6 +8,8 @@ This folder contains framework-owned skills that operationalize the method. Each
 
 Use these skills when creating, updating, auditing, explaining, routing, or handing off framework artifacts. Specialist skills own canonical artifact content. Orchestrator skills own flow, gates, sequencing, and handoff.
 
+Engineering Orchestrator supports sequential execution by default and optional harness-native subagent delegation. Delegated specialists receive persisted minimal-context envelopes, bounded phases, non-overlapping write scopes, and hash-verified return contracts; the CLI never starts agents itself.
+
 Definition and planning skills must follow [Discovery And Challenge](discovery-and-challenge.md). They inspect evidence before asking, use the harness-native structured question tool when available, compare meaningful options, recommend a path, warn about material risks, and stop on unanswered blocking questions.
 
 ## Path Resolution

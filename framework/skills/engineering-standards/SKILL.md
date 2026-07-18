@@ -35,6 +35,10 @@ Technical entity graph; engineering conventions; code and CI evidence; quality a
 
 Follow the shared [Discovery And Challenge contract](../discovery-and-challenge.md) before selecting obligation levels, compatibility policy, profile inheritance, or exception boundaries.
 
+## Delegated execution
+
+When `engineering-orchestrator` supplies an `engineering-specialist` dispatch envelope through `dispatch-orchestrator`, treat it as a minimal-context subagent assignment. Require the returned Technical Landscape dependency, verify the input hash and write scope, read the graph plus standards evidence, write only under `engineering/standards/`, and return a compact summary, blockers, evidence, decision candidates, and product-relative output hashes to `subagent-return-reviewer`. Do not request or retain the parent conversation.
+
 ## Workflow
 1. Read the technical graph, existing conventions, quality and security contracts, and real enforcement evidence.
 2. Define standards only for stable technical rules with an explicit applicability boundary and verification method.

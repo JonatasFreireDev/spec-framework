@@ -35,6 +35,10 @@ Technical graph; deployment configuration; infrastructure; runtime and observabi
 
 Follow the shared [Discovery And Challenge contract](../discovery-and-challenge.md) before material service-level, recovery, data-loss, rollout, or ownership choices.
 
+## Delegated execution
+
+When `engineering-orchestrator` supplies an `engineering-specialist` dispatch envelope through `dispatch-orchestrator`, treat it as a minimal-context subagent assignment. Require the returned Technical Landscape dependency, verify the input hash and write scope, read the graph plus operational evidence, write only under `engineering/operations/`, and return a compact summary, blockers, evidence, decision candidates, and product-relative output hashes to `subagent-return-reviewer`. Do not request or retain the parent conversation.
+
 ## Workflow
 1. Read the technical graph and inspect deployment, infrastructure, observability, incident, continuity, and runbook evidence.
 2. Inventory real environments, deployable units, release paths, rollback mechanisms, dependencies, service objectives, and operational owners.

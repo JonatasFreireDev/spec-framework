@@ -33,6 +33,8 @@ Use the generating skill's own templates whenever a new canonical artifact is cr
 - `specification-contract-template.md`: reusable structure for modular product, behavior, UX, API, data, security, quality, observability, and rollout contracts.
 - `import-traceability-template.json`, `import-plan-template.json`, `import-mapping-template.json`, `import-report-template.md`: staged source-import evidence, review, selection, and reporting contracts.
 - `command-plan-template.json`, `handoff-template.json`, `runtime-workspace-template.json`, `integration-template.json`: execution-runtime planning, handoff, workspace, and integration state contracts.
+- `engineering-baseline-handoff-template.json`: Engineering Orchestrator execution-mode, dependency, minimal-context, and write-scope contract.
+- `engineering-specialist-return-template.json`: compact engineering return contract owned by Subagent Return Reviewer.
 
 ## Responsibility
 

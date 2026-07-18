@@ -36,6 +36,8 @@ When the product declares `product/design/system/`, route shared foundations, to
 
 Route creation or evolution of `product/engineering/` through Engineering Orchestrator. Technical Landscape owns shared architecture and entity graph contracts; Engineering Standards owns standards and profiles; Operations Baseline owns operational contracts; Engineering Evidence owns evidence and maturity assessments; Engineering System owns only aggregate and Quality System consolidation. Do not let one specialist edit another specialist's subtree without an explicit handoff, and stop for human approval of the current composite hash.
 
+Engineering Orchestrator may use harness-native subagents only when its persisted handoff selects `delegated` execution. Keep `sequential` as the compatible default. In delegated mode, give each specialist only its dispatch envelope and required reading, enforce declared dependencies and write scope, bound concurrency, verify output hashes, and reconcile compact returns in the parent context. If native subagents are unavailable, apply the declared fallback; the CLI itself never spawns agents.
+
 ## Required Reading
 
 Authority order:

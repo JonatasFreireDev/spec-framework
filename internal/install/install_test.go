@@ -289,6 +289,10 @@ func TestInitShipsEngineeringCatalogRootsForEveryAgentTarget(t *testing.T) {
 			t.Errorf("runtime missing engineering skill %s: %v", skill, err)
 		}
 	}
+	handoff, err := os.ReadFile(filepath.Join(result.SpecRoot, "skills", "engineering-orchestrator", "assets", "engineering-baseline-handoff-template.json"))
+	if err != nil || !strings.Contains(string(handoff), `"mode": "sequential"`) || !strings.Contains(string(handoff), `"context_policy": "minimal"`) || !strings.Contains(string(handoff), `"skill": "engineering-system"`) {
+		t.Fatalf("runtime engineering delegation contract missing: %v", err)
+	}
 	aggregate, err := os.ReadFile(filepath.Join(target, "product", "engineering", "engineering-system.yaml"))
 	if err != nil {
 		t.Fatal(err)

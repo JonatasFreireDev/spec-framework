@@ -36,6 +36,10 @@ Engineering Orchestrator handoff; specialist-owned technical landscape, standard
 
 Follow the shared [Discovery And Challenge contract](../discovery-and-challenge.md) before substantive creation or material revision.
 
+## Delegated execution
+
+When `engineering-orchestrator` supplies an `engineering-specialist` dispatch envelope through `dispatch-orchestrator`, treat it as a minimal-context subagent assignment. Require every returned specialist dependency, verify the input hash and write scope, read their compact returns and canonical outputs, write only `engineering/engineering-system.md`, `engineering/engineering-system.yaml`, and `engineering/quality/`, and return the composite hash, validation evidence, blockers, and product-relative output hashes to `subagent-return-reviewer`. Do not request or retain the parent conversation and do not approve the aggregate.
+
 
 Use scripts/invoke-cli.ps1 on Windows or scripts/invoke-cli.sh on macOS/Linux for the CLI operation in this skill's reviewed scope. The wrapper never adds --yes or an approver identity.
 

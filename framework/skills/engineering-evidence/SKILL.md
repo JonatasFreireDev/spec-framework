@@ -34,6 +34,10 @@ Technical graph; standards; operations; Quality System; code and tests; CI and r
 
 Follow the shared [Discovery And Challenge contract](../discovery-and-challenge.md) when evidence limitations, freshness policy, maturity interpretation, or ownership requires a material choice.
 
+## Delegated execution
+
+When `engineering-orchestrator` supplies an `engineering-specialist` dispatch envelope through `dispatch-orchestrator`, treat it as a minimal-context subagent assignment. Require returned Standards and Operations dependencies, verify the input hash and write scope, read their contracts plus evidence sources, write only under `engineering/evidence/`, and return a compact summary, blockers, evidence, decision candidates, and product-relative output hashes to `subagent-return-reviewer`. Do not request or retain the parent conversation.
+
 ## Workflow
 1. Run the platform-appropriate evidence inventory script and inspect referenced local, CI, runtime, and approved external sources.
 2. Normalize each material source into a stable `EVID-*` reference without copying volatile logs into canonical contracts.

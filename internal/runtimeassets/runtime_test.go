@@ -43,6 +43,11 @@ func TestEnsureMaterializesVersionedAssets(t *testing.T) {
 			t.Fatal(err)
 		}
 	}
+	for _, name := range []string{"skills/engineering-orchestrator/assets/engineering-baseline-handoff-template.json", "skills/subagent-return-reviewer/assets/engineering-specialist-return-template.json"} {
+		if _, err := os.Stat(filepath.Join(root, filepath.FromSlash(name))); err != nil {
+			t.Fatal(err)
+		}
+	}
 	if _, err := os.Stat(filepath.Join(root, "docs", "engineering-catalog-and-standards.md")); err != nil {
 		t.Fatal(err)
 	}

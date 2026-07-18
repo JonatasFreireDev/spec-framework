@@ -6,6 +6,8 @@ This document contains the operational contract for resumable, parallel, and evi
 
 The runtime coordinates workspaces, task ownership, command plans, execution waves, isolated worktrees, local integration, and recovery. It does not grant product approval, replace task write scopes, or spawn agents.
 
+Harness-native agent delegation is distinct from process execution. The runtime may persist a supervised envelope that a parent agent passes to a native subagent, but only the active harness creates, waits for, interrupts, or collects that subagent. This keeps the CLI portable across Codex, Cursor, Claude, and environments without native delegation.
+
 ## Configuration authority
 
 Runtime behavior is determined by the pinned product manifest, approved product
@@ -50,6 +52,8 @@ Runtime commands include `runtime`, `resume`, `handoff`, `checkpoint`, `lease`, 
 Operational memory is optional and has shared (`memory/shared.md`) and task-local (`memory/tasks/<task>.md`) tiers. Its compact form uses `- source: [label](path)` and `- risk: ...` lines. Inspection is read-only; explicit compaction only removes duplicate lines and refuses approval history or flagged contradictions.
 
 ACP dispatch is experimental and disabled by default. A run requires explicit enablement and per-run acknowledgement, then claims exactly one ready task for its named agent. It records a local transcript hash and releases that lease at the end. It cannot invoke Git delivery commands and has no approval, review-resolution, push, merge, or release authority.
+
+Engineering baseline delegation does not use ACP process execution. Its `engineering-specialist` envelopes are activated by an Engineering Orchestrator handoff whose execution mode is `delegated`. Dispatch Orchestrator owns assignment and observation; Subagent Return Reviewer validates the compact return before CLI persistence. The envelope pins the specialist role, handoff input hash, dependency returns, minimal-context policy, phase, and product-relative write scope. Assignment capacity is claimed atomically per workspace, so concurrent CLI invocations cannot exceed `max_parallel` or duplicate an active specialist role. Returns require evidence and SHA-256 hashes for outputs inside that scope. The default handoff mode is `sequential`; delegated mode has a declared sequential fallback and a bounded `max_parallel` value.
 
 Extensions are versioned manifests discovered without execution. A capability is usable only when that manifest declares it and the product has a matching versioned record under `.product/extensions/`; discovery itself grants no trust or authority.
 

@@ -148,6 +148,8 @@ The optional Engineering System versions stable architecture, module and data ow
 
 `engineering-orchestrator` governs completeness and sequencing across `technical-landscape`, `engineering-standards`, `operations-baseline`, `engineering-evidence`, and final `engineering-system` consolidation. Each specialist owns its canonical contracts; the orchestrator never authors them, and `engineering-system` aggregates and versions them without absorbing their ownership. The baseline stops at human approval before Domain modeling or delivery-specific Technical Discovery.
 
+Engineering baseline execution supports `sequential` and `delegated` modes. Sequential execution is the compatible default. Delegated execution uses harness-native subagents under persisted dispatch envelopes with minimal context, bounded parallelism, explicit dependency phases, disjoint write scopes, and hash-verified compact returns. `dispatch-orchestrator` owns assignment and observation; `subagent-return-reviewer` validates returns; the CLI persists their contracts but never starts an agent itself. Technical Landscape runs first; Standards and Operations may then run concurrently; Evidence follows their returned contracts; Engineering System aggregates last. If native subagents are unavailable, the declared fallback applies without weakening gates or importing the entire specialist conversation into the parent context.
+
 Engineering standards are versioned, verifiable rules composed through profiles and applied by entity type, capability, or explicit assignment. A more specific contract may add constraints but cannot silently weaken an inherited required standard. Divergence requires a scoped, governed exception or approved decision.
 
 ### Engineering Quality System

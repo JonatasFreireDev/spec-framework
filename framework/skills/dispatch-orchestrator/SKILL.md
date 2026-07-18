@@ -18,7 +18,7 @@ Owns dispatch envelopes, waves, capacity observation, and handoff sequencing. It
 - explain: summarize eligible work and blockers.
 
 ## Inputs
-Approved Execution Graph; ready task or import chunk; workspace state; dispatch configuration; current product decisions.
+Approved Execution Graph; ready task or import chunk; Engineering Orchestrator handoff; workspace state; dispatch configuration; current product decisions.
 
 ## Outputs
 Persisted envelopes; dispatch plan; wave observation; reconciliation findings; handoffs.
@@ -38,7 +38,9 @@ Use scripts/invoke-cli.ps1 on Windows or scripts/invoke-cli.sh on macOS/Linux fo
 3. Require explicit human confirmation before assignment or execution.
 4. Persist envelope, lease, required reading, hashes, scope, forbidden operations, and expected evidence.
 5. Dispatch QA, Code Review, and Security Review only from the returned Code Runner diff hash.
-6. Reconcile and route blockers; never repair approval or product state.
+6. For an Engineering Orchestrator handoff in delegated mode, assign only the declared `engineering-specialist` route, dependency IDs, minimal context, phase, and specialist-owned write scope. The harness creates the native subagent; this skill and the CLI do not.
+7. Enforce bounded `max_parallel` across active Engineering assignments and allow concurrency only for disjoint scopes in the same ready phase.
+8. Reconcile and route blockers; never repair approval or product state.
 
 ## Quality checklist
 - [ ] Preserves traceability to affected artifacts.
@@ -50,6 +52,6 @@ Use scripts/invoke-cli.ps1 on Windows or scripts/invoke-cli.sh on macOS/Linux fo
 - [ ] Leaves a clear handoff for the next skill or orchestrator.
 
 ## Handoff
-Next: code-runner, artifact-importer, qa, code-review, security-review, or product-historian.
+Next: code-runner, artifact-importer, technical-landscape, engineering-standards, operations-baseline, engineering-evidence, engineering-system, qa, code-review, security-review, or product-historian.
 
 Pass forward envelope, hashes, evidence, blockers, risks, and required follow-up work.

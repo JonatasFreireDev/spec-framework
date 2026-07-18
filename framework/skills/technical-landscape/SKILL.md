@@ -35,6 +35,10 @@ Product Landscape; declared code roots; repositories; manifests; source and test
 
 Follow the shared [Discovery And Challenge contract](../discovery-and-challenge.md) before material boundary, ownership, identity, split, merge, or adoption choices.
 
+## Delegated execution
+
+When `engineering-orchestrator` supplies an `engineering-specialist` dispatch envelope through `dispatch-orchestrator`, treat it as a minimal-context subagent assignment. Verify the role, input hash, dependencies, and write scope; read only the declared inputs plus evidence discovered within the code roots; write only under `engineering/architecture/` and `engineering/catalog/`; and return a compact summary, blockers, evidence, decision candidates, and product-relative output hashes to `subagent-return-reviewer`. Do not request or retain the parent conversation.
+
 ## Workflow
 1. Run the platform-appropriate technical landscape inventory script and inspect every declared code root, not only the first repository or dominant application.
 2. Identify systems, applications, components, repositories, interfaces, data stores, deployments, ownership, capabilities, and observable relations.

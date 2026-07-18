@@ -35,6 +35,10 @@ func runDispatch(args []string, out, errout io.Writer) int {
 	id := fs.String("id", "", "dispatch id")
 	summary := fs.String("summary", "", "return summary")
 	evidence := fs.String("evidence", "", "comma-separated evidence")
+	dependencies := fs.String("depends-on", "", "comma-separated dispatch dependencies")
+	outputHashes := fs.String("output-hashes", "", "comma-separated product-relative path=sha256 outputs")
+	blockers := fs.String("blockers", "", "comma-separated delegated blockers")
+	decisionCandidates := fs.String("decision-candidates", "", "comma-separated delegated decision candidates")
 	command := fs.String("command", "", "supervised executable")
 	enable := fs.Bool("enable", false, "explicitly enable supervised execution")
 	wave := fs.String("wave", "", "persisted scheduler wave id")
@@ -83,6 +87,23 @@ func runDispatch(args []string, out, errout io.Writer) int {
 		}
 		return 0
 	case "assign":
+		if isEngineeringDispatchRole(*role) {
+			if !*yes || *work == "" || *task == "" || *agent == "" {
+				fmt.Fprintln(errout, "engineering assignment requires --work --task <handoff-path> --role --agent --yes")
+				return 2
+			}
+			path := *task
+			if !filepath.IsAbs(path) {
+				path = filepath.Join(p, filepath.FromSlash(path))
+			}
+			x, e := dispatch.AssignEngineering(p, *work, path, *role, *agent, splitCSV(*dependencies))
+			if e != nil {
+				fmt.Fprintln(errout, e)
+				return 1
+			}
+			fmt.Fprintln(out, "ASSIGNED", x.ID)
+			return 0
+		}
 		if *role == "technical-discovery" {
 			if !*yes || *work == "" || *task == "" || *agent == "" {
 				fmt.Fprintln(errout, "technical-discovery assignment requires --work --task <question-path> --agent --yes")
@@ -154,6 +175,15 @@ func runDispatch(args []string, out, errout io.Writer) int {
 		if !*yes || *work == "" || *id == "" || *agent == "" {
 			fmt.Fprintln(errout, "dispatch return requires --work --id --agent --yes")
 			return 2
+		}
+		if len(splitCSV(*outputHashes)) > 0 {
+			x, e := dispatch.ReturnEngineering(p, *work, *id, *agent, *summary, splitCSV(*evidence), splitCSV(*outputHashes), splitCSV(*blockers), splitCSV(*decisionCandidates))
+			if e != nil {
+				fmt.Fprintln(errout, e)
+				return 1
+			}
+			fmt.Fprintln(out, "RETURNED", x.ID)
+			return 0
 		}
 		if *reviewInput != "" {
 			data, e := os.ReadFile(*reviewInput)
@@ -251,4 +281,13 @@ func runDispatch(args []string, out, errout io.Writer) int {
 	}
 	fmt.Fprintln(errout, "unknown dispatch operation")
 	return 2
+}
+
+func isEngineeringDispatchRole(role string) bool {
+	switch role {
+	case "technical-landscape", "engineering-standards", "operations-baseline", "engineering-evidence", "engineering-system":
+		return true
+	default:
+		return false
+	}
 }
