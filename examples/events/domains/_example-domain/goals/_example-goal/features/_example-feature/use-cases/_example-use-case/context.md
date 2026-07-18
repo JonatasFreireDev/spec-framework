@@ -1,4 +1,4 @@
-# Context: Example Use Case
+﻿# Context: Example Use Case
 
 ```yaml
 id: UC-EXAMPLE
@@ -51,8 +51,8 @@ This context demonstrates the executable artifact bundle expected for a use case
 
 ## Related Artifacts
 
-- framework/template/use-case-template.md - use-case structure.
-- framework/template/context-template.md - context structure.
+- framework/skills/use-case/assets/use-case-template.md - use-case structure.
+- framework/skills/documentation-writer/assets/context-template.md - context structure.
 
 ## Canonical Documents
 

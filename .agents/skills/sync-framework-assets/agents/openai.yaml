@@ -1,0 +1,4 @@
+interface:
+  display_name: "Sync Framework Assets"
+  short_description: "Synchronize shipped framework asset surfaces"
+  default_prompt: "Use $sync-framework-assets to synchronize the affected framework assets."

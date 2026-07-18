@@ -1,6 +1,6 @@
----
+﻿---
 name: dispatch-orchestrator
-description: "Dispatch Orchestrator Skill. Use when Codex needs to plan, assign, observe, reconcile, or supervise bounded subagent work in the Spec Framework workflow."
+description: "Dispatch Orchestrator Skill. Use when an agent needs to plan, assign, observe, reconcile, or supervise bounded subagent work in the Spec Framework workflow."
 ---
 
 # Dispatch Orchestrator Skill
@@ -26,7 +26,7 @@ Persisted envelopes; dispatch plan; wave observation; reconciliation findings; h
 ## Required reading
 - the framework root's `FRAMEWORK.md`
 - Relevant parent context.md files.
-- Relevant templates in framework/template/.
+- Read the return template owned by Subagent Return Reviewer when validating or routing a completed assignment.
 - Approved product decisions in the active product root's `knowledge/decisions/` and `.product/decisions.json`.
 
 ## Workflow

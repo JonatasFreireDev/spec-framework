@@ -61,7 +61,7 @@ Before creating or updating framework-governed work:
 
 1. Resolve and read the pinned framework root's `FRAMEWORK.md`.
 2. Read the relevant `product/**/context.md` files.
-3. Read the matching template in the pinned framework root's `templates/` when creating or normalizing an artifact.
+3. Read the matching template in the generating skill's `skills/<skill>/assets/` directory when creating or normalizing an artifact.
 4. Read approved decisions from `product/.product/decisions.json` and resolve each record from its registered `path`; default domain roots are `knowledge/decisions/`, `design/decisions/`, and `engineering/decisions/`.
 
 Before writing, confirm the owning skill, artifact scope, and allowed write scope. Do not edit artifacts owned by another skill without an explicit handoff or route.
@@ -72,7 +72,7 @@ The active product root is `product/`.
 
 When a skill mentions product-relative paths such as `knowledge/conventions/gates.md`, `.product/decisions.json`, `domains/`, `audits/`, or `releases/`, resolve them under `product/`.
 
-When a skill mentions framework-relative paths such as `FRAMEWORK.md`, `templates/`, or `skills/`, resolve them under the versioned runtime returned by the CLI. Run executable operations through the installed `spec-framework` CLI.
+When a skill mentions framework-relative paths such as `FRAMEWORK.md`, `skills/<skill>/assets/`, or `skills/`, resolve them under the versioned runtime returned by the CLI. Run executable operations through the installed `spec-framework` CLI.
 
 Use Framework Guide as the default route unless current CLI output or an explicit human request names both the specialist and concrete scope. Revalidate persisted handoffs/checkpoints with `dashboard`, `status`, `next`, or `guide` before routing directly. A skill name without scope is only a hint. Use `spec-framework adapters` for supervised optional-adapter discovery or installation; never install an external adapter silently.
 

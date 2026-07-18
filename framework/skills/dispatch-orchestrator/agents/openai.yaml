@@ -1,0 +1,4 @@
+interface:
+  display_name: "Dispatch Orchestrator"
+  short_description: "Spec Framework workflow: Dispatch Orchestrator"
+  default_prompt: "Use $dispatch-orchestrator to follow the Dispatch Orchestrator workflow."

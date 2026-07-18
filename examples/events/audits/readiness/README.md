@@ -1,4 +1,4 @@
-# Readiness Gate
+﻿# Readiness Gate
 
 The Readiness Gate answers one question:
 
@@ -59,7 +59,7 @@ A use case can generate executable tasks only when all of these are true:
 
 ## Output
 
-Use `framework/template/readiness-report-template.md`.
+Use `framework/skills/audit-orchestrator/assets/readiness-report-template.md`.
 
 Save reports under:
 

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Code Review"
+  short_description: "Spec Framework workflow: Code Review"
+  default_prompt: "Use $code-review to follow the Code Review workflow."

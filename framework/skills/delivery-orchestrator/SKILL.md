@@ -1,6 +1,6 @@
----
+﻿---
 name: delivery-orchestrator
-description: "Delivery Orchestrator Skill. Use when Codex needs to route one workspace through allowed orchestrators using persisted state, handoffs, checkpoints, blockers, and attempt limits in the Spec Framework runtime."
+description: "Delivery Orchestrator Skill. Use when an agent needs to route one workspace through allowed orchestrators using persisted state, handoffs, checkpoints, blockers, and attempt limits in the Spec Framework runtime."
 ---
 
 # Delivery Orchestrator Skill
@@ -27,7 +27,7 @@ Updated workspace state; structured handoff; checkpoint request; routed next orc
 - [`execution-runtime.md`](../../docs/execution-runtime.md) and [`lifecycle-and-approvals.md`](../../docs/lifecycle-and-approvals.md).
 - the framework root's `FRAMEWORK.md`
 - Relevant parent context.md files.
-- Relevant templates in framework/template/.
+- This skill owns its generation resources: `assets/handoff-template.json` and `assets/runtime-workspace-template.json`.
 - Approved decisions are discovered through the active product root's `.product/decisions.json`; resolve each registered `path` from its declared domain root (`knowledge/decisions/`, `design/decisions/`, or `engineering/decisions/`).
 
 ## Workflow

@@ -1,6 +1,6 @@
 ---
 name: audit-orchestrator
-description: "Audit Orchestrator. Use when Codex needs to Run quality checks across an artifact subtree without creating new product scope in the Spec Framework workflow, including creating, updating, auditing, explaining, routing, or handing off related product artifacts."
+description: "Audit Orchestrator. Use when an agent needs to Run quality checks across an artifact subtree without creating new product scope in the Spec Framework workflow, including creating, updating, auditing, explaining, routing, or handing off related product artifacts."
 ---
 
 # Audit Orchestrator
@@ -14,6 +14,7 @@ Orchestrator. Controls workflow, gates, handoffs, and approval checkpoints. It s
 ## Required reading
 - the framework root's `FRAMEWORK.md`
 - Relevant context.md files for the requested scope.
+- This skill owns `assets/audit-template.md` and `assets/readiness-report-template.md`.
 - the active product root's `.product/state.json`, `.product/roadmap.json`, and `.product/decisions.json` when present.
 - Approved decisions are discovered through the active product root's `.product/decisions.json`; resolve each registered `path` from its declared domain root.
 

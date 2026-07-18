@@ -22,7 +22,7 @@ Activate only when `product/.product/framework.json` is valid, then resolve and 
 Framework-owned assets may be copied or installed into the product repository:
 
 - the pinned framework runtime's `skills/`
-- the pinned framework runtime's `templates/`
+- the generating skill's `assets/` directory in the pinned framework runtime
 - the pinned framework runtime's validators
 - `.github/workflows/framework-validation.yml`
 

@@ -1,4 +1,4 @@
-# Product Decisions
+﻿# Product Decisions
 
 ## Purpose
 
@@ -9,7 +9,7 @@ Record product or cross-cutting decisions that change product scope, business ru
 Use the product decision template after framework assets are installed:
 
 ```text
-framework/template/decision-template.md
+framework/skills/product-historian/assets/decision-template.md
 ```
 
 ## Index

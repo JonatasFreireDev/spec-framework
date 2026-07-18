@@ -1,0 +1,4 @@
+interface:
+  display_name: "Execution Scheduler"
+  short_description: "Spec Framework workflow: Execution Scheduler"
+  default_prompt: "Use $execution-scheduler to follow the Execution Scheduler workflow."

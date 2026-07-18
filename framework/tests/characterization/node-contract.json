@@ -11,13 +11,13 @@
     {
       "id": "init",
       "exit_code": 0,
-      "stdout": "Initialized Spec Framework product at <TEMP>/product-repo\n- Product root: product\n- Framework assets: .spec-framework\n- Codex skills mirror: .codex/skills\nNext: fill product/foundation and run:\nnode .spec-framework/tools/validate-product.mjs",
+      "stdout": "Initialized Spec Framework product at <TEMP>/product-repo\n- Product root: product\n- Framework assets: .spec-framework\n- Agent skills mirror: .agents/skills\nNext: fill product/foundation and run:\nnode .spec-framework/tools/validate-product.mjs",
       "stderr": "",
       "artifacts": {
         "product_root_exists": true,
         "framework_root_exists": true,
         "skill_count": 34,
-        "codex_skill_count": 34
+        "agent_skill_count": 34
       }
     },
     {
@@ -39,7 +39,7 @@
     {
       "id": "upgrade",
       "exit_code": 0,
-      "stdout": "Upgraded Spec Framework assets at <TEMP>/product-repo\n- Product root preserved: product\n- Framework assets updated: .spec-framework\n- Version: 5cb3526\n- Codex skills mirror: .codex/skills\nNext: run:\nnode .spec-framework/tools/validate-product.mjs",
+      "stdout": "Upgraded Spec Framework assets at <TEMP>/product-repo\n- Product root preserved: product\n- Framework assets updated: .spec-framework\n- Version: 5cb3526\n- Agent skills mirror: .agents/skills\nNext: run:\nnode .spec-framework/tools/validate-product.mjs",
       "stderr": "",
       "artifacts": {
         "product_preserved": true,

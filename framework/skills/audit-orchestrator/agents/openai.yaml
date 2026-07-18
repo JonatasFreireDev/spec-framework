@@ -1,0 +1,4 @@
+interface:
+  display_name: "Audit Orchestrator"
+  short_description: "Spec Framework workflow: Audit Orchestrator"
+  default_prompt: "Use $audit-orchestrator to follow the Audit Orchestrator workflow."

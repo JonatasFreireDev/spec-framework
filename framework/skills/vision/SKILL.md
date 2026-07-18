@@ -1,6 +1,6 @@
----
+﻿---
 name: vision
-description: "Vision Skill. Use when Codex needs to Turn an approved problem into a product vision, principles, north star, and strategic boundaries in the Spec Framework workflow, including creating, updating, auditing, explaining, routing, or handing off related product artifacts."
+description: "Vision Skill. Use when an agent needs to Turn an approved problem into a product vision, principles, north star, and strategic boundaries in the Spec Framework workflow, including creating, updating, auditing, explaining, routing, or handing off related product artifacts."
 ---
 
 # Vision Skill
@@ -28,7 +28,7 @@ Artifact ownership is exclusive: `vision.md` owns the product direction, target 
 ## Required reading
 - the framework root's `FRAMEWORK.md`
 - Relevant parent context.md files.
-- Relevant templates in framework/template/.
+- This skill owns its generation resources: `assets/vision-template.md`.
 - Approved decisions are discovered through the active product root's `.product/decisions.json`; resolve each registered `path` from its declared domain root (`knowledge/decisions/`, `design/decisions/`, or `engineering/decisions/`).
 
 ## Discovery and challenge

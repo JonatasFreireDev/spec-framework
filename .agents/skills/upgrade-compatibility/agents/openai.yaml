@@ -1,0 +1,4 @@
+interface:
+  display_name: "Upgrade Compatibility"
+  short_description: "Verify safe initialization and upgrade behavior"
+  default_prompt: "Use $upgrade-compatibility to verify this distribution change."

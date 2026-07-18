@@ -1,0 +1,4 @@
+interface:
+  display_name: "Task Generator"
+  short_description: "Spec Framework workflow: Task Generator"
+  default_prompt: "Use $task-generator to follow the Task Generator workflow."

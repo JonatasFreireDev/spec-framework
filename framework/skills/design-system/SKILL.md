@@ -1,6 +1,6 @@
----
+﻿---
 name: design-system
-description: "Design System Skill. Use when Codex needs to create, adopt, evolve, document, or audit the canonical product Design System, including foundations, tokens, themes, components, patterns, sources, versioning, compatibility, and handoff to use-case Design."
+description: "Design System Skill. Use when an agent needs to create, adopt, evolve, document, or audit the canonical product Design System, including foundations, tokens, themes, components, patterns, sources, versioning, compatibility, and handoff to use-case Design."
 ---
 
 # Design System Skill
@@ -26,7 +26,7 @@ Approved Vision and Strategy; personas; brand sources; existing interfaces or co
 ## Required reading
 - the framework root's `FRAMEWORK.md`
 - Relevant product foundation and design context files.
-- Relevant templates in framework/template/.
+- This skill owns its generation resources: `assets/design-system-template.md`, `assets/design-component-template.md`, and `assets/design-pattern-template.md`.
 - Approved decisions are discovered through the active product root's `.product/decisions.json`; resolve each registered `path` from its declared domain root (`knowledge/decisions/`, `design/decisions/`, or `engineering/decisions/`).
 
 ## Discovery and challenge

@@ -1,0 +1,4 @@
+interface:
+  display_name: "New Framework Skill"
+  short_description: "Scaffold a canonical framework agent skill"
+  default_prompt: "Use $new-framework-skill to add a framework skill for this responsibility."

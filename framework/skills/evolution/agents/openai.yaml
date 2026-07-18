@@ -1,0 +1,4 @@
+interface:
+  display_name: "Evolution"
+  short_description: "Spec Framework workflow: Evolution"
+  default_prompt: "Use $evolution to follow the Evolution workflow."

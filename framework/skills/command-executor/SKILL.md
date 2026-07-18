@@ -1,6 +1,6 @@
----
+﻿---
 name: command-executor
-description: "Command Executor Skill. Use when Codex needs to execute validated shell-free r0/r1 command plans with direct argv, confined cwd, sanitized environment, timeout, limited attempts, and evidence capture in the Spec Framework runtime."
+description: "Command Executor Skill. Use when an agent needs to execute validated shell-free r0/r1 command plans with direct argv, confined cwd, sanitized environment, timeout, limited attempts, and evidence capture in the Spec Framework runtime."
 ---
 
 # Command Executor Skill
@@ -27,7 +27,7 @@ Command evidence JSON; stdout/stderr digest or safe log reference; result; route
 - [`execution-runtime.md`](../../docs/execution-runtime.md) for command execution limits, stale inputs, and scope controls.
 - the framework root's `FRAMEWORK.md`
 - Relevant parent context.md files.
-- Relevant templates in framework/template/.
+- The canonical template belongs to the skill that generates the artifact; read that skill's `assets/` directory.
 - Approved decisions are discovered through the active product root's `.product/decisions.json`; resolve each registered `path` from its declared domain root (`knowledge/decisions/`, `design/decisions/`, or `engineering/decisions/`).
 
 ## Workflow

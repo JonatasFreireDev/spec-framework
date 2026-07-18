@@ -1,0 +1,4 @@
+interface:
+  display_name: "Security Review"
+  short_description: "Spec Framework workflow: Security Review"
+  default_prompt: "Use $security-review to follow the Security Review workflow."

@@ -1,6 +1,6 @@
----
+﻿---
 name: code-review
-description: "Code Review Skill. Use when Codex needs to perform a read-only implementation review for completeness, adherence, and quality before validation or release."
+description: "Code Review Skill. Use when an agent needs to perform a read-only implementation review for completeness, adherence, and quality before validation or release."
 ---
 
 # Code Review Skill
@@ -25,6 +25,7 @@ Code Review verifies that implementation matches the Specification, tasks, archi
 - [`lifecycle-and-approvals.md`](../../docs/lifecycle-and-approvals.md) for diff-hash, authority, and failure-routing boundaries.
 
 - the framework root's `FRAMEWORK.md`.
+- This skill owns `assets/code-review-template.md` and `assets/review-finding-template.json`.
 - Relevant `context.md`.
 - Specification, Design, Implementation Plan, Execution Graph, Tasks, Tests, QA Evidence, and Security Review when present.
 - the active product root's `knowledge/conventions/gates.md`.

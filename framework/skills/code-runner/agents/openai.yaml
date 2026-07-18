@@ -1,0 +1,4 @@
+interface:
+  display_name: "Code Runner"
+  short_description: "Spec Framework workflow: Code Runner"
+  default_prompt: "Use $code-runner to follow the Code Runner workflow."

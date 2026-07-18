@@ -1,0 +1,4 @@
+interface:
+  display_name: "Strategy"
+  short_description: "Spec Framework workflow: Strategy"
+  default_prompt: "Use $strategy to follow the Strategy workflow."

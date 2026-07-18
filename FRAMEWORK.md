@@ -236,7 +236,7 @@ This repository keeps three explicit sources:
 
 - `starter/` contains canonical product assets selected by initialization contracts.
 - `examples/events/` contains the worked product instance used as learning material and validation fixture.
-- `framework/` contains the executable framework core: decisions, skills, templates, validators, distributable tools, framework-only tests, and adoption guidance. Audit artifacts belong to the active product's `product/audits/`; this repository does not maintain a separate framework-audit artifact tree. The repository root retains only entry points, packaging metadata, scripts, examples, and starter infrastructure.
+- `framework/` contains the executable framework core: decisions, skills with their owned templates and references, validators, distributable tools, framework-only tests, and adoption guidance. Audit artifacts belong to the active product's `product/audits/`; this repository does not maintain a separate framework-audit artifact tree. The repository root retains only entry points, packaging metadata, scripts, examples, and starter infrastructure.
 
 New products never copy the repository root. `product/.product/framework.json` pins the method version and is the exclusive activation marker; the CLI materializes embedded method assets in the operating system's versioned user cache.
 
@@ -730,7 +730,7 @@ The runtime behavior shared by all agents is defined in the pinned `AGENTS.frame
 ### Activation And Routing
 
 - Activate only from a valid `product/.product/framework.json` with `framework: spec-framework`, a concrete version, and `activation.mode: manifest-only`.
-- Resolve versioned skills through the user-scoped dispatcher. Do not copy specialist trees into adopter repositories.
+- Resolve versioned skills through the user-scoped dispatcher. For the Codex target, install the dispatcher at `~/.agents/skills/spec-framework`; upgrade migrates the legacy namespaced dispatcher when present. Do not copy specialist trees into adopter repositories.
 - Route through Framework Guide unless current CLI evidence or an explicit human request names both specialist and concrete scope. Revalidate persisted handoffs with `guide`, `dashboard`, `status`, or `next`.
 - Read `product/BOOTSTRAP.md`, relevant `context.md` files, applicable decisions, the owning skill, and its template before mutation.
 

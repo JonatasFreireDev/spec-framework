@@ -74,7 +74,6 @@ func Ensure(version string) (string, error) {
 		"framework/delivery-closure.md":     "delivery-closure.md",
 		"framework/init":                    "init",
 		"framework/skills":                  "skills",
-		"framework/template":                "templates",
 		"examples/events":                   "examples/events",
 	}
 	for source, dest := range assets {

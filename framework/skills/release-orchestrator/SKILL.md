@@ -1,6 +1,6 @@
 ---
 name: release-orchestrator
-description: "Release Orchestrator. Use when Codex needs to Verify readiness before a release or merge milestone in the Spec Framework workflow, including creating, updating, auditing, explaining, routing, or handing off related product artifacts."
+description: "Release Orchestrator. Use when an agent needs to Verify readiness before a release or merge milestone in the Spec Framework workflow, including creating, updating, auditing, explaining, routing, or handing off related product artifacts."
 ---
 
 # Release Orchestrator
@@ -15,6 +15,7 @@ Orchestrator. Controls workflow, gates, handoffs, and approval checkpoints. It s
 - [`lifecycle-and-approvals.md`](../../docs/lifecycle-and-approvals.md) for lifecycle, residual-risk, and release gates.
 - the framework root's `FRAMEWORK.md`
 - Relevant context.md files for the requested scope.
+- This skill owns `assets/release-template.md`.
 - the active product root's `.product/state.json`, `.product/roadmap.json`, and `.product/decisions.json` when present.
 - Approved decisions are discovered through the active product root's `.product/decisions.json`; resolve each registered `path` from its declared domain root.
 

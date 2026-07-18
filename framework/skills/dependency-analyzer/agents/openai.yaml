@@ -1,0 +1,4 @@
+interface:
+  display_name: "Dependency Analyzer"
+  short_description: "Spec Framework workflow: Dependency Analyzer"
+  default_prompt: "Use $dependency-analyzer to follow the Dependency Analyzer workflow."

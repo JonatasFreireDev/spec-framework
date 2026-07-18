@@ -1,0 +1,4 @@
+interface:
+  display_name: "PR Finalizer"
+  short_description: "Spec Framework workflow: PR Finalizer"
+  default_prompt: "Use $pr-finalizer to follow the PR Finalizer workflow."

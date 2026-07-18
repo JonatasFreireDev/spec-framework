@@ -5,7 +5,7 @@
   "directories": [],
   "files": [
     {
-      "source": "framework/template/feature-brief-template.md",
+      "source": "framework/skills/product-orchestrator/assets/feature-brief-template.md",
       "target": "foundation/feature-brief.md",
       "replacements": {
         "# Feature Brief: [feature name]": "# Feature Brief",

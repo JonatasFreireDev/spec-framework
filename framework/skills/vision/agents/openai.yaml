@@ -1,0 +1,4 @@
+interface:
+  display_name: "Vision"
+  short_description: "Spec Framework workflow: Vision"
+  default_prompt: "Use $vision to follow the Vision workflow."

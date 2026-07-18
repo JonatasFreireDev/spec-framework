@@ -1,0 +1,4 @@
+interface:
+  display_name: "Implementation Planner"
+  short_description: "Spec Framework workflow: Implementation Planner"
+  default_prompt: "Use $implementation-planner to follow the Implementation Planner workflow."

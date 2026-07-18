@@ -1,6 +1,6 @@
----
+﻿---
 name: integration-orchestrator
-description: "Integration Orchestrator Skill. Use when Codex needs to plan ordered local integration of task commits that passed code review and task qa, then require integrated qa in the Spec Framework runtime."
+description: "Integration Orchestrator Skill. Use when an agent needs to plan ordered local integration of task commits that passed code review and task qa, then require integrated qa in the Spec Framework runtime."
 ---
 
 # Integration Orchestrator Skill
@@ -27,7 +27,7 @@ INTEGRATION-NNN.json; ordered cherry-pick plan; integrated diff hash; conflict r
 - [`execution-runtime.md`](../../docs/execution-runtime.md) and [`lifecycle-and-approvals.md`](../../docs/lifecycle-and-approvals.md).
 - the framework root's `FRAMEWORK.md`
 - Relevant parent context.md files.
-- Relevant templates in framework/template/.
+- This skill owns its generation resources: `assets/integration-template.json`.
 - Approved decisions are discovered through the active product root's `.product/decisions.json`; resolve each registered `path` from its declared domain root (`knowledge/decisions/`, `design/decisions/`, or `engineering/decisions/`).
 
 ## Workflow

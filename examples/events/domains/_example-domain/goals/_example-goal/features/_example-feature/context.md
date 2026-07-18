@@ -1,4 +1,4 @@
-# Context: Example Feature
+﻿# Context: Example Feature
 
 ```yaml
 id: FT-EXAMPLE
@@ -34,8 +34,8 @@ This context demonstrates how a feature links to a parent user goal and child us
 
 ## Related Artifacts
 
-- framework/template/feature-template.md - feature structure.
-- framework/template/context-template.md - context structure.
+- framework/skills/feature/assets/feature-template.md - feature structure.
+- framework/skills/documentation-writer/assets/context-template.md - context structure.
 
 ## Canonical Documents
 

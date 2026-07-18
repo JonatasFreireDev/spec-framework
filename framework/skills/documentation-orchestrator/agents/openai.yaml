@@ -1,0 +1,4 @@
+interface:
+  display_name: "Documentation Orchestrator"
+  short_description: "Spec Framework workflow: Documentation Orchestrator"
+  default_prompt: "Use $documentation-orchestrator to follow the Documentation Orchestrator workflow."

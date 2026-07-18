@@ -1,6 +1,6 @@
----
+﻿---
 name: artifact-importer
-description: "Artifact Importer Skill. Use when Codex needs to inventory and normalize existing product documents into an approved, traceable import plan without silently creating canonical product truth."
+description: "Artifact Importer Skill. Use when an agent needs to inventory and normalize existing product documents into an approved, traceable import plan without silently creating canonical product truth."
 ---
 
 # Artifact Importer Skill
@@ -26,8 +26,8 @@ Source documents; product context; existing Domains, User Goals, Features, gloss
 ## Required reading
 - the framework root's `FRAMEWORK.md`
 - Relevant parent context.md files.
-- Relevant templates in framework/template/.
-- `framework/template/import-traceability-template.json` when normalizing the traceability ledger.
+- This skill owns its generation resources: the import-run resources in `assets/`.
+- `framework/skills/artifact-importer/assets/import-traceability-template.json` when normalizing the traceability ledger.
 - Approved decisions are discovered through the active product root's `.product/decisions.json`; resolve each registered `path` from its declared domain root (`knowledge/decisions/`, `design/decisions/`, or `engineering/decisions/`).
 
 ## Workflow

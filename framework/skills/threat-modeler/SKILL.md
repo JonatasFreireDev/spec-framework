@@ -1,6 +1,6 @@
----
+﻿---
 name: threat-modeler
-description: "Threat Modeler Skill. Use when Codex needs to proactively model product-wide, domain-level, or cross-feature security threats; create or update security baselines; maintain a threat register; or analyze authorization, data integrity, privacy, abuse, replay, concurrency, idempotency, and stack-specific vulnerability classes before individual Security Review gates."
+description: "Threat Modeler Skill. Use when an agent needs to proactively model product-wide, domain-level, or cross-feature security threats; create or update security baselines; maintain a threat register; or analyze authorization, data integrity, privacy, abuse, replay, concurrency, idempotency, and stack-specific vulnerability classes before individual Security Review gates."
 ---
 
 # Threat Modeler Skill
@@ -29,8 +29,8 @@ Security baseline updates; threat register entries; threat scenarios; impacted a
 - the framework root's `FRAMEWORK.md`.
 - Relevant parent and local `context.md` files.
 - the active product root's `knowledge/conventions/security-baseline.md`.
-- `framework/template/security-baseline-template.md` when creating or normalizing a baseline.
-- `framework/template/threat-register-template.md` when creating or normalizing a threat register.
+- `framework/skills/threat-modeler/assets/security-baseline-template.md` when creating or normalizing a baseline.
+- `framework/skills/threat-modeler/assets/threat-register-template.md` when creating or normalizing a threat register.
 - Approved decisions are discovered through the active product root's `.product/decisions.json`; resolve each registered `path` from its declared domain root (`knowledge/decisions/`, `design/decisions/`, or `engineering/decisions/`).
 - Security and failure-routing policy in `FRAMEWORK.md`.
 - Existing active product root `audits/security/threat-register.md` when present.

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Product Historian"
+  short_description: "Spec Framework workflow: Product Historian"
+  default_prompt: "Use $product-historian to follow the Product Historian workflow."

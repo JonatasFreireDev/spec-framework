@@ -1,6 +1,6 @@
----
+﻿---
 name: evolution
-description: "Evolution Skill. Use when Codex needs to Turn observations, metrics, feedback, and audit findings into explicit improvement candidates for approval in the Spec Framework workflow, including creating, updating, auditing, explaining, routing, or handing off related product artifacts."
+description: "Evolution Skill. Use when an agent needs to Turn observations, metrics, feedback, and audit findings into explicit improvement candidates for approval in the Spec Framework workflow, including creating, updating, auditing, explaining, routing, or handing off related product artifacts."
 ---
 
 # Evolution Skill
@@ -26,7 +26,7 @@ Evolution proposals; opportunity notes; expected impact; required approvals.
 ## Required reading
 - the framework root's `FRAMEWORK.md`
 - Relevant parent context.md files.
-- Relevant templates in framework/template/.
+- The canonical template belongs to the skill that generates the artifact; read that skill's `assets/` directory.
 - Approved decisions are discovered through the active product root's `.product/decisions.json`; resolve each registered `path` from its declared domain root (`knowledge/decisions/`, `design/decisions/`, or `engineering/decisions/`).
 
 ## Discovery and challenge

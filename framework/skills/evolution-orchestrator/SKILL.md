@@ -1,6 +1,6 @@
 ---
 name: evolution-orchestrator
-description: "Evolution Orchestrator. Use when Codex needs to Turn feedback, metrics, and audit findings into approved improvement candidates in the Spec Framework workflow, including creating, updating, auditing, explaining, routing, or handing off related product artifacts."
+description: "Evolution Orchestrator. Use when an agent needs to Turn feedback, metrics, and audit findings into approved improvement candidates in the Spec Framework workflow, including creating, updating, auditing, explaining, routing, or handing off related product artifacts."
 ---
 
 # Evolution Orchestrator

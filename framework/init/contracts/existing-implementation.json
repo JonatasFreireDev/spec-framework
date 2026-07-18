@@ -5,7 +5,7 @@
   "directories": [],
   "files": [
     {
-      "source": "framework/template/implementation-assessment-template.md",
+      "source": "framework/skills/product-orchestrator/assets/implementation-assessment-template.md",
       "target": "knowledge/assessments/implementation-assessment.md",
       "replacements": {
         "[IMPL-ASSESS-XXX]": "IMPL-ASSESS-TBD",

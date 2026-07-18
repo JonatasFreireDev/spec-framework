@@ -1,6 +1,6 @@
----
+﻿---
 name: engineering-proposal
-description: "Engineering Proposal Skill. Use when Codex needs to translate approved delivery contracts and Technical Discovery into an intended technical solution before independent Engineering Review in the Spec Framework workflow."
+description: "Engineering Proposal Skill. Use when an agent needs to translate approved delivery contracts and Technical Discovery into an intended technical solution before independent Engineering Review in the Spec Framework workflow."
 ---
 
 # Engineering Proposal Skill
@@ -27,7 +27,7 @@ Approved Specification; approved Design or `Not applicable`; approved Technical 
 - [`engineering-systems.md`](../../docs/engineering-systems.md) for the pinned Engineering System and Quality System contracts.
 - the framework root's `FRAMEWORK.md`
 - Relevant parent context.md files.
-- Relevant templates in framework/template/.
+- This skill owns its generation resources: `assets/engineering-proposal-template.md`.
 - Approved decisions are discovered through the active product root's `.product/decisions.json`; resolve each registered `path` from its declared domain root (`knowledge/decisions/`, `design/decisions/`, or `engineering/decisions/`).
 
 ## Discovery and challenge

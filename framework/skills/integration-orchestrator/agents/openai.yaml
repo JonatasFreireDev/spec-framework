@@ -1,0 +1,4 @@
+interface:
+  display_name: "Integration Orchestrator"
+  short_description: "Spec Framework workflow: Integration Orchestrator"
+  default_prompt: "Use $integration-orchestrator to follow the Integration Orchestrator workflow."

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Commit Crafter"
+  short_description: "Spec Framework workflow: Commit Crafter"
+  default_prompt: "Use $commit-crafter to follow the Commit Crafter workflow."

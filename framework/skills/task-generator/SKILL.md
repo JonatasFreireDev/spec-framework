@@ -1,6 +1,6 @@
----
+﻿---
 name: task-generator
-description: "Task Generator Skill. Use when Codex needs to generate complete, executable, testable vertical task contracts from the execution graph and source specification in the Spec Framework workflow, including creating, updating, auditing, explaining, routing, or handing off related product artifacts."
+description: "Task Generator Skill. Use when an agent needs to generate complete, executable, testable vertical task contracts from the execution graph and source specification in the Spec Framework workflow, including creating, updating, auditing, explaining, routing, or handing off related product artifacts."
 ---
 
 # Task Generator Skill
@@ -31,7 +31,7 @@ tasks.md; task files or task records with Delivery Level/Priority; acceptance ch
 - [`execution-runtime.md`](../../docs/execution-runtime.md) for canonical task paths, graph materialization, write scopes, and shared resources.
 - the framework root's `FRAMEWORK.md`
 - Relevant parent context.md files.
-- Relevant templates in framework/template/.
+- This skill owns its generation resources: `assets/task-template.md` and `assets/tasks-template.md`.
 - Approved decisions are discovered through the active product root's `.product/decisions.json`; resolve each registered `path` from its declared domain root (`knowledge/decisions/`, `design/decisions/`, or `engineering/decisions/`).
 
 ## Discovery and challenge

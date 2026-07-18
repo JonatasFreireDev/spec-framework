@@ -1,0 +1,4 @@
+interface:
+  display_name: "Feature"
+  short_description: "Spec Framework workflow: Feature"
+  default_prompt: "Use $feature to follow the Feature workflow."

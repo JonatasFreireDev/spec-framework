@@ -213,7 +213,7 @@ func (manager Manager) PlanUninstall(purge bool) UninstallPlan {
 	}
 	if purge {
 		plan.CacheRoot = manager.CacheRoot
-		for _, harness := range []string{".codex", ".cursor", ".claude"} {
+		for _, harness := range []string{".agents", ".codex", ".cursor", ".claude"} {
 			plan.Dispatchers = append(plan.Dispatchers, filepath.Join(manager.AgentHome, harness, "skills", "spec-framework"))
 		}
 	}

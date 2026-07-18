@@ -1,0 +1,4 @@
+interface:
+  display_name: "Problem Discovery"
+  short_description: "Spec Framework workflow: Problem Discovery"
+  default_prompt: "Use $problem-discovery to follow the Problem Discovery workflow."

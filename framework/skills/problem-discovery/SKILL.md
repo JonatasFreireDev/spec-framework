@@ -1,6 +1,6 @@
----
+﻿---
 name: problem-discovery
-description: "Problem Discovery Skill. Use when Codex needs to Discover, frame, and validate the core problem before solution work starts in the Spec Framework workflow, including creating, updating, auditing, explaining, routing, or handing off related product artifacts."
+description: "Problem Discovery Skill. Use when an agent needs to Discover, frame, and validate the core problem before solution work starts in the Spec Framework workflow, including creating, updating, auditing, explaining, routing, or handing off related product artifacts."
 ---
 
 # Problem Discovery Skill
@@ -26,7 +26,7 @@ problem.md; opportunities.md; research questions; assumptions; risk notes; conte
 ## Required reading
 - the framework root's `FRAMEWORK.md`
 - Relevant parent context.md files.
-- Relevant templates in framework/template/.
+- This skill owns its generation resources: `assets/problem-template.md`, `assets/interview-note-template.md`, and `assets/research-summary-template.md`.
 - Approved decisions are discovered through the active product root's `.product/decisions.json`; resolve each registered `path` from its declared domain root (`knowledge/decisions/`, `design/decisions/`, or `engineering/decisions/`).
 
 ## Discovery and challenge

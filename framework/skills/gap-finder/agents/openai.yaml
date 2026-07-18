@@ -1,0 +1,4 @@
+interface:
+  display_name: "Gap Finder"
+  short_description: "Spec Framework workflow: Gap Finder"
+  default_prompt: "Use $gap-finder to follow the Gap Finder workflow."

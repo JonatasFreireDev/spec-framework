@@ -1,0 +1,4 @@
+interface:
+  display_name: "Evolution Orchestrator"
+  short_description: "Spec Framework workflow: Evolution Orchestrator"
+  default_prompt: "Use $evolution-orchestrator to follow the Evolution Orchestrator workflow."

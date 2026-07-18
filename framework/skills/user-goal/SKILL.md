@@ -1,6 +1,6 @@
----
+﻿---
 name: user-goal
-description: "User Goal Skill. Use when Codex needs to Model stable user goals inside a domain, replacing vague capabilities with user-centered intent in the Spec Framework workflow, including creating, updating, auditing, explaining, routing, or handing off related product artifacts."
+description: "User Goal Skill. Use when an agent needs to Model stable user goals inside a domain, replacing vague capabilities with user-centered intent in the Spec Framework workflow, including creating, updating, auditing, explaining, routing, or handing off related product artifacts."
 ---
 
 # User Goal Skill
@@ -26,7 +26,7 @@ goal.md; goal context.md; candidate journeys; feature opportunity list.
 ## Required reading
 - the framework root's `FRAMEWORK.md`
 - Relevant parent context.md files.
-- Relevant templates in framework/template/.
+- This skill owns its generation resources: `assets/goal-template.md`.
 - Approved decisions are discovered through the active product root's `.product/decisions.json`; resolve each registered `path` from its declared domain root (`knowledge/decisions/`, `design/decisions/`, or `engineering/decisions/`).
 
 ## Discovery and challenge

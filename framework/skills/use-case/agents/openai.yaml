@@ -1,0 +1,4 @@
+interface:
+  display_name: "Use Case"
+  short_description: "Spec Framework workflow: Use Case"
+  default_prompt: "Use $use-case to follow the Use Case workflow."

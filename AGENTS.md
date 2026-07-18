@@ -1,4 +1,4 @@
-# Agent Instructions
+﻿# Agent Instructions
 
 ## Purpose
 
@@ -15,7 +15,7 @@ Always read `FRAMEWORK.md` before changing framework behavior.
 | `starter/` | Clean skeleton copied into new adopter repositories. |
 | `examples/events/` | Worked product fixture used for learning and validation; never use it as the starter. |
 | `cmd/`, `internal/`, `assets.go` | Go CLI, embedded assets, installer, runtime, workflow, and validator implementation. |
-| `.codex/` | Repository-maintenance skills and Codex integration. |
+| `.agents/` | Repository-maintenance skills and agent integration. |
 
 Do not encode Events product scope into reusable framework assets. Do not treat `examples/events/` as the clean source for new products.
 
@@ -23,7 +23,7 @@ Do not encode Events product scope into reusable framework assets. Do not treat 
 
 - Method and gates: `FRAMEWORK.md`.
 - Canonical shipped skills: `framework/skills/`.
-- Canonical templates: `framework/template/`.
+- Canonical templates: each generating skill's `framework/skills/<skill>/assets/` directory.
 - Adopter skeleton: `starter/`.
 - CLI behavior: `cmd/spec-framework/` and `internal/`.
 - Worked product state: `examples/events/` and its `.product/` metadata.
@@ -104,4 +104,4 @@ Report changed framework surfaces, starter/example synchronization, decisions, v
 
 Every implementation report must also include a summary of the implementation, decisions taken, validations executed, blockers and gaps found, corrections applied, pending questions or residual risks, and an explicit confirmation when no known blockers or gaps remain. If a finding cannot be resolved, report the finding, reason, impact, and recommended action.
 
-Use concise status tables and Mermaid only when they materially improve understanding. Use valid UTF-8 status icons: ✅, 🟡, 🔴, and ➖.
+Use concise status tables and Mermaid only when they materially improve understanding. Use valid UTF-8 status icons: âœ…, ðŸŸ¡, ðŸ”´, and âž–.

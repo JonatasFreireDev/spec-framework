@@ -5,7 +5,7 @@
   "directories": [],
   "files": [
     {
-      "source": "framework/template/product-baseline-template.md",
+      "source": "framework/skills/product-orchestrator/assets/product-baseline-template.md",
       "target": "foundation/product-baseline.md",
       "replacements": {
         "[PRODUCT-BASELINE-XXX]": "PRODUCT-BASELINE-TBD",

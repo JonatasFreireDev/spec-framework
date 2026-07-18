@@ -1,0 +1,4 @@
+interface:
+  display_name: "QA"
+  short_description: "Spec Framework workflow: QA"
+  default_prompt: "Use $qa to follow the QA workflow."

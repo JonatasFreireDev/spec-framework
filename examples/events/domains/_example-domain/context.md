@@ -1,4 +1,4 @@
-# Context: Example Domain
+﻿# Context: Example Domain
 
 ```yaml
 id: DOMAIN-EXAMPLE
@@ -34,7 +34,7 @@ This context demonstrates the minimum structure expected from a domain context w
 ## Related Artifacts
 
 - FRAMEWORK.md - canonical framework.
-- framework/template/context-template.md - context structure.
+- framework/skills/documentation-writer/assets/context-template.md - context structure.
 
 ## Canonical Documents
 

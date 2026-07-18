@@ -1,0 +1,4 @@
+interface:
+  display_name: "Specification"
+  short_description: "Spec Framework workflow: Specification"
+  default_prompt: "Use $specification to follow the Specification workflow."

@@ -1,6 +1,6 @@
----
+﻿---
 name: execution-scheduler
-description: "Execution Scheduler Skill. Use when Codex needs to calculate deterministic parallel waves from the dag, write scopes, shared resources, capabilities, leases, priority, and capacity in the Spec Framework runtime."
+description: "Execution Scheduler Skill. Use when an agent needs to calculate deterministic parallel waves from the dag, write scopes, shared resources, capabilities, leases, priority, and capacity in the Spec Framework runtime."
 ---
 
 # Execution Scheduler Skill
@@ -27,7 +27,7 @@ Versioned wave plan; ready/serialized tasks; conflict rationale; capability gaps
 - [`execution-runtime.md`](../../docs/execution-runtime.md) for leases, scheduling, conflict detection, and non-execution boundaries.
 - the framework root's `FRAMEWORK.md`
 - Relevant parent context.md files.
-- Relevant templates in framework/template/.
+- The canonical template belongs to the skill that generates the artifact; read that skill's `assets/` directory.
 - Approved decisions are discovered through the active product root's `.product/decisions.json`; resolve each registered `path` from its declared domain root (`knowledge/decisions/`, `design/decisions/`, or `engineering/decisions/`).
 
 ## Workflow

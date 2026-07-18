@@ -1,6 +1,6 @@
 ---
 name: commit-crafter
-description: "Commit Crafter Skill. Use when Codex needs to turn verified working-tree changes into small atomic local commits without pushing."
+description: "Commit Crafter Skill. Use when an agent needs to turn verified working-tree changes into small atomic local commits without pushing."
 ---
 
 # Commit Crafter Skill

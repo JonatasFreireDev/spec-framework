@@ -1,6 +1,6 @@
 ---
 name: new-feature-orchestrator
-description: "New Feature Orchestrator. Use when Codex needs to Move a proposed feature from idea to executable task graph in the Spec Framework workflow, including creating, updating, auditing, explaining, routing, or handing off related product artifacts."
+description: "New Feature Orchestrator. Use when an agent needs to Move a proposed feature from idea to executable task graph in the Spec Framework workflow, including creating, updating, auditing, explaining, routing, or handing off related product artifacts."
 ---
 
 # New Feature Orchestrator

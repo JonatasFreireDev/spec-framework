@@ -1,0 +1,4 @@
+interface:
+  display_name: "Release Smoke"
+  short_description: "Smoke-test the versioned release binary"
+  default_prompt: "Use $release-smoke to validate the published release binary."

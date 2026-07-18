@@ -1,0 +1,4 @@
+interface:
+  display_name: "User Goal"
+  short_description: "Spec Framework workflow: User Goal"
+  default_prompt: "Use $user-goal to follow the User Goal workflow."

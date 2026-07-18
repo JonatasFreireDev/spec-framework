@@ -1,0 +1,4 @@
+interface:
+  display_name: "Delivery Orchestrator"
+  short_description: "Spec Framework workflow: Delivery Orchestrator"
+  default_prompt: "Use $delivery-orchestrator to follow the Delivery Orchestrator workflow."

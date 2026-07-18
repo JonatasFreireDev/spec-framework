@@ -1,0 +1,4 @@
+interface:
+  display_name: "Fixture Governor"
+  short_description: "Protect starter and worked-fixture boundaries"
+  default_prompt: "Use $fixture-governor to review ownership across starter and fixture changes."

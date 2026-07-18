@@ -1,0 +1,4 @@
+interface:
+  display_name: "Subagent Return Reviewer"
+  short_description: "Spec Framework workflow: Subagent Return Reviewer"
+  default_prompt: "Use $subagent-return-reviewer to follow the Subagent Return Reviewer workflow."

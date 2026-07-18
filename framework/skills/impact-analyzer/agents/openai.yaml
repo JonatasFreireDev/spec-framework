@@ -1,0 +1,4 @@
+interface:
+  display_name: "Impact Analyzer"
+  short_description: "Spec Framework workflow: Impact Analyzer"
+  default_prompt: "Use $impact-analyzer to follow the Impact Analyzer workflow."

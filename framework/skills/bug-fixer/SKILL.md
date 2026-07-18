@@ -1,6 +1,6 @@
 ---
 name: bug-fixer
-description: "Bug Fixer Skill. Use when Codex needs to reproduce and fix a confirmed defect, QA blocker, security finding, or production error with a regression test and minimal root-cause correction."
+description: "Bug Fixer Skill. Use when an agent needs to reproduce and fix a confirmed defect, QA blocker, security finding, or production error with a regression test and minimal root-cause correction."
 ---
 
 # Bug Fixer Skill

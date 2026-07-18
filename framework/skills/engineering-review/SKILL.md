@@ -1,4 +1,4 @@
----
+﻿---
 name: engineering-review
 description: "Independent read-only Engineering Review. Use to verify an Engineering Proposal against the Specification, Technical Discovery, Engineering System, approved decisions, quality attributes, and operational constraints before implementation planning."
 ---
@@ -27,7 +27,7 @@ Approved Specification; Design; approved Technical Discovery; `engineering-propo
 - [`engineering-systems.md`](../../docs/engineering-systems.md) for shared contract versioning, hashes, and review boundaries.
 - the framework root's `FRAMEWORK.md`
 - Relevant parent context.md files.
-- Relevant templates in framework/template/.
+- This skill owns its generation resources: `assets/engineering-review-template.md`.
 - Approved decisions are discovered through the active product root's `.product/decisions.json`; resolve each registered `path` from its declared domain root (`knowledge/decisions/`, `design/decisions/`, or `engineering/decisions/`).
 
 ## Workflow

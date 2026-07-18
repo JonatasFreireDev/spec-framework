@@ -1,6 +1,6 @@
----
+﻿---
 name: conflict-finder
-description: "Conflict Finder Skill. Use when Codex needs to Detect contradictions between product, UX, technical specs, decisions, roadmap, and implementation artifacts in the Spec Framework workflow, including creating, updating, auditing, explaining, routing, or handing off related product artifacts."
+description: "Conflict Finder Skill. Use when an agent needs to Detect contradictions between product, UX, technical specs, decisions, roadmap, and implementation artifacts in the Spec Framework workflow, including creating, updating, auditing, explaining, routing, or handing off related product artifacts."
 ---
 
 # Conflict Finder Skill
@@ -26,7 +26,7 @@ Conflict report; affected files; conflicting claims; proposed resolution options
 ## Required reading
 - the framework root's `FRAMEWORK.md`
 - Relevant parent context.md files.
-- Relevant templates in framework/template/.
+- The canonical template belongs to the skill that generates the artifact; read that skill's `assets/` directory.
 - Approved decisions are discovered through the active product root's `.product/decisions.json`; resolve each registered `path` from its declared domain root (`knowledge/decisions/`, `design/decisions/`, or `engineering/decisions/`).
 
 ## Workflow

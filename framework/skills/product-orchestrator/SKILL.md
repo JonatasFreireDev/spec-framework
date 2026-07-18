@@ -1,6 +1,6 @@
 ---
 name: product-orchestrator
-description: "Product Orchestrator. Use when Codex needs to Create a product foundation from zero or reset an incomplete foundation in the Spec Framework workflow, including creating, updating, auditing, explaining, routing, or handing off related product artifacts."
+description: "Product Orchestrator. Use when an agent needs to Create a product foundation from zero or reset an incomplete foundation in the Spec Framework workflow, including creating, updating, auditing, explaining, routing, or handing off related product artifacts."
 ---
 
 # Product Orchestrator
@@ -14,6 +14,7 @@ Orchestrator. Controls workflow, gates, handoffs, and approval checkpoints. It s
 ## Required reading
 - the framework root's `FRAMEWORK.md`
 - Relevant context.md files for the requested scope.
+- This skill owns `assets/product-baseline-template.md`, `assets/implementation-assessment-template.md`, and `assets/feature-brief-template.md` for the supported starting points.
 - the active product root's `.product/state.json`, `.product/roadmap.json`, and `.product/decisions.json` when present.
 - Approved decisions are discovered through the active product root's `.product/decisions.json`; resolve each registered `path` from its declared domain root.
 

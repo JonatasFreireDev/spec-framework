@@ -1,0 +1,4 @@
+interface:
+  display_name: "New Feature Orchestrator"
+  short_description: "Spec Framework workflow: New Feature Orchestrator"
+  default_prompt: "Use $new-feature-orchestrator to follow the New Feature Orchestrator workflow."

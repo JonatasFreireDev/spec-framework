@@ -1,4 +1,4 @@
-# Decisions
+﻿# Decisions
 
 ## Purpose
 
@@ -10,7 +10,7 @@ Create a decision whenever the framework says an approval gate is required or wh
 
 ## Expected Files
 
-- `DEC-XXX-short-title.md`: one decision per file using `framework/template/decision-template.md`.
+- `DEC-XXX-short-title.md`: one decision per file using `framework/skills/product-historian/assets/decision-template.md`.
 - `README.md`: folder purpose and usage.
 
 ## Responsible Skill

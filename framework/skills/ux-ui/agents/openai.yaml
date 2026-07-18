@@ -1,0 +1,4 @@
+interface:
+  display_name: "UX/UI"
+  short_description: "Spec Framework workflow: UX/UI"
+  default_prompt: "Use $ux-ui to follow the UX/UI workflow."

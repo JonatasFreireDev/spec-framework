@@ -1,0 +1,4 @@
+interface:
+  display_name: "Domain Architect"
+  short_description: "Spec Framework workflow: Domain Architect"
+  default_prompt: "Use $domain-architect to follow the Domain Architect workflow."

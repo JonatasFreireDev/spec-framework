@@ -1,0 +1,4 @@
+interface:
+  display_name: "Skill Contract Auditor"
+  short_description: "Audit metadata, ownership, paths, and handoffs"
+  default_prompt: "Use $skill-contract-auditor to audit the repository skills."

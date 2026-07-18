@@ -1,6 +1,6 @@
----
+﻿---
 name: impact-analyzer
-description: "Impact Analyzer Skill. Use when Codex needs to Analyze what changes when a proposed product, UX, technical, or business decision changes in the Spec Framework workflow, including creating, updating, auditing, explaining, routing, or handing off related product artifacts."
+description: "Impact Analyzer Skill. Use when an agent needs to Analyze what changes when a proposed product, UX, technical, or business decision changes in the Spec Framework workflow, including creating, updating, auditing, explaining, routing, or handing off related product artifacts."
 ---
 
 # Impact Analyzer Skill
@@ -26,7 +26,7 @@ Impact report; affected artifacts; risk level; migration or update plan; approva
 ## Required reading
 - the framework root's `FRAMEWORK.md`
 - Relevant parent context.md files.
-- Relevant templates in framework/template/.
+- The canonical template belongs to the skill that generates the artifact; read that skill's `assets/` directory.
 - Approved decisions are discovered through the active product root's `.product/decisions.json`; resolve each registered `path` from its declared domain root (`knowledge/decisions/`, `design/decisions/`, or `engineering/decisions/`).
 
 ## Workflow

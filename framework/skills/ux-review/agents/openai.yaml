@@ -1,0 +1,4 @@
+interface:
+  display_name: "UX Review"
+  short_description: "Spec Framework workflow: UX Review"
+  default_prompt: "Use $ux-review to follow the UX Review workflow."

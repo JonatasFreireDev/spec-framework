@@ -1,6 +1,6 @@
----
+﻿---
 name: existing-product-import-orchestrator
-description: "Existing Product Import Orchestrator Skill. Use when Codex needs to coordinate multiple existing documents into a reviewed Domain, User Goal, and Feature graph without bypassing framework gates."
+description: "Existing Product Import Orchestrator Skill. Use when an agent needs to coordinate multiple existing documents into a reviewed Domain, User Goal, and Feature graph without bypassing framework gates."
 ---
 
 # Existing Product Import Orchestrator Skill
@@ -26,14 +26,14 @@ Sequenced import run; approval request; routed draft artifacts; synchronization 
 ## Required reading
 - the framework root's `FRAMEWORK.md`
 - Relevant parent context.md files.
-- Relevant templates in framework/template/.
+- The canonical template belongs to the skill that generates the artifact; read that skill's `assets/` directory.
 - Approved decisions are discovered through the active product root's `.product/decisions.json`; resolve each registered `path` from its declared domain root (`knowledge/decisions/`, `design/decisions/`, or `engineering/decisions/`).
 
 ## Workflow
 1. Ask Artifact Importer to inventory and classify all sources.
 2. Review candidates against the existing product graph.
 3. Route terminology and contradiction findings through Conflict Finder and Product Historian when decisions are required.
-4. Present the proposed Domain → User Goal → Feature graph and unresolved questions.
+4. Present the proposed Domain Ã¢â€ â€™ User Goal Ã¢â€ â€™ Feature graph and unresolved questions.
 5. Stop at the materialization gate until the user explicitly approves selected mappings.
 6. Ask Artifact Importer to create approved targets as `draft` only.
 7. Route missing foundation context to Product Orchestrator and ready feature candidates to New Feature Orchestrator.

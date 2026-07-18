@@ -1,4 +1,4 @@
-# Events Example
+﻿# Events Example
 
 ## Purpose
 
@@ -19,7 +19,7 @@ This folder is a self-contained product root, mirroring the canonical structure 
 | Engineering decisions | [engineering/decisions/](engineering/decisions/) |
 | Approval history | [.product/history/](.product/history/) |
 
-Framework core assets (`FRAMEWORK.md`, `AGENTS.md`, `framework/skills/`, `framework/template/`, and `framework/validators/`) live outside this folder, primarily under `framework/`. Documents in this example that reference them use relative links that cross that boundary; the validator reports those as warnings because they point outside `--product-root`.
+Framework core assets (`FRAMEWORK.md`, `AGENTS.md`, `framework/skills/` with skill-owned `assets/`, and `framework/validators/`) live outside this folder, primarily under `framework/`. Documents in this example that reference them use relative links that cross that boundary; the validator reports those as warnings because they point outside `--product-root`.
 
 ## Validation
 

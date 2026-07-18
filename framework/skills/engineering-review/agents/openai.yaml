@@ -1,0 +1,4 @@
+interface:
+  display_name: "Engineering Review"
+  short_description: "Spec Framework workflow: Engineering Review"
+  default_prompt: "Use $engineering-review to follow the Engineering Review workflow."

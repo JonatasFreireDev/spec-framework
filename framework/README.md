@@ -12,7 +12,7 @@ The `framework/` directory hosts the executable framework core. New product repo
 | --- | --- | --- | --- |
 | `FRAMEWORK.md` | Framework core | Yes, into the versioned user cache | Canonical method contract. |
 | `framework/skills/` | Framework core | Yes, into the versioned user cache | Operational agent contracts resolved by the global dispatcher. |
-| `framework/template/` | Framework core | Yes, into the versioned user cache | Reusable artifact templates. |
+| `framework/skills/<skill>/assets/` | Framework core | Yes, into the versioned user cache | Artifact templates owned by the skill that generates them. |
 | Go CLI | Framework core | Installed as a release binary | Mechanical gates and migration tools. |
 | `framework/tests/` | Framework core | No | Tests the framework laboratory and distribution flow. |
 | `starter/product/` | Product starter | Yes | Clean product-owned skeleton. |

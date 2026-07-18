@@ -1,0 +1,4 @@
+interface:
+  display_name: "Engineering Proposal"
+  short_description: "Spec Framework workflow: Engineering Proposal"
+  default_prompt: "Use $engineering-proposal to follow the Engineering Proposal workflow."

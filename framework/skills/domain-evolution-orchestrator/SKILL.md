@@ -1,6 +1,6 @@
----
+﻿---
 name: domain-evolution-orchestrator
-description: "Domain Evolution Orchestrator Skill. Use when Codex needs to turn an approved domain and its goals into compared, sliced, and explicitly selected feature candidates before New Feature Orchestrator begins."
+description: "Domain Evolution Orchestrator Skill. Use when an agent needs to turn an approved domain and its goals into compared, sliced, and explicitly selected feature candidates before New Feature Orchestrator begins."
 ---
 
 # Domain Evolution Orchestrator Skill
@@ -26,7 +26,7 @@ Approved domain; goals; journeys; strategy; roadmap; evidence; metrics; decision
 ## Required reading
 - the framework root's `FRAMEWORK.md`
 - Relevant parent context.md files.
-- Relevant templates in framework/template/.
+- This skill owns its generation resources: `assets/domain-evolution-template.md`.
 - Approved decisions are discovered through the active product root's `.product/decisions.json`; resolve each registered `path` from its declared domain root (`knowledge/decisions/`, `design/decisions/`, or `engineering/decisions/`).
 
 ## Discovery and challenge

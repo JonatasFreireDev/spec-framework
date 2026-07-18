@@ -1,0 +1,4 @@
+interface:
+  display_name: "Artifact Importer"
+  short_description: "Spec Framework workflow: Artifact Importer"
+  default_prompt: "Use $artifact-importer to follow the Artifact Importer workflow."

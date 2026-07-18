@@ -1,6 +1,6 @@
----
+﻿---
 name: command-planner
-description: "Command Planner Skill. Use when Codex needs to own an immutable command plan derived only from approved gates, tasks, runbooks, repository scripts, or explicit human commands in the Spec Framework runtime."
+description: "Command Planner Skill. Use when an agent needs to own an immutable command plan derived only from approved gates, tasks, runbooks, repository scripts, or explicit human commands in the Spec Framework runtime."
 ---
 
 # Command Planner Skill
@@ -27,7 +27,7 @@ CMDPLAN-NNN.json with argv, cwd, source, risk, timeout, expected exit code, hash
 - [`execution-runtime.md`](../../docs/execution-runtime.md) for command-plan risk levels, scope, and approval boundaries.
 - the framework root's `FRAMEWORK.md`
 - Relevant parent context.md files.
-- Relevant templates in framework/template/.
+- This skill owns its generation resources: `assets/command-plan-template.json`.
 - Approved decisions are discovered through the active product root's `.product/decisions.json`; resolve each registered `path` from its declared domain root (`knowledge/decisions/`, `design/decisions/`, or `engineering/decisions/`).
 
 ## Workflow

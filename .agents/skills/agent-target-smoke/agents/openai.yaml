@@ -1,0 +1,4 @@
+interface:
+  display_name: "Agent Target Smoke"
+  short_description: "Verify generated agent target dispatchers"
+  default_prompt: "Use $agent-target-smoke to verify init and upgrade output for supported agent targets."

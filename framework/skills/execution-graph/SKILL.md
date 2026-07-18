@@ -1,6 +1,6 @@
----
+﻿---
 name: execution-graph
-description: "Execution Graph Skill. Use when Codex needs to Convert an implementation plan into a DAG of executable tasks with explicit dependencies and parallelization boundaries in the Spec Framework workflow, including creating, updating, auditing, explaining, routing, or handing off related product artifacts."
+description: "Execution Graph Skill. Use when an agent needs to Convert an implementation plan into a DAG of executable tasks with explicit dependencies and parallelization boundaries in the Spec Framework workflow, including creating, updating, auditing, explaining, routing, or handing off related product artifacts."
 ---
 
 # Execution Graph Skill
@@ -27,7 +27,7 @@ execution-graph.json; ordered DAG; Delivery Level/Priority on graph and nodes; p
 - [`execution-runtime.md`](../../docs/execution-runtime.md) for graph lifecycle, write scopes, shared resources, and runtime boundaries.
 - the framework root's `FRAMEWORK.md`
 - Relevant parent context.md files.
-- Relevant templates in framework/template/.
+- This skill owns its generation resources: `assets/execution-graph-template.json`.
 - Approved decisions are discovered through the active product root's `.product/decisions.json`; resolve each registered `path` from its declared domain root (`knowledge/decisions/`, `design/decisions/`, or `engineering/decisions/`).
 
 ## Discovery and challenge

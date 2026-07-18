@@ -1,4 +1,4 @@
-# Context: Example Goal
+﻿# Context: Example Goal
 
 ```yaml
 id: GOAL-EXAMPLE
@@ -34,8 +34,8 @@ This context demonstrates how a user goal links to a parent domain and child fea
 
 ## Related Artifacts
 
-- framework/template/goal-template.md - goal structure.
-- framework/template/context-template.md - context structure.
+- framework/skills/user-goal/assets/goal-template.md - goal structure.
+- framework/skills/documentation-writer/assets/context-template.md - context structure.
 
 ## Canonical Documents
 

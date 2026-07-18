@@ -1,0 +1,4 @@
+interface:
+  display_name: "Engineering System"
+  short_description: "Spec Framework workflow: Engineering System"
+  default_prompt: "Use $engineering-system to follow the Engineering System workflow."

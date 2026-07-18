@@ -1,4 +1,4 @@
-# Context: QR Code Check-in
+﻿# Context: QR Code Check-in
 
 ```yaml
 id: FT-001
@@ -37,7 +37,7 @@ Provides a concrete way for attendees and organizers to confirm event attendance
 
 ## Related Artifacts
 
-- framework/template/specification-template.md - expected specification shape
+- framework/skills/specification/assets/specification-template.md - expected specification shape
 
 ## Canonical Documents
 

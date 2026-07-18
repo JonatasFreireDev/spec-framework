@@ -1,0 +1,4 @@
+interface:
+  display_name: "Journey"
+  short_description: "Spec Framework workflow: Journey"
+  default_prompt: "Use $journey to follow the Journey workflow."

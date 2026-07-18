@@ -1,6 +1,6 @@
----
+﻿---
 name: documentation-writer
-description: "Documentation Writer Skill. Use when Codex needs to Keep documentation synchronized after approved changes without inventing new product decisions in the Spec Framework workflow, including creating, updating, auditing, explaining, routing, or handing off related product artifacts."
+description: "Documentation Writer Skill. Use when an agent needs to Keep documentation synchronized after approved changes without inventing new product decisions in the Spec Framework workflow, including creating, updating, auditing, explaining, routing, or handing off related product artifacts."
 ---
 
 # Documentation Writer Skill
@@ -26,7 +26,7 @@ Updated docs; updated context.md files; index updates; changelog notes.
 ## Required reading
 - the framework root's `FRAMEWORK.md`
 - Relevant parent context.md files.
-- Relevant templates in framework/template/.
+- This skill owns its generation resources: `assets/context-template.md` and `assets/derivation-record-template.json`; read `references/template-authoring.md` before changing template conventions.
 - Approved decisions are discovered through the active product root's `.product/decisions.json`; resolve each registered `path` from its declared domain root (`knowledge/decisions/`, `design/decisions/`, or `engineering/decisions/`).
 
 ## Workflow

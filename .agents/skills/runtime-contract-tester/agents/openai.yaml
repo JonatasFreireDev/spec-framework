@@ -1,0 +1,4 @@
+interface:
+  display_name: "Runtime Contract Tester"
+  short_description: "Test CLI and runtime behavior contracts"
+  default_prompt: "Use $runtime-contract-tester to verify this runtime contract change."

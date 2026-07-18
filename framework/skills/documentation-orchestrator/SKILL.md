@@ -1,6 +1,6 @@
 ---
 name: documentation-orchestrator
-description: "Documentation Orchestrator. Use when Codex needs to Synchronize context, indexes, templates, and derived docs after approved changes in the Spec Framework workflow, including creating, updating, auditing, explaining, routing, or handing off related product artifacts."
+description: "Documentation Orchestrator. Use when an agent needs to Synchronize context, indexes, templates, and derived docs after approved changes in the Spec Framework workflow, including creating, updating, auditing, explaining, routing, or handing off related product artifacts."
 ---
 
 # Documentation Orchestrator

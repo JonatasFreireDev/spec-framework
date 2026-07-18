@@ -1,6 +1,6 @@
----
+﻿---
 name: domain-architect
-description: "Domain Architect Skill. Use when Codex needs to Model product domains, ownership boundaries, dependencies, and cross-domain risks in the Spec Framework workflow, including creating, updating, auditing, explaining, routing, or handing off related product artifacts."
+description: "Domain Architect Skill. Use when an agent needs to Model product domains, ownership boundaries, dependencies, and cross-domain risks in the Spec Framework workflow, including creating, updating, auditing, explaining, routing, or handing off related product artifacts."
 ---
 
 # Domain Architect Skill
@@ -26,7 +26,7 @@ domain.md files; domain context.md files; ubiquitous language; invariants; comma
 ## Required reading
 - the framework root's `FRAMEWORK.md`
 - Relevant parent context.md files.
-- Relevant templates in framework/template/.
+- This skill owns its generation resources: `assets/domain-template.md`.
 - The pinned framework runtime's `examples/events/domains/README.md` and `examples/events/domains/events/domain.md` before creating the first domain.
 - Approved decisions are discovered through the active product root's `.product/decisions.json`; resolve each registered `path` from its declared domain root (`knowledge/decisions/`, `design/decisions/`, or `engineering/decisions/`).
 

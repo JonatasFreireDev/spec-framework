@@ -1,0 +1,4 @@
+interface:
+  display_name: "Framework Change Reviewer"
+  short_description: "Review framework contracts before release"
+  default_prompt: "Use $framework-change-reviewer to review this framework maintenance change."

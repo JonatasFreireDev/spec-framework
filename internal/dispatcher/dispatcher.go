@@ -50,7 +50,7 @@ func Install(agent string) (string, error) {
 	var questionTool string
 	switch agent {
 	case "codex":
-		root = filepath.Join(home, ".codex", "skills", "spec-framework")
+		root = filepath.Join(home, ".agents", "skills", "spec-framework")
 		questionTool = "request_user_input"
 	case "cursor":
 		root = filepath.Join(home, ".cursor", "skills", "spec-framework")
@@ -67,6 +67,12 @@ func Install(agent string) (string, error) {
 	path := filepath.Join(root, "SKILL.md")
 	if err := os.WriteFile(path, []byte(fmt.Sprintf(skillTemplate, questionTool)), 0644); err != nil {
 		return "", err
+	}
+	if agent == "codex" {
+		legacyRoot := filepath.Join(home, ".codex", "skills", "spec-framework")
+		if err := os.RemoveAll(legacyRoot); err != nil {
+			return "", fmt.Errorf("remove legacy Codex dispatcher: %w", err)
+		}
 	}
 	return path, nil
 }

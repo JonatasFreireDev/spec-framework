@@ -1,6 +1,6 @@
----
+﻿---
 name: specification
-description: "Specification Skill. Use when Codex needs to Create the implementation contract that unifies product, UX, rules, data, APIs, analytics, security, and acceptance criteria in the Spec Framework workflow, including creating, updating, auditing, explaining, routing, or handing off related product artifacts."
+description: "Specification Skill. Use when an agent needs to Create the implementation contract that unifies product, UX, rules, data, APIs, analytics, security, and acceptance criteria in the Spec Framework workflow, including creating, updating, auditing, explaining, routing, or handing off related product artifacts."
 ---
 
 # Specification Skill
@@ -26,7 +26,7 @@ Approved use case; feature context; business rules; design notes; engineering co
 ## Required reading
 - the framework root's `FRAMEWORK.md`
 - Relevant parent context.md files.
-- Relevant templates in framework/template/.
+- This skill owns its generation resources: `assets/specification-template.md` and `assets/specification-contract-template.md`.
 - Approved decisions are discovered through the active product root's `.product/decisions.json`; resolve each registered `path` from its declared domain root (`knowledge/decisions/`, `design/decisions/`, or `engineering/decisions/`).
 
 ## Discovery and challenge

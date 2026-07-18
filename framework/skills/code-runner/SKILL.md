@@ -1,6 +1,6 @@
 ---
 name: code-runner
-description: "Code Runner Skill. Use when Codex needs to implement exactly one approved task using TDD, respecting writeScope, product gates, and framework approval boundaries."
+description: "Code Runner Skill. Use when an agent needs to implement exactly one approved task using TDD, respecting writeScope, product gates, and framework approval boundaries."
 ---
 
 # Code Runner Skill

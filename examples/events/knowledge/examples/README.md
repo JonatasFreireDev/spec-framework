@@ -1,4 +1,4 @@
-# Examples
+﻿# Examples
 
 ## Purpose
 
@@ -19,4 +19,4 @@ Primary owner: Documentation Writer AI.
 
 ## Next Step
 
-When an example becomes a reusable standard, extract the pattern into `knowledge/patterns/` or a template in `framework/template/`.
+When an example becomes a reusable standard, extract the pattern into `knowledge/patterns/` or the owning skill's `framework/skills/<skill>/assets/` directory.

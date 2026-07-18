@@ -1,0 +1,4 @@
+interface:
+  display_name: "Domain Evolution Orchestrator"
+  short_description: "Spec Framework workflow: Domain Evolution Orchestrator"
+  default_prompt: "Use $domain-evolution-orchestrator to follow the Domain Evolution Orchestrator workflow."

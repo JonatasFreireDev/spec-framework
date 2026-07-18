@@ -1,0 +1,4 @@
+interface:
+  display_name: "Product Orchestrator"
+  short_description: "Spec Framework workflow: Product Orchestrator"
+  default_prompt: "Use $product-orchestrator to follow the Product Orchestrator workflow."

@@ -189,7 +189,7 @@ func TestInitKeepsRuntimeAndDispatchersOutsideRepository(t *testing.T) {
 		}
 	}
 	for _, path := range []string{
-		filepath.Join(agentHome, ".codex", "skills", "spec-framework", "SKILL.md"),
+		filepath.Join(agentHome, ".agents", "skills", "spec-framework", "SKILL.md"),
 		filepath.Join(agentHome, ".cursor", "skills", "spec-framework", "SKILL.md"),
 		filepath.Join(agentHome, ".claude", "skills", "spec-framework", "SKILL.md"),
 	} {
@@ -304,8 +304,15 @@ func TestUpgradeRefreshesInstalledDispatcher(t *testing.T) {
 	if _, err := Init(Options{Target: target, Agents: []Agent{Codex}}); err != nil {
 		t.Fatal(err)
 	}
-	dispatcherPath := filepath.Join(agentHome, ".codex", "skills", "spec-framework", "SKILL.md")
+	dispatcherPath := filepath.Join(agentHome, ".agents", "skills", "spec-framework", "SKILL.md")
+	legacyDispatcherPath := filepath.Join(agentHome, ".codex", "skills", "spec-framework", "SKILL.md")
 	if err := os.WriteFile(dispatcherPath, []byte("legacy dispatcher"), 0644); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.MkdirAll(filepath.Dir(legacyDispatcherPath), 0755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(legacyDispatcherPath, []byte("legacy location"), 0644); err != nil {
 		t.Fatal(err)
 	}
 	if _, err := Upgrade(Options{Target: target, Agents: []Agent{Codex}}); err != nil {
@@ -318,6 +325,9 @@ func TestUpgradeRefreshesInstalledDispatcher(t *testing.T) {
 	contract := string(data)
 	if strings.Contains(contract, "legacy dispatcher") || !strings.Contains(contract, "Resolve framework-guide first unless") {
 		t.Fatalf("upgrade did not refresh Guide-first dispatcher: %s", contract)
+	}
+	if _, err := os.Stat(legacyDispatcherPath); !os.IsNotExist(err) {
+		t.Fatalf("upgrade did not remove legacy dispatcher: %v", err)
 	}
 }
 

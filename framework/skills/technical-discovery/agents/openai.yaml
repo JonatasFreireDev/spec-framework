@@ -1,0 +1,4 @@
+interface:
+  display_name: "Technical Discovery"
+  short_description: "Spec Framework workflow: Technical Discovery"
+  default_prompt: "Use $technical-discovery to follow the Technical Discovery workflow."

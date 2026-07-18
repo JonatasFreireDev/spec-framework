@@ -1,6 +1,6 @@
----
+﻿---
 name: subagent-return-reviewer
-description: "Subagent Return Reviewer Skill. Use when Codex needs to validate a bounded subagent return against its envelope, hashes, evidence, and route in the Spec Framework workflow."
+description: "Subagent Return Reviewer Skill. Use when an agent needs to validate a bounded subagent return against its envelope, hashes, evidence, and route in the Spec Framework workflow."
 ---
 
 # Subagent Return Reviewer Skill
@@ -26,7 +26,7 @@ Dispatch envelope; transcript; task/chunk context; hashes; evidence; findings.
 ## Required reading
 - the framework root's `FRAMEWORK.md`
 - Relevant parent context.md files.
-- Relevant templates in framework/template/.
+- This skill owns its generation resource: `assets/dispatch-return-template.md`.
 - Approved product decisions in the active product root's `knowledge/decisions/` and `.product/decisions.json`.
 
 ## Workflow

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Existing Product Import Orchestrator"
+  short_description: "Spec Framework workflow: Existing Product Import Orchestrator"
+  default_prompt: "Use $existing-product-import-orchestrator to follow the Existing Product Import Orchestrator workflow."

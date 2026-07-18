@@ -1,0 +1,4 @@
+interface:
+  display_name: "Documentation Writer"
+  short_description: "Spec Framework workflow: Documentation Writer"
+  default_prompt: "Use $documentation-writer to follow the Documentation Writer workflow."

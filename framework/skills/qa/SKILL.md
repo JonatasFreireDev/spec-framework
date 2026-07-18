@@ -1,6 +1,6 @@
----
+﻿---
 name: qa
-description: "QA Skill. Use when Codex needs to Validate whether an implemented or planned artifact satisfies the specification, acceptance criteria, and edge cases in the Spec Framework workflow, including creating, updating, auditing, explaining, routing, or handing off related product artifacts."
+description: "QA Skill. Use when an agent needs to Validate whether an implemented or planned artifact satisfies the specification, acceptance criteria, and edge cases in the Spec Framework workflow, including creating, updating, auditing, explaining, routing, or handing off related product artifacts."
 ---
 
 # QA Skill
@@ -32,7 +32,7 @@ QA verdict; test evidence; blocking findings; residual risks; required fixes.
 - the framework root's `FRAMEWORK.md`
 - Relevant parent context.md files.
 - the active product root's `knowledge/conventions/gates.md`.
-- Relevant templates in framework/template/.
+- This skill owns its generation resources: `assets/tests-template.md`, `assets/qa-evidence-template.md`, and `assets/analytics-template.md`.
 - Approved decisions are discovered through the active product root's `.product/decisions.json`; resolve each registered `path` from its declared domain root (`knowledge/decisions/`, `design/decisions/`, or `engineering/decisions/`).
 
 ## Workflow

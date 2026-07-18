@@ -1,6 +1,6 @@
----
+﻿---
 name: ux-ui
-description: "UX/UI Skill. Use when Codex needs to Translate an approved specification into flows, states, interaction rules, accessibility requirements, design handoff notes, and mockup requirements before implementation planning in the Spec Framework workflow, including creating, updating, auditing, explaining, routing, or handing off related product artifacts."
+description: "UX/UI Skill. Use when an agent needs to Translate an approved specification into flows, states, interaction rules, accessibility requirements, design handoff notes, and mockup requirements before implementation planning in the Spec Framework workflow, including creating, updating, auditing, explaining, routing, or handing off related product artifacts."
 ---
 
 # UX/UI Skill
@@ -26,7 +26,7 @@ design.md; origin mode and visual maturity; versioned source references; screen 
 ## Required reading
 - the framework root's `FRAMEWORK.md`
 - Relevant parent context.md files.
-- Relevant templates in framework/template/.
+- This skill owns its generation resources: `assets/design-template.md`.
 - Approved decisions are discovered through the active product root's `.product/decisions.json`; resolve each registered `path` from its declared domain root (`knowledge/decisions/`, `design/decisions/`, or `engineering/decisions/`).
 
 ## Discovery and challenge

@@ -1,6 +1,6 @@
----
+﻿---
 name: security-review
-description: "Security Review Skill. Use when Codex needs to evaluate authentication, authorization, privacy, abuse, secrets, data exposure, logging, dependency, rollout, and residual-risk controls before an executable artifact can be validated or released in the Spec Framework workflow."
+description: "Security Review Skill. Use when an agent needs to evaluate authentication, authorization, privacy, abuse, secrets, data exposure, logging, dependency, rollout, and residual-risk controls before an executable artifact can be validated or released in the Spec Framework workflow."
 ---
 
 # Security Review Skill
@@ -29,7 +29,7 @@ Security verdict; threat model summary; control checklist; blocking findings; re
 - [`lifecycle-and-approvals.md`](../../docs/lifecycle-and-approvals.md) for approval authority, blockers, and failure routing.
 - the framework root's `FRAMEWORK.md`.
 - Relevant parent and local `context.md` files.
-- `framework/template/security-review-template.md`.
+- `framework/skills/security-review/assets/security-review-template.md`.
 - the active product root's `knowledge/conventions/security-baseline.md` and any linked domain baseline.
 - Existing active product root `audits/security/threat-register.md` entries that affect the artifact.
 - Approved decisions are discovered through the active product root's `.product/decisions.json`; resolve each registered `path` from its declared domain root (`knowledge/decisions/`, `design/decisions/`, or `engineering/decisions/`).

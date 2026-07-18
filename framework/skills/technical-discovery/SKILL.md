@@ -1,6 +1,6 @@
----
+﻿---
 name: technical-discovery
-description: "Technical Discovery Skill. Use when Codex needs to map an approved specification and design to the existing codebase, architecture, modules, data ownership, tests, and change risks before implementation planning."
+description: "Technical Discovery Skill. Use when an agent needs to map an approved specification and design to the existing codebase, architecture, modules, data ownership, tests, and change risks before implementation planning."
 ---
 
 # Technical Discovery Skill
@@ -27,7 +27,7 @@ Approved specification contracts; approved design or `Not applicable`; stable en
 - [`engineering-systems.md`](../../docs/engineering-systems.md) for the stable engineering baseline and migration boundaries.
 - the framework root's `FRAMEWORK.md`
 - Relevant parent context.md files.
-- Relevant templates in framework/template/.
+- This skill owns its generation resources: `assets/technical-discovery-template.md`.
 - Approved decisions are discovered through the active product root's `.product/decisions.json`; resolve each registered `path` from its declared domain root (`knowledge/decisions/`, `design/decisions/`, or `engineering/decisions/`).
 
 ## Discovery and challenge

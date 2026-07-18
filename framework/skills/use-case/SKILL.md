@@ -1,6 +1,6 @@
----
+﻿---
 name: use-case
-description: "Use Case Skill. Use when Codex needs to Break a feature into concrete, prioritized, verifiable interactions that can become specifications in the Spec Framework workflow, including creating, updating, auditing, explaining, routing, or handing off related product artifacts."
+description: "Use Case Skill. Use when an agent needs to Break a feature into concrete, prioritized, verifiable interactions that can become specifications in the Spec Framework workflow, including creating, updating, auditing, explaining, routing, or handing off related product artifacts."
 ---
 
 # Use Case Skill
@@ -26,7 +26,7 @@ use-case.md files; use-case context.md files; inherited Delivery Level and Prior
 ## Required reading
 - the framework root's `FRAMEWORK.md`
 - Relevant parent context.md files.
-- Relevant templates in framework/template/.
+- This skill owns its generation resources: `assets/use-case-template.md`.
 - Approved decisions are discovered through the active product root's `.product/decisions.json`; resolve each registered `path` from its declared domain root (`knowledge/decisions/`, `design/decisions/`, or `engineering/decisions/`).
 
 ## Discovery and challenge

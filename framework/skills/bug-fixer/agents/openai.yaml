@@ -1,0 +1,4 @@
+interface:
+  display_name: "Bug Fixer"
+  short_description: "Spec Framework workflow: Bug Fixer"
+  default_prompt: "Use $bug-fixer to follow the Bug Fixer workflow."

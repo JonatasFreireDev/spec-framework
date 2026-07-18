@@ -1,6 +1,6 @@
----
+﻿---
 name: engineering-system
-description: "Engineering System Skill. Use when Codex needs to create, adopt, evolve, version, or audit shared product architecture, standards, quality attributes, fitness functions, operations, and engineering evidence in the Spec Framework workflow."
+description: "Engineering System Skill. Use when an agent needs to create, adopt, evolve, version, or audit shared product architecture, standards, quality attributes, fitness functions, operations, and engineering evidence in the Spec Framework workflow."
 ---
 
 # Engineering System Skill
@@ -28,7 +28,7 @@ Product context; real code and test tree; deployment and operations configuratio
 - [`engineering-systems.md`](../../docs/engineering-systems.md) for shared Engineering System and Quality System versioning, migration, and approval boundaries.
 - the framework root's `FRAMEWORK.md`
 - Relevant parent context.md files.
-- Relevant templates in framework/template/.
+- This skill owns its generation resources: the engineering-system, quality-system, quality-model, test-strategy, and fitness-function resources in `assets/`.
 - Approved decisions are discovered through the active product root's `.product/decisions.json`; resolve each registered `path` from its declared domain root (`knowledge/decisions/`, `design/decisions/`, or `engineering/decisions/`).
 
 ## Discovery and challenge

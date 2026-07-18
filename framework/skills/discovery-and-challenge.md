@@ -18,7 +18,7 @@ Before drafting or materially updating an artifact, the skill must:
 
 ## Harness capability
 
-The canonical capability is `native_user_question`. Harness adapters map it to their default structured question mechanism, such as `request_user_input` in Codex or `AskUserQuestion` in Claude Code. Cursor uses its native user-question mechanism when exposed. If the harness exposes no structured question tool, ask a concise explicit question in conversation and record that fallback in the handoff.
+The canonical capability is `native_user_question`. Harness adapters map it to the available native structured-question mechanism. If the harness exposes no structured question tool, ask a concise explicit question in conversation and record that fallback in the handoff.
 
 ## Mode behavior
 

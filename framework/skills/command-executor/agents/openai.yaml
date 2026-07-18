@@ -1,0 +1,4 @@
+interface:
+  display_name: "Command Executor"
+  short_description: "Spec Framework workflow: Command Executor"
+  default_prompt: "Use $command-executor to follow the Command Executor workflow."

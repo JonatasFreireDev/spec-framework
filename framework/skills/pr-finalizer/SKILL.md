@@ -1,6 +1,6 @@
 ---
 name: pr-finalizer
-description: "PR Finalizer Skill. Use when Codex needs to prepare or open a pull request after gates, QA, Code Review, and Security Review are ready, without merging."
+description: "PR Finalizer Skill. Use when an agent needs to prepare or open a pull request after gates, QA, Code Review, and Security Review are ready, without merging."
 ---
 
 # PR Finalizer Skill

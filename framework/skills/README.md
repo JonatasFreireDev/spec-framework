@@ -1,8 +1,8 @@
-# Codex Skills
+# Agent Skills
 
 ## Purpose
 
-This folder contains repository-local skills that operationalize the framework. Each child folder is a Codex skill with a required `SKILL.md`.
+This folder contains framework-owned skills that operationalize the method. Each child folder is an agent skill with a required `SKILL.md` and optional `agents/openai.yaml` metadata.
 
 ## When To Use
 
@@ -16,16 +16,17 @@ Skills are written to work in both this framework repository and adopter reposit
 
 | Path kind | In this repository | In adopter repositories |
 | --- | --- | --- |
-| Framework method assets | `framework/skills/`, `framework/template/`, `framework/validators/`, `framework/tools/`, `framework/tests/` | Versioned external user cache resolved from `product/.product/framework.json` |
+| Framework method assets | `framework/skills/` (including skill-owned `assets/` and `references/`), `framework/validators/`, `framework/tools/`, `framework/tests/` | Versioned external user cache resolved from `product/.product/framework.json` |
 | Active product artifacts | `examples/events/` | `product/` |
 | Product decisions and state | `examples/events/.product/` and its indexed decision roots | `product/.product/` and its indexed decision roots |
 | Product gates and conventions | `examples/events/knowledge/conventions/` | `product/knowledge/conventions/` |
 
-When a skill mentions a product-relative path such as `knowledge/conventions/gates.md`, `.product/decisions.json`, `domains/`, `audits/`, or `releases/`, resolve it under the active product root. When it mentions framework assets such as `FRAMEWORK.md`, `templates/`, or `validators/`, resolve it under the framework root.
+When a skill mentions a product-relative path such as `knowledge/conventions/gates.md`, `.product/decisions.json`, `domains/`, `audits/`, or `releases/`, resolve it under the active product root. Each skill owns the templates it generates in its own `assets/` directory and its detailed guidance in `references/`; resolve those paths relative to the skill directory. Resolve shared framework assets such as `FRAMEWORK.md` or `validators/` under the framework root.
 
 ## Expected Files
 
 - `<skill-name>/SKILL.md`: one skill per folder.
+- `<skill-name>/agents/openai.yaml`: optional UI metadata for discovery surfaces.
 - Specialist skills: problem, vision, strategy, domain, goal, journey, feature, use case, Design System, UX/UI, specification, Engineering System, technical discovery, engineering proposal, engineering review, implementation planning, graph, task, code runner, bug fixer, QA, code review, security review, threat modeler, commit crafter, PR finalizer, audit, documentation, history, artifact import, and subagent return review.
 - Orchestrator skills: product, domain evolution, existing product import, new feature, audit, evolution, documentation, release, delivery, execution scheduling, integration, and dispatch.
 - Guidance skill: Framework Guide translates human goals into current CLI state, the smallest safe command, and the correct specialist or approval handoff without authoring artifacts.

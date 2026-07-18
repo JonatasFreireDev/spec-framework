@@ -1,0 +1,4 @@
+interface:
+  display_name: "Distribution Impact Analyzer"
+  short_description: "Assess install, upgrade, and release impact"
+  default_prompt: "Use $distribution-impact-analyzer to assess distribution impact for this change."

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Conflict Finder"
+  short_description: "Spec Framework workflow: Conflict Finder"
+  default_prompt: "Use $conflict-finder to follow the Conflict Finder workflow."

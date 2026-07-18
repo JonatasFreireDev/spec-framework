@@ -1,0 +1,4 @@
+interface:
+  display_name: "Release Publisher"
+  short_description: "Coordinate an approved repository release"
+  default_prompt: "Use $release-publisher to prepare the approved release."

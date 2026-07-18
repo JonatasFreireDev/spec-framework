@@ -1,4 +1,4 @@
 interface:
   display_name: "Design System"
-  short_description: "Manage canonical product design systems."
-  default_prompt: "Create or evolve the canonical product Design System while preserving approved sources, tokens, components, patterns, and framework gates."
+  short_description: "Spec Framework workflow: Design System"
+  default_prompt: "Use $design-system to follow the Design System workflow."

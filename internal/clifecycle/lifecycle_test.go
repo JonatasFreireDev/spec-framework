@@ -156,7 +156,7 @@ func TestUninstallAndPurgeStayWithinOwnedPaths(t *testing.T) {
 			cache := filepath.Join(root, "spec-framework")
 			agentHome := filepath.Join(root, "agents")
 			product := filepath.Join(root, "repo", "product", "owned.md")
-			for _, path := range []string{executable, filepath.Join(cache, "versions", "1", ".complete"), filepath.Join(agentHome, ".codex", "skills", "spec-framework", "SKILL.md"), product} {
+			for _, path := range []string{executable, filepath.Join(cache, "versions", "1", ".complete"), filepath.Join(agentHome, ".agents", "skills", "spec-framework", "SKILL.md"), filepath.Join(agentHome, ".codex", "skills", "spec-framework", "SKILL.md"), product} {
 				if err := os.MkdirAll(filepath.Dir(path), 0755); err != nil {
 					t.Fatal(err)
 				}
@@ -182,12 +182,13 @@ func TestUninstallAndPurgeStayWithinOwnedPaths(t *testing.T) {
 				t.Fatalf("manifest remained: %v", err)
 			}
 			_, cacheErr := os.Stat(cache)
-			_, dispatcherErr := os.Stat(filepath.Join(agentHome, ".codex", "skills", "spec-framework"))
-			if purge && (!os.IsNotExist(cacheErr) || !os.IsNotExist(dispatcherErr)) {
-				t.Fatalf("purge left cache=%v dispatcher=%v", cacheErr, dispatcherErr)
+			_, dispatcherErr := os.Stat(filepath.Join(agentHome, ".agents", "skills", "spec-framework"))
+			_, legacyDispatcherErr := os.Stat(filepath.Join(agentHome, ".codex", "skills", "spec-framework"))
+			if purge && (!os.IsNotExist(cacheErr) || !os.IsNotExist(dispatcherErr) || !os.IsNotExist(legacyDispatcherErr)) {
+				t.Fatalf("purge left cache=%v dispatcher=%v legacy=%v", cacheErr, dispatcherErr, legacyDispatcherErr)
 			}
-			if !purge && (cacheErr != nil || dispatcherErr != nil) {
-				t.Fatalf("standard uninstall removed cache=%v dispatcher=%v", cacheErr, dispatcherErr)
+			if !purge && (cacheErr != nil || dispatcherErr != nil || legacyDispatcherErr != nil) {
+				t.Fatalf("standard uninstall removed cache=%v dispatcher=%v legacy=%v", cacheErr, dispatcherErr, legacyDispatcherErr)
 			}
 			if data, err := os.ReadFile(product); err != nil || string(data) != "owned" {
 				t.Fatalf("product changed: %q %v", data, err)

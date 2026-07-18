@@ -1,0 +1,4 @@
+interface:
+  display_name: "Release Orchestrator"
+  short_description: "Spec Framework workflow: Release Orchestrator"
+  default_prompt: "Use $release-orchestrator to follow the Release Orchestrator workflow."
