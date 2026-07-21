@@ -41,6 +41,8 @@ For product demand evolution, preserve the existing Domain -> Goal -> Feature ->
 
 Engineering Orchestrator may use harness-native subagents only when its persisted handoff selects `delegated` execution. Keep `sequential` as the compatible default. In delegated mode, give each specialist only its dispatch envelope and required reading, enforce declared dependencies and write scope, bound concurrency, verify output hashes, and reconcile compact returns in the parent context. If native subagents are unavailable, apply the declared fallback; the CLI itself never spawns agents.
 
+Specification may delegate disjoint concern modules only when the current runtime handoff explicitly selects `specification_execution_mode: delegated`. Sequential remains the default. Each delegated pass writes only its declared contract, returns requirement mappings and unresolved questions, and cannot author decisions or approvals. The parent Specification skill performs the mandatory adversarial cross-contract review; falling back to sequential never weakens depth, traceability, or approval gates.
+
 ## Required Reading
 
 Authority order:

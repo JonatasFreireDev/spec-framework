@@ -847,7 +847,7 @@
         "UC-002"
       ],
       "path": "domains/events/goals/participate-in-event/features/qr-code-check-in/use-cases/organizer-validates-qr-code/specification.md",
-      "status": "proposed",
+      "status": "draft",
       "type": "specification"
     },
     {

@@ -73,7 +73,7 @@ spec-framework uninstall --purge --yes
 
 | Concept | In one line |
 | --- | --- |
-| **Specification** | The central contract: flow, UI, APIs, data, permissions, analytics, security, and acceptance — written before any code. |
+| **Specification** | A bounded root synthesis plus rigor-selected product, behavior, UX, API, data, security, quality, observability, and rollout contracts. New specs use semantic Contract v2 gates; existing specs migrate explicitly without `upgrade` rewriting adopter content. |
 | **Design flow** | Specification → `design.md` (origin `generate`/`evolve`/`adopt`, versioned visual sources) → independent UX Review → human gate. |
 | **Engineering flow** | Shared baseline: Engineering Orchestrator → Technical Landscape → Standards + Operations → Evidence → Engineering System approval. It runs sequentially by default or through bounded minimal-context native subagents. Delivery: Technical Discovery → Engineering Proposal → independent Engineering Review → Implementation Plan. |
 | **Execution Graph** | Complete vertical task contracts as a DAG with explicit `writeScope`; parallel work never overlaps write paths. |

@@ -50,9 +50,15 @@ Follow the shared [Discovery And Challenge contract](../discovery-and-challenge.
 
 ## Execution modes
 
-- `sequential` is the default and works in every harness.
-- `delegated` may assign disjoint contract passes to native subagents when the harness supports them. Each assignment receives only the approved evidence and declared module scope, writes only its own contract, and returns unresolved questions and requirement mappings. The parent Specification skill performs the final adversarial audit and remains accountable for the bundle.
+- `sequential` is the default and works in every harness. The optional current-run parameter is `specification_execution_mode: sequential | delegated`; execution routing belongs in the runtime handoff, not in product scope or approval records.
+- `delegated` may assign disjoint contract passes to native subagents only when the current runtime handoff explicitly selects it and the harness supports them. Each assignment receives only the approved evidence and declared module scope, writes only its own contract, and returns unresolved questions and requirement mappings. The parent Specification skill performs the final adversarial audit and remains accountable for the bundle.
 - Falling back from delegated to sequential never weakens applicability, traceability, review, or approval gates.
+
+## Boundaries
+
+- Own Specification root and modular contract content; do not author Design, Engineering Proposal, Implementation Plan, Tasks, product decisions, or approval evidence.
+- Do not infer product intent from code or imported documents. Record observation and inference separately and route material choices to the human and owning decision workflow.
+- Delegation is an agent capability, not CLI behavior. The CLI validates persisted artifacts and never starts subagents.
 
 ## Quality checklist
 - [ ] Preserves traceability to the parent artifact.

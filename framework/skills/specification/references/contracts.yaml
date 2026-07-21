@@ -4,6 +4,8 @@ activation:
   value: "2"
 execution:
   default: sequential
+  activation_parameter: specification_execution_mode
+  persistence: runtime_handoff
   supported: [sequential, delegated]
 modules:
   - id: product

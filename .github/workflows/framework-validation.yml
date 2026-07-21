@@ -42,5 +42,8 @@ jobs:
       - name: Framework validator
         run: go run ./cmd/spec-framework validate --product-root examples/events --framework-root .
 
+      - name: Strict framework validator
+        run: go run ./cmd/spec-framework validate --product-root examples/events --framework-root . --strict
+
       - name: Decision diagnostics
         run: go run ./cmd/spec-framework decisions check --product-root examples/events --framework-root . --strict

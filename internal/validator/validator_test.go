@@ -413,15 +413,23 @@ func TestStructuredNotApplicableRequiresRationale(t *testing.T) {
 	}
 }
 
-func TestEventsFixtureRemainsReady(t *testing.T) {
+func TestEventsFixtureHasOnlyExpectedSpecificationMigrationStaleness(t *testing.T) {
 	frameworkRoot := filepath.Clean(filepath.Join("..", ".."))
 	productRoot := filepath.Join(frameworkRoot, "examples", "events")
 	result, err := Validate(context.Background(), productRoot, frameworkRoot)
 	if err != nil {
 		t.Fatal(err)
 	}
-	if result.Errors != 0 || result.Warnings != 0 {
-		t.Fatalf("events fixture is not ready: %+v", result.Diagnostics)
+	if result.Errors != 0 {
+		t.Fatalf("events fixture has blocking findings: %+v", result.Diagnostics)
+	}
+	for _, diagnostic := range result.Diagnostics {
+		if diagnostic.Severity == Warning && diagnostic.Check != "staleness" {
+			t.Fatalf("events fixture has an unexpected warning: %+v", diagnostic)
+		}
+		if diagnostic.Check == "specification-depth" || diagnostic.Check == "specification-traceability" || diagnostic.Check == "specification-depth-migration" {
+			t.Fatalf("events fixture did not complete Specification v2 migration: %+v", diagnostic)
+		}
 	}
 }
 

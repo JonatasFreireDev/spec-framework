@@ -1,158 +1,74 @@
 # Specification: Attendee Checks In With QR Code
 
-## Context
+## Snapshot
 
-- ID: SPEC-001
-- Status: draft
-- Source use case: UC-001
-- Source feature: FT-001
-- Context file: context.md
+| Field | Value |
+| --- | --- |
+| ID | SPEC-001 |
+| Status | draft |
+| Source use case | [UC-001](use-case.md) |
+| Source feature | [FT-001](../../feature.md) |
+| Contract version | 2 |
+| Delivery | L1 / P0 |
 
-## Delivery
+## Contract Applicability
 
-- Level: L1 Walking Skeleton
-- Priority: P0
-- Rationale: Attendee QR generation and presentation are required for the first end-to-end check-in flow.
-- Depends on:
-  - FT-001
-  - DEC-001
-  - DEC-002
+| Contract | Applies | Status | Rationale |
+| --- | --- | --- | --- |
+| Product | yes | draft | QR proof closes the attendee side of the L1 attendance outcome. |
+| Behavior | yes | draft | Token generation, refresh, validation, and duplicate handling are stateful. |
+| UX | yes | draft | Attendee and organizer require visible, accessible states. |
+| API | yes | draft | Generation, status, and validation cross a server boundary. |
+| Data | yes | draft | Opaque tokens and attendance state require persistence and cleanup. |
+| Security | yes | draft | The flow crosses identity, permission, token, and privacy boundaries. |
+| Quality | yes | draft | Permission and state mutation risks require explicit verification. |
+| Observability | yes | draft | Success, expiry, denial, and replay need privacy-safe diagnosis. |
+| Rollout | yes | draft | Schema and flag changes require reversible activation. |
 
-## Product Context
+## Evidence And Boundary
 
-QR check-in supports the user goal of participating in an event and gives the product a stronger signal of real attendance than RSVP alone.
+| Kind | Evidence or statement | Source | Confidence/decision status |
+| --- | --- | --- | --- |
+| Approved decision | QR tokens expire after five minutes. | [DEC-001](../../../../../../../../knowledge/decisions/DEC-001-qr-expiration-duration.md) | approved |
+| Approved decision | V1 uses opaque, server-stored, event- and attendee-scoped tokens. | [DEC-002](../../../../../../../../knowledge/decisions/DEC-002-qr-token-strategy.md) | approved |
+| Scope | Generate and present attendee proof; validate it server-side and record one check-in. | [Use Case](use-case.md) | draft product scope |
+| Non-goal | Offline validation, payment/ticketing, and advanced fraud scoring. | [Feature](../../feature.md) | draft product scope |
 
-## Scope
+## Cross-Contract Synthesis
 
-### In Scope
+| Concern | Implementable outcome | Contract | Blocking dependency |
+| --- | --- | --- | --- |
+| Product and behavior | A joined attendee receives expiring proof; authorized validation records attendance exactly once. | [Product](contracts/product.md), [Behavior](contracts/behavior.md) | Organizer role policy remains a downstream decision. |
+| Experience and interfaces | QR generation, refresh, validation, and failure states are explicit without revealing identity on rejection. | [UX](contracts/ux.md), [API](contracts/api.md) | None for the documented draft. |
+| Data and trust | Token material is opaque and prunable; attendance uniqueness and server authorization protect the mutation. | [Data](contracts/data.md), [Security](contracts/security.md) | Event permission source must be selected before implementation. |
+| Quality and operations | Risk-based tests, privacy-safe signals, staged activation, and rollback cover the L1 path. | [Quality](contracts/quality.md), [Observability](contracts/observability.md), [Rollout](contracts/rollout.md) | Runtime stack and environments are not configured. |
 
-- Generate an opaque QR token for an authenticated attendee and event.
-- Validate a scanned QR token server-side.
-- Mark an attendance record as checked in exactly once.
-- Return clear states for success, expired, invalid, already checked in, and permission denied.
-- Emit analytics and logs for generation, success, and failure.
+## Traceability Summary
 
-### Non-Goals
+| Requirement range | Acceptance range | Source contracts | Test/evidence destination |
+| --- | --- | --- | --- |
+| REQ-001 through REQ-009 | AC-001 through AC-009 | [contracts](contracts/) | [Tests](tests.md), [QA Evidence](qa-evidence.md) |
 
-- Offline validation.
-- Paid ticketing.
-- Advanced fraud scoring.
+## Adversarial Review
 
-## Functional Behavior
+| Check | Result | Evidence or routed correction |
+| --- | --- | --- |
+| Contradictions and duplicated requirements | passed | Each REQ has one concern owner; shared rules are linked rather than copied as requirements. |
+| Alternate, error, edge, and abuse coverage | passed for draft | Expiry, invalid token, wrong event, denial, network failure, replay, and concurrent scans are covered. |
+| Unsafe assumptions and missing decisions | blocked for implementation | Organizer role source and runtime stack remain explicit downstream blockers. |
+| Cross-contract terminology and ownership | passed | Token, attendance, organizer permission, and check-in states use consistent names. |
 
-### Main Flow
+## Open Questions And Decisions
 
-1. Attendee requests QR code for an event they joined.
-2. Server creates an opaque, event-scoped, attendee-scoped token with expiration.
-3. Client renders QR code and text status.
-4. Organizer scans QR code from an organizer check-in surface.
-5. Server validates token, expiration, event, attendee, and organizer permission.
-6. Server updates attendance record with checked_in_at if not already set.
-7. Server returns success or already_checked_in.
-
-### Alternate Flows
-
-- Expired QR: reject and let attendee refresh.
-- Already checked in: return idempotent already_checked_in without changing timestamp.
-- Wrong event: reject with invalid_for_event.
-
-### Error States
-
-- invalid_token - no attendee details returned - log validation failure.
-- expired_token - user can refresh QR - analytics event emitted.
-- permission_denied - organizer cannot validate this event - security log emitted.
-- network_error - client shows retryable state.
-
-### Edge Cases
-
-- Multiple scans in quick succession must be idempotent.
-- Token replay after successful check-in must not create new attendance records.
-- QR payload must not expose raw user PII.
-
-## Business Rules
-
-- QR token must be opaque and validated by the server.
-- QR token must expire after 5 minutes, per DEC-001.
-- Check-in mutation must be idempotent.
-- Only authorized organizers can validate QR codes for their event.
-
-## UX Contract
-
-- Entry points: attendee event detail; organizer check-in scanner.
-- UI states: QR active, QR expired, generating, validating, success, invalid, permission denied, already checked in.
-- Accessibility requirements: QR code has textual fallback status and refresh action label.
-- Copy/content requirements: errors should not expose whether a token belongs to a specific person.
-
-## API Contract
-
-### Commands / Mutations
-
-- `generateEventCheckInQr(eventId)`
-  - Request: authenticated attendee session and event id.
-  - Response: opaque token, expiresAt, qrPayload.
-  - Errors: not_joined, event_not_found, check_in_not_open.
-
-- `validateEventCheckInQr(eventId, token)`
-  - Request: authenticated organizer session, event id, token.
-  - Response: status success | already_checked_in, checkedInAt.
-  - Errors: invalid_token, expired_token, permission_denied, invalid_for_event.
-
-### Queries
-
-- `getEventCheckInStatus(eventId)`
-  - Parameters: event id, authenticated attendee.
-  - Response: joined status, checked-in status, checkedInAt.
-
-## Data Contract
-
-- Tables/entities: event_attendance, event_check_in_tokens.
-- Fields: event_id, attendee_id, checked_in_at, token_hash, expires_at, consumed_at.
-- Constraints: unique event_id + attendee_id attendance record.
-- Retention/privacy: token records should expire or be pruned.
-- Migration needed: yes.
-
-## Permissions And Security
-
-- Who can read: attendee can read own QR/check-in status; organizer can read check-in result for managed event.
-- Who can write: server mutation can mark checked_in_at after validating organizer permission.
-- Server-authoritative checks: event membership, organizer permission, token expiration, token event binding.
-- Abuse cases: token replay, forged QR, organizer scanning wrong event, PII exposure.
-- Privacy/LGPD notes: QR payload must not include raw attendee personal data.
-
-## Analytics And Observability
-
-- Analytics events: qr_check_in_generated, qr_check_in_validated, qr_check_in_failed.
-- Logs: permission denied, invalid token, expired token, idempotent duplicate scan.
-- Metrics: check-in success rate, check-in failure rate, duplicate scan rate.
-- Alerts: unusual invalid token spike.
-
-## Performance And Reliability
-
-- Latency expectations: validation should complete in under two seconds under normal conditions.
-- Offline/retry behavior: no offline mutation in v1; retry network failures.
-- Concurrency/idempotency: duplicate scans must not change checked_in_at after first success.
-
-## Rollout
-
-- Feature flag: event_qr_check_in.
-- Migration/backfill: add check-in fields before enabling validation.
-- Rollback: disable flag; keep attendance records intact.
-
-## Acceptance Criteria
-
-- [ ] Attendee can generate a non-PII QR token for an event they joined.
-- [ ] Organizer can validate a valid token for an event they manage.
-- [ ] Invalid, expired, wrong-event, and permission-denied tokens are rejected.
-- [ ] Duplicate scans are idempotent.
-- [ ] Analytics and logs are emitted for success and failure.
-
-## Open Questions
-
-- DEC-001 QR expiration duration is approved.
-- DEC-002 QR token strategy is approved.
+| Question/Decision | Owner | Blocks |
+| --- | --- | --- |
+| Which event role source grants organizer check-in permission? | Product and Engineering | Engineering Proposal and implementation |
+| Which runtime stack and deployment environment will host the flow? | Engineering | Technical planning and executable tests |
 
 ## Approval
 
-- Approved by:
-- Date:
-- Notes:
+| Field | Value |
+| --- | --- |
+| Approved by |  |
+| Date |  |
+| Notes | Migrated to Specification Contract v2 as draft; no approval created. |

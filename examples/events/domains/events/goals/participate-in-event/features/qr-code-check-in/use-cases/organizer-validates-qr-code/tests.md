@@ -20,6 +20,20 @@
 | Platforms | web, mobile-camera |
 | Deviations or exceptions | None; absent runtime evidence blocks validation |
 
+## Specification v2 Acceptance Traceability
+
+| Criterion | Requirement | Planned test/evidence | Risk covered |
+| --- | --- | --- | --- |
+| AC-101 | REQ-101 | TEST-101 managed-event end-to-end validation. | Product outcome and authority. |
+| AC-102 | REQ-102 | TEST-102 state table, camera/network failures, and concurrent organizers. | Behavior and idempotency. |
+| AC-103 | REQ-103 | TEST-103 scanner accessibility, focus, controls, and safe content. | UX/accessibility/privacy. |
+| AC-104 | REQ-104 | TEST-104 session/validation API auth, schema, error, retry, and concurrency suite. | Interface safety. |
+| AC-105 | REQ-105 | TEST-105 unique attendance, nullable audit identity, migration, and retention tests. | Data integrity/lifecycle. |
+| AC-106 | REQ-106 | TEST-106 role denial, replay, wrong-event, secret-log, and disclosure negatives. | Security and abuse. |
+| AC-107 | REQ-107 | TEST-107 cross-contract gate and evidence audit. | Quality-system conformance. |
+| AC-108 | REQ-108 | TEST-108 scanner/server telemetry, privacy, metric, and alert review. | Venue operability. |
+| AC-109 | REQ-109 | TEST-109 additive deployment, allowlist, pilot pause, and rollback rehearsal. | Release reversibility. |
+
 ## Behavioral Tests
 
 - Valid organizer scans valid QR and receives checked-in result.

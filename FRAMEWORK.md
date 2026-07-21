@@ -342,6 +342,9 @@ behavior; UX, API, and data; security, quality, and observability; rollout and
 reversibility; traceability; and adversarial review. Sequential execution is the
 compatible default. A harness may delegate disjoint contract passes, but the
 same inputs, outputs, gates, and final owning Specification review apply.
+The optional current-run activation parameter is
+`specification_execution_mode: sequential | delegated`; it is persisted in the
+runtime handoff rather than product scope or approval evidence.
 
 A v2 Specification may remain incomplete while `draft`. It is semantically
 ready for `proposed` or `approved` only when all of the following are true:

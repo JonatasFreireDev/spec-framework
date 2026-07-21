@@ -8,6 +8,7 @@ status: proposed
 owner_skill: use-case
 slug: organizer-validates-qr-code
 rigor_tier: L
+specification_contract_version: 2
 engineering_triggers:
   - data_ownership_change
   - security_boundary_change

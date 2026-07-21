@@ -8,6 +8,7 @@ status: draft
 owner_skill: use-case
 slug: attendee-checks-in-with-qr-code
 rigor_tier: L
+specification_contract_version: 2
 engineering_triggers:
   - migration
   - security_boundary_change
