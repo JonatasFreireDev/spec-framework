@@ -206,6 +206,25 @@ func TestTierLRequiresEngineeringProposalAndReview(t *testing.T) {
 	}
 }
 
+func TestLegacySpecificationShellRemainsCompatibleBeforeV2OptIn(t *testing.T) {
+	base := "domains/d/goals/g/features/f/use-cases/u"
+	shell := "# Contract\nStatus: draft\n\nThis contract will receive stable REQ/AC identifiers during the next approved content evolution.\n\n## Scope\n\n- Preserve approved behavior.\n"
+	texts := map[string]string{
+		base + "/context.md":              "---\nrigor_tier: L\n---\n",
+		base + "/technical-discovery.md":  "# Technical Discovery\n",
+		base + "/engineering-proposal.md": "# Engineering Proposal\n",
+		base + "/engineering-review.md":   "# Engineering Review\n",
+	}
+	for _, name := range []string{"product", "behavior", "ux", "api", "data", "security", "quality", "observability", "rollout"} {
+		texts[base+"/contracts/"+name+".md"] = shell
+	}
+
+	diagnostics := validateDeliveryClosure(Snapshot{Text: texts})
+	if len(diagnostics) != 0 {
+		t.Fatalf("legacy contract without specification_contract_version must remain compatible, got %+v", diagnostics)
+	}
+}
+
 func TestTierLAdvancedPlanRequiresPassedEngineeringReview(t *testing.T) {
 	base := "domains/d/goals/g/features/f/use-cases/u"
 	s := Snapshot{Text: map[string]string{

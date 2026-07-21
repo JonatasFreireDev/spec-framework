@@ -328,6 +328,47 @@ Domain -> Domain Evolution -> Feature Selection -> New Feature -> Use Cases
 
 `specification.md` remains the root contract. Large concerns live under `contracts/` (`product`, `behavior`, `ux`, `api`, `data`, `security`, `quality`, `observability`, and `rollout`) and use stable `REQ-*` and `AC-*` identifiers. Tier S requires behavior and quality; Tier M adds product, UX, API, data, rollout, and Technical Discovery; Tier L adds security and observability. An inapplicable contract must use structured status `not_applicable` and a non-placeholder rationale.
 
+Specification Contract v2 makes depth an explicit readiness boundary. A use-case
+opts in with `specification_contract_version: 2` in its `context.md`; newly
+generated Specifications use v2, while an existing use case without that field
+remains on the legacy contract until a human explicitly selects migration. An
+upgrade must not add the field, rewrite product content, reopen an approval, or
+create approval evidence on the adopter's behalf.
+
+Under v2, `specification.md` is an index and concise cross-contract synthesis,
+not a second copy of every concern. Contract modules are selected by rigor and
+applicability and are authored in bounded passes: evidence and scope; product and
+behavior; UX, API, and data; security, quality, and observability; rollout and
+reversibility; traceability; and adversarial review. Sequential execution is the
+compatible default. A harness may delegate disjoint contract passes, but the
+same inputs, outputs, gates, and final owning Specification review apply.
+
+A v2 Specification may remain incomplete while `draft`. It is semantically
+ready for `proposed` or `approved` only when all of the following are true:
+
+- it covers one bounded use case and distinguishes evidence, inference,
+  decisions, and unresolved questions;
+- every applicable contract contains concern-specific content rather than a
+  generic shell, placeholder, or promise to define the contract later;
+- declared flows cover applicable success, alternate, error, and edge states,
+  with rules and invariants that make expected behavior deterministic;
+- every requirement has a stable id, a navigable source, and one or more
+  observable acceptance criteria, without duplicate or orphan identifiers;
+- security, privacy, accessibility, reliability, operability, rollout, and
+  rollback obligations are either covered where applicable or use structured
+  `not_applicable` with a concrete evidence-backed rationale;
+- blocking questions prevent handoff, while non-blocking assumptions identify
+  an owner and the downstream contract they may invalidate; and
+- an adversarial audit finds no known material ambiguity, contradiction,
+  uncovered failure mode, or missing decision.
+
+Depth is not measured by word, row, requirement, or file count. The mechanical
+validator enforces deterministic semantic shape and traceability; the owning
+skill evaluates contextual sufficiency; human approval remains the authority for
+product decisions. Legacy Specifications remain valid under their pinned
+contract, but validation may report an advisory migration diagnostic and strict
+audits may expose depth gaps without modifying their lifecycle state.
+
 Design is mandatory for any use case with an interface. For deliveries without UI, `design.md` must exist with structured status `not_applicable`, a non-placeholder `Rationale`, and impacts on accessibility, observability, or operations when relevant. Free-text mentions of Not applicable never satisfy the gate. The same structured status and rationale contract applies to inapplicable modular Specification contracts.
 
 QA Evidence and Security Review are validation gates. QA Evidence proves that acceptance criteria, tasks, flows, edge cases, regression, accessibility, observability, and security controls were verified. Security Review evaluates authentication, authorization, privacy, abuse, sensitive data, tokens, logs, dependencies, rollout, rollback, and residual risk. Security Review must also read the product's security baseline in `knowledge/conventions/security-baseline.md` and active threats in `audits/security/threat-register.md`. An artifact must not reach `validated` or `released` when there is a QA or security blocker.
