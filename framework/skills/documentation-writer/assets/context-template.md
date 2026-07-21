@@ -26,6 +26,7 @@ status: [draft | proposed | approved | in_progress | implemented | validated | r
 owner_skill: [skill name]
 slug: [immutable-folder-slug]
 rigor_tier: [S | M | L | N/A]
+specification_contract_version: 2 # use cases with a new or explicitly migrated Specification; omit for legacy use cases
 maturity: [declared | specified | implementation-ready] # use cases only; omit for other artifacts
 engineering_triggers: []
 last_updated: [YYYY-MM-DD]

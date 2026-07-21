@@ -1,4 +1,6 @@
-# [Contract Type] Contract: [use case]
+# Legacy Shared Contract Base: [use case]
+
+> Specification Contract v2 uses the concern-specific templates in this directory. Keep this shared template only for compatibility with legacy products that have not explicitly migrated.
 
 ## 🧾 Generation And Agent Self-Check
 

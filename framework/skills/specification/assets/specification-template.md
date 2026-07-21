@@ -24,6 +24,7 @@
 | Status | `[draft | proposed | approved]` |
 | Source use case | `[UC-XXX]` |
 | Source feature | `[FT-XXX]` |
+| Contract version | `2` |
 | Owner skill | Specification AI |
 | Next skill | UX/UI AI |
 
@@ -98,101 +99,38 @@ flowchart LR
   class D,P,G,T,Q,SR pending;
 ```
 
-## 📌 Product Context
+## Evidence And Boundary
 
-[Why this use case matters and which outcome it supports.]
-
-## 🧱 Scope
-
-| In Scope | Non-Goals |
-| --- | --- |
-| `[behavior to implement]` | `[behavior explicitly excluded]` |
-
-## ⚙️ Functional Behavior
-
-### Main Flow
-
-1. [Step]
-2. [Step]
-3. [Step]
-
-### Alternate, Error, And Edge Flows
-
-| Type | Case | Expected Behavior |
-| --- | --- | --- |
-| Alternate | `[flow]` | `[behavior]` |
-| Error | `[error]` | `[behavior/logging/analytics]` |
-| Edge | `[edge case]` | `[behavior]` |
-
-## 📏 Business Rules
-
-| Rule | Source | Impact |
-| --- | --- | --- |
-| `[rule]` | `[decision/path]` | `[impact]` |
-
-## 🎨 UX Contract
-
-| Area | Requirement |
-| --- | --- |
-| Entry points | `[entry points]` |
-| UI states | `[states]` |
-| Accessibility | `[requirements]` |
-| Copy/content | `[requirements]` |
-| Design artifact required | `[yes/no]` |
-
-## 🔌 API Contract
-
-| API | Request | Response | Errors |
+| Kind | Evidence or statement | Source | Confidence/decision status |
 | --- | --- | --- | --- |
-| `[command/query]` | `[shape]` | `[shape]` | `[errors]` |
+| Observation | `[verified product or code evidence]` | `[link]` | `verified` |
+| Inference | `[interpretation that still needs confirmation]` | `[link]` | `[confidence]` |
+| Scope | `[bounded interaction included]` | `[use case]` | `approved/draft` |
+| Non-goal | `[explicitly excluded behavior]` | `[feature/use case]` | `approved/draft` |
 
-## 🗃️ Data Contract
+## Cross-Contract Synthesis
 
-| Entity/Table | Fields | Constraints | Privacy/Retention |
+| Concern | Implementable outcome | Contract | Blocking dependency |
 | --- | --- | --- | --- |
-| `[entity]` | `[fields]` | `[constraints]` | `[notes]` |
+| Product and behavior | `[observable outcome and governing invariants]` | [product.md](contracts/product.md), [behavior.md](contracts/behavior.md) | `[id/link or None]` |
+| Experience and interfaces | `[states and interface boundary]` | [ux.md](contracts/ux.md), [api.md](contracts/api.md) | `[id/link or None]` |
+| Data and trust | `[ownership, privacy, and control summary]` | [data.md](contracts/data.md), [security.md](contracts/security.md) | `[id/link or None]` |
+| Quality and operations | `[verification, signals, and release safety]` | [quality.md](contracts/quality.md), [observability.md](contracts/observability.md), [rollout.md](contracts/rollout.md) | `[id/link or None]` |
 
-## 🔐 Permissions And Security
+## Traceability Summary
 
-| Topic | Requirement |
-| --- | --- |
-| Who can read | `[actors]` |
-| Who can write | `[actors]` |
-| Server-authoritative checks | `[checks]` |
-| Abuse cases | `[cases]` |
-| Privacy/LGPD notes | `[notes]` |
+| Requirement range | Acceptance range | Source contracts | Test/evidence destination |
+| --- | --- | --- | --- |
+| `[REQ-001..REQ-XXX]` | `[AC-001..AC-XXX]` | `[contract links]` | [tests.md](tests.md) |
 
-## 📊 Analytics And Observability
+## Adversarial Review
 
-| Type | Name | Purpose |
+| Check | Result | Evidence or routed correction |
 | --- | --- | --- |
-| Event | `[event]` | `[purpose]` |
-| Log | `[log]` | `[purpose]` |
-| Metric | `[metric]` | `[purpose]` |
-| Alert | `[alert]` | `[purpose]` |
-
-## ⚡ Performance And Reliability
-
-| Topic | Expectation |
-| --- | --- |
-| Latency | `[expectation]` |
-| Offline/retry behavior | `[behavior]` |
-| Concurrency/idempotency | `[behavior]` |
-
-## 🚢 Rollout
-
-| Topic | Plan |
-| --- | --- |
-| Feature flag | `[flag or N/A]` |
-| Migration/backfill | `[plan or N/A]` |
-| Rollback | `[plan]` |
-
-## ✅ Acceptance Criteria
-
-- [ ] [End-to-end observable behavior]
-- [ ] [Permission/security behavior]
-- [ ] [Analytics/observability behavior]
-- [ ] [Failure mode behavior]
+| Contradictions and duplicated requirements | `[passed/blocked]` | `[links]` |
+| Alternate, error, edge, and abuse coverage | `[passed/blocked]` | `[links]` |
+| Unsafe assumptions and missing decisions | `[passed/blocked]` | `[links]` |
+| Cross-contract terminology and ownership | `[passed/blocked]` | `[links]` |
 
 ## 🔐 Open Questions And Decisions
 
@@ -214,3 +152,5 @@ flowchart LR
 - [ ] Main, alternate, error, and edge flows cover product, UX, API, data, permissions, and rules.
 - [ ] Requirements and acceptance criteria are stable, testable, linked, and non-duplicative.
 - [ ] Analytics, observability, performance, reliability, rollout, risks, and open decisions are complete.
+- [ ] Root content synthesizes and links concern contracts without duplicating them.
+- [ ] Adversarial review has no unresolved material gap or blocking question.

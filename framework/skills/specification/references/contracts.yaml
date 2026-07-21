@@ -1,0 +1,62 @@
+version: 2
+activation:
+  context_field: specification_contract_version
+  value: "2"
+execution:
+  default: sequential
+  supported: [sequential, delegated]
+modules:
+  - id: product
+    path: contracts/product.md
+    template: assets/product-contract-template.md
+    tiers: [M, L]
+    allows_not_applicable: true
+    required_sections: [Outcome And Actors, Scope And Non-Goals, Product Rules, Requirements]
+  - id: behavior
+    path: contracts/behavior.md
+    template: assets/behavior-contract-template.md
+    tiers: [S, M, L]
+    allows_not_applicable: false
+    required_sections: [Preconditions And Triggers, State Transitions, Alternate Error And Edge Flows, Invariants, Requirements]
+  - id: ux
+    path: contracts/ux.md
+    template: assets/ux-contract-template.md
+    tiers: [M, L]
+    allows_not_applicable: true
+    required_sections: [Entry Points And Navigation, Interaction States, Feedback And Recovery, Accessibility And Content, Requirements]
+  - id: api
+    path: contracts/api.md
+    template: assets/api-contract-template.md
+    tiers: [M, L]
+    allows_not_applicable: true
+    required_sections: [Operations, Authorization, Request And Response Schemas, Errors Idempotency And Compatibility, Requirements]
+  - id: data
+    path: contracts/data.md
+    template: assets/data-contract-template.md
+    tiers: [M, L]
+    allows_not_applicable: true
+    required_sections: [Ownership And Entities, Constraints And Invariants, Lifecycle Migration And Retention, Privacy And Classification, Requirements]
+  - id: security
+    path: contracts/security.md
+    template: assets/security-contract-template.md
+    tiers: [L]
+    allows_not_applicable: true
+    required_sections: [Assets And Trust Boundaries, Threats And Abuse Cases, Controls And Audit, Residual Risk, Requirements]
+  - id: quality
+    path: contracts/quality.md
+    template: assets/quality-contract-template.md
+    tiers: [S, M, L]
+    allows_not_applicable: false
+    required_sections: [Quality Risks, Acceptance Traceability, Test Levels And Environments, Evidence And Exit Conditions, Requirements]
+  - id: observability
+    path: contracts/observability.md
+    template: assets/observability-contract-template.md
+    tiers: [L]
+    allows_not_applicable: true
+    required_sections: [Signals And Correlation, Metrics And Service Expectations, Alerts And Diagnosis, Logging Privacy And Retention, Requirements]
+  - id: rollout
+    path: contracts/rollout.md
+    template: assets/rollout-contract-template.md
+    tiers: [M, L]
+    allows_not_applicable: true
+    required_sections: [Release Strategy, Compatibility Migration And Backfill, Monitoring And Decision Points, Rollback And Recovery, Requirements]

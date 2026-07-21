@@ -30,7 +30,8 @@ Use the generating skill's own templates whenever a new canonical artifact is cr
 - `technical-discovery-template.md`: requirement-to-codebase mapping and Architecture Gate.
 - `execution-graph-template.json`: proposed DAG contract; task paths become mandatory after atomic materialization.
 - `task-template.md`: canonical task contract and readiness handoff.
-- `specification-contract-template.md`: reusable structure for modular product, behavior, UX, API, data, security, quality, observability, and rollout contracts.
+- `specification-contract-template.md`: legacy shared structure retained for products that have not migrated to Specification Contract v2.
+- `product-contract-template.md`, `behavior-contract-template.md`, `ux-contract-template.md`, `api-contract-template.md`, `data-contract-template.md`, `security-contract-template.md`, `quality-contract-template.md`, `observability-contract-template.md`, and `rollout-contract-template.md`: concern-specific Specification Contract v2 structures selected through `specification/references/contracts.yaml`.
 - `import-traceability-template.json`, `import-plan-template.json`, `import-mapping-template.json`, `import-report-template.md`: staged source-import evidence, review, selection, and reporting contracts.
 - `command-plan-template.json`, `handoff-template.json`, `runtime-workspace-template.json`, `integration-template.json`: execution-runtime planning, handoff, workspace, and integration state contracts.
 - `engineering-baseline-handoff-template.json`: Engineering Orchestrator execution-mode, dependency, minimal-context, and write-scope contract.
