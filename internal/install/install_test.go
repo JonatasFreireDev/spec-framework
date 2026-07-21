@@ -49,6 +49,39 @@ func TestInitShipsLeanReadmeSurfaceAndUpgradePreservesAdopterReadmes(t *testing.
 	}
 }
 
+func TestUpgradeDoesNotOptExistingSpecificationIntoV2(t *testing.T) {
+	t.Setenv("SPEC_FRAMEWORK_CACHE", filepath.Join(t.TempDir(), "cache"))
+	t.Setenv("SPEC_FRAMEWORK_AGENT_HOME", filepath.Join(t.TempDir(), "agents"))
+	target := filepath.Join(t.TempDir(), "product-repo")
+	if _, err := Init(Options{Target: target, Version: "test", Agents: []Agent{Codex}}); err != nil {
+		t.Fatal(err)
+	}
+	useCase := filepath.Join(target, "product", "domains", "d", "goals", "g", "features", "f", "use-cases", "u")
+	if err := os.MkdirAll(useCase, 0755); err != nil {
+		t.Fatal(err)
+	}
+	contextBody := []byte("---\nid: UC-1\nrigor_tier: S\n---\n")
+	specificationBody := []byte("# Adopter-owned legacy Specification\n")
+	if err := os.WriteFile(filepath.Join(useCase, "context.md"), contextBody, 0644); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(useCase, "specification.md"), specificationBody, 0644); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := Upgrade(Options{Target: target, Version: "test", Agents: []Agent{Codex}}); err != nil {
+		t.Fatal(err)
+	}
+	for path, expected := range map[string][]byte{
+		filepath.Join(useCase, "context.md"):       contextBody,
+		filepath.Join(useCase, "specification.md"): specificationBody,
+	} {
+		actual, err := os.ReadFile(path)
+		if err != nil || string(actual) != string(expected) {
+			t.Fatalf("upgrade changed adopter Specification file %s: %q %v", path, actual, err)
+		}
+	}
+}
+
 func TestInitDiscoversSiblingCodeRootsAndPreservesThemOnUpgrade(t *testing.T) {
 	t.Setenv("SPEC_FRAMEWORK_CACHE", filepath.Join(t.TempDir(), "cache"))
 	t.Setenv("SPEC_FRAMEWORK_AGENT_HOME", filepath.Join(t.TempDir(), "agents"))

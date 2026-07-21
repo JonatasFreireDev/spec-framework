@@ -420,9 +420,62 @@ func TestEventsFixtureRemainsReady(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if result.Errors != 0 || result.Warnings != 0 || result.Notes != 0 {
+	if result.Errors != 0 || result.Warnings != 0 {
 		t.Fatalf("events fixture is not ready: %+v", result.Diagnostics)
 	}
+}
+
+func TestSpecificationV2RejectsGenericShells(t *testing.T) {
+	base := "domains/d/goals/g/features/f/use-cases/u"
+	root := specificationV2Root("proposed")
+	shell := "# Contract\n\n| Status | proposed |\n\nThis contract will receive stable REQ/AC identifiers during the next approved content evolution.\n"
+	s := Snapshot{FrameworkRoot: filepath.Clean(filepath.Join("..", "..")), Text: map[string]string{
+		base + "/context.md":            "---\nrigor_tier: S\nspecification_contract_version: 2\n---\n",
+		base + "/specification.md":      root,
+		base + "/contracts/behavior.md": shell,
+		base + "/contracts/quality.md":  shell,
+	}}
+	diagnostics := validateSpecificationDepth(s)
+	foundBlocking := false
+	for _, diagnostic := range diagnostics {
+		if diagnostic.Check == "specification-depth" && diagnostic.Severity == Error {
+			foundBlocking = true
+		}
+	}
+	if !foundBlocking {
+		t.Fatalf("expected v2 generic shells to block proposed Specification, got %+v", diagnostics)
+	}
+}
+
+func TestLegacySpecificationDoesNotRequireV2Registry(t *testing.T) {
+	base := "domains/d/goals/g/features/f/use-cases/u"
+	s := Snapshot{FrameworkRoot: t.TempDir(), Text: map[string]string{
+		base + "/context.md":       "---\nrigor_tier: S\n---\n",
+		base + "/specification.md": "# Legacy Specification\n",
+	}}
+	diagnostics := validateSpecificationDepth(s)
+	if len(diagnostics) != 1 || diagnostics[0].Check != "specification-depth-migration" || diagnostics[0].Severity != Note {
+		t.Fatalf("legacy Specification should need no v2 registry, got %+v", diagnostics)
+	}
+}
+
+func TestSpecificationV2AcceptsConcernSpecificTierSContracts(t *testing.T) {
+	base := "domains/d/goals/g/features/f/use-cases/u"
+	behavior := "# Behavior Contract\n\n| Status | proposed |\n\n## Preconditions And Triggers\nConcrete trigger from [use case](../use-case.md).\n\n## State Transitions\nConcrete transition.\n\n## Alternate Error And Edge Flows\nConcrete failure and recovery.\n\n## Invariants\nConcrete invariant.\n\n## Requirements\n\n| ID | Requirement | Source | Acceptance criteria | Dependencies |\n| --- | --- | --- | --- | --- |\n| REQ-001 | Deterministic behavior. | [Use case](../use-case.md) | AC-001 | None |\n"
+	quality := "# Quality Contract\n\n| Status | proposed |\n\n## Quality Risks\nConcrete risk.\n\n## Acceptance Traceability\nConcrete mapping.\n\n## Test Levels And Environments\nConcrete level and environment.\n\n## Evidence And Exit Conditions\nConcrete evidence condition.\n\n## Requirements\n\n| ID | Requirement | Source | Acceptance criteria | Dependencies |\n| --- | --- | --- | --- | --- |\n| REQ-002 | Verification is repeatable. | [Use case](../use-case.md) | AC-002 | REQ-001 |\n"
+	s := Snapshot{FrameworkRoot: filepath.Clean(filepath.Join("..", "..")), Text: map[string]string{
+		base + "/context.md":            "---\nrigor_tier: S\nspecification_contract_version: 2\n---\n",
+		base + "/specification.md":      specificationV2Root("proposed"),
+		base + "/contracts/behavior.md": behavior,
+		base + "/contracts/quality.md":  quality,
+	}}
+	if diagnostics := validateSpecificationDepth(s); len(diagnostics) != 0 {
+		t.Fatalf("expected complete Tier S v2 bundle, got %+v", diagnostics)
+	}
+}
+
+func specificationV2Root(status string) string {
+	return "# Specification\n\n| Status | " + status + " |\n\n## Evidence And Boundary\nConcrete evidence from [use case](use-case.md).\n\n## Cross-Contract Synthesis\nConcrete synthesis.\n\n## Traceability Summary\nREQ-001 maps to AC-001.\n\n## Adversarial Review\nNo material gap found.\n\n## Open Questions And Decisions\n\n| Question/Decision | Owner | Blocks |\n| --- | --- | --- |\n| None | None | None |\n"
 }
 
 func TestEngineeringProposalMustPinCurrentSystem(t *testing.T) {

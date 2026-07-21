@@ -1264,7 +1264,7 @@ func promoteApprovedWarnings(diagnostics []Diagnostic, s Snapshot) []Diagnostic 
 		}
 	}
 	for i := range diagnostics {
-		if diagnostics[i].Severity == Warning && approved[filepath.ToSlash(diagnostics[i].File)] && (diagnostics[i].Check == "delivery" || diagnostics[i].Check == "template-conformance") {
+		if diagnostics[i].Severity == Warning && approved[filepath.ToSlash(diagnostics[i].File)] && (diagnostics[i].Check == "delivery" || diagnostics[i].Check == "template-conformance" || diagnostics[i].Check == "specification-depth" || diagnostics[i].Check == "specification-traceability") {
 			diagnostics[i].Severity = Error
 		}
 	}

@@ -27,6 +27,7 @@ Approved use case; local and parent context.md files; sibling Specifications; bu
 - the framework root's `FRAMEWORK.md`
 - Relevant parent context.md files.
 - This skill owns its generation resources: `assets/specification-template.md`, the concern-specific templates under `assets/*-contract-template.md`, and the machine-readable module registry at `references/contracts.yaml`. `assets/specification-contract-template.md` is retained only as the legacy shared base.
+- Read `references/migration-v2.md` before adding `specification_contract_version: 2` to an existing use case.
 - Approved decisions are discovered through the active product root's `.product/decisions.json`; resolve each registered `path` from its declared domain root (`knowledge/decisions/`, `design/decisions/`, or `engineering/decisions/`).
 
 ## Discovery and challenge

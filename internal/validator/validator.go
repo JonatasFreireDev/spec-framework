@@ -228,6 +228,7 @@ func validate(ctx context.Context, root, frameworkRoot string, strict bool, cand
 	d = append(d, validatePreSpecificationBaselines(snap)...)
 	d = append(d, validateImportRuns(snap)...)
 	d = append(d, validateDeliveryClosure(snap)...)
+	d = append(d, validateSpecificationDepth(snap)...)
 	d = append(d, validateSkillDiscoveryContracts(snap)...)
 	d = append(d, validateDomainModeling(snap)...)
 	d = append(d, validateDesignArtifacts(snap)...)
