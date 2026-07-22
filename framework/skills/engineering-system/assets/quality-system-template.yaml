@@ -32,13 +32,4 @@ exceptions:
   require_owner: true
   require_residual_risk: true
   require_expiry_or_review: true
-  records:
-    - id: QEX-001
-      scope: "[product or product-relative domains/... path]"
-      owner: "[person or role]"
-      rationale: "[why the exception is temporarily necessary]"
-      residual_risk: "[remaining risk]"
-      mitigation: "[temporary mitigation]"
-      expiry_or_review: "[YYYY-MM-DD]"
-      reentry_gate: "[gate required to close]"
-      status: open
+  records: []

@@ -79,6 +79,24 @@ for navigation and never determines ownership or containment by itself. This
 supports monorepos, polyrepos, shared components, multiple deployables per
 repository, and applications assembled from several repositories.
 
+`catalog/catalog.yaml` is an index, not an entity store. Every category maps a
+stable entity ID to one relative YAML file:
+
+```yaml
+entities:
+  systems:
+    SYS-PRODUCT-001: systems/product.yaml
+```
+
+Embedded entity mappings are incompatible with this contract. Each referenced
+file must exist below `engineering/`, parse as YAML, and declare at least
+`schema_version: 1`, an `id` equal to the catalog key, the category-compatible
+`type`, and a non-empty `status`.
+
+`architecture/topology.yaml` uses the same seven entity categories as the
+catalog. Every catalog entity must appear in the topology, every topology ID
+must be indexed by the catalog, and every topology relation endpoint must exist.
+
 Each relation declares a stable `REL-*` ID, an extensible relation `type`, and
 existing `source` and `target` entity IDs. Evidence may be attached when the
 relation is observed rather than hypothetical. The framework validates graph
@@ -121,6 +139,19 @@ Profiles compose standards for common shapes such as web applications, HTTP
 APIs, workers, event consumers, shared libraries, and product defaults.
 Consumers pin profile and standard versions. Profiles may extend other
 profiles, but cycles are invalid.
+
+`standards/standards.yaml` is also strictly indexed: `PROFILE-*`, `STD-*`, and
+`STDEX-*` keys map to relative YAML records and never contain embedded fields.
+Profiles and standards require `schema_version: 1`, matching identity, semantic
+version, and non-empty status. Standards additionally require a supported
+category and obligation level plus at least one verifiable rule.
+
+`operations/operations.yaml` maps `ENV-*` and `DEPLOY-*` IDs to relative YAML
+records and `RUNBOOK-*` IDs to relative Markdown files. Embedded records are
+invalid. Environment and deployment YAML must declare `schema_version: 1`, a
+matching ID, and non-empty status; deployments also reference an indexed
+environment, a `DEPLOY-*` technical entity, valid application/component IDs,
+and indexed runbooks.
 
 Standards define technical rules. The Quality System defines quality policy and
 coverage. The security baseline defines threats, trust, and governed controls.

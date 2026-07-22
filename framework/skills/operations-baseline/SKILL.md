@@ -43,7 +43,7 @@ When `engineering-orchestrator` supplies an `engineering-specialist` dispatch en
 1. Read the technical graph and inspect deployment, infrastructure, observability, incident, continuity, and runbook evidence.
 2. Inventory real environments, deployable units, release paths, rollback mechanisms, dependencies, service objectives, and operational owners.
 3. Distinguish observed capability from intended or hypothetical capability; do not claim recovery, monitoring, or rollback without evidence.
-4. Update the root operations catalog and create detailed records only for evidenced or explicitly proposed operational surfaces.
+4. Update the root operations catalog and create detailed records only for evidenced or explicitly proposed operational surfaces. Keep `operations.yaml` indexed: `ENV-*` and `DEPLOY-*` keys map to relative YAML files and `RUNBOOK-*` keys map to relative Markdown files, never to embedded fields. Environment and deployment records must declare `schema_version`, matching `id`, and non-empty `status`.
 5. Link operational deployment records to technical `DEPLOY-*`, application, component, interface, and data-store IDs.
 6. Record gaps and decision candidates for ownership, recovery objectives, data loss, observability, continuity, and irreversible rollout risk.
 7. Validate safe references and return the baseline to `engineering-orchestrator` without performing operational changes.

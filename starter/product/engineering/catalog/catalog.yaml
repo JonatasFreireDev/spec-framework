@@ -1,6 +1,8 @@
 schema_version: 1
 owner_skill: technical-landscape
 entities:
+  # Every entity ID maps to a relative YAML file. Do not embed entity fields here.
+  # Example: SYS-PRODUCT-001: systems/product.yaml
   systems: {}
   applications: {}
   components: {}

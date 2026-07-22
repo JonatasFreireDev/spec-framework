@@ -452,16 +452,25 @@ func TestInitShipsEngineeringCatalogRootsForEveryAgentTarget(t *testing.T) {
 			t.Errorf("engineering aggregate missing owner %s", owner)
 		}
 	}
-	owned := filepath.Join(target, "product", "engineering", "catalog", "catalog.yaml")
-	if err := os.WriteFile(owned, []byte("adopter-owned catalog\n"), 0o644); err != nil {
-		t.Fatal(err)
+	owned := []string{
+		"product/engineering/architecture/topology.yaml",
+		"product/engineering/catalog/catalog.yaml",
+		"product/engineering/standards/standards.yaml",
+		"product/engineering/operations/operations.yaml",
+	}
+	for _, file := range owned {
+		if err := os.WriteFile(filepath.Join(target, filepath.FromSlash(file)), []byte("adopter-owned "+file+"\n"), 0o644); err != nil {
+			t.Fatal(err)
+		}
 	}
 	if _, err := Upgrade(Options{Target: target, Version: "test", Agents: []Agent{Codex, Cursor, Claude}}); err != nil {
 		t.Fatal(err)
 	}
-	data, err := os.ReadFile(owned)
-	if err != nil || string(data) != "adopter-owned catalog\n" {
-		t.Fatalf("upgrade changed adopter engineering catalog: %q %v", data, err)
+	for _, file := range owned {
+		data, err := os.ReadFile(filepath.Join(target, filepath.FromSlash(file)))
+		if err != nil || string(data) != "adopter-owned "+file+"\n" {
+			t.Fatalf("upgrade changed adopter engineering artifact %s: %q %v", file, data, err)
+		}
 	}
 }
 

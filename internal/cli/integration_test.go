@@ -96,6 +96,61 @@ func TestGoCLIInitValidateUpgradeAndMove(t *testing.T) {
 	}
 }
 
+func TestCLIStructuredEngineeringBaselineValidatesWithoutNormalization(t *testing.T) {
+	t.Setenv("SPEC_FRAMEWORK_CACHE", filepath.Join(t.TempDir(), "cache"))
+	t.Setenv("SPEC_FRAMEWORK_AGENT_HOME", filepath.Join(t.TempDir(), "agents"))
+	target := filepath.Join(t.TempDir(), "repo")
+	productRoot := filepath.Join(target, "product")
+	var stdout, stderr bytes.Buffer
+	app := cli.New("integration")
+	if code := app.Run([]string{"init", "--target", target, "--agents", "codex", "--no-code-roots", "--yes"}, &stdout, &stderr); code != 0 {
+		t.Fatalf("init=%d stdout=%s stderr=%s", code, stdout.String(), stderr.String())
+	}
+
+	// Simulate Technical Landscape materialization using the shipped indexed
+	// catalog and entity contracts.
+	files := map[string]string{
+		"engineering/catalog/catalog.yaml":                    "schema_version: 1\nowner_skill: technical-landscape\nentities:\n  systems:\n    SYS-MF-001: systems/meetfriends.yaml\n  applications: {}\n  components: {}\n  repositories: {}\n  data_stores: {}\n  interfaces: {}\n  deployments: {}\nrelations: []\n",
+		"engineering/catalog/systems/meetfriends.yaml":        "schema_version: 1\nid: SYS-MF-001\ntype: system\nstatus: draft\nname: MeetFriends\nevidence: []\n",
+		"engineering/architecture/topology.yaml":              "schema_version: 1\nowner_skill: technical-landscape\nsystems: [SYS-MF-001]\napplications: []\ncomponents: []\nrepositories: []\ndata_stores: []\ninterfaces: []\ndeployments: []\nrelations: []\n",
+		"engineering/standards/standards.yaml":                "schema_version: 1\nowner_skill: engineering-standards\nprofiles:\n  PROFILE-PRODUCT-DEFAULT: profiles/product-default.yaml\nstandards:\n  STD-API-001: catalog/api.yaml\nexceptions: {}\n",
+		"engineering/standards/profiles/product-default.yaml": "schema_version: 1\nid: PROFILE-PRODUCT-DEFAULT\nversion: 0.1.0\nstatus: draft\nextends: []\nstandards: [STD-API-001]\n",
+		"engineering/standards/catalog/api.yaml":              "schema_version: 1\nid: STD-API-001\nversion: 1.0.0\nstatus: draft\ncategory: api\nlevel: required\nrules:\n  - id: STD-API-001-R01\n    requirement: Publish an API schema\n    verification: [schema]\n",
+		"engineering/operations/operations.yaml":              "schema_version: 1\nowner_skill: operations-baseline\nenvironments:\n  ENV-PRODUCTION: environments/production.yaml\ndeployments: {}\nrunbooks: {}\n",
+		"engineering/operations/environments/production.yaml": "schema_version: 1\nid: ENV-PRODUCTION\nstatus: draft\npurpose: production\n",
+	}
+	for name, body := range files {
+		path := filepath.Join(productRoot, filepath.FromSlash(name))
+		if err := os.MkdirAll(filepath.Dir(path), 0o755); err != nil {
+			t.Fatal(err)
+		}
+		if err := os.WriteFile(path, []byte(body), 0o644); err != nil {
+			t.Fatal(err)
+		}
+	}
+
+	stdout.Reset()
+	stderr.Reset()
+	if code := app.Run([]string{"validate", "--product-root", productRoot}, &stdout, &stderr); code != 0 {
+		t.Fatalf("validate=%d stdout=%s stderr=%s", code, stdout.String(), stderr.String())
+	}
+
+	embedded := "schema_version: 1\nowner_skill: technical-landscape\nentities:\n  systems:\n    SYS-MF-001:\n      name: MeetFriends\n      evidence: []\nrelations: []\n"
+	if err := os.WriteFile(filepath.Join(productRoot, "engineering", "catalog", "catalog.yaml"), []byte(embedded), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	stdout.Reset()
+	stderr.Reset()
+	if code := app.Run([]string{"validate", "--product-root", productRoot}, &stdout, &stderr); code == 0 {
+		t.Fatalf("embedded catalog unexpectedly validated: stdout=%s stderr=%s", stdout.String(), stderr.String())
+	}
+	for _, expected := range []string{"systems id SYS-MF-001", "expected a relative YAML file path", "not an embedded entity"} {
+		if !strings.Contains(stdout.String(), expected) {
+			t.Fatalf("CLI diagnostic omitted %q: stdout=%s", expected, stdout.String())
+		}
+	}
+}
+
 func TestCLIAgentLedCodeRootDiscovery(t *testing.T) {
 	t.Setenv("SPEC_FRAMEWORK_CACHE", filepath.Join(t.TempDir(), "cache"))
 	t.Setenv("SPEC_FRAMEWORK_AGENT_HOME", filepath.Join(t.TempDir(), "agents"))

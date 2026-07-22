@@ -7,6 +7,19 @@ import (
 	"testing"
 )
 
+func writeEngineeringTestFiles(t *testing.T, engineering string, files map[string]string) {
+	t.Helper()
+	for name, body := range files {
+		path := filepath.Join(engineering, filepath.FromSlash(name))
+		if err := os.MkdirAll(filepath.Dir(path), 0o755); err != nil {
+			t.Fatal(err)
+		}
+		if err := os.WriteFile(path, []byte(body), 0o644); err != nil {
+			t.Fatal(err)
+		}
+	}
+}
+
 func TestTriggersParsesAllowedAndRejectsUnknown(t *testing.T) {
 	valid, invalid := Triggers("---\nengineering_triggers:\n  - migration\n  - new_dependency\n  - magic_change\n---\n")
 	if len(valid) != 2 || valid[0] != "migration" || valid[1] != "new_dependency" {
@@ -72,7 +85,7 @@ func TestInspectRejectsCatalogIdentityMismatch(t *testing.T) {
 		"context.md":                     "---\nid: ENGSYS-TEST-001\nstatus: draft\nversion: 1.0.0\norigin_mode: generate\n---\n",
 		"engineering-system.md":          "| Field | Value |\n| --- | --- |\n| ID | `ENGSYS-TEST-001` |\n| Status | `draft` |\n| Version | `1.0.0` |\n",
 		"architecture/system-context.md": "# Context\n",
-		"engineering-system.yaml":        "schema_version: 1\nid: ENGSYS-OTHER-001\nstatus: draft\nversion: 1.0.0\norigin_mode: generate\nscope: product\nareas:\n  context:\n    contract: architecture/system-context.md\n    maturity: baseline\n    evidence: []\n",
+		"engineering-system.yaml":        "schema_version: 1\nid: ENGSYS-OTHER-001\nstatus: draft\nversion: 1.0.0\norigin_mode: generate\nscope: product\nareas:\n  system_context:\n    contract: architecture/system-context.md\n    maturity: baseline\n    evidence: []\n",
 	}
 	for name, body := range files {
 		path := filepath.Join(engineering, filepath.FromSlash(name))
@@ -102,12 +115,13 @@ func TestInspectValidatesTechnicalStandardsAndOperationsCatalogs(t *testing.T) {
 		"catalog/catalog.yaml":              "schema_version: 1\nentities:\n  systems: {SYS-ONE: systems/system.yaml}\n  applications: {APP-ONE: applications/app.yaml}\n  components: {}\n  repositories: {}\n  data_stores: {}\n  interfaces: {}\n  deployments: {}\nrelations:\n  - {id: REL-SYSTEM-APP, type: contains, source: SYS-ONE, target: APP-ONE, evidence: []}\n",
 		"catalog/systems/system.yaml":       "schema_version: 1\nid: SYS-ONE\ntype: system\nstatus: draft\n",
 		"catalog/applications/app.yaml":     "schema_version: 1\nid: APP-ONE\ntype: application\nstatus: draft\n",
+		"architecture/topology.yaml":        "schema_version: 1\nowner_skill: technical-landscape\nsystems: [SYS-ONE]\napplications: [APP-ONE]\ncomponents: []\nrepositories: []\ndata_stores: []\ninterfaces: []\ndeployments: []\nrelations:\n  - {id: REL-SYSTEM-APP, type: contains, source: SYS-ONE, target: APP-ONE}\n",
 		"standards/standards.yaml":          "schema_version: 1\nprofiles: {PROFILE-DEFAULT: profiles/default.yaml}\nstandards: {STD-API-001: catalog/api.yaml}\nexceptions: {STDEX-001: exceptions/api.yaml}\n",
 		"standards/profiles/default.yaml":   "schema_version: 1\nid: PROFILE-DEFAULT\nversion: 1.0.0\nstatus: draft\nextends: []\nstandards: [STD-API-001]\n",
 		"standards/catalog/api.yaml":        "schema_version: 1\nid: STD-API-001\nversion: 1.0.0\nstatus: active\ncategory: api\nlevel: required\nrules:\n  - id: STD-API-001-R01\n    requirement: APIs publish a contract\n    verification: [schema]\n",
 		"standards/exceptions/api.yaml":     "schema_version: 1\nid: STDEX-001\nstandard: STD-API-001\nscope: [APP-ONE]\nowner: team\nrationale: migration\nresidual_risk: accepted\nmitigation: monitor\nexpires_on: 2099-01-01\nreentry_gate: tests pass\nstatus: open\n",
 		"operations/operations.yaml":        "schema_version: 1\nenvironments: {ENV-PROD: environments/prod.yaml}\ndeployments: {}\nrunbooks: {}\n",
-		"operations/environments/prod.yaml": "schema_version: 1\nid: ENV-PROD\n",
+		"operations/environments/prod.yaml": "schema_version: 1\nid: ENV-PROD\nstatus: draft\n",
 	}
 	for name, body := range files {
 		path := filepath.Join(engineering, filepath.FromSlash(name))
@@ -121,6 +135,173 @@ func TestInspectValidatesTechnicalStandardsAndOperationsCatalogs(t *testing.T) {
 	inspection, err := Inspect(root)
 	if err != nil || len(inspection.Blockers) != 0 {
 		t.Fatalf("inspection=%+v err=%v", inspection, err)
+	}
+}
+
+func TestInspectExplainsHowToNormalizeEmbeddedTechnicalEntities(t *testing.T) {
+	root := t.TempDir()
+	engineering := filepath.Join(root, "engineering")
+	files := map[string]string{
+		"context.md":              "---\nid: ENGSYS-TEST-001\nstatus: draft\nversion: 1.0.0\norigin_mode: generate\n---\n",
+		"engineering-system.md":   "| Field | Value |\n| --- | --- |\n| ID | `ENGSYS-TEST-001` |\n| Status | `draft` |\n| Version | `1.0.0` |\n",
+		"engineering-system.yaml": "schema_version: 1\nid: ENGSYS-TEST-001\nstatus: draft\nversion: 1.0.0\norigin_mode: generate\nscope: product\nareas:\n  technical_catalog: {contract: catalog/catalog.yaml, maturity: baseline, evidence: []}\n",
+		"catalog/catalog.yaml":    "schema_version: 1\nentities:\n  systems:\n    SYS-MF-001:\n      name: MeetFriends\n      evidence: []\nrelations: []\n",
+	}
+	for name, body := range files {
+		path := filepath.Join(engineering, filepath.FromSlash(name))
+		if err := os.MkdirAll(filepath.Dir(path), 0o755); err != nil {
+			t.Fatal(err)
+		}
+		if err := os.WriteFile(path, []byte(body), 0o644); err != nil {
+			t.Fatal(err)
+		}
+	}
+
+	inspection, err := Inspect(root)
+	if err != nil {
+		t.Fatal(err)
+	}
+	joined := strings.Join(inspection.Blockers, "\n")
+	for _, expected := range []string{"systems id SYS-MF-001", "expected a relative YAML file path", "not an embedded entity"} {
+		if !strings.Contains(joined, expected) {
+			t.Fatalf("expected %q in blockers=%v", expected, inspection.Blockers)
+		}
+	}
+	if strings.Contains(joined, "technical catalog is invalid YAML") {
+		t.Fatalf("syntactically valid embedded YAML received a generic parse error: %v", inspection.Blockers)
+	}
+}
+
+func TestInspectReportsTechnicalEntityReferenceAndFieldFailures(t *testing.T) {
+	root := t.TempDir()
+	engineering := filepath.Join(root, "engineering")
+	files := map[string]string{
+		"context.md":                      "---\nid: ENGSYS-TEST-001\nstatus: draft\nversion: 1.0.0\norigin_mode: generate\n---\n",
+		"engineering-system.md":           "| Field | Value |\n| --- | --- |\n| ID | `ENGSYS-TEST-001` |\n| Status | `draft` |\n| Version | `1.0.0` |\n",
+		"engineering-system.yaml":         "schema_version: 1\nid: ENGSYS-TEST-001\nstatus: draft\nversion: 1.0.0\norigin_mode: generate\nscope: product\nareas:\n  technical_catalog: {contract: catalog/catalog.yaml, maturity: baseline, evidence: []}\n",
+		"catalog/catalog.yaml":            "schema_version: 1\nentities:\n  systems: {SYS-MISSING-001: systems/missing.yaml}\n  applications: {APP-WRONG-001: applications/wrong.yaml}\n  components: {CMP-BAD-REF-001: components/component.md}\nrelations: []\n",
+		"catalog/applications/wrong.yaml": "schema_version: 2\nid: APP-OTHER-001\ntype: system\n",
+	}
+	for name, body := range files {
+		path := filepath.Join(engineering, filepath.FromSlash(name))
+		if err := os.MkdirAll(filepath.Dir(path), 0o755); err != nil {
+			t.Fatal(err)
+		}
+		if err := os.WriteFile(path, []byte(body), 0o644); err != nil {
+			t.Fatal(err)
+		}
+	}
+
+	inspection, err := Inspect(root)
+	if err != nil {
+		t.Fatal(err)
+	}
+	joined := strings.Join(inspection.Blockers, "\n")
+	for _, expected := range []string{
+		"technical entity SYS-MISSING-001 referenced file systems/missing.yaml is missing",
+		"applications id APP-WRONG-001 references applications/wrong.yaml with schema_version 2; expected 1",
+		"with entity id \"APP-OTHER-001\"; expected \"APP-WRONG-001\"",
+		"with type \"system\"; expected \"application\"",
+		"without required field status",
+		"components id CMP-BAD-REF-001 reference components/component.md is invalid; expected a relative .yaml or .yml entity file",
+	} {
+		if !strings.Contains(joined, expected) {
+			t.Fatalf("expected %q in blockers=%v", expected, inspection.Blockers)
+		}
+	}
+}
+
+func TestInspectRejectsMalformedTechnicalTopology(t *testing.T) {
+	root := t.TempDir()
+	engineering := filepath.Join(root, "engineering")
+	writeEngineeringTestFiles(t, engineering, map[string]string{
+		"context.md":                 "---\nid: ENGSYS-TEST-001\nstatus: draft\nversion: 1.0.0\norigin_mode: generate\n---\n",
+		"engineering-system.md":      "| Field | Value |\n| --- | --- |\n| ID | `ENGSYS-TEST-001` |\n| Status | `draft` |\n| Version | `1.0.0` |\n",
+		"engineering-system.yaml":    "schema_version: 1\nid: ENGSYS-TEST-001\nstatus: draft\nversion: 1.0.0\norigin_mode: generate\nscope: product\nareas:\n  technical_catalog: {contract: catalog/catalog.yaml, maturity: baseline, evidence: []}\n",
+		"catalog/catalog.yaml":       "schema_version: 1\nentities: {}\nrelations: []\n",
+		"architecture/topology.yaml": "[",
+	})
+	inspection, err := Inspect(root)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if joined := strings.Join(inspection.Blockers, "\n"); !strings.Contains(joined, "technical topology architecture/topology.yaml is invalid YAML") {
+		t.Fatalf("malformed topology was accepted: %v", inspection.Blockers)
+	}
+}
+
+func TestInspectExplainsEmbeddedStandardsAndOperationsRecords(t *testing.T) {
+	root := t.TempDir()
+	engineering := filepath.Join(root, "engineering")
+	writeEngineeringTestFiles(t, engineering, map[string]string{
+		"context.md":                 "---\nid: ENGSYS-TEST-001\nstatus: draft\nversion: 1.0.0\norigin_mode: generate\n---\n",
+		"engineering-system.md":      "| Field | Value |\n| --- | --- |\n| ID | `ENGSYS-TEST-001` |\n| Status | `draft` |\n| Version | `1.0.0` |\n",
+		"engineering-system.yaml":    "schema_version: 1\nid: ENGSYS-TEST-001\nstatus: draft\nversion: 1.0.0\norigin_mode: generate\nscope: product\nareas:\n  standards: {contract: standards/standards.yaml, maturity: baseline, evidence: []}\n  operations: {contract: operations/operations.yaml, maturity: baseline, evidence: []}\n",
+		"standards/standards.yaml":   "schema_version: 1\nprofiles:\n  PROFILE-DEFAULT:\n    schema_version: 1\n    id: PROFILE-DEFAULT\n    version: 1.0.0\n    status: draft\nstandards: {}\nexceptions: {}\n",
+		"operations/operations.yaml": "schema_version: 1\nenvironments:\n  ENV-PRODUCTION:\n    schema_version: 1\n    id: ENV-PRODUCTION\n    status: draft\ndeployments: {}\nrunbooks: {}\n",
+	})
+	inspection, err := Inspect(root)
+	if err != nil {
+		t.Fatal(err)
+	}
+	joined := strings.Join(inspection.Blockers, "\n")
+	for _, expected := range []string{
+		"standards profile PROFILE-DEFAULT has an incompatible reference",
+		"operations environment ENV-PRODUCTION has an incompatible reference",
+		"not an embedded record",
+	} {
+		if !strings.Contains(joined, expected) {
+			t.Fatalf("expected %q in blockers=%v", expected, inspection.Blockers)
+		}
+	}
+	if strings.Contains(joined, "catalog is invalid YAML") {
+		t.Fatalf("embedded records received a generic YAML diagnostic: %v", inspection.Blockers)
+	}
+}
+
+func TestInspectRejectsInvalidOperationsRecordsAndMissingStandardStatus(t *testing.T) {
+	root := t.TempDir()
+	engineering := filepath.Join(root, "engineering")
+	writeEngineeringTestFiles(t, engineering, map[string]string{
+		"context.md":                              "---\nid: ENGSYS-TEST-001\nstatus: draft\nversion: 1.0.0\norigin_mode: generate\n---\n",
+		"engineering-system.md":                   "| Field | Value |\n| --- | --- |\n| ID | `ENGSYS-TEST-001` |\n| Status | `draft` |\n| Version | `1.0.0` |\n",
+		"engineering-system.yaml":                 "schema_version: 1\nid: ENGSYS-TEST-001\nstatus: draft\nversion: 1.0.0\norigin_mode: generate\nscope: product\nareas:\n  standards: {contract: standards/standards.yaml, maturity: baseline, evidence: []}\n  operations: {contract: operations/operations.yaml, maturity: baseline, evidence: []}\n",
+		"standards/standards.yaml":                "schema_version: 1\nprofiles: {}\nstandards: {STD-API-001: catalog/api.yaml}\nexceptions: {}\n",
+		"standards/catalog/api.yaml":              "schema_version: 1\nid: STD-API-001\nversion: 1.0.0\ncategory: api\nlevel: required\nrules:\n  - {id: STD-API-001-R01, requirement: Publish a schema, verification: [schema]}\n",
+		"operations/operations.yaml":              "schema_version: 1\nenvironments: {INVALID-ID: environments/production.yaml}\ndeployments: {}\nrunbooks: {}\n",
+		"operations/environments/production.yaml": "[",
+	})
+	inspection, err := Inspect(root)
+	if err != nil {
+		t.Fatal(err)
+	}
+	joined := strings.Join(inspection.Blockers, "\n")
+	for _, expected := range []string{
+		"standard STD-API-001 has invalid schema, identity, semantic version, or status",
+		"operations environment id INVALID-ID must start with ENV-",
+		"operations environment INVALID-ID references environments/production.yaml, but that record is invalid YAML",
+	} {
+		if !strings.Contains(joined, expected) {
+			t.Fatalf("expected %q in blockers=%v", expected, inspection.Blockers)
+		}
+	}
+}
+
+func TestInspectRejectsUnknownEngineeringArea(t *testing.T) {
+	root := t.TempDir()
+	engineering := filepath.Join(root, "engineering")
+	writeEngineeringTestFiles(t, engineering, map[string]string{
+		"context.md":                 "---\nid: ENGSYS-TEST-001\nstatus: draft\nversion: 1.0.0\norigin_mode: generate\n---\n",
+		"engineering-system.md":      "| Field | Value |\n| --- | --- |\n| ID | `ENGSYS-TEST-001` |\n| Status | `draft` |\n| Version | `1.0.0` |\n",
+		"engineering-system.yaml":    "schema_version: 1\nid: ENGSYS-TEST-001\nstatus: draft\nversion: 1.0.0\norigin_mode: generate\nscope: not-configured\nareas:\n  operatons: {contract: operations/operations.yaml, maturity: baseline, evidence: []}\n",
+		"operations/operations.yaml": "schema_version: 1\n",
+	})
+	inspection, err := Inspect(root)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if joined := strings.Join(inspection.Blockers, "\n"); !strings.Contains(joined, "catalog has unknown area operatons") {
+		t.Fatalf("unknown area was accepted: %v", inspection.Blockers)
 	}
 }
 
@@ -283,13 +464,14 @@ func TestInspectValidatesConfiguredQualitySystem(t *testing.T) {
 	root := t.TempDir()
 	engineering := filepath.Join(root, "engineering")
 	files := map[string]string{
-		"context.md":                  "---\nid: ENGSYS-TEST-001\nstatus: draft\nversion: 1.0.0\norigin_mode: generate\n---\n",
-		"engineering-system.md":       "| Field | Value |\n| --- | --- |\n| ID | `ENGSYS-TEST-001` |\n| Status | `draft` |\n| Version | `1.0.0` |\n",
-		"quality/quality-system.md":   "| Field | Value |\n| --- | --- |\n| Engineering System | `ENGSYS-TEST-001 @ 1.0.0` |\n| Status | `draft` |\n\n| Area | Policy | Evidence | Maturity |\n| --- | --- | --- | --- |\n| Behavioral | strategy | none | baseline |\n| Accessibility | strategy | none | baseline |\n| Security and privacy | strategy | none | baseline |\n| Performance and reliability | model | none | baseline |\n| Observability | model | none | baseline |\n",
-		"quality/quality-model.md":    "# Model\n",
-		"quality/test-strategy.md":    "# Strategy\n",
-		"engineering-system.yaml":     "schema_version: 1\nid: ENGSYS-TEST-001\nstatus: draft\nversion: 1.0.0\norigin_mode: generate\nscope: product\nareas:\n  quality:\n    contract: quality/quality-system.md\n    maturity: baseline\n    evidence: []\n",
-		"quality/quality-system.yaml": "schema_version: 1\nengineering_system: ENGSYS-TEST-001\nversion: 1.0.0\nstatus: draft\nareas:\n  behavioral: {maturity: baseline, policy: test-strategy.md, required_evidence: []}\n  accessibility: {maturity: baseline, policy: test-strategy.md, required_evidence: []}\n  security_privacy: {maturity: baseline, policy: test-strategy.md, delegated_gate: security-review, required_evidence: []}\n  performance_reliability: {maturity: baseline, policy: quality-model.md, required_evidence: []}\n  observability: {maturity: baseline, policy: quality-model.md, required_evidence: []}\ngate_source: knowledge/conventions/gates.md\nexceptions:\n  require_owner: true\n  require_residual_risk: true\n  require_expiry_or_review: true\n",
+		"context.md":                     "---\nid: ENGSYS-TEST-001\nstatus: draft\nversion: 1.0.0\norigin_mode: generate\n---\n",
+		"engineering-system.md":          "| Field | Value |\n| --- | --- |\n| ID | `ENGSYS-TEST-001` |\n| Status | `draft` |\n| Version | `1.0.0` |\n",
+		"quality/quality-system.md":      "| Field | Value |\n| --- | --- |\n| Engineering System | `ENGSYS-TEST-001 @ 1.0.0` |\n| Status | `draft` |\n\n| Area | Policy | Evidence | Maturity |\n| --- | --- | --- | --- |\n| Behavioral | strategy | none | baseline |\n| Accessibility | strategy | none | baseline |\n| Security and privacy | strategy | none | baseline |\n| Performance and reliability | model | none | baseline |\n| Observability | model | none | baseline |\n",
+		"quality/quality-model.md":       "# Model\n",
+		"quality/test-strategy.md":       "# Strategy\n",
+		"quality/fitness-functions.yaml": "version: 1\nfunctions: []\n",
+		"engineering-system.yaml":        "schema_version: 1\nid: ENGSYS-TEST-001\nstatus: draft\nversion: 1.0.0\norigin_mode: generate\nscope: product\nareas:\n  quality:\n    contract: quality/quality-system.md\n    maturity: baseline\n    evidence: []\n",
+		"quality/quality-system.yaml":    "schema_version: 1\nengineering_system: ENGSYS-TEST-001\nversion: 1.0.0\nstatus: draft\nareas:\n  behavioral: {maturity: baseline, policy: test-strategy.md, required_evidence: []}\n  accessibility: {maturity: baseline, policy: test-strategy.md, required_evidence: []}\n  security_privacy: {maturity: baseline, policy: test-strategy.md, delegated_gate: security-review, required_evidence: []}\n  performance_reliability: {maturity: baseline, policy: quality-model.md, required_evidence: []}\n  observability: {maturity: baseline, policy: quality-model.md, required_evidence: []}\ngate_source: knowledge/conventions/gates.md\nexceptions:\n  require_owner: true\n  require_residual_risk: true\n  require_expiry_or_review: true\n",
 	}
 	for name, body := range files {
 		path := filepath.Join(engineering, filepath.FromSlash(name))
@@ -303,6 +485,17 @@ func TestInspectValidatesConfiguredQualitySystem(t *testing.T) {
 	inspection, err := Inspect(root)
 	if err != nil || len(inspection.Blockers) != 0 || !inspection.QualitySystem {
 		t.Fatalf("inspection=%+v err=%v", inspection, err)
+	}
+	fitnessPath := filepath.Join(engineering, "quality", "fitness-functions.yaml")
+	if err := os.WriteFile(fitnessPath, []byte("["), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	inspection, err = Inspect(root)
+	if err != nil || !strings.Contains(strings.Join(inspection.Blockers, "\n"), "quality fitness functions quality/fitness-functions.yaml is invalid YAML") {
+		t.Fatalf("invalid fitness functions were accepted: inspection=%+v err=%v", inspection, err)
+	}
+	if err := os.WriteFile(fitnessPath, []byte("version: 1\nfunctions: []\n"), 0o644); err != nil {
+		t.Fatal(err)
 	}
 	catalogPath := filepath.Join(engineering, "quality", "quality-system.yaml")
 	catalogData, _ := os.ReadFile(catalogPath)

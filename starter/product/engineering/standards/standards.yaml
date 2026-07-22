@@ -1,5 +1,6 @@
 schema_version: 1
 owner_skill: engineering-standards
+# Every ID maps to a relative YAML file. Do not embed profiles, standards, or exceptions here.
 profiles:
   PROFILE-PRODUCT-DEFAULT: profiles/product-default.yaml
 standards: {}

@@ -11,6 +11,7 @@ Store stable product architecture knowledge and product ADR references:
 - `modules.md`: module responsibilities and dependencies.
 - `data-ownership.md`: sources of truth, consistency, and authorization boundaries.
 - `integration-map.md`: APIs, events, queues, and third-party contracts.
+- `topology.yaml`: strict mechanical index of every catalog entity and relation.
 
 Delivery-specific change analysis lives beside its use case in `technical-discovery.md` and links back here.
 

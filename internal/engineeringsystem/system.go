@@ -62,6 +62,11 @@ var expectedAreaOwners = map[string]string{
 	"evidence":          "engineering-evidence",
 }
 
+var allowedEngineeringAreas = map[string]bool{
+	"system_context": true, "modules": true, "technical_catalog": true,
+	"standards": true, "quality": true, "operations": true, "evidence": true,
+}
+
 type Area struct {
 	Name       string `json:"name"`
 	Contract   string `json:"contract"`
@@ -157,10 +162,10 @@ type qualityExceptionRecord struct {
 }
 
 type technicalCatalogDocument struct {
-	SchemaVersion int                          `yaml:"schema_version"`
-	OwnerSkill    string                       `yaml:"owner_skill"`
-	Entities      map[string]map[string]string `yaml:"entities"`
-	Relations     []technicalRelationDocument  `yaml:"relations"`
+	SchemaVersion int                         `yaml:"schema_version"`
+	OwnerSkill    string                      `yaml:"owner_skill"`
+	Entities      map[string]map[string]any   `yaml:"entities"`
+	Relations     []technicalRelationDocument `yaml:"relations"`
 }
 
 type technicalEntityDocument struct {
@@ -178,12 +183,25 @@ type technicalRelationDocument struct {
 	Evidence []string `yaml:"evidence"`
 }
 
+type technicalTopologyDocument struct {
+	SchemaVersion int                         `yaml:"schema_version"`
+	OwnerSkill    string                      `yaml:"owner_skill"`
+	Systems       []string                    `yaml:"systems"`
+	Applications  []string                    `yaml:"applications"`
+	Components    []string                    `yaml:"components"`
+	Repositories  []string                    `yaml:"repositories"`
+	DataStores    []string                    `yaml:"data_stores"`
+	Interfaces    []string                    `yaml:"interfaces"`
+	Deployments   []string                    `yaml:"deployments"`
+	Relations     []technicalRelationDocument `yaml:"relations"`
+}
+
 type standardsCatalogDocument struct {
-	SchemaVersion int               `yaml:"schema_version"`
-	OwnerSkill    string            `yaml:"owner_skill"`
-	Profiles      map[string]string `yaml:"profiles"`
-	Standards     map[string]string `yaml:"standards"`
-	Exceptions    map[string]string `yaml:"exceptions"`
+	SchemaVersion int            `yaml:"schema_version"`
+	OwnerSkill    string         `yaml:"owner_skill"`
+	Profiles      map[string]any `yaml:"profiles"`
+	Standards     map[string]any `yaml:"standards"`
+	Exceptions    map[string]any `yaml:"exceptions"`
 }
 
 type standardProfileDocument struct {
@@ -226,11 +244,33 @@ type standardExceptionDocument struct {
 }
 
 type operationsCatalogDocument struct {
-	SchemaVersion int               `yaml:"schema_version"`
-	OwnerSkill    string            `yaml:"owner_skill"`
-	Environments  map[string]string `yaml:"environments"`
-	Deployments   map[string]string `yaml:"deployments"`
-	Runbooks      map[string]string `yaml:"runbooks"`
+	SchemaVersion int            `yaml:"schema_version"`
+	OwnerSkill    string         `yaml:"owner_skill"`
+	Environments  map[string]any `yaml:"environments"`
+	Deployments   map[string]any `yaml:"deployments"`
+	Runbooks      map[string]any `yaml:"runbooks"`
+}
+
+type operationsEnvironmentDocument struct {
+	SchemaVersion int    `yaml:"schema_version"`
+	ID            string `yaml:"id"`
+	Status        string `yaml:"status"`
+}
+
+type operationsDeploymentDocument struct {
+	SchemaVersion   int      `yaml:"schema_version"`
+	ID              string   `yaml:"id"`
+	Status          string   `yaml:"status"`
+	TechnicalEntity string   `yaml:"technical_entity"`
+	Environment     string   `yaml:"environment"`
+	Applications    []string `yaml:"applications"`
+	Components      []string `yaml:"components"`
+	Runbooks        []string `yaml:"runbooks"`
+}
+
+type fitnessFunctionsDocument struct {
+	Version   int   `yaml:"version"`
+	Functions []any `yaml:"functions"`
 }
 
 func Inspect(root string) (Inspection, error) {
@@ -306,6 +346,9 @@ func Inspect(root string) (Inspection, error) {
 	for name, source := range catalog.Areas {
 		area := Area{Name: name, Contract: source.Contract, Maturity: source.Maturity, Evidence: len(source.Evidence), OwnerSkill: source.OwnerSkill}
 		i.Areas = append(i.Areas, area)
+		if !allowedEngineeringAreas[name] {
+			i.Blockers = append(i.Blockers, "catalog has unknown area "+name)
+		}
 		if area.Contract == "" || area.Maturity == "" {
 			i.Blockers = append(i.Blockers, fmt.Sprintf("area %s is missing contract or maturity", name))
 			continue
@@ -374,11 +417,21 @@ func validateTechnicalCatalog(engineeringDir, contract string) []string {
 	}
 	entityIDs := map[string]bool{}
 	for category, prefix := range technicalEntityPrefixes {
-		for id, reference := range catalog.Entities[category] {
+		for id, rawReference := range catalog.Entities[category] {
 			if !regexp.MustCompile(`^[A-Z][A-Z0-9-]+$`).MatchString(id) || !strings.HasPrefix(id, prefix) {
 				blockers = append(blockers, fmt.Sprintf("technical catalog %s id %s must start with %s", category, id, prefix))
 			}
 			entityIDs[id] = true
+			reference, ok := rawReference.(string)
+			if !ok || strings.TrimSpace(reference) == "" {
+				blockers = append(blockers, fmt.Sprintf("technical catalog %s id %s has an incompatible entity reference; expected a relative YAML file path such as %s/%s.yaml, not an embedded entity", category, id, strings.ReplaceAll(category, "_", "-"), strings.ToLower(strings.TrimPrefix(id, prefix))))
+				continue
+			}
+			extension := strings.ToLower(filepath.Ext(reference))
+			if extension != ".yaml" && extension != ".yml" {
+				blockers = append(blockers, fmt.Sprintf("technical catalog %s id %s reference %s is invalid; expected a relative .yaml or .yml entity file", category, id, reference))
+				continue
+			}
 			entityPath, refBlockers := resolvedCatalogReference(engineeringDir, filepath.Dir(path), reference, "technical entity "+id)
 			blockers = append(blockers, refBlockers...)
 			if len(refBlockers) != 0 {
@@ -386,11 +439,20 @@ func validateTechnicalCatalog(engineeringDir, contract string) []string {
 			}
 			var entity technicalEntityDocument
 			if err := readYAML(entityPath, &entity); err != nil {
-				blockers = append(blockers, "technical entity "+id+" is invalid YAML")
+				blockers = append(blockers, fmt.Sprintf("technical catalog %s id %s references %s, but that entity file is invalid YAML", category, id, reference))
 				continue
 			}
-			if entity.SchemaVersion != 1 || entity.ID != id || entity.Type != technicalEntityTypes[category] || strings.TrimSpace(entity.Status) == "" {
-				blockers = append(blockers, "technical entity "+id+" has invalid schema, identity, type, or status")
+			if entity.SchemaVersion != 1 {
+				blockers = append(blockers, fmt.Sprintf("technical catalog %s id %s references %s with schema_version %d; expected 1", category, id, reference, entity.SchemaVersion))
+			}
+			if entity.ID != id {
+				blockers = append(blockers, fmt.Sprintf("technical catalog %s id %s references %s with entity id %q; expected %q", category, id, reference, entity.ID, id))
+			}
+			if entity.Type != technicalEntityTypes[category] {
+				blockers = append(blockers, fmt.Sprintf("technical catalog %s id %s references %s with type %q; expected %q", category, id, reference, entity.Type, technicalEntityTypes[category]))
+			}
+			if strings.TrimSpace(entity.Status) == "" {
+				blockers = append(blockers, fmt.Sprintf("technical catalog %s id %s references %s without required field status", category, id, reference))
 			}
 		}
 	}
@@ -405,6 +467,66 @@ func validateTechnicalCatalog(engineeringDir, contract string) []string {
 		seenRelations[relation.ID] = true
 		if !entityIDs[relation.Source] || !entityIDs[relation.Target] {
 			blockers = append(blockers, "technical relation "+relation.ID+" references an unknown source or target")
+		}
+	}
+	blockers = append(blockers, validateTechnicalTopology(engineeringDir, entityIDs)...)
+	return blockers
+}
+
+func validateTechnicalTopology(engineeringDir string, catalogEntityIDs map[string]bool) []string {
+	path := filepath.Join(engineeringDir, "architecture", "topology.yaml")
+	var topology technicalTopologyDocument
+	if err := readYAML(path, &topology); err != nil {
+		if os.IsNotExist(err) {
+			return []string{"technical topology architecture/topology.yaml is missing"}
+		}
+		return []string{"technical topology architecture/topology.yaml is invalid YAML"}
+	}
+	var blockers []string
+	if topology.SchemaVersion != 1 {
+		blockers = append(blockers, "technical topology schema_version must be 1")
+	}
+	if topology.OwnerSkill != "technical-landscape" {
+		blockers = append(blockers, "technical topology owner_skill must be technical-landscape")
+	}
+	categories := map[string][]string{
+		"systems": topology.Systems, "applications": topology.Applications, "components": topology.Components,
+		"repositories": topology.Repositories, "data_stores": topology.DataStores, "interfaces": topology.Interfaces,
+		"deployments": topology.Deployments,
+	}
+	topologyIDs := map[string]bool{}
+	for category, ids := range categories {
+		seen := map[string]bool{}
+		for _, id := range ids {
+			if !strings.HasPrefix(id, technicalEntityPrefixes[category]) {
+				blockers = append(blockers, fmt.Sprintf("technical topology %s id %s must start with %s", category, id, technicalEntityPrefixes[category]))
+			}
+			if seen[id] {
+				blockers = append(blockers, fmt.Sprintf("technical topology %s id %s is duplicated", category, id))
+			}
+			seen[id] = true
+			topologyIDs[id] = true
+			if !catalogEntityIDs[id] {
+				blockers = append(blockers, fmt.Sprintf("technical topology %s id %s is not indexed by catalog/catalog.yaml", category, id))
+			}
+		}
+	}
+	for id := range catalogEntityIDs {
+		if !topologyIDs[id] {
+			blockers = append(blockers, "technical catalog entity "+id+" is missing from architecture/topology.yaml")
+		}
+	}
+	seenRelations := map[string]bool{}
+	for _, relation := range topology.Relations {
+		if !regexp.MustCompile(`^REL-[A-Z0-9-]+$`).MatchString(relation.ID) || strings.TrimSpace(relation.Type) == "" {
+			blockers = append(blockers, "technical topology relation "+relation.ID+" has invalid identity or type")
+		}
+		if seenRelations[relation.ID] {
+			blockers = append(blockers, "technical topology relation "+relation.ID+" is duplicated")
+		}
+		seenRelations[relation.ID] = true
+		if !topologyIDs[relation.Source] || !topologyIDs[relation.Target] {
+			blockers = append(blockers, "technical topology relation "+relation.ID+" references an unknown source or target")
 		}
 	}
 	return blockers
@@ -424,9 +546,14 @@ func validateStandardsCatalog(engineeringDir, contract string) []string {
 	}
 	base := filepath.Dir(path)
 	profiles := map[string]standardProfileDocument{}
-	for id, reference := range catalog.Profiles {
+	for id, rawReference := range catalog.Profiles {
 		if !strings.HasPrefix(id, "PROFILE-") {
 			blockers = append(blockers, "standards profile id "+id+" must start with PROFILE-")
+		}
+		reference, referenceBlockers := indexedYAMLReference(rawReference, "standards profile "+id, "profiles/product-default.yaml")
+		blockers = append(blockers, referenceBlockers...)
+		if len(referenceBlockers) != 0 {
+			continue
 		}
 		profilePath, refBlockers := resolvedCatalogReference(engineeringDir, base, reference, "standards profile "+id)
 		blockers = append(blockers, refBlockers...)
@@ -438,14 +565,19 @@ func validateStandardsCatalog(engineeringDir, contract string) []string {
 			blockers = append(blockers, "standards profile "+id+" is invalid YAML")
 			continue
 		}
-		if profile.SchemaVersion != 1 || profile.ID != id || !semanticVersion(profile.Version) {
-			blockers = append(blockers, "standards profile "+id+" has invalid schema, identity, or semantic version")
+		if profile.SchemaVersion != 1 || profile.ID != id || !semanticVersion(profile.Version) || strings.TrimSpace(profile.Status) == "" {
+			blockers = append(blockers, "standards profile "+id+" has invalid schema, identity, semantic version, or status")
 		}
 		profiles[id] = profile
 	}
-	for id, reference := range catalog.Standards {
+	for id, rawReference := range catalog.Standards {
 		if !strings.HasPrefix(id, "STD-") {
 			blockers = append(blockers, "standard id "+id+" must start with STD-")
+		}
+		reference, referenceBlockers := indexedYAMLReference(rawReference, "standard "+id, "catalog/api.yaml")
+		blockers = append(blockers, referenceBlockers...)
+		if len(referenceBlockers) != 0 {
+			continue
 		}
 		standardPath, refBlockers := resolvedCatalogReference(engineeringDir, base, reference, "standard "+id)
 		blockers = append(blockers, refBlockers...)
@@ -457,8 +589,8 @@ func validateStandardsCatalog(engineeringDir, contract string) []string {
 			blockers = append(blockers, "standard "+id+" is invalid YAML")
 			continue
 		}
-		if standard.SchemaVersion != 1 || standard.ID != id || !semanticVersion(standard.Version) {
-			blockers = append(blockers, "standard "+id+" has invalid schema, identity, or semantic version")
+		if standard.SchemaVersion != 1 || standard.ID != id || !semanticVersion(standard.Version) || strings.TrimSpace(standard.Status) == "" {
+			blockers = append(blockers, "standard "+id+" has invalid schema, identity, semantic version, or status")
 		}
 		if !allowedStandardCategories[standard.Category] {
 			blockers = append(blockers, "standard "+id+" has invalid category "+standard.Category)
@@ -480,9 +612,14 @@ func validateStandardsCatalog(engineeringDir, contract string) []string {
 			seenRules[rule.ID] = true
 		}
 	}
-	for id, reference := range catalog.Exceptions {
+	for id, rawReference := range catalog.Exceptions {
 		if !strings.HasPrefix(id, "STDEX-") {
 			blockers = append(blockers, "standard exception id "+id+" must start with STDEX-")
+		}
+		reference, referenceBlockers := indexedYAMLReference(rawReference, "standard exception "+id, "exceptions/api.yaml")
+		blockers = append(blockers, referenceBlockers...)
+		if len(referenceBlockers) != 0 {
+			continue
 		}
 		exceptionPath, refBlockers := resolvedCatalogReference(engineeringDir, base, reference, "standard exception "+id)
 		blockers = append(blockers, refBlockers...)
@@ -494,7 +631,7 @@ func validateStandardsCatalog(engineeringDir, contract string) []string {
 			blockers = append(blockers, "standard exception "+id+" is invalid YAML")
 			continue
 		}
-		if exception.SchemaVersion != 1 || exception.ID != id || catalog.Standards[exception.Standard] == "" {
+		if exception.SchemaVersion != 1 || exception.ID != id || catalog.Standards[exception.Standard] == nil {
 			blockers = append(blockers, "standard exception "+id+" has invalid schema, identity, or standard reference")
 		}
 		if len(exception.Scope) == 0 || strings.TrimSpace(exception.Owner) == "" || strings.TrimSpace(exception.Rationale) == "" || strings.TrimSpace(exception.ResidualRisk) == "" || strings.TrimSpace(exception.Mitigation) == "" || strings.TrimSpace(exception.ReentryGate) == "" {
@@ -538,12 +675,105 @@ func validateOperationsCatalog(engineeringDir, contract string) []string {
 	if catalog.OwnerSkill != "" && catalog.OwnerSkill != "operations-baseline" {
 		blockers = append(blockers, "operations catalog owner_skill must be operations-baseline")
 	}
-	for category, entries := range map[string]map[string]string{"environment": catalog.Environments, "deployment": catalog.Deployments, "runbook": catalog.Runbooks} {
-		for id, reference := range entries {
-			blockers = append(blockers, validateCatalogReference(engineeringDir, filepath.Dir(path), reference, category+" "+id)...)
+	base := filepath.Dir(path)
+	environments := map[string]bool{}
+	for id, rawReference := range catalog.Environments {
+		if !strings.HasPrefix(id, "ENV-") {
+			blockers = append(blockers, "operations environment id "+id+" must start with ENV-")
+		}
+		reference, referenceBlockers := indexedYAMLReference(rawReference, "operations environment "+id, "environments/production.yaml")
+		blockers = append(blockers, referenceBlockers...)
+		if len(referenceBlockers) != 0 {
+			continue
+		}
+		recordPath, refBlockers := resolvedCatalogReference(engineeringDir, base, reference, "operations environment "+id)
+		blockers = append(blockers, refBlockers...)
+		if len(refBlockers) != 0 {
+			continue
+		}
+		var environment operationsEnvironmentDocument
+		if err := readYAML(recordPath, &environment); err != nil {
+			blockers = append(blockers, fmt.Sprintf("operations environment %s references %s, but that record is invalid YAML", id, reference))
+			continue
+		}
+		if environment.SchemaVersion != 1 || environment.ID != id || strings.TrimSpace(environment.Status) == "" {
+			blockers = append(blockers, "operations environment "+id+" has invalid schema, identity, or status")
+		}
+		environments[id] = true
+	}
+	for id, rawReference := range catalog.Deployments {
+		if !strings.HasPrefix(id, "DEPLOY-") {
+			blockers = append(blockers, "operations deployment id "+id+" must start with DEPLOY-")
+		}
+		reference, referenceBlockers := indexedYAMLReference(rawReference, "operations deployment "+id, "deployments/application-production.yaml")
+		blockers = append(blockers, referenceBlockers...)
+		if len(referenceBlockers) != 0 {
+			continue
+		}
+		recordPath, refBlockers := resolvedCatalogReference(engineeringDir, base, reference, "operations deployment "+id)
+		blockers = append(blockers, refBlockers...)
+		if len(refBlockers) != 0 {
+			continue
+		}
+		var deployment operationsDeploymentDocument
+		if err := readYAML(recordPath, &deployment); err != nil {
+			blockers = append(blockers, fmt.Sprintf("operations deployment %s references %s, but that record is invalid YAML", id, reference))
+			continue
+		}
+		if deployment.SchemaVersion != 1 || deployment.ID != id || strings.TrimSpace(deployment.Status) == "" {
+			blockers = append(blockers, "operations deployment "+id+" has invalid schema, identity, or status")
+		}
+		if !strings.HasPrefix(deployment.TechnicalEntity, "DEPLOY-") {
+			blockers = append(blockers, "operations deployment "+id+" technical_entity must start with DEPLOY-")
+		}
+		if !environments[deployment.Environment] {
+			blockers = append(blockers, "operations deployment "+id+" references unknown environment "+deployment.Environment)
+		}
+		for _, application := range deployment.Applications {
+			if !strings.HasPrefix(application, "APP-") {
+				blockers = append(blockers, "operations deployment "+id+" has invalid application id "+application)
+			}
+		}
+		for _, component := range deployment.Components {
+			if !strings.HasPrefix(component, "CMP-") {
+				blockers = append(blockers, "operations deployment "+id+" has invalid component id "+component)
+			}
+		}
+		for _, runbook := range deployment.Runbooks {
+			if catalog.Runbooks[runbook] == nil {
+				blockers = append(blockers, "operations deployment "+id+" references unknown runbook "+runbook)
+			}
 		}
 	}
+	for id, rawReference := range catalog.Runbooks {
+		if !strings.HasPrefix(id, "RUNBOOK-") {
+			blockers = append(blockers, "operations runbook id "+id+" must start with RUNBOOK-")
+		}
+		reference, ok := rawReference.(string)
+		if !ok || strings.TrimSpace(reference) == "" {
+			blockers = append(blockers, "operations runbook "+id+" has an incompatible reference; expected a relative Markdown file path such as runbooks/recovery.md, not an embedded record")
+			continue
+		}
+		if strings.ToLower(filepath.Ext(reference)) != ".md" {
+			blockers = append(blockers, "operations runbook "+id+" reference "+reference+" is invalid; expected a relative .md file")
+			continue
+		}
+		blockers = append(blockers, validateCatalogReference(engineeringDir, base, reference, "operations runbook "+id)...)
+	}
 	return blockers
+}
+
+func indexedYAMLReference(rawReference any, label, example string) (string, []string) {
+	reference, ok := rawReference.(string)
+	if !ok || strings.TrimSpace(reference) == "" {
+		return "", []string{label + " has an incompatible reference; expected a relative YAML file path such as " + example + ", not an embedded record"}
+	}
+	reference = strings.TrimSpace(reference)
+	extension := strings.ToLower(filepath.Ext(reference))
+	if extension != ".yaml" && extension != ".yml" {
+		return "", []string{label + " reference " + reference + " is invalid; expected a relative .yaml or .yml file"}
+	}
+	return reference, nil
 }
 
 func loadEngineeringYAML(engineeringDir, contract, label string, target any) (string, []string) {
@@ -566,12 +796,21 @@ func resolvedCatalogReference(engineeringDir, baseDir, reference, label string) 
 	reference = strings.TrimSpace(reference)
 	path := filepath.Clean(filepath.Join(baseDir, filepath.FromSlash(reference)))
 	relative, err := filepath.Rel(engineeringDir, path)
-	if reference == "" || filepath.IsAbs(filepath.FromSlash(reference)) || err != nil || relative == ".." || strings.HasPrefix(relative, ".."+string(filepath.Separator)) {
-		return path, []string{label + " reference escapes engineering"}
+	if reference == "" {
+		return path, []string{label + " reference is empty; expected a relative YAML file path"}
+	}
+	if filepath.IsAbs(filepath.FromSlash(reference)) {
+		return path, []string{label + " reference " + reference + " is invalid; expected a relative YAML file path within engineering"}
+	}
+	if err != nil || relative == ".." || strings.HasPrefix(relative, ".."+string(filepath.Separator)) {
+		return path, []string{label + " reference " + reference + " escapes engineering; expected a relative YAML file path within engineering"}
 	}
 	info, statErr := os.Stat(path)
-	if statErr != nil || info.IsDir() {
-		return path, []string{label + " reference " + reference + " is missing"}
+	if statErr != nil {
+		return path, []string{label + " referenced file " + reference + " is missing"}
+	}
+	if info.IsDir() {
+		return path, []string{label + " reference " + reference + " is invalid because it is a directory; expected a YAML file"}
 	}
 	return path, nil
 }
@@ -788,7 +1027,23 @@ func validateQualitySystem(engineeringDir string, inspection Inspection) []strin
 	if !catalog.Exceptions.RequireOwner || !catalog.Exceptions.RequireResidualRisk || !catalog.Exceptions.RequireExpiryOrReview {
 		blockers = append(blockers, "quality system exceptions must require owner, residual risk, and expiry or review")
 	}
+	blockers = append(blockers, validateFitnessFunctions(engineeringDir)...)
 	return blockers
+}
+
+func validateFitnessFunctions(engineeringDir string) []string {
+	path := filepath.Join(engineeringDir, "quality", "fitness-functions.yaml")
+	var document fitnessFunctionsDocument
+	if err := readYAML(path, &document); err != nil {
+		if os.IsNotExist(err) {
+			return []string{"quality fitness functions quality/fitness-functions.yaml is missing"}
+		}
+		return []string{"quality fitness functions quality/fitness-functions.yaml is invalid YAML"}
+	}
+	if document.Version != 1 {
+		return []string{"quality fitness functions version must be 1"}
+	}
+	return nil
 }
 
 func qualityHumanMaturity(text string) map[string]string {

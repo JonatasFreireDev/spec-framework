@@ -43,7 +43,7 @@ When `engineering-orchestrator` supplies an `engineering-specialist` dispatch en
 1. Read the technical graph, existing conventions, quality and security contracts, and real enforcement evidence.
 2. Define standards only for stable technical rules with an explicit applicability boundary and verification method.
 3. Assign semantic versions, categories, obligation levels, individually identifiable rules, compatibility notes, and exception policy.
-4. Compose profiles by entity type, capability, or explicit assignment; reject inheritance cycles and silent weakening of required rules.
+4. Compose profiles by entity type, capability, or explicit assignment; reject inheritance cycles and silent weakening of required rules. Keep `standards.yaml` indexed: every `PROFILE-*`, `STD-*`, and `STDEX-*` key maps to a relative YAML file, never to embedded fields. Referenced profiles and standards must declare a non-empty status.
 5. Resolve effective standards for affected entities and record uncovered or conflicting applicability.
 6. Create `STDEX-*` only with exact scope, owner, rationale, residual risk, mitigation, expiry, re-entry gate, and status; never self-approve it.
 7. Validate all references, versions, rules, profiles, and exception expiry.

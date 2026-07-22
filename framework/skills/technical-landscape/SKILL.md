@@ -44,7 +44,7 @@ When `engineering-orchestrator` supplies an `engineering-specialist` dispatch en
 2. Identify systems, applications, components, repositories, interfaces, data stores, deployments, ownership, capabilities, and observable relations.
 3. Distinguish observed evidence from inference and explicit hypotheses; do not convert folder nesting into ownership automatically.
 4. Reuse stable IDs when meaning is unchanged. Record move, split, merge, replacement, or compatibility implications when identity changes.
-5. Update `catalog.yaml` and `topology.yaml`; create entity records only when evidence or explicit hypotheses justify them.
+5. Update `catalog.yaml` and `topology.yaml`; create entity records only when evidence or explicit hypotheses justify them. Keep `catalog.yaml` indexed: each category maps every stable ID to a relative entity YAML path (for example, `SYS-PRODUCT-001: systems/product.yaml`), never to embedded entity fields. Materialize the referenced file from `technical-entity-template.yaml` with `schema_version`, matching `id`, category-compatible `type`, and non-empty `status` before handoff.
 6. Validate entity identity, type, safe references, relation endpoints, and coverage of every declared code root.
 7. Record decision candidates for unresolved boundaries, ownership, data, integration, or repository structure.
 8. Return the current graph and gaps to `engineering-orchestrator` without changing aggregate status or approvals.

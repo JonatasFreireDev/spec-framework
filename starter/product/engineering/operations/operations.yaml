@@ -1,5 +1,6 @@
 schema_version: 1
 owner_skill: operations-baseline
+# Every ID maps to a relative record path. Environments and deployments use YAML; runbooks use Markdown.
 environments: {}
 deployments: {}
 runbooks: {}
